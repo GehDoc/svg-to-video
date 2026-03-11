@@ -45,4 +45,4 @@ COPY . .
 RUN mkdir -p /app/data && chown -R node:node /app
 
 USER node
-ENTRYPOINT ["node", "index.js"]
+ENTRYPOINT ["node", "src/index.js"]

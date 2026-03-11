@@ -24,7 +24,7 @@ export GID=$(id -g)
 docker compose build
 
 # 2. Run a render
-docker compose run --rm svg-to-video /app/data/example.svg 13 60 /app/data/out-dir --hold 2
+docker compose run --rm svg-to-video /app/data/examples/example.svg 13 60 /app/data/out-dir --hold 2
 ```
 
 _Note: Local paths must be prefixed with `/app/data/` inside the container to match the volume mount._
@@ -51,7 +51,7 @@ npm install
 Whether running via Docker or natively, the command structure remains the same:
 
 ```bash
-node index.js <svgPath> <duration> <fps> <outDir> [options]
+node src/index.js <svgPath> <duration> <fps> <outDir> [options]
 ```
 
 ### Arguments
@@ -92,7 +92,7 @@ The tool creates the video in the specified `<outDir>`. The filename will match 
 Render a 13-second animation at 60 FPS and hold the final frame for 2 seconds. By default, temporary frames are deleted.
 
 ```bash
-node ./index.js ./example.svg 13 60 out-dir/ --hold 2
+node ./src/index.js ./examples/example.svg 13 60 out-dir/ --hold 2
 ```
 
 #### Example output

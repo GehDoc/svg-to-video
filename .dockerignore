@@ -24,3 +24,6 @@ docker-compose.yml
 
 # Logs
 npm-debug.log*
+
+# Examples (Not meant to be included in the container)
+examples/
