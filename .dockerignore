@@ -1,0 +1,26 @@
+# Dependencies (Crucial: local node_modules will break the container)
+node_modules/
+
+# Build Output
+out-dir/
+*.mp4
+
+# Dev/Tooling configs (Not needed inside the container)
+.github/
+.husky/
+.vscode/
+.eslint*
+.prettier*
+tsconfig.json
+
+# Docker files (The container doesn't need its own recipe)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Git
+.git/
+.gitignore
+
+# Logs
+npm-debug.log*

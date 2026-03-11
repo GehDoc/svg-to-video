@@ -1,0 +1,11 @@
+services:
+  svg-to-video:
+    build: .
+    image: svg-to-video:latest
+    volumes:
+      - .:/app/data:Z
+    # This maps the internal 'node' user to your current local user
+    user: "${UID:-1000}:${GID:-1000}"
+    # This is a security feature to prevent the container from gaining root
+    security_opt:
+      - no-new-privileges:true

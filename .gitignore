@@ -1,2 +1,13 @@
-/node_modules
-/out-dir
+# Dependencies
+node_modules/
+
+# Generated Video Files
+out-dir/
+*.mp4
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Environment/Secrets
+.env

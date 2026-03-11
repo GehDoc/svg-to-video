@@ -11,16 +11,34 @@ Unlike standard converters that often struggle with complex CSS keyframes or tra
 - **Customizable Output**: Control duration, FPS, and post-animation "hold" time.
 - **Automated Cleanup**: Temporary frames are automatically removed, but can be kept with the `--keep-frames` flag.
 
-## 📋 Prerequisites
+## 🐳 Running with Docker (Recommended)
 
-Before running the script, ensure you have the following installed:
+Using Docker is the most reliable way to run this tool. It ensures that **Google Chrome**, **FFmpeg**, and all Linux dependencies are perfectly configured, regardless of your host OS.
+
+> **Note:** The initial build installs a full browser environment. It may take 2–5 minutes, but subsequent runs are near-instant.
+
+```bash
+# 1. Set your user IDs (Linux/Fedora) and build
+export UID=$(id -u)
+export GID=$(id -g)
+docker compose build
+
+# 2. Run a render
+docker compose run --rm svg-to-video /app/data/example.svg 13 60 /app/data/out-dir --hold 2
+```
+
+_Note: Local paths must be prefixed with `/app/data/` inside the container to match the volume mount._
+
+---
+
+## 🛠 Local Installation
+
+If you prefer to run the script natively, ensure you have the following installed:
 
 - **Node.js** (v16 or higher recommended)
 - **FFmpeg**: Required for encoding the image sequence into an MP4.
   - _Ubuntu/Debian:_ `sudo apt install ffmpeg`
   - _macOS:_ `brew install ffmpeg`
-
-## ⚙️ Installation
 
 ```bash
 git clone https://github.com/GehDoc/svg-to-video.git
@@ -29,6 +47,8 @@ npm install
 ```
 
 ## 📖 Usage
+
+Whether running via Docker or natively, the command structure remains the same:
 
 ```bash
 node index.js <svgPath> <duration> <fps> <outDir> [options]
@@ -43,6 +63,11 @@ node index.js <svgPath> <duration> <fps> <outDir> [options]
 | `fps`      | Frames per second (e.g., `30` or `60`).                   |
 | `outDir`   | Directory where frames and the final video will be saved. |
 
+**💡 Note for Docker users:**
+
+> Because the project folder is mounted to `/app/data` inside the container, you must prefix your paths with `/app/data/`.  
+> **Example:** Use `/app/data/example.svg` instead of `./example.svg`.
+
 ### Options
 
 | Option                 | Description                                                                        |
@@ -50,6 +75,10 @@ node index.js <svgPath> <duration> <fps> <outDir> [options]
 | `-h, --hold <seconds>` | Number of seconds to freeze the last frame at the end of the video. (Default: `0`) |
 | `-f, --force`          | Overwrite the output video if it already exists.                                   |
 | `--keep-frames`        | Prevents the automatic deletion of temporary `.png` frames after video creation.   |
+
+### 🛠 Troubleshooting (Fedora / SELinux)
+
+If you encounter `Permission Denied` errors on Fedora, ensure the `:Z` flag is present in your `docker-compose.yml` volumes to allow SELinux relabeling.
 
 ### Output Handling
 
