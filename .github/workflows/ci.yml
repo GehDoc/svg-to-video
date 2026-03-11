@@ -16,10 +16,27 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '20' # Or latest LTS
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run all checks
-        run: npm run check
+      # Run fast checks directly on the runner
+      - name: Run fast checks (lint, format, type-check)
+        run: npm run check:fast
+
+      # --- E2E Tests (run in Docker) ---
+      # Set up User IDs for docker compose, as before
+      - name: Set up User IDs for Docker
+        run: |
+          echo "UID=$(id -u)" >> $GITHUB_ENV
+          echo "GID=$(id -g)" >> $GITHUB_ENV
+
+      # Build the Docker image using docker compose
+      - name: Build Docker Image for E2E
+        run: docker compose build svg-to-video # Build only the relevant service
+
+      # Run E2E tests inside the Docker container using docker compose
+      - name: Run E2E tests in Docker
+        # We specify the command directly to run only the e2e tests
+        run: docker compose run --rm svg-to-video npm run test:e2e

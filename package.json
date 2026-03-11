@@ -35,6 +35,7 @@
     "test:e2e": "node --test tests/e2e.test.mjs",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "check": "npm run lint && npm run format && npm run type-check && npm run test:e2e",
+    "check:fast": "npm run lint && npm run format && npm run type-check",
     "fix": "npm run lint:fix && npm run format:fix",
     "prepare": "husky"
   },
