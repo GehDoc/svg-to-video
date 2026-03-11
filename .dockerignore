@@ -29,5 +29,4 @@ npm-debug.log*
 # Examples (Not meant to be included in the container)
 examples/
 
-# Tests (Not meant to be included in the container)
-tests/
+# Tests (Temporarily included for CI)

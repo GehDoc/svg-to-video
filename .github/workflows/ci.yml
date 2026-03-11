@@ -38,7 +38,7 @@ jobs:
 
       # Run E2E tests inside the Docker container using docker compose
       - name: Run E2E tests in Docker
-        # We specify the command directly to run only the e2e tests
-        run: docker compose run --rm svg-to-video npm run test:e2e
+        # Override the service's entrypoint to run npm, then execute the test script
+        run: docker compose run --rm --entrypoint "npm" svg-to-video run test:e2e
         env:
           CI_DOCKER_TEST: 'true' # Set environment variable for the test to detect Docker context
