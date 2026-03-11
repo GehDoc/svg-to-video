@@ -32,14 +32,15 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
+    "test:e2e": "node --test tests/e2e.test.mjs",
     "type-check": "tsc -p tsconfig.json --noEmit",
-    "check": "npm run lint && npm run format && npm run type-check",
+    "check": "npm run lint && npm run format && npm run type-check && npm run test:e2e",
     "fix": "npm run lint:fix && npm run format:fix",
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,ts,json,md,yml,Dockerfile,dockerfile}": "prettier --write",
-    "*.{js,ts}": [
+    "*.{js,mjs,ts,json,md,yml,Dockerfile,dockerfile}": "prettier --write",
+    "*.{js,mjs,ts}": [
       "eslint --fix"
     ]
   },

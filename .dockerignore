@@ -4,6 +4,7 @@ node_modules/
 # Build Output
 out-dir/
 *.mp4
+out-dir-test/
 
 # Dev/Tooling configs (Not needed inside the container)
 .github/
@@ -27,3 +28,6 @@ npm-debug.log*
 
 # Examples (Not meant to be included in the container)
 examples/
+
+# Tests (Not meant to be included in the container)
+tests/

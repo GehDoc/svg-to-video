@@ -4,6 +4,7 @@ node_modules/
 # Generated Video Files
 out-dir/
 *.mp4
+out-dir-test/
 
 # OS Files
 .DS_Store
