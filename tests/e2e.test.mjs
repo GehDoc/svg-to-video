@@ -3,29 +3,41 @@ import assert from 'node:assert';
 import { spawnSync } from 'child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import {
+  FIXTURE_DIR_RELATIVE,
+  OUTPUT_DIR_RELATIVE,
+  resolveEnvironmentPath,
+} from './utils.mjs';
 
 describe('End-to-End Rendering', () => {
-  const FIXTURE_DIR = './tests/fixtures';
   const TEST_SVG_NAME = 'font-test';
-  const TEST_SVG_PATH = path.join(FIXTURE_DIR, `${TEST_SVG_NAME}.svg`);
+  const testSvgPathRelative = path.join(
+    FIXTURE_DIR_RELATIVE,
+    `${TEST_SVG_NAME}.svg`
+  );
 
-  const outputDir = './out-dir-test';
-  const outputFile = path.join(outputDir, `${TEST_SVG_NAME}.mp4`);
+  const outputFileRelative = path.join(
+    OUTPUT_DIR_RELATIVE,
+    `${TEST_SVG_NAME}.mp4`
+  );
+
+  const cliSvgPathArg = resolveEnvironmentPath(testSvgPathRelative);
+  const cliOutputDirArg = resolveEnvironmentPath(OUTPUT_DIR_RELATIVE);
 
   before(() => {
     // Ensure output directory exists before tests run
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+    if (!fs.existsSync(OUTPUT_DIR_RELATIVE)) {
+      fs.mkdirSync(OUTPUT_DIR_RELATIVE, { recursive: true });
     }
   });
 
   after(() => {
     // Cleanup output directory and file after all tests
-    if (fs.existsSync(outputFile)) {
-      fs.unlinkSync(outputFile);
+    if (fs.existsSync(outputFileRelative)) {
+      fs.unlinkSync(outputFileRelative);
     }
-    if (fs.existsSync(outputDir)) {
-      fs.rmdirSync(outputDir, { recursive: true });
+    if (fs.existsSync(OUTPUT_DIR_RELATIVE)) {
+      fs.rmSync(OUTPUT_DIR_RELATIVE, { recursive: true, force: true });
     }
   });
 
@@ -35,10 +47,10 @@ describe('End-to-End Rendering', () => {
       'node',
       [
         'src/index.js',
-        TEST_SVG_PATH,
+        cliSvgPathArg,
         '1', // duration
         '30', // fps
-        outputDir,
+        cliOutputDirArg,
         '--force',
       ],
       { encoding: 'utf-8' }
@@ -50,9 +62,12 @@ describe('End-to-End Rendering', () => {
       0,
       `Process failed with stderr: ${result.stderr}`
     );
-    assert.ok(fs.existsSync(outputFile), 'The output MP4 file was not created');
+    assert.ok(
+      fs.existsSync(outputFileRelative),
+      'The output MP4 file was not created'
+    );
 
-    const stats = fs.statSync(outputFile);
+    const stats = fs.statSync(outputFileRelative);
     assert.ok(
       stats.size > 1000,
       'The generated video file is suspiciously small (possibly empty)'
