@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="box-clip">
+      <rect x="0" y="0" width="500" height="340" />
+    </clipPath>
+  </defs>
+
+  <style>
+  /* <![CDATA[ */
+    .item { 
+      font-family: 'Segoe UI', Arial, sans-serif; 
+      font-weight: 900; fill: #000; font-size: 18px; opacity: 0; text-anchor: middle;
+      text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 0px 2px 0 #fff, 0px -2px 0 #fff, 2px 0px 0 #fff, -2px 0px 0 #fff;
+    }
+    .box-body { fill: #1a1a1a; }
+    .box-side { fill: #000; }
+    .box-lid { fill: #444; }
+    
+    @keyframes cleanDrop {
+      0% { transform: translate(0, 0); opacity: 0; }
+      15% { opacity: 1; }
+      80% { transform: translate(var(--tx), var(--ty)); opacity: 1; }
+      100% { transform: translate(var(--tx), calc(var(--ty) + 75px)); opacity: 0; }
+    }
+
+    @keyframes closeLidPerspective {
+      0% { d: path("M0 20 L80 -90 L105 -105 L25 5 Z"); }
+      100% { d: path("M0 20 L140 20 L165 5 L25 5 Z"); }
+    }
+
+    /* TRAJECTOIRE LINÉAIRE ET STABLE */
+    @keyframes walkAndSitFinal {
+      0%   { transform: translate(550px, 195px); opacity: 0; }
+      5%   { opacity: 1; }
+      /* Avancée régulière avec léger rebond Y uniquement */
+      15%  { transform: translate(500px, 192px); }
+      30%  { transform: translate(450px, 195px); }
+      45%  { transform: translate(400px, 192px); }
+      60%  { transform: translate(350px, 195px); }
+      75%  { transform: translate(300px, 192px); }
+      85%  { transform: translate(250px, 195px); } /* Arrivée au bord */
+      100% { transform: translate(250px, 208px); opacity: 1; } /* Assis */
+    }
+
+    @keyframes legSwingWalk {
+      0%, 100% { d: path("M0 50 L-12 90 M0 50 L12 90"); }
+      50% { d: path("M0 50 L12 90 M0 50 L-12 90"); }
+    }
+
+    @keyframes legsFinal {
+      0%, 84.9% { opacity: 1; } 
+      85%, 100% { d: path("M0 50 L25 52 L25 95 M0 50 L18 58 L18 95"); }
+    }
+
+    @keyframes armSwingWalk {
+      0%, 100% { d: path("M-22 35 L0 25 L22 15"); }
+      50% { d: path("M-22 15 L0 25 L22 35"); }
+    }
+
+    @keyframes armsFinal {
+      0%, 84.9% { opacity: 1; }
+      85%, 100% { d: path("M-15 45 L0 25 L15 45"); }
+    }
+
+    .it1 { --tx: 170px;  --ty: 155px; animation: cleanDrop 3s ease-in-out 0s forwards; }
+    .it2 { --tx: -150px; --ty: 165px; animation: cleanDrop 3s ease-in-out 1.2s forwards; }
+    .it3 { --tx: 20px;   --ty: 135px; animation: cleanDrop 3s ease-in-out 2.4s forwards; }
+    .it4 { --tx: 210px;  --ty: 35px;  animation: cleanDrop 3s ease-in-out 3.6s forwards; }
+    .it5 { --tx: -170px; --ty: 45px;  animation: cleanDrop 3s ease-in-out 4.8s forwards; }
+
+    .box-lid { animation: closeLidPerspective 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.1) 7.5s forwards; }
+
+    .char-group { animation: walkAndSitFinal 4s linear 8.5s forwards; opacity: 0; }
+    .outline { stroke: white; stroke-width: 8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .fill { stroke: black; stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    
+    /* Utilisation de steps pour switcher instantanément de la marche à la pose assise à 85% */
+    .char-legs { 
+      animation: 
+        legSwingWalk 0.4s infinite 8.5s, 
+        legsFinal 4s steps(1) 8.5s forwards; 
+    }
+    .char-arms { 
+      animation: 
+        armSwingWalk 0.4s infinite 8.5s, 
+        armsFinal 4s steps(1) 8.5s forwards; 
+    }
+  /* ]]> */
+  </style>
+
+  <g transform="translate(180, 240)">
+      <path d="M0 20 L140 20 L165 5 L25 5 Z" fill="#000" />
+      <path d="M140 20 L165 5 L165 85 L140 100 Z" class="box-side" />
+      <path d="M0 20 L80 -90 L105 -105 L25 5 Z" class="box-lid" />
+  </g>
+
+  <g clip-path="url(#box-clip)">
+    <text x="80" y="100" class="item it1">Négociation</text>
+    <text x="400" y="90" class="item it2">Contrat</text>
+    <text x="230" y="120" class="item it3">Règles</text>
+    <text x="40" y="220" class="item it4">Signature</text>
+    <text x="420" y="210" class="item it5">Accord</text>
+  </g>
+
+  <g transform="translate(180, 240)">
+    <path d="M0 20 L140 20 L140 100 L0 100 Z" class="box-body" />
+  </g>
+
+  <g class="char-group">
+    <g>
+      <circle cx="0" cy="0" r="13" class="outline" style="fill:white" />
+      <path d="M0 13 L0 50" class="outline" />
+      <path d="M-22 25 L0 25 L22 25" class="outline char-arms" />
+      <path d="M0 50 L-10 90 M0 50 L10 90" class="outline char-legs" />
+    </g>
+    <g>
+      <circle cx="0" cy="0" r="13" class="fill" style="fill:black" />
+      <path d="M0 13 L0 50" class="fill" />
+      <path d="M-22 25 L0 25 L22 25" class="fill char-arms" />
+      <path d="M0 50 L-10 90 M0 50 L10 90" class="fill char-legs" />
+    </g>
+  </g>
+</svg>
