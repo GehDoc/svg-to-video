@@ -57,9 +57,7 @@ jobs:
         run: >
           docker compose run
           --rm
-          --user root
           -e HOME=/tmp
-          -e PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --single-process --no-zygote --user-data-dir=/tmp/chrome-profile"
           -e CI=true 
           -e CI_DOCKER_TEST=true 
           -w /app/data
