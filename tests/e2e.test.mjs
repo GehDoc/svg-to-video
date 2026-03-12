@@ -85,7 +85,7 @@ describe('End-to-End Rendering', () => {
     }
     fs.writeSync(
       2,
-      `\n=== CAPTURED LOGS ON FAILURE ===\n${logs.join('\n')}\n================================\n`
+      `\n=== CAPTURED LOGS ON SUCCESS ===\n${logs.join('\n')}\n================================\n`
     );
     // 3. Assertions
     assert.strictEqual(

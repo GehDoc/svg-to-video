@@ -54,9 +54,14 @@ jobs:
       # Run E2E tests inside the Docker container using docker compose
       - name: Run E2E tests in Docker
         # Override the service's entrypoint to run npm, then execute the test script
-        run: docker compose run --rm --user root -w /app/data --entrypoint "npm" svg-to-video run test:e2e
-        env:
-          CI: true
-          CI_DOCKER_TEST: 'true' # Set environment variable for the test to detect Docker context
-          HOME: '/tmp'
-          PUPPETEER_ARGS: '--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --single-process --no-zygote --user-data-dir=/tmp/chrome-profile'
+        run: >
+          docker compose run
+          --rm
+          --user root
+          -e HOME=/tmp
+          -e PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --single-process --no-zygote --user-data-dir=/tmp/chrome-profile"
+          -e CI=true 
+          -e CI_DOCKER_TEST=true 
+          -w /app/data
+          --entrypoint "npm"
+          svg-to-video run test:e2e
