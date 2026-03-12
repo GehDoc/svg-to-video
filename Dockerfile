@@ -42,7 +42,11 @@ RUN npm install --omit=dev --ignore-scripts
 
 # 5. Application Code (Changes most often)
 COPY . .
-RUN mkdir -p /app/data && chown -R node:node /app
+RUN mkdir -p /app/data \
+    && chown -R node:node /app \
+    && mkdir -p /home/node/Downloads \
+    && chown -R node:node /home/node/Downloads \
+    && usermod -a -G audio,video node
 
 USER node
 ENTRYPOINT ["node", "src/index.js"]

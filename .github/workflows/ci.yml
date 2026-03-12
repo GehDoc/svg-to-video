@@ -11,15 +11,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      # 1. Mise en place du cache Docker pour accélérer les builds futurs
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      # 2. Setup Node pour les checks rapides (Lint/Format)
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20' # Or latest LTS
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       # Run fast checks directly on the runner
       - name: Run fast checks (lint, format, type-check)
@@ -41,6 +56,6 @@ jobs:
         # Override the service's entrypoint to run npm, then execute the test script
         run: docker compose run --rm -w /app/data --entrypoint "npm" svg-to-video run test:e2e
         env:
+          CI: true
           CI_DOCKER_TEST: 'true' # Set environment variable for the test to detect Docker context
-          PUPPETEER_ARGS: '--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --user-data-dir=/tmp/.chromium_user_data --single-process --no-zygote' # Direct Chrome to a writable user data directory in /tmp
-          HOME: '/tmp' # Set HOME to /tmp inside the container for Chrome
+          PUPPETEER_ARGS: '--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --single-process --no-zygote'

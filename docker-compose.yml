@@ -9,3 +9,4 @@ services:
     # This is a security feature to prevent the container from gaining root
     security_opt:
       - no-new-privileges:true
+    shm_size: '2gb'
