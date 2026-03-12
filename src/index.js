@@ -109,7 +109,12 @@ async function createFrames(svg, fps, totalFrames, padWidth, outDir) {
 
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox'],
+    args: [
+      '--no-sandbox',
+      ...(process.env.PUPPETEER_ARGS
+        ? process.env.PUPPETEER_ARGS.split(' ')
+        : []),
+    ],
   });
 
   const page = await browser.newPage();
