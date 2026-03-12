@@ -107,7 +107,14 @@ async function createFrames(svg, fps, totalFrames, padWidth, outDir) {
   // animations are defined.
   svg = svg.replace(/--play-state:\s*running\s*;/g, '--play-state: paused;');
 
+  console.log('--- DEBUG INFO ---');
+  console.log('Current UID:', process.getuid?.());
+  console.log('HOME env:', process.env.HOME);
+  console.log('PUPPETEER_ARGS:', process.env.PUPPETEER_ARGS);
+  console.log('------------------');
+
   const browser = await puppeteer.launch({
+    dumpio: true,
     headless: true,
     args: [
       '--no-sandbox',

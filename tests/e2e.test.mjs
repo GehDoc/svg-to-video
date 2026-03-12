@@ -9,6 +9,9 @@ import {
   resolveEnvironmentPath,
 } from './utils.mjs';
 
+const logs = [];
+const logger = (msg) => logs.push(`[${new Date().toISOString()}] ${msg}`);
+
 describe('End-to-End Rendering', () => {
   const TEST_SVG_NAME = 'font-test';
   const testSvgPathRelative = path.join(
@@ -42,20 +45,48 @@ describe('End-to-End Rendering', () => {
   });
 
   test('should render font-test.svg into a valid mp4 file', () => {
-    // 2. Execute the CLI tool
-    const result = spawnSync(
-      'node',
-      [
-        'src/index.js',
-        cliSvgPathArg,
-        '1', // duration
-        '30', // fps
-        cliOutputDirArg,
-        '--force',
-      ],
-      { encoding: 'utf-8' }
-    );
+    logger('Starting test...');
+    logger(`UID: ${process.getuid()}`);
+    logger(`HOME: ${process.env.HOME}`);
 
+    let result;
+    try {
+      // 2. Execute the CLI tool
+      result = spawnSync(
+        'node',
+        [
+          'src/index.js',
+          cliSvgPathArg,
+          '1', // duration
+          '30', // fps
+          cliOutputDirArg,
+          '--force',
+        ],
+        { encoding: 'utf-8' }
+      );
+      logger(result.stdout);
+      if (result.stderr) {
+        logger(`STDERR: ${result.stderr}`);
+      }
+    } catch (err) {
+      logger(`FATAL ERROR: ${err.message}`);
+      if (err.stack) logger(err.stack);
+
+      // ICI : On force l'affichage de TOUT ce qu'on a capturé sur stderr
+      // fs.writeSync est synchrone et ne peut pas être intercepté par le test runner
+      fs.writeSync(
+        2,
+        `\n=== CAPTURED LOGS ON FAILURE ===\n${logs.join('\n')}\n================================\n`
+      );
+      logs.length = 0; // Clear logs after dumping
+
+      // On re-balance l'erreur pour que le test soit marqué comme "failed"
+      throw err;
+    }
+    fs.writeSync(
+      2,
+      `\n=== CAPTURED LOGS ON FAILURE ===\n${logs.join('\n')}\n================================\n`
+    );
     // 3. Assertions
     assert.strictEqual(
       result.status,
