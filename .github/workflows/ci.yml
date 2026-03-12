@@ -42,3 +42,4 @@ jobs:
         run: docker compose run --rm -w /app/data --entrypoint "npm" svg-to-video run test:e2e
         env:
           CI_DOCKER_TEST: 'true' # Set environment variable for the test to detect Docker context
+          PUPPETEER_ARGS: '--user-data-dir=/app/data/.chromium_user_data' # Direct Chrome to a writable user data directory
