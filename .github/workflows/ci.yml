@@ -58,4 +58,5 @@ jobs:
         env:
           CI: true
           CI_DOCKER_TEST: 'true' # Set environment variable for the test to detect Docker context
-          PUPPETEER_ARGS: '--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --single-process'
+          HOME: '/tmp'
+          PUPPETEER_ARGS: '--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --single-process --no-zygote --user-data-dir=/tmp/chrome-profile'
