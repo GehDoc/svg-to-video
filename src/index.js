@@ -66,6 +66,10 @@ async function run(svgPath, duration, fps, outDir, options) {
     process.exit(1);
   }
 
+  const puppeteerArgs = (process.env.PUPPETEER_ARGS || '')
+    .split(' ')
+    .filter((arg) => arg.trim().length > 0);
+
   const svg = fs.readFileSync(svgPath, 'utf-8');
 
   const totalFrames = Math.ceil(fps * duration);
@@ -77,12 +81,15 @@ async function run(svgPath, duration, fps, outDir, options) {
   console.log(
     `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s)`
   );
+  if (puppeteerArgs.length > 0) {
+    console.log(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
+  }
   console.log(`  Frames:     ${totalFrames} total`);
   console.log('---');
 
   fs.mkdirSync(outDir, { recursive: true });
 
-  await createFrames(svg, fps, totalFrames, padWidth, outDir);
+  await createFrames(svg, fps, totalFrames, padWidth, outDir, puppeteerArgs);
   convertToMP4(outputFileName, fps, padWidth, options.hold, outDir);
 
   if (!options.keepFrames) {
@@ -99,29 +106,26 @@ async function run(svgPath, duration, fps, outDir, options) {
  * @param {number} totalFrames
  * @param {number} padWidth
  * @param {string} outDir
+ * @param {string[]} puppeteerArgs
  */
-async function createFrames(svg, fps, totalFrames, padWidth, outDir) {
+async function createFrames(
+  svg,
+  fps,
+  totalFrames,
+  padWidth,
+  outDir,
+  puppeteerArgs
+) {
   // advance every animation to the desired timestamp. we use the Web
   // Animations API (`document.getAnimations()`) and set `currentTime` on
   // each animation, which works for any SVG regardless of how its
   // animations are defined.
   svg = svg.replace(/--play-state:\s*running\s*;/g, '--play-state: paused;');
 
-  console.log('--- DEBUG INFO ---');
-  console.log('Current UID:', process.getuid?.());
-  console.log('HOME env:', process.env.HOME);
-  console.log('PUPPETEER_ARGS:', process.env.PUPPETEER_ARGS);
-  console.log('------------------');
-
   const browser = await puppeteer.launch({
     dumpio: true,
     headless: true,
-    args: [
-      '--no-sandbox',
-      ...(process.env.PUPPETEER_ARGS
-        ? process.env.PUPPETEER_ARGS.split(' ')
-        : []),
-    ],
+    args: ['--no-sandbox', ...puppeteerArgs],
   });
 
   const page = await browser.newPage();
