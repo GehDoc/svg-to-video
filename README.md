@@ -76,6 +76,13 @@ node src/index.js <svgPath> <duration> <fps> <outDir> [options]
 | `-f, --force`          | Overwrite the output video if it already exists.                                   |
 | `--keep-frames`        | Prevents the automatic deletion of temporary `.png` frames after video creation.   |
 
+### Environment Variables
+
+| Variable         | Scope     | Description                                                                                                                                       |
+| ---------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PUPPETEER_ARGS` | Runtime   | Additional arguments passed directly to the Puppeteer `launch` method. Useful for custom browser flags (e.g., `--proxy-server`, `--disable-gpu`). |
+| `DOCKER_TEST`    | E2E Tests | Set to `true` when running end-to-end tests inside a Docker container. Adjusts file paths to match the `/app/data` volume mount.                  |
+
 ### 🛠 Troubleshooting (Fedora / SELinux)
 
 If you encounter `Permission Denied` errors on Fedora, ensure the `:Z` flag is present in your `docker-compose.yml` volumes to allow SELinux relabeling.
