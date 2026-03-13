@@ -15,21 +15,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 1. Mise en place du cache Docker pour accélérer les builds futurs
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Cache Docker layers
-        uses: actions/cache@v3
+      - name: Build and load Docker image
+        uses: docker/build-push-action@v5
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+          context: .
+          load: true
+          tags: svg-to-video:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      # 2. Setup Node pour les checks rapides (Lint/Format)
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20' # Or latest LTS
           cache: 'npm'
@@ -37,22 +36,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Run fast checks directly on the runner
       - name: Run fast checks (lint, format, type-check)
         run: npm run check:fast
 
       # --- E2E Tests (run in Docker) ---
-      # Set up User IDs for docker compose, as before
+
       - name: Set up User IDs for Docker
         run: |
           echo "UID=$(id -u)" >> $GITHUB_ENV
           echo "GID=$(id -g)" >> $GITHUB_ENV
 
-      # Build the Docker image using docker compose
-      - name: Build Docker Image for E2E
-        run: docker compose build svg-to-video # Build only the relevant service
-
-      # Run E2E tests inside the Docker container using docker compose
       - name: Run E2E tests in Docker
         # Override the service's entrypoint to run npm, then execute the test script
         run: >
