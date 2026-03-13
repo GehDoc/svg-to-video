@@ -7,40 +7,52 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  tests:
+    name: 'Testing (Lint, Format, Type-Check, E2E)'
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and load Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          load: true
+          tags: svg-to-video:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20' # Or latest LTS
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      # Run fast checks directly on the runner
       - name: Run fast checks (lint, format, type-check)
         run: npm run check:fast
 
       # --- E2E Tests (run in Docker) ---
-      # Set up User IDs for docker compose, as before
+
       - name: Set up User IDs for Docker
         run: |
           echo "UID=$(id -u)" >> $GITHUB_ENV
           echo "GID=$(id -g)" >> $GITHUB_ENV
 
-      # Build the Docker image using docker compose
-      - name: Build Docker Image for E2E
-        run: docker compose build svg-to-video # Build only the relevant service
-
-      # Run E2E tests inside the Docker container using docker compose
       - name: Run E2E tests in Docker
         # Override the service's entrypoint to run npm, then execute the test script
-        run: docker compose run --rm -w /app/data --entrypoint "npm" svg-to-video run test:e2e
-        env:
-          CI_DOCKER_TEST: 'true' # Set environment variable for the test to detect Docker context
-          PUPPETEER_ARGS: '--user-data-dir=/app/data/.chromium_user_data' # Direct Chrome to a writable user data directory
-          HOME: '/app/data' # Set HOME to a writable directory for Chrome
+        run: >
+          docker compose run
+          --rm
+          -e CI=true 
+          -e DOCKER_TEST=true 
+          -w /app/data
+          --entrypoint "npm"
+          svg-to-video run test:e2e

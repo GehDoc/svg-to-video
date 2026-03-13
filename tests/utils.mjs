@@ -5,7 +5,7 @@ export const FIXTURE_DIR_RELATIVE = './tests/fixtures';
 export const OUTPUT_DIR_RELATIVE = './out-dir-test';
 
 // Detect Docker environment by checking for a specific environment variable
-export const isDockerEnv = process.env.CI_DOCKER_TEST === 'true';
+export const isDockerEnv = process.env.DOCKER_TEST === 'true';
 
 /**
  * Returns an environment-aware path for CLI arguments.
