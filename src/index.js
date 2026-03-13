@@ -123,7 +123,6 @@ async function createFrames(
   svg = svg.replace(/--play-state:\s*running\s*;/g, '--play-state: paused;');
 
   const browser = await puppeteer.launch({
-    dumpio: true,
     headless: true,
     args: ['--no-sandbox', ...puppeteerArgs],
   });
