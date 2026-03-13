@@ -3,7 +3,8 @@ FROM node:20-slim
 # 1. Setup Environment
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable \
-    NODE_ENV=production
+    NODE_ENV=production \
+    HOME=/tmp/chrome-home
 
 # 2. Heavy Layer: Chrome & Core Dependencies (Rarely changes)
 RUN apt-get update && apt-get install -y \
@@ -36,17 +37,17 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# 4. App Dependencies (Only rebuilds if package.json changes)
+# 4. Create a directory for Chrome's user data and set permissions for allowing non-root users to write to it.
+# 5. Create a directory for output data and set permissions for allowing non-root users to write to it.
+RUN mkdir -p /tmp/chrome-home && chmod 777 /tmp/chrome-home \
+    && mkdir -p /app/data && chmod 777 /app/data
+
+# 6. App Dependencies (Only rebuilds if package.json changes)
 COPY package*.json ./
 RUN npm install --omit=dev --ignore-scripts
 
-# 5. Application Code (Changes most often)
+# 7. Application Code (Changes most often)
 COPY . .
-RUN mkdir -p /app/data \
-    && chown -R node:node /app \
-    && mkdir -p /home/node/Downloads \
-    && chown -R node:node /home/node/Downloads \
-    && usermod -a -G audio,video node
 
 USER node
 ENTRYPOINT ["node", "src/index.js"]
