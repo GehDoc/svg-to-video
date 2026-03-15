@@ -9,23 +9,38 @@ Transition the `svg-to-video` tool from a Docker-based CLI to a purely client-si
 
 ## 🛠 Technical Strategy
 
-- **Core Technologies**: `Mediabunny` (`CanvasSource`, `Mp4OutputFormat`, `BufferTarget`), WebCodecs API (for hardware-accelerated encoding in-browser).
-- **Architecture**: Single Page Application (SPA) that mirrors the original CLI arguments but runs entirely in the client's browser.
-- **Key Dependencies**: `mediabunny`, `vite` (for fast local development and bundling).
+- **Core Technologies**: `Mediabunny` (`CanvasSource`, `Mp4OutputFormat`, `BufferTarget`), WebCodecs API, **React** (UI Framework), **Vite** (Build Tool).
+- **Architecture**: **Monorepo** using NPM Workspaces (Root CLI + `web/` workspace). Shared logic residing in a `shared/` directory for parity.
+- **Capture Pipeline**: Use **Internal Canvas (Path B)**. Render the SVG onto a `<canvas>` _within_ the isolated iframe to guarantee correct font and asset rendering, then transfer pixel data to the main encoder.
+- **UI Responsiveness**: Offload encoding to a **Web Worker** to prevent UI freezing during long renders.
+- **Resolution & Scaling**: Support "Original" size (with 1x-4x scaling) and standard presets (720p, 1080p). Default to **1080p** if no SVG dimensions are found. Ensure even-numbered dimensions.
+- **SVG Isolation**: Use a hidden `<iframe>` to render the SVG, providing total style and ID isolation.
+- **Asset Readiness**: Implement a robust "Pre-flight" check using `document.fonts.ready` and image `onload` events within the iframe.
+- **Browser Compatibility**: Target modern browsers with native WebCodecs support. Show a clear "Unsupported Browser" error if WebCodecs is missing.
+- **Audio Support**: **Explicitly excluded** for MVP.
+- **Cross-Origin Isolation**: Use `coi-serviceworker.js` to enable `SharedArrayBuffer` for `Mediabunny` on GitHub Pages.
+- **Local Development**: Configure `vite.config.ts` with COOP/COEP headers.
 
 ## ✅ Task List
 
 - [ ] **Infrastructure**
-  - [ ] Initialize Vite/React (or Vanilla TS) project structure in a new `web/` directory.
-  - [ ] Verify `mediabunny` compatibility and WebCodecs availability in target browsers.
+  - [ ] Initialize NPM Workspaces in the root `package.json`.
+  - [ ] Create `shared/` directory and migrate core `seekAnimations` logic.
+  - [ ] Initialize Vite/React (TypeScript) project structure in the `web/` directory.
+  - [ ] Integrate `coi-serviceworker.js` and configure `vite.config.ts` for Cross-Origin Isolation.
+  - [ ] Implement `WebCodecs` compatibility check and "Unsupported Browser" error state.
 - [ ] **Core Logic (Rendering Engine)**
-  - [ ] Implement frame-accurate scrubbing logic in the browser (Port `seekAnimations` logic).
-  - [ ] Create `CanvasSource` to capture SVG frames from a hidden `<canvas>` element.
-  - [ ] Implement the "Frame Pumping" loop (Duration × FPS).
-  - [ ] Manage backpressure by `awaiting` frame draws to ensure the encoder stays synchronized.
+  - [ ] Implement hidden `<iframe>` management with an **Internal Canvas capture pipeline**.
+  - [ ] Implement resolution scaling and aspect-ratio fitting logic.
+  - [ ] Implement **Asset Readiness check** (Wait for `document.fonts.ready` + images).
+  - [ ] Implement frame-accurate scrubbing logic using the `shared/` core.
+  - [ ] Create `CanvasSource` and offload encoding to a **Web Worker**.
+  - [ ] Implement the "Frame Pumping" loop (Duration × FPS) with backpressure management.
 - [ ] **UI / Integration**
-  - [ ] Build minimalist UI: File selector (SVG), Duration (number), FPS (number).
-  - [ ] Add "Render & Download" button with progress feedback (Progress bar + status text).
+  - [ ] Build minimalist UI: File selector (SVG), Resolution/Scale controls, Duration, FPS.
+  - [ ] Add "Render & Download" button with **"Cancel" functionality** and progress feedback.
+  - [ ] Implement **Auto-suggested filename** (matching the input SVG name).
+  - [ ] Implement CORS-aware asset check.
   - [ ] Implement Finalize & Download logic (generating a local `Blob` URL for the MP4).
 
 ## 🧪 Verification Plan
