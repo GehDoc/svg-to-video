@@ -122,29 +122,9 @@ node ./src/index.js ./examples/example.svg 13 60 out-dir/ --hold 2
 ✅ Done! Video saved to out-dir/example.mp4
 ```
 
-## 🧑‍💻 Development
+## 🤝 Contributing
 
-This project uses ESLint for linting, Prettier for formatting, and TypeScript for type-checking, and includes end-to-end tests for comprehensive validation.
-
-There are several scripts to help with development and ensure code quality:
-
-- `npm run check:fast`: Runs all fast checks (linting, formatting, and type-checking).
-- `npm run check`: Runs all checks, including fast checks and end-to-end tests. This is the command run in the CI pipeline.
-- `npm run fix`: Automatically fixes all linting and formatting issues.
-
-### All Scripts
-
-| Script               | Description                                                             |
-| -------------------- | ----------------------------------------------------------------------- |
-| `npm run check`      | Runs all checks (lint, format, type-check, e2e tests).                  |
-| `npm run check:fast` | Runs fast checks only (lint, format, type-check).                       |
-| `npm run fix`        | Fixes all linting and formatting issues.                                |
-| `npm run lint`       | Checks for linting issues.                                              |
-| `npm run lint:fix`   | Fixes linting issues.                                                   |
-| `npm run format`     | Checks for formatting issues.                                           |
-| `npm run format:fix` | Fixes formatting issues.                                                |
-| `npm run type-check` | Checks for TypeScript type errors.                                      |
-| `npm run test:e2e`   | Runs the end-to-end tests. (Executed as part of `npm run check` in CI). |
+For instructions on contributing, build commands, and the technical roadmap, please see [DEVELOPER.md](./DEVELOPER.md).
 
 ## 🛠 Technical Details
 
