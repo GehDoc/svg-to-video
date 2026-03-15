@@ -29,4 +29,9 @@ npm-debug.log*
 # Examples (Not meant to be included in the container)
 examples/
 
+# Ignore documentation and specs
+specs/
+DEVELOPER.md
+CONTRIBUTING.md
+
 # Tests (Temporarily included for CI)
