@@ -40,8 +40,8 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,mjs,ts,json,md,yml,Dockerfile,dockerfile}": "prettier --write",
-    "*.{js,mjs,ts}": [
+    "**/*.{js,mjs,ts,json,md,yml,Dockerfile,dockerfile}": "prettier --write",
+    "**/*.{js,mjs,ts}": [
       "eslint --fix"
     ]
   },
