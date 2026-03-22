@@ -30,6 +30,7 @@ export interface RenderState {
     originalSize: string;
     finalSize: string;
     codec: string;
+    eta: number; // in seconds
   };
 }
 
@@ -144,6 +145,8 @@ export const useRenderer = (rendererRef: React.RefObject<RendererHandle>) => {
             originalSize: `${origWidth}x${origHeight}`,
             finalSize: `${width}x${height}`,
             codec: videoCodec,
+            eta: 0,
+            encodingSpeed: 0,
           },
         }));
 
@@ -167,6 +170,7 @@ export const useRenderer = (rendererRef: React.RefObject<RendererHandle>) => {
         const totalHoldFrames = Math.ceil(settings.hold * settings.fps);
         const totalFrames = totalAnimationFrames + totalHoldFrames;
         const frameDuration = 1 / settings.fps;
+        const startTime = performance.now();
 
         // 1. Animation Loop
         for (let frame = 1; frame <= totalAnimationFrames; frame++) {
@@ -191,11 +195,23 @@ export const useRenderer = (rendererRef: React.RefObject<RendererHandle>) => {
 
           await source.add((frame - 1) * frameDuration, frameDuration);
 
-          setState({
+          const elapsedTime = (performance.now() - startTime) / 1000; // in seconds
+          const framesRemaining = totalFrames - frame;
+          const timePerFrame = elapsedTime / frame;
+          const eta = Math.round(framesRemaining * timePerFrame);
+
+          setState((prevState) => ({
+            ...prevState,
             isRendering: true,
             progress: Math.round((frame / totalFrames) * 100),
             status: `Rendering animation frame ${frame}/${totalAnimationFrames}...`,
-          });
+            meta: {
+              originalSize: prevState.meta?.originalSize || '',
+              finalSize: prevState.meta?.finalSize || '',
+              codec: prevState.meta?.codec || '',
+              eta,
+            },
+          }));
         }
 
         // 2. Hold Frames Loop (Repeat last frame)
@@ -214,11 +230,23 @@ export const useRenderer = (rendererRef: React.RefObject<RendererHandle>) => {
             // The canvas already contains the last frame's image, so we just add it again
             await source.add((currentFrame - 1) * frameDuration, frameDuration);
 
-            setState({
+            const elapsedTime = (performance.now() - startTime) / 1000; // in seconds
+            const framesRemaining = totalFrames - currentFrame;
+            const timePerFrame = elapsedTime / currentFrame;
+            const eta = Math.round(framesRemaining * timePerFrame);
+
+            setState((prevState) => ({
+              ...prevState,
               isRendering: true,
               progress: Math.round((currentFrame / totalFrames) * 100),
               status: `Adding hold frame ${frame}/${totalHoldFrames}...`,
-            });
+              meta: {
+                originalSize: prevState.meta?.originalSize || '',
+                finalSize: prevState.meta?.finalSize || '',
+                codec: prevState.meta?.codec || '',
+                eta,
+              },
+            }));
           }
         }
 

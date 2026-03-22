@@ -407,6 +407,9 @@ function App() {
                       <div className="meta-item">
                         <strong>Codec</strong> {state.meta.codec}
                       </div>
+                      <div className="meta-item">
+                        <strong>ETA</strong> {state.meta.eta}s
+                      </div>
                       <div className="meta-item" style={{ textAlign: 'right' }}>
                         <button className="cancel-button" onClick={cancel}>
                           Cancel
