@@ -1,4 +1,3 @@
-// Test comment for lint-staged
 import { useState, useEffect, useRef, type ChangeEvent } from 'react';
 import SvgRenderer, { type RendererHandle } from './components/SvgRenderer';
 import {
