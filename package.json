@@ -33,8 +33,8 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "test:e2e": "node --test tests/e2e.test.mjs",
-    "type-check": "tsc -p tsconfig.json --noEmit",
-    "check": "npm run lint && npm run format && npm run type-check && npm run test:e2e",
+    "type-check": "tsc -p tsconfig.json --noEmit && npm run type-check -w web",
+    "check": "npm run lint && npm run format && npm run type-check && npm run test:e2e && npm run test:e2e -w web",
     "check:fast": "npm run lint && npm run format && npm run type-check",
     "fix": "npm run lint:fix && npm run format:fix",
     "prepare": "husky"
@@ -48,5 +48,8 @@
   "main": "src/index.js",
   "bin": {
     "svg-to-video": "src/index.js"
-  }
+  },
+  "workspaces": [
+    "web"
+  ]
 }
