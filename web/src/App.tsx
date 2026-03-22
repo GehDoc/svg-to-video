@@ -363,7 +363,7 @@ function App() {
             <button
               className="render-button"
               onClick={handleStartRender}
-              disabled={!svgContent || state.isRendering}
+              disabled={!svgContent || state.isRendering || !!renderedUrl}
             >
               {state.isRendering ? 'Processing...' : 'Export MP4'}
             </button>
