@@ -14,7 +14,7 @@ function App() {
         <header>
           <h1>
             <img
-              src="/logo.svg"
+              src="/favicon.svg"
               alt=""
               width="24"
               height="24"
