@@ -44,40 +44,51 @@ export const parseSvgDimensions = (svgContent: string) => {
   let width = parseFloat(svg.getAttribute('width') || '');
   let height = parseFloat(svg.getAttribute('height') || '');
   const viewBox = svg.getAttribute('viewBox');
+  let fromViewBox = false;
 
   if ((isNaN(width) || isNaN(height)) && viewBox) {
     const parts = viewBox.trim().split(/\s+/).map(parseFloat);
     if (parts.length === 4) {
       width = parts[2];
       height = parts[3];
+      fromViewBox = true;
     }
   }
 
   if (isNaN(width) || isNaN(height)) {
     width = 1920;
     height = 1080;
+    fromViewBox = false; // Defaulting, not from viewbox
   }
 
-  return { width, height };
+  return { width, height, fromViewBox };
 };
 
 export const calculateFinalDimensions = (
   origWidth: number,
   origHeight: number,
+  fromViewBox: boolean,
   settings: { preset: ResolutionPreset; scale: number }
 ) => {
   let width = origWidth;
   let height = origHeight;
 
-  if (settings.preset === '720p') {
-    const ratio = Math.min(1280 / origWidth, 720 / origHeight);
-    width = origWidth * ratio;
-    height = origHeight * ratio;
-  } else if (settings.preset === '1080p') {
-    const ratio = Math.min(1920 / origWidth, 1080 / origHeight);
-    width = origWidth * ratio;
-    height = origHeight * ratio;
-  } else {
+  // Only apply presets if the SVG has explicit width/height.
+  // If we only have a viewBox, 'original' is the only sensible option.
+  if (!fromViewBox) {
+    if (settings.preset === '720p') {
+      const ratio = Math.min(1280 / origWidth, 720 / origHeight);
+      width = origWidth * ratio;
+      height = origHeight * ratio;
+    } else if (settings.preset === '1080p') {
+      const ratio = Math.min(1920 / origWidth, 1080 / origHeight);
+      width = origWidth * ratio;
+      height = origHeight * ratio;
+    }
+  }
+
+  // Always apply scaling
+  if (settings.preset === 'original') {
     width *= settings.scale;
     height *= settings.scale;
   }
@@ -114,11 +125,15 @@ export const useRenderer = (rendererRef: React.RefObject<RendererHandle>) => {
       setState({ isRendering: true, progress: 0, status: 'Initializing...' });
 
       try {
-        const { width: origWidth, height: origHeight } =
-          parseSvgDimensions(svgContent);
+        const {
+          width: origWidth,
+          height: origHeight,
+          fromViewBox,
+        } = parseSvgDimensions(svgContent);
         const { width, height } = calculateFinalDimensions(
           origWidth,
           origHeight,
+          fromViewBox,
           settings
         );
 
@@ -146,7 +161,6 @@ export const useRenderer = (rendererRef: React.RefObject<RendererHandle>) => {
             finalSize: `${width}x${height}`,
             codec: videoCodec,
             eta: 0,
-            encodingSpeed: 0,
           },
         }));
 

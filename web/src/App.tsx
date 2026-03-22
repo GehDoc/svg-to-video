@@ -37,7 +37,7 @@ function App() {
   );
 
   // Derived State for Preview
-  let originalDim = { width: 0, height: 0 };
+  let originalDim = { width: 0, height: 0, fromViewBox: false };
   let targetDim = { width: 0, height: 0 };
   if (svgContent) {
     try {
@@ -45,6 +45,7 @@ function App() {
       targetDim = calculateFinalDimensions(
         originalDim.width,
         originalDim.height,
+        originalDim.fromViewBox,
         { preset, scale }
       );
     } catch {
@@ -85,9 +86,15 @@ function App() {
   const processFile = (file: File) => {
     const reader = new FileReader();
     reader.onload = (event) => {
-      setSvgContent(event.target?.result as string);
+      const content = event.target?.result as string;
+      setSvgContent(content);
       const baseName = file.name.replace(/\.svg$/i, '');
       setFileName(`${baseName}.mp4`);
+
+      // Reset to original if it's viewBox-only
+      if (parseSvgDimensions(content).fromViewBox) {
+        setPreset('original');
+      }
     };
     reader.readAsText(file);
   };
@@ -233,12 +240,21 @@ function App() {
                 id="resolution"
                 value={preset}
                 onChange={(e) => setPreset(e.target.value as ResolutionPreset)}
-                disabled={state.isRendering}
+                disabled={state.isRendering || originalDim.fromViewBox}
               >
                 <option value="original">Original Size</option>
-                <option value="720p">720p (1280x720)</option>
-                <option value="1080p">1080p (1920x1080)</option>
+                <option value="720p" disabled={originalDim.fromViewBox}>
+                  720p (Fit)
+                </option>
+                <option value="1080p" disabled={originalDim.fromViewBox}>
+                  1080p (Fit)
+                </option>
               </select>
+              {originalDim.fromViewBox && (
+                <p className="hint-text">
+                  SVG has no dimensions; using viewBox. Presets disabled.
+                </p>
+              )}
             </div>
 
             {preset === 'original' && (

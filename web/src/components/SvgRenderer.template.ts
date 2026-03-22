@@ -66,9 +66,9 @@ export const getIframeTemplate = (
 <html>
   <head>
     <style>
-      body, html { margin: 0; padding: 0; overflow: hidden; width: 100%; height: 100%; background: transparent; }
+      body, html { margin: 0; padding: 0; overflow: hidden; width: ${width}px; height: ${height}px; background: transparent; }
       #svg-container { width: ${width}px; height: ${height}px; }
-      svg { display: block; width: 100%; height: 100%; }
+      svg { display: block; width: ${width}px; height: ${height}px; }
       canvas { display: none; }
     </style>
   </head>
@@ -119,10 +119,11 @@ export const getIframeTemplate = (
         });
         
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         URL.revokeObjectURL(url);
-        
+
         return createImageBitmap(canvas);
+
       };
 
       window.checkAssets = async () => {
