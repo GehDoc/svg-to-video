@@ -27,6 +27,9 @@ function App() {
   const [captureMethod, setCaptureMethod] = useState<
     'optimal' | 'high-fidelity'
   >('optimal');
+  const [isDragging, setIsDragging] = useState(false);
+  const [renderedUrl, setRenderedUrl] = useState<string | null>(null);
+  const [fileSize, setFileSize] = useState<string | null>(null);
 
   const rendererRef = useRef<RendererHandle>(null);
   const { render, cancel, state } = useRenderer(
@@ -75,18 +78,45 @@ function App() {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setSvgContent(event.target?.result as string);
-        const baseName = file.name.replace(/\.svg$/i, '');
-        setFileName(`${baseName}.mp4`);
-      };
-      reader.readAsText(file);
+      processFile(file);
+    }
+  };
+
+  const processFile = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setSvgContent(event.target?.result as string);
+      const baseName = file.name.replace(/\.svg$/i, '');
+      setFileName(`${baseName}.mp4`);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setIsDragging(true);
+    } else if (e.type === 'dragleave') {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type === 'image/svg+xml') {
+      processFile(file);
     }
   };
 
   const handleStartRender = async () => {
     if (!svgContent) return;
+    setRenderedUrl(null);
+    setFileSize(null);
 
     const settings: RenderSettings = {
       duration,
@@ -101,14 +131,24 @@ function App() {
     try {
       const url = await render(svgContent, settings);
       if (url) {
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        URL.revokeObjectURL(url);
+        setRenderedUrl(url);
+        // Get file size from blob
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const sizeMb = (blob.size / (1024 * 1024)).toFixed(2);
+        setFileSize(`${sizeMb} MB`);
       }
     } catch {
       // Error handled by hook state
+    }
+  };
+
+  const downloadResult = () => {
+    if (renderedUrl) {
+      const a = document.createElement('a');
+      a.href = renderedUrl;
+      a.download = fileName;
+      a.click();
     }
   };
 
@@ -159,16 +199,28 @@ function App() {
         <aside className="config-panel">
           <section className="config-section">
             <h2>1. Source</h2>
-            <div className="input-group">
-              <label htmlFor="svg-upload">Upload Animated SVG</label>
-              <div className="file-input-wrapper">
-                <input
-                  type="file"
-                  id="svg-upload"
-                  accept=".svg"
-                  onChange={handleFileChange}
-                  disabled={state.isRendering}
-                />
+            <div
+              className={`dropzone ${isDragging ? 'dragging' : ''} ${svgContent ? 'has-content' : ''}`}
+              onDragEnter={handleDrag}
+              onDragOver={handleDrag}
+              onDragLeave={handleDrag}
+              onDrop={handleDrop}
+            >
+              <div className="input-group" style={{ marginBottom: 0 }}>
+                <label htmlFor="svg-upload">
+                  {svgContent
+                    ? 'Change SVG'
+                    : 'Drop SVG here or click to upload'}
+                </label>
+                <div className="file-input-wrapper">
+                  <input
+                    type="file"
+                    id="svg-upload"
+                    accept=".svg"
+                    onChange={handleFileChange}
+                    disabled={state.isRendering}
+                  />
+                </div>
               </div>
             </div>
           </section>
@@ -303,69 +355,112 @@ function App() {
         </aside>
 
         <section className="monitor-panel">
-          <div className="monitor-wrapper">
-            <SvgRenderer ref={rendererRef} />
-          </div>
-
-          {state.isRendering ? (
-            <div className="progress-overlay">
-              <div className="progress-status">
-                <span>{state.status}</span>
-                <span>{state.progress}%</span>
+          {renderedUrl ? (
+            <div className="success-card">
+              <div className="success-icon">✓</div>
+              <h3>Render Complete</h3>
+              <p className="success-meta">
+                {fileName} • {fileSize}
+              </p>
+              <div className="success-preview">
+                <video src={renderedUrl} controls autoPlay loop />
               </div>
-              <div className="progress-bar-container">
-                <div
-                  className="progress-bar-fill"
-                  style={{ width: `${state.progress}%` }}
-                ></div>
+              <div className="success-actions">
+                <button className="render-button" onClick={downloadResult}>
+                  Download MP4
+                </button>
+                <button
+                  className="secondary-button"
+                  onClick={() => setRenderedUrl(null)}
+                >
+                  Back to Studio
+                </button>
               </div>
-
-              {state.meta && (
-                <div className="meta-grid">
-                  <div className="meta-item">
-                    <strong>Source</strong> {state.meta.originalSize}
-                  </div>
-                  <div className="meta-item">
-                    <strong>Export</strong> {state.meta.finalSize}
-                  </div>
-                  <div className="meta-item">
-                    <strong>Codec</strong> {state.meta.codec}
-                  </div>
-                  <div className="meta-item" style={{ textAlign: 'right' }}>
-                    <button className="cancel-button" onClick={cancel}>
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           ) : (
             <>
-              {svgContent ? (
-                <div
-                  className="progress-overlay"
-                  style={{ background: 'rgba(15, 23, 42, 0.6)' }}
-                >
-                  <div className="meta-grid">
-                    <div className="meta-item">
-                      <strong>Source</strong> {originalDim.width}x
-                      {originalDim.height}
-                    </div>
-                    <div className="meta-item">
-                      <strong>Export</strong> {targetDim.width}x
-                      {targetDim.height}
-                    </div>
-                    <div className="meta-item">
-                      <strong>Target Codec</strong> {codec || 'Detecting...'}
-                    </div>
+              <div className="monitor-wrapper">
+                <SvgRenderer ref={rendererRef} />
+              </div>
+
+              {state.isRendering ? (
+                <div className="progress-overlay">
+                  <div className="progress-status">
+                    <span>{state.status}</span>
+                    <span>{state.progress}%</span>
                   </div>
+                  <div className="progress-bar-container">
+                    <div
+                      className="progress-bar-fill"
+                      style={{ width: `${state.progress}%` }}
+                    ></div>
+                  </div>
+
+                  {state.meta && (
+                    <div className="meta-grid">
+                      <div className="meta-item">
+                        <strong>Source</strong> {state.meta.originalSize}
+                      </div>
+                      <div className="meta-item">
+                        <strong>Export</strong> {state.meta.finalSize}
+                      </div>
+                      <div className="meta-item">
+                        <strong>Codec</strong> {state.meta.codec}
+                      </div>
+                      <div className="meta-item" style={{ textAlign: 'right' }}>
+                        <button className="cancel-button" onClick={cancel}>
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
-                <div
-                  style={{ color: 'var(--text-muted)', textAlign: 'center' }}
-                >
-                  <p>Upload an SVG to begin preview</p>
-                </div>
+                <>
+                  {svgContent ? (
+                    <div
+                      className="progress-overlay"
+                      style={{ background: 'rgba(15, 23, 42, 0.6)' }}
+                    >
+                      <div className="meta-grid">
+                        <div className="meta-item">
+                          <strong>Source</strong> {originalDim.width}x
+                          {originalDim.height}
+                        </div>
+                        <div className="meta-item">
+                          <strong>Export</strong> {targetDim.width}x
+                          {targetDim.height}
+                        </div>
+                        <div className="meta-item">
+                          <strong>Target Codec</strong>{' '}
+                          {codec || 'Detecting...'}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        color: 'var(--text-muted)',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <svg
+                        width="48"
+                        height="48"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1"
+                        style={{ opacity: 0.2, marginBottom: '1rem' }}
+                      >
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                      </svg>
+                      <p>Upload an SVG to begin preview</p>
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}

@@ -159,6 +159,54 @@ header p {
   margin-top: 0.4rem;
 }
 
+.dropzone {
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.dropzone:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--primary);
+}
+
+.dropzone.dragging {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--primary);
+  transform: scale(1.02);
+}
+
+.dropzone.has-content {
+  border-style: solid;
+  border-color: var(--accent);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.dropzone label {
+  cursor: pointer;
+}
+
+.secondary-button {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.secondary-button:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+}
+
 .render-actions {
   padding: 1.5rem;
   margin-top: auto;
@@ -290,6 +338,81 @@ header p {
 .file-input-wrapper input[type='file'] {
   width: 100%;
   font-size: 0.8rem;
+}
+
+.success-card {
+  background: var(--panel);
+  padding: 2.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 1.5rem;
+}
+
+.success-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+}
+
+.success-meta {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.success-preview {
+  background: black;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border);
+  aspect-ratio: 16 / 9;
+  display: flex;
+}
+
+.success-preview video {
+  width: 100%;
+  height: 100%;
+}
+
+.success-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.success-actions .render-button {
+  flex: 2;
+}
+
+.success-actions .secondary-button {
+  flex: 1;
 }
 
 .error-container {
