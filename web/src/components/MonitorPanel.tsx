@@ -51,6 +51,9 @@ export const MonitorPanel = () => {
             <div className="progress-overlay">
               <div className="progress-status">
                 <span>{state.status}</span>
+                <button className="cancel-button" onClick={cancel}>
+                  Cancel
+                </button>
                 <span>{state.progress}%</span>
               </div>
               <div className="progress-bar-container">
@@ -73,11 +76,6 @@ export const MonitorPanel = () => {
                   </div>
                   <div className="meta-item">
                     <strong>ETA</strong> {state.meta.eta}s
-                  </div>
-                  <div className="meta-item" style={{ textAlign: 'right' }}>
-                    <button className="cancel-button" onClick={cancel}>
-                      Cancel
-                    </button>
                   </div>
                 </div>
               )}

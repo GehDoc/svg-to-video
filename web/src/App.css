@@ -316,14 +316,19 @@ header p {
   position: absolute;
   top: 1rem;
   left: 1rem;
-  font-family: monospace;
-  font-size: 0.7rem;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 0.25rem 0.5rem;
-  border-radius: 3px;
-  color: var(--accent);
+  font-family:
+    'Inter',
+    sans-serif;
+  font-weight: 600;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  background: rgba(15, 23, 42, 0.8);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  color: #38bdf8;
   z-index: 5;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  text-transform: uppercase;
 }
 
 .cancel-button {
