@@ -43,7 +43,7 @@ function App() {
         originalDim.height,
         { preset, scale }
       );
-    } catch (e) {
+    } catch {
       /* ignore invalid svg for preview */
     }
   }
@@ -104,7 +104,7 @@ function App() {
         a.click();
         URL.revokeObjectURL(url);
       }
-    } catch (err) {
+    } catch {
       // Error handled by hook state
     }
   };

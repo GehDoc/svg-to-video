@@ -207,14 +207,15 @@ export const useRenderer = (rendererRef: React.RefObject<RendererHandle>) => {
 
         setState({ isRendering: false, progress: 100, status: 'Done!' });
         return url;
-      } catch (err: any) {
-        console.error(err);
+      } catch (err) {
+        const error = err as Error;
+        console.error(error);
         setState({
           isRendering: false,
           progress: 0,
-          status: `Error: ${err.message}`,
+          status: `Error: ${error.message}`,
         });
-        throw err;
+        throw error;
       }
     },
     [rendererRef]

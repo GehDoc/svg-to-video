@@ -8,6 +8,12 @@ export interface RendererHandle {
   isReady: () => boolean;
 }
 
+interface RendererWindow extends Window {
+  checkAssets?: () => Promise<void>;
+  seekAnimations?: (timeMs: number) => void;
+  captureFrame?: (method: 'optimal' | 'high-fidelity') => Promise<ImageBitmap>;
+}
+
 const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [ready, setReady] = useState(false);
@@ -123,13 +129,13 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
         iframe.onload = resolve;
       });
 
-      await (iframe.contentWindow as any).checkAssets();
+      await (iframe.contentWindow as RendererWindow).checkAssets?.();
 
       setReady(true);
     },
 
     seek: async (timeMs: number) => {
-      const win = iframeRef.current?.contentWindow as any;
+      const win = iframeRef.current?.contentWindow as RendererWindow;
       if (win?.seekAnimations) {
         win.seekAnimations(timeMs);
         // Wait for next frame to ensure rendering
@@ -138,7 +144,7 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
     },
 
     capture: async (method: 'optimal' | 'high-fidelity') => {
-      const win = iframeRef.current?.contentWindow as any;
+      const win = iframeRef.current?.contentWindow as RendererWindow;
       if (win?.captureFrame) {
         return await win.captureFrame(method);
       }
