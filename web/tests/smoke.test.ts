@@ -11,7 +11,7 @@ test.describe('SVG to Video Web Smoke Test', () => {
     await page.goto('/');
     const renderButton = page.locator('button.render-button');
     await expect(renderButton).toBeDisabled();
-    await expect(renderButton).toContainText('Render & Download MP4');
+    await expect(renderButton).toContainText('Export MP4');
   });
 
   test('should have configuration inputs', async ({ page }) => {
