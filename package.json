@@ -28,13 +28,15 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . && npm run lint -w web",
+    "lint:fix": "eslint . --fix && npm run lint:fix -w web",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "test:e2e": "node --test tests/e2e.test.mjs",
+    "test:cli": "node --test tests/e2e.test.mjs",
+    "test:web": "npm run test -w web",
+    "test": "npm run test:cli && npm run test:web",
     "type-check": "tsc -p tsconfig.json --noEmit && npm run type-check -w web",
-    "check": "npm run lint && npm run format && npm run type-check && npm run test:e2e && npm run test:e2e -w web",
+    "check": "npm run lint && npm run format && npm run type-check && npm run test",
     "check:fast": "npm run lint && npm run format && npm run type-check",
     "fix": "npm run lint:fix && npm run format:fix",
     "prepare": "husky"

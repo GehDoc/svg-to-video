@@ -7,8 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "type-check": "tsc -b",
-    "test:e2e": "playwright test --reporter=line",
+    "test": "playwright test --reporter=line",
     "preview": "vite preview"
   },
   "dependencies": {

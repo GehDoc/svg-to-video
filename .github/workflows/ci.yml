@@ -55,7 +55,7 @@ jobs:
           -e DOCKER_TEST=true 
           -w /app/data
           --entrypoint "npm"
-          svg-to-video run test:e2e
+          svg-to-video run test:cli
 
   web-tests:
     name: 'Web Studio Tests (E2E)'
@@ -70,4 +70,4 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Web E2E tests
-        run: npm run test:e2e -w web
+        run: npm run test:web
