@@ -40,10 +40,10 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "**/*.{js,mjs,ts,json,md,yml,Dockerfile,dockerfile}": "prettier --write",
-    "**/*.{js,mjs,ts}": [
-      "eslint --fix"
-    ]
+    "**/*.{js,mjs,ts,tsx,json,md,yml,Dockerfile,dockerfile}": "prettier --write",
+    "src/**/*.{js,mjs}": "eslint --fix",
+    "shared/**/*.{js,ts}": "eslint --fix",
+    "web/**/*.{ts,tsx,js}": "npm run lint --workspace=web --fix"
   },
   "main": "src/index.js",
   "bin": {
