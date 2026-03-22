@@ -18,6 +18,7 @@ function App() {
   const [svgContent, setSvgContent] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>('animation.mp4');
   const [duration, setDuration] = useState(5);
+  const [hold, setHold] = useState(0);
   const [fps, setFps] = useState(60);
   const [preset, setPreset] = useState<ResolutionPreset>('original');
   const [scale, setScale] = useState(1);
@@ -93,6 +94,7 @@ function App() {
       scale,
       backgroundColor,
       captureMethod,
+      hold,
     };
 
     try {
@@ -188,18 +190,31 @@ function App() {
             </section>
 
             <section className="input-group">
-              <label htmlFor="fps">4. FPS</label>
+              <label htmlFor="hold">Hold End (sec)</label>
               <input
                 type="number"
-                id="fps"
-                value={fps}
-                onChange={(e) => setFps(parseInt(e.target.value))}
-                min={1}
-                max={60}
+                id="hold"
+                value={hold}
+                onChange={(e) => setHold(parseFloat(e.target.value))}
+                min={0}
+                step={0.5}
                 disabled={state.isRendering}
               />
             </section>
           </div>
+
+          <section className="input-group">
+            <label htmlFor="fps">4. FPS</label>
+            <input
+              type="number"
+              id="fps"
+              value={fps}
+              onChange={(e) => setFps(parseInt(e.target.value))}
+              min={1}
+              max={60}
+              disabled={state.isRendering}
+            />
+          </section>
 
           <section className="input-group">
             <label htmlFor="bg-color">5. Background Color</label>

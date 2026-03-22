@@ -19,6 +19,7 @@ export interface RenderSettings {
   scale: number;
   backgroundColor: string;
   captureMethod: CaptureMethod;
+  hold: number;
 }
 
 export interface RenderState {
@@ -160,10 +161,15 @@ export const useRenderer = (rendererRef: React.RefObject<RendererHandle>) => {
 
         await output.start();
 
-        const totalFrames = Math.ceil(settings.duration * settings.fps);
+        const totalAnimationFrames = Math.ceil(
+          settings.duration * settings.fps
+        );
+        const totalHoldFrames = Math.ceil(settings.hold * settings.fps);
+        const totalFrames = totalAnimationFrames + totalHoldFrames;
         const frameDuration = 1 / settings.fps;
 
-        for (let frame = 1; frame <= totalFrames; frame++) {
+        // 1. Animation Loop
+        for (let frame = 1; frame <= totalAnimationFrames; frame++) {
           if (cancelRef.current) {
             setState({ isRendering: false, progress: 0, status: 'Cancelled' });
             return;
@@ -188,8 +194,32 @@ export const useRenderer = (rendererRef: React.RefObject<RendererHandle>) => {
           setState({
             isRendering: true,
             progress: Math.round((frame / totalFrames) * 100),
-            status: `Rendering frame ${frame}/${totalFrames}...`,
+            status: `Rendering animation frame ${frame}/${totalAnimationFrames}...`,
           });
+        }
+
+        // 2. Hold Frames Loop (Repeat last frame)
+        if (totalHoldFrames > 0) {
+          for (let frame = 1; frame <= totalHoldFrames; frame++) {
+            if (cancelRef.current) {
+              setState({
+                isRendering: false,
+                progress: 0,
+                status: 'Cancelled',
+              });
+              return;
+            }
+
+            const currentFrame = totalAnimationFrames + frame;
+            // The canvas already contains the last frame's image, so we just add it again
+            await source.add((currentFrame - 1) * frameDuration, frameDuration);
+
+            setState({
+              isRendering: true,
+              progress: Math.round((currentFrame / totalFrames) * 100),
+              status: `Adding hold frame ${frame}/${totalHoldFrames}...`,
+            });
+          }
         }
 
         setState({
