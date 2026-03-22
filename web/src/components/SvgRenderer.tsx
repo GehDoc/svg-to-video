@@ -1,17 +1,10 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
-import { getIframeTemplate } from './SvgRenderer.template';
 
 export interface RendererHandle {
   loadSvg: (svgContent: string, width: number, height: number) => Promise<void>;
   seek: (timeMs: number) => Promise<void>;
   capture: (method: 'optimal' | 'high-fidelity') => Promise<ImageBitmap>;
   isReady: () => boolean;
-}
-
-interface RendererWindow extends Window {
-  checkAssets?: () => Promise<void>;
-  seekAnimations?: (timeMs: number) => void;
-  captureFrame?: (method: 'optimal' | 'high-fidelity') => Promise<ImageBitmap>;
 }
 
 const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
@@ -26,46 +19,52 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
       const iframe = iframeRef.current;
       if (!iframe) return;
 
-      const doc = iframe.contentDocument || iframe.contentWindow?.document;
-      if (!doc) throw new Error('Could not access iframe document');
-
-      // Ensure animations are paused via CSS variable if used
-      const pausedSvg = svgContent.replace(
-        /--play-state:\s*running\s*;/g,
-        '--play-state: paused;'
-      );
-
-      doc.open();
-      doc.write(getIframeTemplate(pausedSvg, width, height));
-      doc.close();
-
-      // Wait for iframe scripts to load and fonts to be ready
-      await new Promise((resolve) => {
-        iframe.onload = resolve;
+      return new Promise<void>((resolve) => {
+        const handler = (event: MessageEvent) => {
+          if (event.data.type === 'READY') {
+            window.removeEventListener('message', handler);
+            setReady(true);
+            resolve();
+          }
+        };
+        window.addEventListener('message', handler);
+        iframe.contentWindow?.postMessage(
+          { type: 'LOAD_SVG', payload: { svgContent, width, height } },
+          '*'
+        );
       });
-
-      await (iframe.contentWindow as RendererWindow).checkAssets?.();
-
-      setReady(true);
     },
 
     seek: async (timeMs: number) => {
-      const win = iframeRef.current?.contentWindow as RendererWindow;
-      if (win?.seekAnimations) {
-        win.seekAnimations(timeMs);
-        // Wait for next frame to ensure rendering
-        await new Promise((r) => win.requestAnimationFrame(r));
-      }
+      return new Promise<void>((resolve) => {
+        const handler = (event: MessageEvent) => {
+          if (event.data.type === 'SEEKED') {
+            window.removeEventListener('message', handler);
+            resolve();
+          }
+        };
+        window.addEventListener('message', handler);
+        iframeRef.current?.contentWindow?.postMessage(
+          { type: 'SEEK', payload: { timeMs } },
+          '*'
+        );
+      });
     },
 
     capture: async (method: 'optimal' | 'high-fidelity') => {
-      const win = iframeRef.current?.contentWindow as RendererWindow;
-      if (win?.captureFrame) {
-        const result = await win.captureFrame(method);
-        if (!result) throw new Error('Capture failed: No result from iframe');
-        return result;
-      }
-      throw new Error('Capture method not available in iframe');
+      return new Promise<ImageBitmap>((resolve) => {
+        const handler = (event: MessageEvent) => {
+          if (event.data.type === 'CAPTURE_RESULT') {
+            window.removeEventListener('message', handler);
+            resolve(event.data.payload);
+          }
+        };
+        window.addEventListener('message', handler);
+        iframeRef.current?.contentWindow?.postMessage(
+          { type: 'CAPTURE', payload: { method } },
+          '*'
+        );
+      });
     },
 
     isReady: () => ready,
@@ -77,6 +76,7 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
       <div className="monitor-viewport">
         <iframe
           ref={iframeRef}
+          src="/src/iframe/renderer.html"
           title="svg-renderer"
           style={{
             width: dimensions.width,
