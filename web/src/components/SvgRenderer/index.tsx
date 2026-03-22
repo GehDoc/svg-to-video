@@ -76,7 +76,7 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
       <div className="monitor-viewport">
         <iframe
           ref={iframeRef}
-          src="/src/iframe/renderer.html"
+          src="/src/components/SvgRenderer/renderer.html"
           title="svg-renderer"
           style={{
             width: dimensions.width,
