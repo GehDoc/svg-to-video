@@ -108,7 +108,9 @@ export const getBestCodec = async (width: number, height: number) => {
   });
 };
 
-export const useRenderer = (rendererRef: React.RefObject<RendererHandle>) => {
+export const useRenderer = (
+  rendererRef: React.RefObject<RendererHandle | null>
+) => {
   const [state, setState] = useState<RenderState>({
     isRendering: false,
     progress: 0,
