@@ -1,12 +1,18 @@
 # Dependencies (Crucial: local node_modules will break the container)
 node_modules/
+web/node_modules/
 
 # Build Output
 out-dir/
+web/dist/
 *.mp4
 out-dir-test/
 
-# Dev/Tooling configs (Not needed inside the container)
+# Web Studio source (Not needed for the CLI runtime)
+web/
+playwright.config.ts
+
+# Dev/Tooling configs
 .github/
 .husky/
 .vscode/
@@ -14,7 +20,7 @@ out-dir-test/
 .prettier*
 tsconfig.json
 
-# Docker files (The container doesn't need its own recipe)
+# Docker files
 Dockerfile
 docker-compose.yml
 .dockerignore
@@ -26,7 +32,7 @@ docker-compose.yml
 # Logs
 npm-debug.log*
 
-# Examples (Not meant to be included in the container)
+# Examples
 examples/
 
 # Ignore documentation and specs

@@ -6,6 +6,10 @@ out-dir/
 *.mp4
 out-dir-test/
 
+# Playwright Reports/Results
+web/playwright-report/
+web/test-results/
+
 # OS Files
 .DS_Store
 Thumbs.db
