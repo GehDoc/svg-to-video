@@ -490,7 +490,14 @@ function App() {
 
       <footer>
         All processing happens locally in your browser. Files never leave your
-        computer.
+        computer. |{' '}
+        <a
+          href="https://github.com/GehDoc/svg-to-video"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub Repository
+        </a>
       </footer>
     </div>
   );

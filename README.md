@@ -1,6 +1,16 @@
 # SVG to Video (svg-to-video)
 
-A high-fidelity command-line tool to render CSS-animated SVGs into MP4 videos.
+A high-fidelity tool to render CSS-animated SVGs into MP4 videos.
+
+## 🌐 Web Studio (New!)
+
+Prefer a GUI? Our **[Web Studio](https://gehdoc.github.io/svg-to-video/)** is a serverless, client-side rendering tool. It runs entirely in your browser using **WebCodecs**—your SVG files never leave your computer, ensuring absolute privacy.
+
+---
+
+## 🚀 CLI / Docker Tool
+
+A high-fidelity command-line tool to render CSS-animated SVGs into MP4 videos using Puppeteer.
 
 Unlike standard converters that often struggle with complex CSS keyframes or transitions, this tool uses **Puppeteer** to frame-accurately scrub through the **Web Animations API**, ensuring every frame is captured exactly as the browser renders it.
 
