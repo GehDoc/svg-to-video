@@ -203,7 +203,9 @@ function App() {
       </header>
 
       <main className="studio-layout">
-        <aside className="config-panel">
+        <aside
+          className={`config-panel ${state.isRendering || !!renderedUrl ? 'is-locked' : ''}`}
+        >
           <section className="config-section">
             <h2>1. Source</h2>
             <div

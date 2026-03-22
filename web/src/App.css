@@ -66,6 +66,12 @@ header p {
 }
 
 /* Left Panel: Configuration */
+.is-locked {
+  opacity: 0.6;
+  pointer-events: none;
+  filter: grayscale(0.2);
+}
+
 .config-panel {
   width: 350px;
   background: var(--panel);
