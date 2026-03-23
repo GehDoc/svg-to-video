@@ -3,27 +3,13 @@ import assert from 'node:assert';
 import { spawnSync } from 'child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import {
-  FIXTURE_DIR_RELATIVE,
-  OUTPUT_DIR_RELATIVE,
-  resolveEnvironmentPath,
-} from './utils.mjs';
+import { FIXTURE_DIR_RELATIVE, OUTPUT_DIR_RELATIVE } from './utils.mjs';
 
 describe('End-to-End Rendering', () => {
   const TEST_SVG_NAME = 'font-test';
-  const inputFileRelative = path.join(
-    FIXTURE_DIR_RELATIVE,
-    `${TEST_SVG_NAME}.svg`
-  );
-
-  const outputFileRelative = path.join(
-    OUTPUT_DIR_RELATIVE,
-    `${TEST_SVG_NAME}.mp4`
-  );
-
-  const inputFile = resolveEnvironmentPath(inputFileRelative);
-  const outputDir = resolveEnvironmentPath(OUTPUT_DIR_RELATIVE);
-  const outputFile = resolveEnvironmentPath(outputFileRelative);
+  const inputFile = path.join(FIXTURE_DIR_RELATIVE, `${TEST_SVG_NAME}.svg`);
+  const outputDir = OUTPUT_DIR_RELATIVE;
+  const outputFile = path.join(outputDir, `${TEST_SVG_NAME}.mp4`);
 
   before(() => {
     // Ensure output directory exists before tests run

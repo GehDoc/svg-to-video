@@ -69,10 +69,9 @@ node src/index.js <svgPath> <duration> <fps> <outDir> [options]
 
 ### Environment Variables
 
-| Variable         | Scope     | Description                                                                                                                                       |
-| ---------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PUPPETEER_ARGS` | Runtime   | Additional arguments passed directly to the Puppeteer `launch` method. Useful for custom browser flags (e.g., `--proxy-server`, `--disable-gpu`). |
-| `DOCKER_TEST`    | E2E Tests | Set to `true` during CI to handle environment-specific pathing for integration tests.                                                             |
+| Variable         | Scope   | Description                                                                                                                                       |
+| ---------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PUPPETEER_ARGS` | Runtime | Additional arguments passed directly to the Puppeteer `launch` method. Useful for custom browser flags (e.g., `--proxy-server`, `--disable-gpu`). |
 
 ### 🛠 Troubleshooting (Fedora / SELinux)
 
