@@ -52,7 +52,6 @@ jobs:
           docker compose run
           --rm
           -e CI=true 
-          -e DOCKER_TEST=true 
           -w /app/data
           --entrypoint "npm"
           svg-to-video run test:cli

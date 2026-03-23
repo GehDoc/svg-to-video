@@ -21,23 +21,19 @@ Unlike standard converters that often struggle with complex CSS keyframes or tra
 - **Customizable Output**: Control duration, FPS, and post-animation "hold" time.
 - **Automated Cleanup**: Temporary frames are automatically removed, but can be kept with the `--keep-frames` flag.
 
-## 🐳 Running with Docker (Recommended)
+## 🐳 Docker Usage (Recommended)
 
-Using Docker is the most reliable way to run this tool. It ensures that **Google Chrome**, **FFmpeg**, and all Linux dependencies are perfectly configured, regardless of your host OS.
-
-> **Note:** The initial build installs a full browser environment. It may take 2–5 minutes, but subsequent runs are near-instant.
+Using Docker is the most reliable way to run this tool. It ensures that **Google Chrome**, **FFmpeg**, and all Linux dependencies are perfectly configured.
 
 ```bash
-# 1. Set your user IDs (Linux/Fedora) and build
-export UID=$(id -u)
-export GID=$(id -g)
+# 1. Build the image
 docker compose build
 
 # 2. Run a render
-docker compose run --rm svg-to-video /app/data/examples/example.svg 13 60 /app/data/out-dir --hold 2
+docker compose run --rm svg-to-video ./examples/example.svg 13 60 ./out-dir --hold 2
 ```
 
-_Note: Local paths must be prefixed with `/app/data/` inside the container to match the volume mount._
+_Note: Since the project folder is mounted to `/app/data` and the `WORKDIR` is set, you can use local paths directly._
 
 ---
 
@@ -73,11 +69,6 @@ node src/index.js <svgPath> <duration> <fps> <outDir> [options]
 | `fps`      | Frames per second (e.g., `30` or `60`).                   |
 | `outDir`   | Directory where frames and the final video will be saved. |
 
-**💡 Note for Docker users:**
-
-> Because the project folder is mounted to `/app/data` inside the container, you must prefix your paths with `/app/data/`.  
-> **Example:** Use `/app/data/example.svg` instead of `./example.svg`.
-
 ### Options
 
 | Option                 | Description                                                                        |
@@ -88,10 +79,9 @@ node src/index.js <svgPath> <duration> <fps> <outDir> [options]
 
 ### Environment Variables
 
-| Variable         | Scope     | Description                                                                                                                                       |
-| ---------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PUPPETEER_ARGS` | Runtime   | Additional arguments passed directly to the Puppeteer `launch` method. Useful for custom browser flags (e.g., `--proxy-server`, `--disable-gpu`). |
-| `DOCKER_TEST`    | E2E Tests | Set to `true` when running end-to-end tests inside a Docker container. Adjusts file paths to match the `/app/data` volume mount.                  |
+| Variable         | Scope   | Description                                                                                                                                       |
+| ---------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PUPPETEER_ARGS` | Runtime | Additional arguments passed directly to the Puppeteer `launch` method. Useful for custom browser flags (e.g., `--proxy-server`, `--disable-gpu`). |
 
 ### 🛠 Troubleshooting (Fedora / SELinux)
 
