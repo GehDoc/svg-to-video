@@ -4,6 +4,7 @@ import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/svg-to-video/',
   plugins: [react()],
   resolve: {
     alias: {
