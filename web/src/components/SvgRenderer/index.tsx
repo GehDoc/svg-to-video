@@ -5,6 +5,7 @@ import {
   useState,
   useEffect,
 } from 'react';
+import { seekAnimations } from '@shared/animation-engine';
 
 export interface RendererHandle {
   loadSvg: (svgContent: string, width: number, height: number) => Promise<void>;
@@ -25,6 +26,7 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
       <html>
         <head>
           <meta charset="UTF-8">
+          <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2" />
           <style>
             body, html { margin: 0; padding: 0; overflow: hidden; width: 100%; height: 100%; background: transparent; }
             #svg-container { width: 100%; height: 100%; }
@@ -36,7 +38,7 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
           <div id="svg-container"></div>
           <canvas id="capture-canvas"></canvas>
           <script>
-            // We use standard JS here to avoid browser-incompatible TS syntax
+            window.seekAnimations = ${seekAnimations.toString()};
             const OPTIMAL_PROPS = [
               'fill', 'fill-opacity', 'fill-rule', 'stroke', 'stroke-opacity', 'stroke-width',
               'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-dasharray',
@@ -66,9 +68,11 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
               }
 
               if (type === 'SEEK') {
-                // Assuming seekAnimations is global or defined in parent/accessible.
-                // In your shared engine, we must ensure it's available.
-                // For now, simple pause/play or similar logic would go here.
+                window.seekAnimations(payload.timeMs);
+                // Double requestAnimationFrame ensures that the browser has updated layout/styles
+                // and painted those changes to the render tree before we capture the frame.
+                await new Promise((r) => requestAnimationFrame(r));
+                await new Promise((r) => requestAnimationFrame(r));
                 window.parent.postMessage({ type: 'SEEKED' }, '*');
               }
 
