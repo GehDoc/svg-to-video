@@ -3,6 +3,7 @@ const child_process = require('child_process');
 const puppeteer = require('puppeteer');
 const { Command } = require('commander');
 const path = require('path');
+const { seekAnimations } = require('../shared/animation-engine');
 
 /** @type {'png'} */
 const frameFileExtension = 'png';
@@ -257,21 +258,6 @@ function getFrameFilename(frame, padWidth) {
   const prefix = ('' + frame).padStart(padWidth, '0');
   return `${prefix}.${frameFileExtension}`;
 }
-
-/**
- * Browser-side function to seek all animations to a specific time
- * @param {number} timeInMilliseconds
- */
-const seekAnimations = (timeInMilliseconds) => {
-  for (const animation of document.getAnimations()) {
-    try {
-      animation.pause();
-    } catch (_error) {
-      /* ignored */
-    }
-    animation.currentTime = timeInMilliseconds;
-  }
-};
 
 main().catch((err) => {
   console.error(err);

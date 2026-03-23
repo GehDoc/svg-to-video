@@ -37,17 +37,15 @@ If working without an agent, follow these steps to keep the project state synchr
 
 ## 🛠 Development Commands
 
-| Script               | Description                                                             |
-| -------------------- | ----------------------------------------------------------------------- |
-| `npm run check`      | Runs all checks (lint, format, type-check, e2e tests).                  |
-| `npm run check:fast` | Runs fast checks only (lint, format, type-check).                       |
-| `npm run fix`        | Auto-fixes linting and formatting issues.                               |
-| `npm run lint`       | Checks for linting issues.                                              |
-| `npm run lint:fix`   | Fixes linting issues.                                                   |
-| `npm run format`     | Checks for formatting issues.                                           |
-| `npm run format:fix` | Fixes formatting issues.                                                |
-| `npm run type-check` | Validates TypeScript types.                                             |
-| `npm run test:e2e`   | Runs the end-to-end tests. (Executed as part of `npm run check` in CI). |
+| `npm run check` | Runs all checks (lint, format, type-check, e2e tests). |
+| `npm run check:fast` | Runs fast checks only (lint, format, type-check). |
+| `npm run fix` | Auto-fixes linting and formatting issues. |
+| `npm run lint` | Checks for linting issues in both CLI and Web Studio code. |
+| `npm run lint:fix` | Fixes linting issues in both CLI and Web Studio code. |
+| `npm run format` | Checks for formatting issues. |
+| `npm run format:fix` | Fixes formatting issues. |
+| `npm run test` | Runs all tests (CLI and Web Studio E2E). |
+| `npm run type-check` | Validates TypeScript types. |
 
 ## 🐳 Docker & Hardening
 

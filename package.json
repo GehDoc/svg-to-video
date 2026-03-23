@@ -1,6 +1,6 @@
 {
   "name": "svg-to-video",
-  "version": "0.1",
+  "version": "0.2.0",
   "description": "Command-line tool for converting a CSS-animated SVG to a MP4 video",
   "author": "GehDoc",
   "keywords": [
@@ -28,25 +28,30 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . && npm run lint -w web",
+    "lint:fix": "eslint . --fix && npm run lint:fix -w web",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "test:e2e": "node --test tests/e2e.test.mjs",
-    "type-check": "tsc -p tsconfig.json --noEmit",
-    "check": "npm run lint && npm run format && npm run type-check && npm run test:e2e",
+    "test:cli": "node --test tests/e2e.test.mjs",
+    "test:web": "npm run test -w web",
+    "test": "npm run test:cli && npm run test:web",
+    "type-check": "tsc -p tsconfig.json --noEmit && npm run type-check -w web",
+    "check": "npm run lint && npm run format && npm run type-check && npm run test",
     "check:fast": "npm run lint && npm run format && npm run type-check",
     "fix": "npm run lint:fix && npm run format:fix",
     "prepare": "husky"
   },
   "lint-staged": {
-    "**/*.{js,mjs,ts,json,md,yml,Dockerfile,dockerfile}": "prettier --write",
-    "**/*.{js,mjs,ts}": [
-      "eslint --fix"
-    ]
+    "**/*.{js,mjs,ts,tsx,json,md,yml,Dockerfile,dockerfile}": "prettier --write",
+    "src/**/*.{js,mjs}": "eslint --fix",
+    "shared/**/*.{js,ts}": "eslint --fix",
+    "web/**/*.{ts,tsx,js}": "npm run lint --workspace=web --fix"
   },
   "main": "src/index.js",
   "bin": {
     "svg-to-video": "src/index.js"
-  }
+  },
+  "workspaces": [
+    "web"
+  ]
 }
