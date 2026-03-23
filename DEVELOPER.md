@@ -51,5 +51,12 @@ If working without an agent, follow these steps to keep the project state synchr
 
 The project includes a hardened Dockerfile for both development and production use.
 
-- **Security**: The application runs as the non-root `node` user.
-- **Exclusions**: Development-only files like `specs/`, `AGENTS.md`, and `DEVELOPER.md` are excluded from the image via `.dockerignore`.
+## 🌐 Web Studio Deployment
+
+The Web Studio is configured to deploy automatically to **GitHub Pages** via GitHub Actions.
+
+- **Asset Pathing**: The project uses an environment-aware `base` path (`/svg-to-video/`) in `web/vite.config.ts`. This ensures all assets load correctly when deployed as a GitHub Project Site.
+- **CI Pipeline**: Deployment is triggered automatically on pushes to the `main` branch via `.github/workflows/deploy.yml`.
+
+* **Security**: The application runs as the non-root `node` user.
+* **Exclusions**: Development-only files like `specs/`, `AGENTS.md`, and `DEVELOPER.md` are excluded from the image via `.dockerignore`.
