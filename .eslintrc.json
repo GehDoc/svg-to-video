@@ -10,11 +10,17 @@
     "sourceType": "module"
   },
   "rules": {
-    // allow unused variables that begin with an underscore (common
-    // convention for ignored parameters)
     "no-unused-vars": [
       "error",
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.mjs"],
+      "parserOptions": {
+        "sourceType": "module"
+      }
+    }
+  ]
 }
