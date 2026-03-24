@@ -38,7 +38,6 @@ export const ConfigPanel = () => {
       setSvgContent(content);
       const baseName = file.name.replace(/\.svg$/i, '');
       setFileName(`${baseName}.mp4`);
-      if (originalDim.fromViewBox) setPreset('original');
     };
     reader.readAsText(file);
   };
@@ -102,16 +101,25 @@ export const ConfigPanel = () => {
           <label htmlFor="resolution">Resolution</label>
           <select
             id="resolution"
-            value={preset}
+            value={!originalDim.isDimensionsDetected ? '1080p' : preset}
             onChange={(e: ChangeEvent<HTMLSelectElement>) =>
               setPreset(e.target.value as ResolutionPreset)
             }
-            disabled={state.isRendering || !!renderedUrl}
+            disabled={
+              state.isRendering ||
+              !!renderedUrl ||
+              !originalDim.isDimensionsDetected
+            }
           >
             <option value="original">Original Size</option>
             <option value="720p">720p (Fit)</option>
             <option value="1080p">1080p (Fit)</option>
           </select>
+          {svgContent && !originalDim.isDimensionsDetected && (
+            <p className="hint-text" style={{ color: 'var(--error)' }}>
+              Warning: Could not detect SVG dimensions. Defaulting to 1080p.
+            </p>
+          )}
         </div>
 
         {preset === 'original' && (

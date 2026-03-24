@@ -33,7 +33,6 @@ export interface RenderState {
     eta: number; // in seconds
   };
 }
-
 export const parseSvgDimensions = (svgContent: string) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(svgContent, 'image/svg+xml');
@@ -44,23 +43,25 @@ export const parseSvgDimensions = (svgContent: string) => {
   let width = parseFloat(svg.getAttribute('width') || '');
   let height = parseFloat(svg.getAttribute('height') || '');
   const viewBox = svg.getAttribute('viewBox');
-  let fromViewBox = false;
 
-  if ((isNaN(width) || isNaN(height)) && viewBox) {
+  let isDimensionsDetected = !(isNaN(width) || isNaN(height));
+
+  if (!isDimensionsDetected && viewBox) {
     const parts = viewBox.trim().split(/\s+/).map(parseFloat);
     if (parts.length === 4) {
       width = parts[2];
       height = parts[3];
-      fromViewBox = true;
+      isDimensionsDetected = true;
     }
   }
 
   if (isNaN(width) || isNaN(height)) {
     width = 1920;
     height = 1080;
+    isDimensionsDetected = false;
   }
 
-  return { width, height, fromViewBox };
+  return { width, height, isDimensionsDetected };
 };
 
 export const calculateFinalDimensions = (

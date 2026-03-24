@@ -27,7 +27,7 @@ export interface StudioContextType {
   setRenderedUrl: (url: string | null) => void;
   fileSize: string | null;
   setFileSize: (size: string | null) => void;
-  originalDim: { width: number; height: number; fromViewBox: boolean };
+  originalDim: { width: number; height: number; isDimensionsDetected: boolean };
   targetDim: { width: number; height: number };
   state: RenderState;
   handleStartRender: () => Promise<void>;

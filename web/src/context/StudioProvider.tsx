@@ -33,11 +33,16 @@ export const StudioProvider = ({
 
   const { render, cancel, state } = useRenderer(rendererRef);
 
-  let originalDim = { width: 0, height: 0, fromViewBox: false };
+  let originalDim = { width: 0, height: 0, isDimensionsDetected: false };
   let targetDim = { width: 0, height: 0 };
   if (svgContent) {
     try {
-      originalDim = parseSvgDimensions(svgContent);
+      const result = parseSvgDimensions(svgContent);
+      originalDim = {
+        width: result.width,
+        height: result.height,
+        isDimensionsDetected: result.isDimensionsDetected,
+      };
       targetDim = calculateFinalDimensions(
         originalDim.width,
         originalDim.height,
