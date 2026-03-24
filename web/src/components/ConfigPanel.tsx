@@ -1,6 +1,8 @@
 import { StudioContext } from '../context/StudioContext';
 import { useContext, type ChangeEvent } from 'react';
 import type { ResolutionPreset } from '../hooks/useRenderer';
+import { FaGithub } from 'react-icons/fa';
+import pkg from '../../../package.json';
 
 export const ConfigPanel = () => {
   const {
@@ -36,7 +38,6 @@ export const ConfigPanel = () => {
       setSvgContent(content);
       const baseName = file.name.replace(/\.svg$/i, '');
       setFileName(`${baseName}.mp4`);
-      if (originalDim.fromViewBox) setPreset('original');
     };
     reader.readAsText(file);
   };
@@ -100,26 +101,23 @@ export const ConfigPanel = () => {
           <label htmlFor="resolution">Resolution</label>
           <select
             id="resolution"
-            value={preset}
+            value={!originalDim.isDimensionsDetected ? '1080p' : preset}
             onChange={(e: ChangeEvent<HTMLSelectElement>) =>
               setPreset(e.target.value as ResolutionPreset)
             }
             disabled={
-              state.isRendering || !!renderedUrl || originalDim.fromViewBox
+              state.isRendering ||
+              !!renderedUrl ||
+              !originalDim.isDimensionsDetected
             }
           >
             <option value="original">Original Size</option>
-            <option value="720p" disabled={originalDim.fromViewBox}>
-              720p (Fit)
-            </option>
-            <option value="1080p" disabled={originalDim.fromViewBox}>
-              1080p (Fit)
-            </option>
+            <option value="720p">720p (Fit)</option>
+            <option value="1080p">1080p (Fit)</option>
           </select>
-
-          {originalDim.fromViewBox && (
-            <p className="hint-text">
-              SVG has no dimensions; using viewBox. Presets disabled.
+          {svgContent && !originalDim.isDimensionsDetected && (
+            <p className="hint-text" style={{ color: 'var(--error)' }}>
+              Warning: Could not detect SVG dimensions. Defaulting to 1080p.
             </p>
           )}
         </div>
@@ -141,9 +139,9 @@ export const ConfigPanel = () => {
           </div>
         )}
 
-        <div className="grid-2">
+        <div className="grid-3">
           <div className="input-group">
-            <label htmlFor="duration">Duration (s)</label>
+            <label htmlFor="duration">Dur. (s)</label>
             <input
               type="number"
               id="duration"
@@ -165,19 +163,18 @@ export const ConfigPanel = () => {
               disabled={state.isRendering || !!renderedUrl}
             />
           </div>
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="fps">Frame Rate (FPS)</label>
-          <input
-            type="number"
-            id="fps"
-            value={fps}
-            onChange={(e) => setFps(parseInt(e.target.value))}
-            min={1}
-            max={60}
-            disabled={state.isRendering || !!renderedUrl}
-          />
+          <div className="input-group">
+            <label htmlFor="fps">FPS</label>
+            <input
+              type="number"
+              id="fps"
+              value={fps}
+              onChange={(e) => setFps(parseInt(e.target.value))}
+              min={1}
+              max={60}
+              disabled={state.isRendering || !!renderedUrl}
+            />
+          </div>
         </div>
       </section>
 
@@ -226,6 +223,17 @@ export const ConfigPanel = () => {
         >
           {state.isRendering ? 'Processing...' : 'Export MP4'}
         </button>
+        <div className="footer-mini">
+          <p>Local processing only. Files never leave your browser.</p>
+          <a
+            href="https://github.com/GehDoc/svg-to-video"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="github-link"
+          >
+            <FaGithub size={16} /> <span>v{pkg.version}</span>
+          </a>
+        </div>
       </div>
     </aside>
   );

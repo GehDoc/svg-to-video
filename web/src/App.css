@@ -65,7 +65,6 @@ header p {
   overflow: hidden;
 }
 
-/* Left Panel: Configuration */
 .is-locked {
   opacity: 0.6;
   pointer-events: none;
@@ -79,23 +78,23 @@ header p {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  position: relative;
 }
 
 .config-section {
-  padding: 1.5rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--border);
 }
 
 .config-section h2 {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
   margin-top: 0;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.75rem;
 }
 
-/* Right Panel: Monitor */
 .monitor-panel {
   flex: 1;
   background: var(--bg);
@@ -138,10 +137,27 @@ header p {
   font-size: 0.9rem;
 }
 
-.grid-2 {
+.grid-3 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.grid-3 .input-group input[type='number'] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem;
+}
+
+.grid-3 .input-group {
+  margin-bottom: 0;
+}
+
+.grid-3 .input-group label {
+  text-align: center;
+  font-size: 0.65rem;
+  margin-bottom: 0.25rem;
 }
 
 .color-picker-wrapper {
@@ -173,11 +189,13 @@ header p {
   transition: all 0.2s ease;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.02);
+  color: var(--text-muted);
 }
 
 .dropzone:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
   border-color: var(--primary);
+  color: var(--text);
 }
 
 .dropzone.dragging {
@@ -214,10 +232,12 @@ header p {
 }
 
 .render-actions {
-  padding: 1.5rem;
-  margin-top: auto;
+  padding: 1rem 1.5rem;
   background: var(--panel);
   border-top: 1px solid var(--border);
+  position: sticky;
+  bottom: 0;
+  margin-top: 1rem;
 }
 
 .render-button {
@@ -316,7 +336,6 @@ header p {
   position: absolute;
   top: 1rem;
   left: 1rem;
-  font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 0.65rem;
   letter-spacing: 0.05em;
@@ -443,24 +462,31 @@ header p {
   max-width: 400px;
 }
 
-footer {
-  padding: 0.75rem 2rem;
-  background: var(--panel);
+.footer-mini {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--border);
   font-size: 0.7rem;
   color: var(--text-muted);
   text-align: center;
 }
 
-footer a {
-  color: var(--primary);
+.footer-mini p {
+  margin: 0 0 0.5rem;
+}
+
+.footer-mini .github-link {
+  justify-content: center;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-muted);
+  font-weight: 500;
   text-decoration: none;
+  transition: color 0.2s;
 }
 
-footer a:hover {
-  text-decoration: underline;
-}
-
-footer a:visited {
+.footer-mini .github-link:hover {
   color: var(--primary);
 }

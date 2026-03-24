@@ -10,7 +10,12 @@ import { getRendererScript } from './renderer';
 import rendererTemplate from './renderer.html?raw';
 
 export interface RendererHandle {
-  loadSvg: (svgContent: string, width: number, height: number) => Promise<void>;
+  loadSvg: (
+    svgContent: string,
+    width: number,
+    height: number,
+    backgroundColor: string
+  ) => Promise<void>;
   seek: (timeMs: number) => Promise<void>;
   capture: (method: 'optimal' | 'high-fidelity') => Promise<ImageBitmap>;
   isReady: () => boolean;
@@ -38,7 +43,12 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
   }, []);
 
   useImperativeHandle(ref, () => ({
-    loadSvg: async (svgContent: string, width: number, height: number) => {
+    loadSvg: async (
+      svgContent: string,
+      width: number,
+      height: number,
+      backgroundColor: string
+    ) => {
       setReady(false);
       setDimensions({ width, height });
       const iframe = iframeRef.current;
@@ -54,7 +64,10 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
         };
         window.addEventListener('message', handler);
         iframe.contentWindow?.postMessage(
-          { type: 'LOAD_SVG', payload: { svgContent, width, height } },
+          {
+            type: 'LOAD_SVG',
+            payload: { svgContent, width, height, backgroundColor },
+          },
           '*'
         );
       });
