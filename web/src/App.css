@@ -144,6 +144,12 @@ header p {
   width: 100%;
 }
 
+.grid-3 .input-group input[type='number'] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem;
+}
+
 .grid-3 .input-group {
   margin-bottom: 0;
 }
@@ -330,7 +336,6 @@ header p {
   position: absolute;
   top: 1rem;
   left: 1rem;
-  font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 0.65rem;
   letter-spacing: 0.05em;
