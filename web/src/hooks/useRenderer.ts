@@ -127,7 +127,12 @@ export const useRenderer = (
           settings
         );
 
-        await rendererRef.current.loadSvg(svgContent, width, height);
+        await rendererRef.current.loadSvg(
+          svgContent,
+          width,
+          height,
+          settings.backgroundColor
+        );
 
         const target = new BufferTarget();
         const output = new Output({

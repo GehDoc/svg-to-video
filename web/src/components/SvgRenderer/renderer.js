@@ -60,13 +60,14 @@ export function getRendererScript(seekAnimations) {
     const { type, payload } = event.data;
 
     if (type === 'LOAD_SVG') {
-      const { svgContent, width, height } = payload;
+      const { svgContent, width, height, backgroundColor } = payload;
       svgContainer.innerHTML = svgContent.replace(
         /--play-state:\s*running\s*;/g,
         '--play-state: paused;'
       );
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';
+      svgContainer.style.backgroundColor = backgroundColor;
       captureCanvas.width = width;
       captureCanvas.height = height;
       window.parent.postMessage({ type: 'READY' }, '*');
