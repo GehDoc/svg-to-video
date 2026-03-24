@@ -141,7 +141,7 @@ export const ConfigPanel = () => {
           </div>
         )}
 
-        <div className="grid-2">
+        <div className="grid-3">
           <div className="input-group">
             <label htmlFor="duration">Duration (s)</label>
             <input
@@ -165,19 +165,18 @@ export const ConfigPanel = () => {
               disabled={state.isRendering || !!renderedUrl}
             />
           </div>
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="fps">Frame Rate (FPS)</label>
-          <input
-            type="number"
-            id="fps"
-            value={fps}
-            onChange={(e) => setFps(parseInt(e.target.value))}
-            min={1}
-            max={60}
-            disabled={state.isRendering || !!renderedUrl}
-          />
+          <div className="input-group">
+            <label htmlFor="fps">FPS</label>
+            <input
+              type="number"
+              id="fps"
+              value={fps}
+              onChange={(e) => setFps(parseInt(e.target.value))}
+              min={1}
+              max={60}
+              disabled={state.isRendering || !!renderedUrl}
+            />
+          </div>
         </div>
       </section>
 

@@ -65,7 +65,6 @@ header p {
   overflow: hidden;
 }
 
-/* Left Panel: Configuration */
 .is-locked {
   opacity: 0.6;
   pointer-events: none;
@@ -79,23 +78,23 @@ header p {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  position: relative;
 }
 
 .config-section {
-  padding: 1.5rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--border);
 }
 
 .config-section h2 {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
   margin-top: 0;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.75rem;
 }
 
-/* Right Panel: Monitor */
 .monitor-panel {
   flex: 1;
   background: var(--bg);
@@ -138,10 +137,10 @@ header p {
   font-size: 0.9rem;
 }
 
-.grid-2 {
+.grid-3 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem;
 }
 
 .color-picker-wrapper {
@@ -214,10 +213,12 @@ header p {
 }
 
 .render-actions {
-  padding: 1.5rem;
-  margin-top: auto;
+  padding: 1rem 1.5rem;
   background: var(--panel);
   border-top: 1px solid var(--border);
+  position: sticky;
+  bottom: 0;
+  margin-top: auto;
 }
 
 .render-button {
