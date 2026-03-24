@@ -33,6 +33,7 @@ export interface RenderState {
     eta: number; // in seconds
   };
 }
+
 export const parseSvgDimensions = (svgContent: string) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(svgContent, 'image/svg+xml');
@@ -85,7 +86,6 @@ export const calculateFinalDimensions = (
     height *= settings.scale;
   }
 
-  // Ensure dimensions are even numbers (requirement for many H.264 encoders)
   width = Math.floor(width / 2) * 2;
   height = Math.floor(height / 2) * 2;
 
@@ -142,9 +142,7 @@ export const useRenderer = (
 
         const videoCodec = await getBestCodec(width, height);
         if (!videoCodec) {
-          throw new Error(
-            'No supported video codec found for this resolution in your browser.'
-          );
+          throw new Error('No supported video codec found.');
         }
 
         setState((s) => ({
@@ -198,8 +196,7 @@ export const useRenderer = (
           await source.add((frame - 1) * frameDuration, frameDuration);
 
           const elapsedTime = (performance.now() - startTime) / 1000;
-          const framesRemaining = totalFrames - frame;
-          const eta = Math.round(framesRemaining * (elapsedTime / frame));
+          const eta = Math.round((totalFrames - frame) * (elapsedTime / frame));
 
           setState((prevState) => ({
             ...prevState,
@@ -217,6 +214,11 @@ export const useRenderer = (
 
         // 2. Hold Frames Loop
         if (totalHoldFrames > 0) {
+          await rendererRef.current.seek(settings.duration * 1000);
+          const finalBitmap = await rendererRef.current.capture(
+            settings.captureMethod
+          );
+
           for (let frame = 1; frame <= totalHoldFrames; frame++) {
             if (cancelRef.current) {
               setState({
@@ -227,7 +229,11 @@ export const useRenderer = (
               return;
             }
             const currentFrame = totalAnimationFrames + frame;
+            ctx.fillStyle = settings.backgroundColor;
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(finalBitmap, 0, 0, width, height);
             await source.add((currentFrame - 1) * frameDuration, frameDuration);
+
             const elapsedTime = (performance.now() - startTime) / 1000;
             const eta = Math.round(
               (totalFrames - currentFrame) * (elapsedTime / currentFrame)
@@ -246,6 +252,7 @@ export const useRenderer = (
               },
             }));
           }
+          finalBitmap.close();
         }
 
         setState({
