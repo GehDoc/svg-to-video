@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { seekAnimations } from '@shared/animation-engine';
 import { getRendererScript } from './renderer';
+import rendererTemplate from './renderer.html?raw';
 
 export interface RendererHandle {
   loadSvg: (svgContent: string, width: number, height: number) => Promise<void>;
@@ -22,29 +23,14 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
 
   // Initialize iframe with blob to ensure COOP/COEP header inheritance
   useEffect(() => {
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2" />
-          <style>
-            body, html { margin: 0; padding: 0; overflow: hidden; width: 100%; height: 100%; background: transparent; }
-            #svg-container { width: 100%; height: 100%; }
-            svg { display: block; width: 100%; height: 100%; }
-            canvas { display: none; }
-          </style>
-        </head>
-        <body>
-          <div id="svg-container"></div>
-          <canvas id="capture-canvas"></canvas>
-          <script>
-            const seekAnimations = ${seekAnimations.toString()};
-            (${getRendererScript.toString()})(seekAnimations);
-          </script>
-        </body>
-      </html>
-    `;
+    const rendererScript = `(${getRendererScript.toString()})(window.seekAnimations);`;
+    const html = rendererTemplate.replace(
+      '// RENDERER_SCRIPT_PLACEHOLDER',
+      `
+      window.seekAnimations = ${seekAnimations.toString()};
+      ${rendererScript}
+    `
+    );
     const blob = new Blob([html], { type: 'text/html' });
     if (iframeRef.current) {
       iframeRef.current.src = URL.createObjectURL(blob);
