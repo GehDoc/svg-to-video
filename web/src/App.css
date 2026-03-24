@@ -231,22 +231,13 @@ header p {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.footer-mini {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
+.render-actions {
+  padding: 1rem 1.5rem;
+  background: var(--panel);
   border-top: 1px solid var(--border);
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  text-align: center;
-}
-
-.footer-mini p {
-  margin: 0 0 0.5rem;
-}
-
-.footer-mini .github-link {
-  justify-content: center;
-  font-size: 0.8rem;
+  position: sticky;
+  bottom: 0;
+  margin-top: 1rem;
 }
 
 .render-button {
@@ -471,32 +462,24 @@ header p {
   max-width: 400px;
 }
 
-footer {
-  padding: 0.75rem 2rem;
-  background: var(--panel);
+.footer-mini {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--border);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
   text-align: center;
 }
 
-.footer-content {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  width: 100%;
-  padding: 0 1rem;
+.footer-mini p {
+  margin: 0 0 0.5rem;
 }
 
-.footer-content p {
-  margin: 0;
-  text-align: center;
-}
-
-.github-link {
+.footer-mini .github-link {
+  justify-content: center;
+  font-size: 0.8rem;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   gap: 0.4rem;
   color: var(--text-muted);
   font-weight: 500;
@@ -504,6 +487,6 @@ footer {
   transition: color 0.2s;
 }
 
-.github-link:hover {
+.footer-mini .github-link:hover {
   color: var(--primary);
 }
