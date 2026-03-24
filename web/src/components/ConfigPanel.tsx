@@ -143,7 +143,9 @@ export const ConfigPanel = () => {
 
         <div className="grid-3">
           <div className="input-group">
-            <label htmlFor="duration">Duration (s)</label>
+            <label htmlFor="duration" style={{ fontSize: '0.7rem' }}>
+              Dur. (s)
+            </label>
             <input
               type="number"
               id="duration"
@@ -154,7 +156,9 @@ export const ConfigPanel = () => {
             />
           </div>
           <div className="input-group">
-            <label htmlFor="hold">Hold (s)</label>
+            <label htmlFor="hold" style={{ fontSize: '0.7rem' }}>
+              Hold (s)
+            </label>
             <input
               type="number"
               id="hold"
@@ -166,7 +170,9 @@ export const ConfigPanel = () => {
             />
           </div>
           <div className="input-group">
-            <label htmlFor="fps">FPS</label>
+            <label htmlFor="fps" style={{ fontSize: '0.7rem' }}>
+              FPS
+            </label>
             <input
               type="number"
               id="fps"

@@ -140,7 +140,7 @@ header p {
 .grid-3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.75rem;
+  gap: 1.5rem;
 }
 
 .color-picker-wrapper {
@@ -172,11 +172,13 @@ header p {
   transition: all 0.2s ease;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.02);
+  color: var(--text-muted);
 }
 
 .dropzone:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
   border-color: var(--primary);
+  color: var(--text);
 }
 
 .dropzone.dragging {
@@ -454,15 +456,22 @@ footer {
 }
 
 .footer-content {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  gap: 1rem;
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.footer-content p {
+  margin: 0;
+  text-align: center;
 }
 
 .github-link {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.4rem;
   color: var(--text-muted);
   font-weight: 500;
