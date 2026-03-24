@@ -140,7 +140,18 @@ header p {
 .grid-3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 1.5rem;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.grid-3 .input-group {
+  margin-bottom: 0;
+}
+
+.grid-3 .input-group label {
+  text-align: center;
+  font-size: 0.65rem;
+  margin-bottom: 0.25rem;
 }
 
 .color-picker-wrapper {
