@@ -1,7 +1,9 @@
 {
   "name": "@svg-to-video/web",
-  "private": true,
   "version": "0.2.0",
+  "description": "The Web Studio interface for svg-to-video",
+  "author": "GehDoc",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
