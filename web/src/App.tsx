@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { FaGithub } from 'react-icons/fa';
 import type { RendererHandle } from './components/SvgRenderer';
 import { StudioProvider } from './context/StudioProvider';
 import { ConfigPanel } from './components/ConfigPanel';
@@ -14,7 +15,7 @@ function App() {
         <header>
           <h1>
             <img
-              src="/favicon.svg"
+              src="favicon.svg"
               alt=""
               width="24"
               height="24"
@@ -36,22 +37,25 @@ function App() {
           </h1>
           <p>Zero-server high-fidelity rendering</p>
         </header>
-
         <main className="studio-layout">
           <ConfigPanel />
           <MonitorPanel />
         </main>
-
         <footer>
-          All processing happens locally in your browser. Files never leave your
-          computer. |{' '}
-          <a
-            href="https://github.com/GehDoc/svg-to-video"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            GitHub Repository
-          </a>
+          <div className="footer-content">
+            <p>
+              All processing happens locally in your browser. Files never leave
+              your computer.
+            </p>
+            <a
+              href="https://github.com/GehDoc/svg-to-video"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="github-link"
+            >
+              <FaGithub size={16} /> <span>GitHub</span>
+            </a>
+          </div>
         </footer>
       </div>
     </StudioProvider>

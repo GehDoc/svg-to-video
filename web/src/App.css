@@ -447,20 +447,28 @@ footer {
   padding: 0.75rem 2rem;
   background: var(--panel);
   border-top: 1px solid var(--border);
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   text-align: center;
 }
 
-footer a {
-  color: var(--primary);
+.footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.github-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-muted);
+  font-weight: 500;
   text-decoration: none;
+  transition: color 0.2s;
 }
 
-footer a:hover {
-  text-decoration: underline;
-}
-
-footer a:visited {
+.github-link:hover {
   color: var(--primary);
 }

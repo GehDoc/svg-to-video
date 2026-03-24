@@ -14,7 +14,8 @@
   "license": "MIT",
   "dependencies": {
     "commander": "^14.0.3",
-    "puppeteer": "^24.38.0"
+    "puppeteer": "^24.38.0",
+    "react-icons": "^5.6.0"
   },
   "devDependencies": {
     "@types/commander": "^2.12.0",
