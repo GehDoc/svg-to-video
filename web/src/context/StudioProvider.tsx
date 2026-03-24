@@ -41,7 +41,6 @@ export const StudioProvider = ({
       targetDim = calculateFinalDimensions(
         originalDim.width,
         originalDim.height,
-        originalDim.fromViewBox,
         { preset, scale }
       );
     } catch {

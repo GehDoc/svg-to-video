@@ -58,7 +58,6 @@ export const parseSvgDimensions = (svgContent: string) => {
   if (isNaN(width) || isNaN(height)) {
     width = 1920;
     height = 1080;
-    fromViewBox = false; // Defaulting, not from viewbox
   }
 
   return { width, height, fromViewBox };
@@ -67,28 +66,20 @@ export const parseSvgDimensions = (svgContent: string) => {
 export const calculateFinalDimensions = (
   origWidth: number,
   origHeight: number,
-  fromViewBox: boolean,
   settings: { preset: ResolutionPreset; scale: number }
 ) => {
   let width = origWidth;
   let height = origHeight;
 
-  // Only apply presets if the SVG has explicit width/height.
-  // If we only have a viewBox, 'original' is the only sensible option.
-  if (!fromViewBox) {
-    if (settings.preset === '720p') {
-      const ratio = Math.min(1280 / origWidth, 720 / origHeight);
-      width = origWidth * ratio;
-      height = origHeight * ratio;
-    } else if (settings.preset === '1080p') {
-      const ratio = Math.min(1920 / origWidth, 1080 / origHeight);
-      width = origWidth * ratio;
-      height = origHeight * ratio;
-    }
-  }
-
-  // Always apply scaling
-  if (settings.preset === 'original') {
+  if (settings.preset === '720p') {
+    const ratio = Math.min(1280 / origWidth, 720 / origHeight);
+    width = origWidth * ratio;
+    height = origHeight * ratio;
+  } else if (settings.preset === '1080p') {
+    const ratio = Math.min(1920 / origWidth, 1080 / origHeight);
+    width = origWidth * ratio;
+    height = origHeight * ratio;
+  } else if (settings.preset === 'original') {
     width *= settings.scale;
     height *= settings.scale;
   }
@@ -127,15 +118,11 @@ export const useRenderer = (
       setState({ isRendering: true, progress: 0, status: 'Initializing...' });
 
       try {
-        const {
-          width: origWidth,
-          height: origHeight,
-          fromViewBox,
-        } = parseSvgDimensions(svgContent);
+        const { width: origWidth, height: origHeight } =
+          parseSvgDimensions(svgContent);
         const { width, height } = calculateFinalDimensions(
           origWidth,
           origHeight,
-          fromViewBox,
           settings
         );
 
@@ -147,9 +134,7 @@ export const useRenderer = (
           target,
         });
 
-        // Dynamically find the best supported codec for these specific dimensions
         const videoCodec = await getBestCodec(width, height);
-
         if (!videoCodec) {
           throw new Error(
             'No supported video codec found for this resolution in your browser.'
@@ -197,24 +182,18 @@ export const useRenderer = (
 
           const timeMs = ((frame - 1) / settings.fps) * 1000;
           await rendererRef.current.seek(timeMs);
-
           const bitmap = await rendererRef.current.capture(
             settings.captureMethod
           );
-
-          // Fill background
           ctx.fillStyle = settings.backgroundColor;
           ctx.fillRect(0, 0, width, height);
-
-          ctx.drawImage(bitmap, 0, 0);
+          ctx.drawImage(bitmap, 0, 0, width, height);
           bitmap.close();
-
           await source.add((frame - 1) * frameDuration, frameDuration);
 
-          const elapsedTime = (performance.now() - startTime) / 1000; // in seconds
+          const elapsedTime = (performance.now() - startTime) / 1000;
           const framesRemaining = totalFrames - frame;
-          const timePerFrame = elapsedTime / frame;
-          const eta = Math.round(framesRemaining * timePerFrame);
+          const eta = Math.round(framesRemaining * (elapsedTime / frame));
 
           setState((prevState) => ({
             ...prevState,
@@ -230,7 +209,7 @@ export const useRenderer = (
           }));
         }
 
-        // 2. Hold Frames Loop (Repeat last frame)
+        // 2. Hold Frames Loop
         if (totalHoldFrames > 0) {
           for (let frame = 1; frame <= totalHoldFrames; frame++) {
             if (cancelRef.current) {
@@ -241,15 +220,12 @@ export const useRenderer = (
               });
               return;
             }
-
             const currentFrame = totalAnimationFrames + frame;
-            // The canvas already contains the last frame's image, so we just add it again
             await source.add((currentFrame - 1) * frameDuration, frameDuration);
-
-            const elapsedTime = (performance.now() - startTime) / 1000; // in seconds
-            const framesRemaining = totalFrames - currentFrame;
-            const timePerFrame = elapsedTime / currentFrame;
-            const eta = Math.round(framesRemaining * timePerFrame);
+            const elapsedTime = (performance.now() - startTime) / 1000;
+            const eta = Math.round(
+              (totalFrames - currentFrame) * (elapsedTime / currentFrame)
+            );
 
             setState((prevState) => ({
               ...prevState,
@@ -272,18 +248,14 @@ export const useRenderer = (
           status: 'Finalizing video...',
         });
         await output.finalize();
-
         const resultBuffer = target.buffer;
         if (!resultBuffer) throw new Error('Output buffer is empty');
-
         const blob = new Blob([resultBuffer], { type: 'video/mp4' });
         const url = URL.createObjectURL(blob);
-
         setState({ isRendering: false, progress: 100, status: 'Done!' });
         return url;
       } catch (err) {
         const error = err as Error;
-        console.error(error);
         setState({
           isRendering: false,
           progress: 0,

@@ -106,23 +106,12 @@ export const ConfigPanel = () => {
             onChange={(e: ChangeEvent<HTMLSelectElement>) =>
               setPreset(e.target.value as ResolutionPreset)
             }
-            disabled={
-              state.isRendering || !!renderedUrl || originalDim.fromViewBox
-            }
+            disabled={state.isRendering || !!renderedUrl}
           >
             <option value="original">Original Size</option>
-            <option value="720p" disabled={originalDim.fromViewBox}>
-              720p (Fit)
-            </option>
-            <option value="1080p" disabled={originalDim.fromViewBox}>
-              1080p (Fit)
-            </option>
+            <option value="720p">720p (Fit)</option>
+            <option value="1080p">1080p (Fit)</option>
           </select>
-          {originalDim.fromViewBox && (
-            <p className="hint-text">
-              SVG has no dimensions; using viewBox. Presets disabled.
-            </p>
-          )}
         </div>
 
         {preset === 'original' && (
