@@ -231,13 +231,22 @@ header p {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.render-actions {
-  padding: 1rem 1.5rem;
-  background: var(--panel);
+.footer-mini {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--border);
-  position: sticky;
-  bottom: 0;
-  margin-top: auto;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.footer-mini p {
+  margin: 0 0 0.5rem;
+}
+
+.footer-mini .github-link {
+  justify-content: center;
+  font-size: 0.8rem;
 }
 
 .render-button {

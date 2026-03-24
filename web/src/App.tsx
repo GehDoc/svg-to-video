@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import { FaGithub } from 'react-icons/fa';
 import type { RendererHandle } from './components/SvgRenderer';
 import { StudioProvider } from './context/StudioProvider';
 import { ConfigPanel } from './components/ConfigPanel';
@@ -41,22 +40,6 @@ function App() {
           <ConfigPanel />
           <MonitorPanel />
         </main>
-        <footer>
-          <div className="footer-content">
-            <p>
-              All processing happens locally in your browser. Files never leave
-              your computer.
-            </p>
-            <a
-              href="https://github.com/GehDoc/svg-to-video"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="github-link"
-            >
-              <FaGithub size={16} /> <span>GitHub</span>
-            </a>
-          </div>
-        </footer>
       </div>
     </StudioProvider>
   );
