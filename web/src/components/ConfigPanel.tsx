@@ -1,8 +1,6 @@
 import { StudioContext } from '../context/StudioContext';
 import { useContext, type ChangeEvent } from 'react';
 import type { ResolutionPreset } from '../hooks/useRenderer';
-import { FaGithub } from 'react-icons/fa';
-import pkg from '../../../package.json';
 
 export const ConfigPanel = () => {
   const {
@@ -223,17 +221,6 @@ export const ConfigPanel = () => {
         >
           {state.isRendering ? 'Processing...' : 'Export MP4'}
         </button>
-        <div className="footer-mini">
-          <p>Local processing only. Files never leave your browser.</p>
-          <a
-            href="https://github.com/GehDoc/svg-to-video"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="github-link"
-          >
-            <FaGithub size={16} /> <span>v{pkg.version}</span>
-          </a>
-        </div>
       </div>
     </aside>
   );
