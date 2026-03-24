@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const fs = require('fs');
 const child_process = require('child_process');
 const puppeteer = require('puppeteer');

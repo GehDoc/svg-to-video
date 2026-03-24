@@ -1,7 +1,7 @@
 {
-  "name": "web",
+  "name": "@svg-to-video/web",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,7 +16,8 @@
     "coi-serviceworker": "^0.1.7",
     "mediabunny": "^1.39.2",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "react-icons": "^5.6.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

@@ -1,6 +1,8 @@
 import { StudioContext } from '../context/StudioContext';
 import { useContext } from 'react';
 import SvgRenderer from './SvgRenderer';
+import { FaGithub } from 'react-icons/fa';
+import pkg from '../../../package.json';
 
 export const MonitorPanel = () => {
   const {
@@ -116,6 +118,22 @@ export const MonitorPanel = () => {
                     <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
                   <p>Upload an SVG to begin preview</p>
+                  <div
+                    className="footer-mini"
+                    style={{ borderTop: 'none', marginTop: '2rem' }}
+                  >
+                    <p>
+                      Local processing only. Files never leave your browser.
+                    </p>
+                    <a
+                      href="https://github.com/GehDoc/svg-to-video"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="github-link"
+                    >
+                      <FaGithub size={16} /> <span>v{pkg.version}</span>
+                    </a>
+                  </div>
                 </div>
               )}
             </>
