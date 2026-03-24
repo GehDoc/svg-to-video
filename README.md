@@ -4,7 +4,7 @@ A high-fidelity tool to render CSS-animated SVGs into MP4 videos.
 
 Unlike standard converters that struggle with complex CSS keyframes or transitions, this project provides a unified engine to scrub through the Web Animations API, ensuring every frame is captured exactly as the browser renders it.
 
-## 🌐 Web Studio (New!)
+## 🌐 Web Studio
 
 Prefer a GUI? Our **[Web Studio](https://gehdoc.github.io/svg-to-video/)** is a serverless, client-side rendering tool. It runs entirely in your browser using **WebCodecs**—your SVG files never leave your computer, ensuring absolute privacy.
 
