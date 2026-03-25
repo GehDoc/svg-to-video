@@ -9,11 +9,11 @@ Establish visual component testing using Storybook in the `web/` workspace to en
 
 ## 🛠 Technical Strategy
 
-- **Core Technologies**: Storybook (Vite integration), Storybook Test Runner (Playwright-based), Chromatic (optional, but standard for visual regression).
+- **Core Technologies**: Storybook (Vite integration), Storybook Test Runner (Playwright-based).
 - **Architecture**: Move from brute-force E2E tests to component-level sandboxing.
 - **CI Integration**: Integrate `test-storybook` into `.github/workflows/ci.yml` and mandate it as a **required GitHub Status Check** in branch protection rules to block PR merges if visual regressions occur.
 - **Component Sandbox**: Create `SvgRenderer.stories.tsx` to expose `seek` and `capture` controls, allowing inspection of `SvgRenderer` in isolation.
-- **Visual Regression**: Implement baseline screenshots for different rendering modes (Optimal vs. High-Fidelity) at critical timestamps.
+- **Visual Regression**: Use native Playwright snapshot testing (via Storybook Test Runner) to compare current renders against baseline images committed to the repo, ensuring zero 3rd-party dependency. Include baseline snapshots for different rendering modes (Optimal vs. High-Fidelity) at critical timestamps.
 - **"Loop-Synchronized-Capture" Test**: Implement a specific test scenario using a `loop-test.svg` (360° rotation) to verify temporal integrity (T0 vs T1 frames differ) and fidelity integrity (Optimal vs High-Fidelity outputs match).
 
 ## ✅ Task List
@@ -28,6 +28,7 @@ Establish visual component testing using Storybook in the `web/` workspace to en
   - [ ] Configure Storybook Test Runner.
   - [ ] Implement "Loop-Synchronized-Capture" test scenario using `loop-test.svg`.
   - [ ] Integrate test runner into CI pipeline and set as mandatory status check.
+  - [ ] Implement local baseline snapshot capture process.
   - [ ] Document pixel-matching assertions for rendering modes.
 
 ## 🧪 Verification Plan
