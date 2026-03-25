@@ -1,31 +1,42 @@
+import { useRef } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import SvgRenderer from './index';
+import type { RendererHandle } from './index';
 
-const meta: Meta<typeof SvgRenderer> = {
+const Wrapper = ({ backgroundColor }: { backgroundColor: string }) => {
+  const ref = useRef<RendererHandle>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.loadSvg(
+        '<svg width="500" height="500"><rect width="100%" height="100%" fill="blue" /></svg>',
+        500,
+        500,
+        backgroundColor
+      );
+    }
+  }, [backgroundColor]);
+
+  return (
+    <div style={{ backgroundColor, padding: '10px' }}>
+      <SvgRenderer ref={ref} />
+    </div>
+  );
+};
+
+const meta: Meta<typeof Wrapper> = {
   title: 'Components/SvgRenderer',
-  component: SvgRenderer,
-  parameters: {
-    layout: 'centered',
-  },
+  component: Wrapper,
   argTypes: {
     backgroundColor: { control: 'color' },
-    captureMethod: {
-      control: 'select',
-      options: ['optimal', 'high-fidelity'],
-    },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof SvgRenderer>;
+type Story = StoryObj<typeof Wrapper>;
 
 export const Default: Story = {
   args: {
-    // These args would pass to the SvgRenderer if it accepted them as props.
-    // Since it's a forwardRef, we use the `play` function to interact.
-  },
-  play: async () => {
-    // We can use the play function to interact with the component once it's rendered
-    // e.g., calling ref.current.loadSvg()
+    backgroundColor: '#ffffff',
   },
 };
