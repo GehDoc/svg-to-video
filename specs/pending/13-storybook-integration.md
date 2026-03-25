@@ -29,6 +29,7 @@ Establish visual component testing using Storybook in the `web/` workspace to en
   - [ ] Implement "Loop-Synchronized-Capture" test scenario using `loop-test.svg`.
   - [ ] Integrate test runner into CI pipeline and set as mandatory status check.
   - [ ] Implement local baseline snapshot capture process.
+  - [ ] Update DEVELOPER.md to document the new testing modes and commands.
   - [ ] Document pixel-matching assertions for rendering modes.
 
 ## 🧪 Verification Plan
