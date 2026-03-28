@@ -1,5 +1,6 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import SvgRenderer from './index';
 import type { RendererHandle } from './index';
 
@@ -24,19 +25,26 @@ const Wrapper = ({ backgroundColor }: { backgroundColor: string }) => {
   );
 };
 
-const meta: Meta<typeof Wrapper> = {
+const meta = {
   title: 'Components/SvgRenderer',
   component: Wrapper,
+  tags: ['test'],
   argTypes: {
     backgroundColor: { control: 'color' },
   },
-};
+} satisfies Meta<typeof Wrapper>;
 
 export default meta;
-type Story = StoryObj<typeof Wrapper>;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
     backgroundColor: '#ffffff',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Wait for the "Live Monitor" label to appear
+    const monitorLabel = await canvas.findByText('Live Monitor');
+    await expect(monitorLabel).toBeInTheDocument();
   },
 };
