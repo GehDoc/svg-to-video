@@ -44,8 +44,43 @@ If working without an agent, follow these steps to keep the project state synchr
 | `npm run lint:fix` | Fixes linting issues in both CLI and Web Studio code. |
 | `npm run format` | Checks for formatting issues. |
 | `npm run format:fix` | Fixes formatting issues. |
-| `npm run test` | Runs all tests (CLI and Web Studio E2E). |
+| `npm run test` | Runs all tests (CLI, Web Studio E2E, and Storybook). |
+| `npm run test:storybook` | Runs Storybook interaction tests using Vitest. |
+| `npm run test-storybook:update` | Updates Vitest browser snapshots for Storybook tests. |
 | `npm run type-check` | Validates TypeScript types. |
+
+## 📸 Visual Regression Testing
+
+The `SvgRenderer` component is monitored for visual regressions using Storybook and Vitest's browser mode.
+
+### Running Visual Tests
+
+Snapshots are captured in a headless browser (Chromium) to ensure frame-accurate rendering consistency across different environments.
+
+```bash
+# In the web/ directory
+npm run test-storybook
+```
+
+### Updating Baselines
+
+When intentional changes are made to the rendering logic, update the stored snapshots:
+
+```bash
+# In the root or web/ directory
+npm run test-storybook:update
+```
+
+### Configuring Pixel-Match Thresholds
+
+To adjust the sensitivity of the visual comparison (e.g., to ignore minor anti-aliasing differences), you can provide a threshold in the story's play function:
+
+```typescript
+// Example: src/components/SvgRenderer/SvgRenderer.stories.tsx
+await expect(canvasElement).toMatchImageSnapshot({
+  threshold: 0.1, // Allow 10% pixel difference
+});
+```
 
 ## 🐳 Docker & Hardening
 

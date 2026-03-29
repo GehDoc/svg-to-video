@@ -70,6 +70,7 @@ export function getRendererScript(seekAnimations) {
       svgContainer.style.backgroundColor = backgroundColor;
       captureCanvas.width = width;
       captureCanvas.height = height;
+
       window.parent.postMessage({ type: 'READY' }, '*');
     }
 
@@ -126,12 +127,14 @@ export function getRendererScript(seekAnimations) {
       ctx.drawImage(img, 0, 0, captureCanvas.width, captureCanvas.height);
       URL.revokeObjectURL(url);
       const bitmap = await createImageBitmap(captureCanvas);
-      const channel = new MessageChannel();
       window.parent.postMessage(
         { type: 'CAPTURE_RESULT', payload: bitmap },
         '*',
-        [channel.port2]
+        [bitmap]
       );
     }
   });
+
+  // Signal that the script is loaded and listening
+  window.parent.postMessage({ type: 'SCRIPT_LOADED' }, '*');
 }
