@@ -133,7 +133,7 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
   }));
 
   return (
-    <div className="renderer-monitor">
+    <div className="renderer-monitor" data-testid="svg-renderer">
       <p className="monitor-label">Live Monitor</p>
       <div className="monitor-viewport">
         <iframe

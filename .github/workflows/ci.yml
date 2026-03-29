@@ -70,3 +70,5 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Web E2E tests
         run: npm run test:web
+      - name: Run Storybook Interaction tests
+        run: npm run test:storybook
