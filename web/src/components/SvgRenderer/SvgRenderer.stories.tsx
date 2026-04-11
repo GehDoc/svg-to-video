@@ -106,7 +106,7 @@ const meta = {
     height: 500,
     seekTime: 0,
     svgContent:
-      '<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="blue" /><circle cx="250" cy="250" r="100" fill="yellow"><animate attributeName="r" from="50" to="150" dur="2s" repeatCount="indefinite" /></circle></svg>',
+      '<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg"><polygon points="0,0 500,0 0,500" fill="blue" opacity="0.8" /><circle cx="350" cy="150" r="100" fill="yellow"><animate attributeName="r" from="50" to="150" dur="2s" repeatCount="indefinite" /></circle></svg>',
   },
   argTypes: {
     backgroundColor: { control: 'color' },
