@@ -16,7 +16,7 @@
     "test-storybook:update": "vitest run --project=storybook -u",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build -o dist/storybook"
   },
   "dependencies": {
     "coi-serviceworker": "^0.1.7",

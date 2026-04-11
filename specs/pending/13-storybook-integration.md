@@ -38,16 +38,17 @@ Establish visual component testing using Storybook in the `web/` workspace to en
 
 ### 🚀 Phase 2: Advanced Integration & Gallery
 
-- [ ] **Exhaustive Component controls**
-  - [ ] Refactor `Wrapper` to support declarative `svgContent` updates via Storybook Controls.
-  - [ ] Add `width`, `height`, and `backgroundColor` as interactive knobs.
-- [ ] **Visual Test Gallery**
-  - [ ] Create `TypographySuite.story` using `font-test.svg`.
-  - [ ] Create `AnimationStressTest.story` with 20+ simultaneous keyframe animations.
-  - [ ] Create `FilterFidelity.story` verifying `<feGaussianBlur>` and `<feColorMatrix>` rendering.
-- [ ] **Automated Deployment**
-  - [ ] Update `.github/workflows/deploy.yml` to build and deploy Storybook to `/storybook/` subfolder.
-  - [ ] Ensure `coi-serviceworker` is active in the Storybook build for WebCodecs support.
+- [x] **Exhaustive Component controls**
+  - [x] Refactor `Wrapper` to support declarative `svgContent` updates via Storybook Controls.
+  - [x] Add `width`, `height`, and `backgroundColor` as interactive knobs.
+  - [x] Replace `window.alert` with **Storybook Actions** for cleaner event logging.
+- [x] **Visual Test Gallery**
+  - [x] Create `TypographySuite.story` using `font-test.svg`.
+  - [x] Create `AnimationStressTest.story` with 20+ simultaneous keyframe animations.
+  - [x] Create `FilterFidelity.story` verifying `<feGaussianBlur>` and `<feColorMatrix>` rendering.
+- [x] **Automated Deployment**
+  - [x] Update `.github/workflows/deploy.yml` to build and deploy Storybook to `/storybook/` subfolder.
+  - [x] Ensure `coi-serviceworker` is active in the Storybook build for WebCodecs support.
 
 ## 🧪 Verification Plan
 
