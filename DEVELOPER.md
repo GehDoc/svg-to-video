@@ -46,7 +46,8 @@ If working without an agent, follow these steps to keep the project state synchr
 | `npm run format:fix` | Fixes formatting issues. |
 | `npm run test` | Runs all tests (CLI, Web Studio E2E, and Storybook). |
 | `npm run test:storybook` | Runs Storybook interaction tests using Vitest. |
-| `npm run test-storybook:update` | Updates Vitest browser snapshots for Storybook tests. |
+| `npm run test:storybook:update` | Updates visual regression baseline screenshots. |
+| `npm run build-storybook` | Builds the Storybook static site for deployment. |
 | `npm run type-check` | Validates TypeScript types. |
 
 ## 📸 Visual Regression Testing
