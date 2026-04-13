@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { within, fn } from 'storybook/test';
-import { expect } from 'vitest';
+import { within, expect, fn } from 'storybook/test';
 import SvgRenderer from './index';
 import type { RendererHandle } from './index';
 
@@ -138,8 +137,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const renderer = canvas.getByTestId('svg-renderer');
-    await new Promise((r) => setTimeout(r, 1000));
-    await expect.element(renderer).toMatchScreenshot('default-view.png');
+    await expect(renderer).toBeInTheDocument();
   },
 };
 
@@ -156,12 +154,6 @@ export const LoopSynchronizedCapture: Story = {
     `,
     width: 400,
     height: 100,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const renderer = canvas.getByTestId('svg-renderer');
-    await new Promise((r) => setTimeout(r, 1000));
-    await expect.element(renderer).toMatchScreenshot('loop-t0.png');
   },
 };
 
@@ -183,12 +175,6 @@ export const TypographySuite: Story = {
         <text x="20" y="250">Emojis: 🚀 🎨 🐳 ✅</text>
       </svg>
     `,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const renderer = canvas.getByTestId('svg-renderer');
-    await new Promise((r) => setTimeout(r, 1000));
-    await expect.element(renderer).toMatchScreenshot('typography-suite.png');
   },
 };
 
@@ -215,13 +201,6 @@ export const AnimationStressTest: Story = {
       </svg>
     `,
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const renderer = canvas.getByTestId('svg-renderer');
-    await new Promise((r) => setTimeout(r, 1000));
-    await expect.element(renderer).toMatchScreenshot('animation-stress.png');
-  },
-  parameters: { test: { testTimeout: 60000 } },
 };
 
 export const FilterFidelity: Story = {
@@ -247,11 +226,5 @@ export const FilterFidelity: Story = {
         </rect>
       </svg>
     `,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const renderer = canvas.getByTestId('svg-renderer');
-    await new Promise((r) => setTimeout(r, 1000));
-    await expect.element(renderer).toMatchScreenshot('filter-fidelity.png');
   },
 };

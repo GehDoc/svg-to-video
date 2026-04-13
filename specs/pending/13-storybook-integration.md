@@ -1,7 +1,7 @@
 # Spec: 13 - Storybook Component Testing
 
 **GitHub Issue**: [https://github.com/GehDoc/svg-to-video/issues/13](https://github.com/GehDoc/svg-to-video/issues/13)
-**Status**: 🟡 In-Progress (Visual validation stable, investigating stress test performance)
+**Status**: 🟡 In-Progress (Visual validation stable, refining temporal/fidelity assertions)
 
 ## 🎯 Objective
 
@@ -10,36 +10,39 @@ Establish visual component testing using Storybook in the `web/` workspace to en
 ## 🛠 Technical Strategy
 
 - **Core Technologies**: Storybook 10.3.3 (Vite integration), Vitest Browser Mode.
-- **Visual Regression**: Uses native `expect.element().toMatchScreenshot()` for deterministic pixel-perfect validation.
+- **Visual Regression**: Uses native `expect.element().toMatchScreenshot()` for deterministic pixel-perfect validation, decoupled from the Storybook UI sandbox.
+- **Fidelity & Temporal Validation**: Manual frame-data comparison to ensure scrubbing engine progress and cross-mode output fidelity.
 
 ## ✅ Task List
 
 ### 🚀 Phase 2: Advanced Integration & Gallery
 
 - [x] **Exhaustive Component controls**
-  - [x] Refactor `Wrapper` to support declarative `svgContent` updates via Storybook Controls.
-  - [x] Add `width`, `height`, and `backgroundColor` as interactive knobs.
-  - [x] Replace `window.alert` with **Storybook Actions** for cleaner event logging.
 - [x] **Procedural Visual Validation Strategy**
-  - [x] Implement capture logic in `Wrapper` to extract pixel data.
-  - [x] Implement `toMatchScreenshot` using native browser mode.
 - [x] **Visual Test Gallery**
-  - [x] Create `TypographySuite.story`.
-  - [x] Create `AnimationStressTest.story` (investigating performance timeout).
-  - [x] Create `FilterFidelity.story`.
 - [x] **Automated Deployment**
-  - [x] Update `.github/workflows/deploy.yml` for Storybook.
-  - [x] Ensure `coi-serviceworker` is active.
+
+### ✨ Phase 3: Final Polish & Stability
+
+- [ ] **Temporal & Fidelity Validation (New)**
+  - [ ] Implement `LoopSynchronizedCapture` assertions: Capture at **Start (T0)**, **Middle (T50%)**, and **End (T100%)**.
+  - [ ] Assert `T0 != T50` and `T50 != T100` to verify smooth scrubbing progression.
+  - [ ] Assert `Frame(Optimal) == Frame(High-Fidelity)` within pixel-distance threshold.
+- [ ] **Stabilize Stress Test**: Adjust `AnimationStressTest` parameters to ensure consistent CI pass rates without fragile timeouts.
+- [ ] **Final Deployment Verification**: Verify live deployment of the Storybook gallery on GitHub Pages.
 
 ## 🧪 Verification Plan
 
 - [x] Storybook can be launched via `npm run storybook`.
-- [x] `SvgRenderer` renders correctly in Storybook UI with auto-loaded default SVG.
-- [x] Visual regression tests pass locally using `npm run test:storybook` (AnimationStressTest currently timing out).
+- [x] `SvgRenderer` renders correctly in Storybook UI.
+- [x] Native visual regression tests (`test:visual`) pass locally.
+- [ ] Temporal integrity assertions pass (3-point scrubbing verification).
+- [ ] Cross-mode fidelity assertion passes.
+- [ ] CI pipeline fully green with no flaky timeouts.
 
 ## 📝 Change Log
 
-- _2026-03-24: Initial spec created for Issue #13._
+- _2026-03-24: Initial spec created._
 - _2026-03-28: Path issue resolved. Integrated Storybook tests into CI pipeline._
-- _2026-04-13: Migrated to native `toMatchScreenshot` for visual regression._
-- _2026-04-14: Identified `AnimationStressTest` performance timeout; current focus is optimizing capture or increasing timeout headroom._
+- _2026-04-13: Migrated to native `toMatchScreenshot` and decoupled runners._
+- _2026-04-14: Identified `AnimationStressTest` timeout; expanded stability phase to include explicit temporal and fidelity assertions._
