@@ -36,19 +36,23 @@ Establish visual component testing using Storybook in the `web/` workspace to en
   - [x] Update DEVELOPER.md to document the new testing modes and commands.
   - [x] Document pixel-matching assertions for rendering modes in DEVELOPER.md.
 
-### 🚀 Phase 2: Advanced Integration & Gallery
-
-- [x] **Exhaustive Component controls**
-  - [x] Refactor `Wrapper` to support declarative `svgContent` updates via Storybook Controls.
-  - [x] Add `width`, `height`, and `backgroundColor` as interactive knobs.
-  - [x] Replace `window.alert` with **Storybook Actions** for cleaner event logging.
-- [x] **Visual Test Gallery**
-  - [x] Create `TypographySuite.story` using `font-test.svg`.
-  - [x] Create `AnimationStressTest.story` with 20+ simultaneous keyframe animations.
-  - [x] Create `FilterFidelity.story` verifying `<feGaussianBlur>` and `<feColorMatrix>` rendering.
-- [x] **Automated Deployment**
-  - [x] Update `.github/workflows/deploy.yml` to build and deploy Storybook to `/storybook/` subfolder.
-  - [x] Ensure `coi-serviceworker` is active in the Storybook build for WebCodecs support.
+  ### 🚀 Phase 2: Advanced Integration & Gallery (Procedural Visual Validation)
+  - [ ] **Exhaustive Component controls**
+    - [x] Refactor `Wrapper` to support declarative `svgContent` updates via Storybook Controls.
+    - [x] Add `width`, `height`, and `backgroundColor` as interactive knobs.
+    - [x] Replace `window.alert` with **Storybook Actions** for cleaner event logging.
+  - [ ] **Procedural Visual Validation Strategy**
+    - [x] Implement capture logic in `Wrapper` to extract pixel data (DataURL) in the browser.
+    - [ ] Implement `tests/fixtures/baselines/` storage for pixel-buffer hashes/data.
+    - [ ] Develop pixel-comparison utility (using `pixelmatch`) in Node.js to replace broken snapshotting.
+    - [ ] Update `SvgRenderer.stories.tsx` to assert pixel-distance thresholds instead of DOM snapshots.
+  - [ ] **Visual Test Gallery**
+    - [x] Create `TypographySuite.story`.
+    - [x] Create `AnimationStressTest.story`.
+    - [x] Create `FilterFidelity.story`.
+  - [ ] **Automated Deployment**
+    - [x] Update `.github/workflows/deploy.yml` for Storybook.
+    - [x] Ensure `coi-serviceworker` is active.
 
 ## 🧪 Verification Plan
 

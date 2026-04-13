@@ -12,8 +12,8 @@
     "lint:fix": "eslint . --fix",
     "type-check": "tsc -b",
     "test": "playwright test --reporter=line",
-    "test-storybook": "vitest run --project=storybook",
-    "test-storybook:update": "vitest run --project=storybook -u",
+    "test:storybook": "vitest run --project=storybook",
+    "test:storybook:update": "vitest run --project=storybook -u",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o dist/storybook"

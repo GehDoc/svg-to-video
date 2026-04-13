@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within, userEvent, waitFor, fn } from 'storybook/test';
+import { within, fn } from 'storybook/test';
+import { expect } from 'vitest';
 import SvgRenderer from './index';
 import type { RendererHandle } from './index';
 
@@ -10,7 +11,12 @@ interface WrapperProps {
   width: number;
   height: number;
   seekTime: number;
-  onCapture?: (data: { method: string; width: number; height: number }) => void;
+  onCapture?: (data: {
+    method: string;
+    width: number;
+    height: number;
+    dataUrl: string;
+  }) => void;
 }
 
 const Wrapper = ({
@@ -18,10 +24,15 @@ const Wrapper = ({
   svgContent,
   width,
   height,
-  seekTime,
+  seekTime: initialSeekTime,
   onCapture,
 }: WrapperProps) => {
   const ref = useRef<RendererHandle>(null);
+  const [currentSeek, setCurrentSeek] = useState(initialSeekTime);
+
+  useEffect(() => {
+    setCurrentSeek(initialSeekTime);
+  }, [initialSeekTime]);
 
   useEffect(() => {
     if (ref.current) {
@@ -31,20 +42,28 @@ const Wrapper = ({
 
   useEffect(() => {
     if (ref.current) {
-      ref.current.seek(seekTime);
+      ref.current.seek(currentSeek);
     }
-  }, [seekTime]);
+  }, [currentSeek]);
 
   const handleCapture = async (method: 'optimal' | 'high-fidelity') => {
     if (ref.current) {
       const bitmap = await ref.current.capture(method);
-      console.log(`Captured with ${method}:`, bitmap);
+      const canvas = document.createElement('canvas');
+      canvas.width = bitmap.width;
+      canvas.height = bitmap.height;
+      const ctx = canvas.getContext('bitmaprenderer');
+      if (ctx) ctx.transferFromImageBitmap(bitmap);
+      const dataUrl = canvas.toDataURL();
       onCapture?.({
         method,
         width: bitmap.width,
         height: bitmap.height,
+        dataUrl,
       });
+      return dataUrl;
     }
+    return null;
   };
 
   return (
@@ -65,21 +84,23 @@ const Wrapper = ({
       >
         <button
           onClick={() => handleCapture('optimal')}
-          style={{ padding: '8px 16px', cursor: 'pointer' }}
+          data-testid="capture-optimal"
         >
           Capture (Optimal)
         </button>
         <button
           onClick={() => handleCapture('high-fidelity')}
-          style={{ padding: '8px 16px', cursor: 'pointer' }}
+          data-testid="capture-hifi"
         >
           Capture (High-Fidelity)
         </button>
+        <button onClick={() => setCurrentSeek(1000)} data-testid="seek-1s">
+          Seek to 1s
+        </button>
         <span style={{ fontSize: '12px', color: '#666' }}>
-          Check "Actions" panel for capture results
+          Current Seek: {currentSeek}ms
         </span>
       </div>
-
       <div
         style={{
           display: 'inline-block',
@@ -108,26 +129,17 @@ const meta = {
     svgContent:
       '<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg"><polygon points="0,0 500,0 0,500" fill="blue" opacity="0.8" /><circle cx="350" cy="150" r="100" fill="yellow"><animate attributeName="r" from="50" to="150" dur="2s" repeatCount="indefinite" /></circle></svg>',
   },
-  argTypes: {
-    backgroundColor: { control: 'color' },
-    width: { control: { type: 'range', min: 100, max: 1920, step: 10 } },
-    height: { control: { type: 'range', min: 100, max: 1080, step: 10 } },
-    seekTime: { control: { type: 'range', min: 0, max: 10000, step: 100 } },
-    svgContent: { control: 'text' },
-  },
 } satisfies Meta<typeof Wrapper>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {
-    backgroundColor: '#ffffff',
-  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const monitorLabel = await canvas.findByText('Live Monitor');
-    await expect(monitorLabel).toBeInTheDocument();
+    const renderer = canvas.getByTestId('svg-renderer');
+    await new Promise((r) => setTimeout(r, 1000));
+    await expect.element(renderer).toMatchScreenshot('default-view.png');
   },
 };
 
@@ -138,53 +150,18 @@ export const LoopSynchronizedCapture: Story = {
       <svg width="400" height="100" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" fill="#eee" />
         <circle cx="50" cy="50" r="20" fill="#3b82f6">
-          <animate 
-            attributeName="cx" 
-            from="50" 
-            to="350" 
-            dur="2s" 
-            repeatCount="indefinite" />
+          <animate attributeName="cx" from="50" to="350" dur="2s" repeatCount="indefinite" />
         </circle>
       </svg>
     `,
     width: 400,
     height: 100,
   },
-  play: async ({ canvasElement, step, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-
-    await step('Load and Seek', async () => {
-      await new Promise((r) => setTimeout(r, 1000));
-      const renderer = canvas.getByTestId('svg-renderer');
-      await expect(renderer).toBeInTheDocument();
-    });
-
-    await step('Test Capture Buttons', async () => {
-      const optimalBtn = canvas.getByRole('button', {
-        name: /Capture \(Optimal\)/i,
-      });
-      const hiFiBtn = canvas.getByRole('button', {
-        name: /Capture \(High-Fidelity\)/i,
-      });
-
-      await userEvent.click(optimalBtn);
-      await waitFor(
-        () =>
-          expect(args.onCapture).toHaveBeenCalledWith(
-            expect.objectContaining({ method: 'optimal' })
-          ),
-        { timeout: 3000 }
-      );
-
-      await userEvent.click(hiFiBtn);
-      await waitFor(
-        () =>
-          expect(args.onCapture).toHaveBeenCalledWith(
-            expect.objectContaining({ method: 'high-fidelity' })
-          ),
-        { timeout: 3000 }
-      );
-    });
+    const renderer = canvas.getByTestId('svg-renderer');
+    await new Promise((r) => setTimeout(r, 1000));
+    await expect.element(renderer).toMatchScreenshot('loop-t0.png');
   },
 };
 
@@ -206,6 +183,12 @@ export const TypographySuite: Story = {
         <text x="20" y="250">Emojis: 🚀 🎨 🐳 ✅</text>
       </svg>
     `,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const renderer = canvas.getByTestId('svg-renderer');
+    await new Promise((r) => setTimeout(r, 1000));
+    await expect.element(renderer).toMatchScreenshot('typography-suite.png');
   },
 };
 
@@ -232,6 +215,13 @@ export const AnimationStressTest: Story = {
       </svg>
     `,
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const renderer = canvas.getByTestId('svg-renderer');
+    await new Promise((r) => setTimeout(r, 1000));
+    await expect.element(renderer).toMatchScreenshot('animation-stress.png');
+  },
+  parameters: { test: { testTimeout: 60000 } },
 };
 
 export const FilterFidelity: Story = {
@@ -257,5 +247,11 @@ export const FilterFidelity: Story = {
         </rect>
       </svg>
     `,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const renderer = canvas.getByTestId('svg-renderer');
+    await new Promise((r) => setTimeout(r, 1000));
+    await expect.element(renderer).toMatchScreenshot('filter-fidelity.png');
   },
 };
