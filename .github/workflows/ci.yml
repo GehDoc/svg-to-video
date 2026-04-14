@@ -72,3 +72,5 @@ jobs:
         run: npm run test:web
       - name: Run Storybook Interaction tests
         run: npm run test:storybook
+      - name: Run Visual Regression tests
+        run: npm run test:visual
