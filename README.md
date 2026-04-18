@@ -8,6 +8,8 @@ Unlike standard converters that struggle with complex CSS keyframes or transitio
 
 Prefer a GUI? Our **[Web Studio](https://gehdoc.github.io/svg-to-video/)** is a serverless, client-side rendering tool. It runs entirely in your browser using **WebCodecs**—your SVG files never leave your computer, ensuring absolute privacy.
 
+You can also explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video/storybook/)** to see how the engine handles complex CSS and fonts.
+
 ### Quick Start
 
 1. Open the [Web Studio](https://gehdoc.github.io/svg-to-video/).
