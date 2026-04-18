@@ -9,6 +9,8 @@ out-dir-test/
 # Playwright Reports/Results
 web/playwright-report/
 web/test-results/
+web/storybook-static/
+.storybook-cache/
 
 # OS Files
 .DS_Store

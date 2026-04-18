@@ -25,6 +25,9 @@ jobs:
       - name: Build Web Studio
         run: npm run build -w web
 
+      - name: Build Storybook
+        run: npm run build-storybook -w web
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:

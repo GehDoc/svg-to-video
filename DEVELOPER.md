@@ -42,10 +42,48 @@ If working without an agent, follow these steps to keep the project state synchr
 | `npm run fix` | Auto-fixes linting and formatting issues. |
 | `npm run lint` | Checks for linting issues in both CLI and Web Studio code. |
 | `npm run lint:fix` | Fixes linting issues in both CLI and Web Studio code. |
+| `npm run storybook` | Launches the Storybook UI for component development. |
 | `npm run format` | Checks for formatting issues. |
 | `npm run format:fix` | Fixes formatting issues. |
-| `npm run test` | Runs all tests (CLI and Web Studio E2E). |
+| `npm run test` | Runs all tests (CLI, Web Studio E2E, Storybook, and Visual). |
+| `npm run test:storybook` | Runs Storybook interaction tests using Vitest. |
+| `npm run test:visual` | Runs native visual regression tests (pixel matching). |
+| `npm run test:visual:update` | Updates visual regression baseline screenshots. |
+| `npm run build-storybook` | Builds the Storybook static site for deployment. |
 | `npm run type-check` | Validates TypeScript types. |
+
+## 📸 Visual Regression Testing
+
+The `SvgRenderer` component is monitored for visual regressions using native Vitest matchers.
+
+### Running Visual Tests
+
+Snapshots are captured in a headless browser (Chromium) to ensure frame-accurate rendering consistency across different environments.
+
+```bash
+# In the web/ directory
+npm run test:visual
+```
+
+### Updating Baselines
+
+When intentional changes are made to the rendering logic, update the stored snapshots:
+
+```bash
+# In the root or web/ directory
+npm run test:visual:update
+```
+
+### Configuring Pixel-Match Thresholds
+
+To adjust the sensitivity of the visual comparison (e.g., to ignore minor anti-aliasing differences), you can provide a threshold in the visual test configuration:
+
+```typescript
+// Example: web/vitest.visual.config.ts
+screenshotOptions: {
+  threshold: 0.1, // Allow 10% pixel difference
+}
+```
 
 ## 🐳 Docker & Hardening
 
