@@ -1,48 +1,54 @@
 # Spec: 13 - Storybook Component Testing
 
 **GitHub Issue**: [https://github.com/GehDoc/svg-to-video/issues/13](https://github.com/GehDoc/svg-to-video/issues/13)
-**Status**: 🟡 In-Progress (Visual validation stable, refining temporal/fidelity assertions)
+**Status**: 🟡 In-Progress (Decoupled architecture stable; implementing Node-task visual validation)
 
 ## 🎯 Objective
 
-Establish visual component testing using Storybook in the `web/` workspace to enable visual regression testing and component-level debugging for the `SvgRenderer`.
+Establish visual component testing using Storybook and a robust, headless-compatible visual regression suite that produces human-readable PNG baselines via a Node.js task bridge.
 
 ## 🛠 Technical Strategy
 
-- **Core Technologies**: Storybook 10.3.3 (Vite integration), Vitest Browser Mode.
-- **Visual Regression**: Uses native `expect.element().toMatchScreenshot()` for deterministic pixel-perfect validation, decoupled from the Storybook UI sandbox.
-- **Fidelity & Temporal Validation**: Manual frame-data comparison to ensure scrubbing engine progress and cross-mode output fidelity.
+- **Core Technologies**: Storybook 10.3.3, Vitest Browser Mode, `pixelmatch`, `pngjs`.
+- **Decoupled Runners**:
+  - `test:storybook`: UI interaction tests in the browser.
+  - `test:visual`: Pixel-matching tests using a dedicated `vitest.visual.config.ts`.
+- **Node-Task Bridge**:
+  - Use Vitest **Tasks** to bridge the Browser-to-Disk gap.
+  - Browser captures `dataUrl` -> Sends to Node.js task via `vi.waitFor` or custom task runner.
+  - Node.js task writes binary `.png` and performs `pixelmatch` comparison on the host filesystem.
+- **Verification Logic**: 3-point temporal checks (Start/Middle/End) for both loop and filter stories to ensure scrubbing engine continuity.
 
 ## ✅ Task List
 
 ### 🚀 Phase 2: Advanced Integration & Gallery
 
 - [x] **Exhaustive Component controls**
-- [x] **Procedural Visual Validation Strategy**
-- [x] **Visual Test Gallery**
-- [x] **Automated Deployment**
+- [x] **Visual Test Gallery** (Typography, Filters, Loop)
+- [x] **Automated Deployment** configuration
+- [ ] **Remove AnimationStressTest**: Drop the redundant/unstable stress test as it is no longer required.
 
-### ✨ Phase 3: Final Polish & Stability
+### ✨ Phase 3: Robust Visual Validation (Node-Bridge)
 
-- [ ] **Temporal & Fidelity Validation (New)**
-  - [ ] Implement `LoopSynchronizedCapture` assertions: Capture at **Start (T0)**, **Middle (T50%)**, and **End (T100%)**.
-  - [ ] Assert `T0 != T50` and `T50 != T100` to verify smooth scrubbing progression.
-  - [ ] Assert `Frame(Optimal) == Frame(High-Fidelity)` within pixel-distance threshold.
-- [ ] **Stabilize Stress Test**: Adjust `AnimationStressTest` parameters to ensure consistent CI pass rates without fragile timeouts.
-- [ ] **Final Deployment Verification**: Verify live deployment of the Storybook gallery on GitHub Pages.
+- [ ] **Implement Vitest Node Tasks**:
+  - [ ] Create `saveAndCompareScreenshot` task in `vitest.visual.config.ts`.
+  - [ ] Implement binary `.png` writing in Node.js context (bypassing browser sandbox).
+  - [ ] Implement `pixelmatch` logic with configurable thresholds.
+- [ ] **Temporal & Fidelity Verification**:
+  - [ ] Update `LoopSynchronizedCapture` assertions: Capture at **Start (T0)**, **Middle (T50%)**, and **End (T100%)**.
+  - [ ] Update `FilterFidelity` to verify temporal progression of SVG filters (Start/Middle/End).
+  - [ ] Assert `Frame(Optimal) == Frame(High-Fidelity)` using the Node-task bridge.
 
 ## 🧪 Verification Plan
 
-- [x] Storybook can be launched via `npm run storybook`.
-- [x] `SvgRenderer` renders correctly in Storybook UI.
-- [x] Native visual regression tests (`test:visual`) pass locally.
-- [ ] Temporal integrity assertions pass (3-point scrubbing verification).
-- [ ] Cross-mode fidelity assertion passes.
-- [ ] CI pipeline fully green with no flaky timeouts.
+- [x] Storybook launches and renders correctly.
+- [x] Decoupled `test:visual` command executes without Storybook sandbox interference.
+- [ ] Visual regression produces viewable, binary `.png` files in `__snapshots__/`.
+- [ ] Temporal tests fail if animation is frozen or "jumping" between Start/Middle/End.
+- [ ] CI pipeline fully green in headless mode.
 
 ## 📝 Change Log
 
-- _2026-03-24: Initial spec created._
-- _2026-03-28: Path issue resolved. Integrated Storybook tests into CI pipeline._
-- _2026-04-13: Migrated to native `toMatchScreenshot` and decoupled runners._
-- _2026-04-14: Identified `AnimationStressTest` timeout; expanded stability phase to include explicit temporal and fidelity assertions._
+- _2026-03-24: Initial spec created for Issue #13._
+- _2026-04-13: Migrated to native decoupled runners and established stable base64 snapshots._
+- _2026-04-18: Redrafted Phase 3: Implementing Node-task bridge for binary PNG storage, expanding temporal checks to Filter story, and removing redundant AnimationStressTest._
