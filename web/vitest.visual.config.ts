@@ -13,11 +13,32 @@ export default defineConfig({
       '@shared': path.resolve(dirname, '../shared'),
     },
   },
+  server: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+    },
+  },
   test: {
+    testTimeout: 60000,
     include: ['src/**/*.test.tsx'],
     browser: {
       enabled: true,
-      provider: playwright({}), // Using factory here too
+      headless: true,
+      viewport: { width: 800, height: 600 },
+      provider: playwright({
+        launchOptions: {
+          args: [
+            '--disable-gpu',
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',
+          ],
+        },
+      }),
       instances: [{ browser: 'chromium' }],
     },
   },

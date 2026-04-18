@@ -1,5 +1,5 @@
 import { render, screen, cleanup } from '@testing-library/react';
-import { expect, test, afterEach } from 'vitest';
+import { expect, test, afterEach, vi } from 'vitest';
 import { composeStories } from '@storybook/react';
 import * as stories from './SvgRenderer.stories';
 
@@ -13,29 +13,55 @@ const {
 } = composeStories(stories);
 
 test('Loop Synchronized Capture - Visual Regression', async () => {
-  render(<LoopSynchronizedCapture />);
-  const renderer = await screen.findByTestId('svg-renderer');
-  await expect.element(renderer).toMatchScreenshot('loop-t0.png');
+  const onCapture = vi.fn();
+  render(<LoopSynchronizedCapture onCapture={onCapture} />);
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  screen.getByTestId('capture-optimal').click();
+  await vi.waitFor(() => expect(onCapture).toHaveBeenCalled(), {
+    timeout: 5000,
+  });
+
+  const dataUrl = onCapture.mock.calls[0][0].dataUrl;
+  // Snapshoting the base64 string directly
+  expect(dataUrl).toMatchSnapshot();
 });
 
 test('Typography Suite - Visual Regression', async () => {
-  render(<TypographySuite />);
-  const renderer = await screen.findByTestId('svg-renderer');
-  await expect.element(renderer).toMatchScreenshot('typography-suite.png');
+  const onCapture = vi.fn();
+  render(<TypographySuite onCapture={onCapture} />);
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  screen.getByTestId('capture-optimal').click();
+  await vi.waitFor(() => expect(onCapture).toHaveBeenCalled(), {
+    timeout: 5000,
+  });
+
+  expect(onCapture.mock.calls[0][0].dataUrl).toMatchSnapshot();
 });
 
-test(
-  'Animation Stress Test - Visual Regression',
-  { timeout: 60000 },
-  async () => {
-    render(<AnimationStressTest />);
-    const renderer = await screen.findByTestId('svg-renderer');
-    await expect.element(renderer).toMatchScreenshot('animation-stress.png');
-  }
-);
+test('Animation Stress Test - Visual Regression', async () => {
+  const onCapture = vi.fn();
+  render(<AnimationStressTest onCapture={onCapture} />);
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  screen.getByTestId('capture-optimal').click();
+  await vi.waitFor(() => expect(onCapture).toHaveBeenCalled(), {
+    timeout: 5000,
+  });
+
+  expect(onCapture.mock.calls[0][0].dataUrl).toMatchSnapshot();
+});
 
 test('Filter Fidelity - Visual Regression', async () => {
-  render(<FilterFidelity />);
-  const renderer = await screen.findByTestId('svg-renderer');
-  await expect.element(renderer).toMatchScreenshot('filter-fidelity.png');
+  const onCapture = vi.fn();
+  render(<FilterFidelity onCapture={onCapture} />);
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  screen.getByTestId('capture-optimal').click();
+  await vi.waitFor(() => expect(onCapture).toHaveBeenCalled(), {
+    timeout: 5000,
+  });
+
+  expect(onCapture.mock.calls[0][0].dataUrl).toMatchSnapshot();
 });
