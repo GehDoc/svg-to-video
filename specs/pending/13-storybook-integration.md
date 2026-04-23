@@ -9,7 +9,7 @@ Establish visual component testing using Storybook and a robust, headless-compat
 
 ## 🛠 Technical Strategy
 
-- **Core Technologies**: Storybook 10.3.3, Vitest Browser Mode, `pixelmatch`, `pngjs`.
+- **Core Technologies**: Storybook 10.3.5, Vitest 4.1.4 (Browser Mode), `pixelmatch`, `pngjs`.
 - **Decoupled Runners**:
   - `test:storybook`: UI interaction tests in the browser.
   - `test:visual`: Pixel-matching tests using a dedicated `vitest.visual.config.ts`.

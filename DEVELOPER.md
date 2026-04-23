@@ -10,6 +10,29 @@ Welcome! This repository uses **Spec-Driven Development (SDD)** to maintain a cl
 
 ## 🔄 Workflow & Automation
 
+### 🚦 Type Safety & Commit Hooks
+
+To prevent the introduction of breaking changes, the project uses **Husky** to enforce type safety:
+
+- **Pre-commit**: The `.husky/pre-commit` hook automatically runs `npm run type-check` alongside linting and formatting. Commits will fail if `tsc` detects any errors.
+- **Manual Check**: You can always run `npm run check:fast` to validate types, linting, and formatting locally.
+
+### 📦 Dependency Management (Vitest & Storybook)
+
+This project requires strict version alignment between **Storybook** and **Vitest** to avoid `Mock` type mismatches.
+
+- **The Problem**: Storybook's `composeStories` often pulls in an internal version of `@vitest/spy` that can conflict with the project's direct Vitest dependency, leading to "Type 'Mock' is not assignable" errors in tests.
+- **The Solution**: We use the `overrides` field in the root `package.json` to force a unified version for all Vitest-related packages:
+  ```json
+  "overrides": {
+    "vitest": "4.1.4",
+    "@vitest/spy": "4.1.4",
+    "@vitest/expect": "4.1.4",
+    ...
+  }
+  ```
+- **Future Upgrades**: When upgrading Storybook or Vitest, ensure all `@vitest/*` packages in the `overrides` section are updated to the same version. Run `rm -rf node_modules package-lock.json && npm install` to ensure the dependency tree is correctly rebuilt.
+
 ### 🤖 Starting with an AI Agent (Recommended)
 
 To initiate a new feature, simply provide the following command to your AI collaborator:
