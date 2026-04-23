@@ -30,25 +30,21 @@ Establish visual component testing using Storybook and a robust, headless-compat
 
 ### ✨ Phase 3: Robust Visual Validation (Node-Bridge)
 
-- [ ] **Implement Vitest Node Tasks**:
-  - [ ] Create `saveAndCompareScreenshot` task in `vitest.visual.config.ts`.
-  - [ ] Implement binary `.png` writing in Node.js context (bypassing browser sandbox).
-  - [ ] Implement `pixelmatch` logic with configurable thresholds.
-- [ ] **Temporal & Fidelity Verification**:
-  - [ ] Update `LoopSynchronizedCapture` assertions: Capture at **Start (T0)**, **Middle (T50%)**, and **End (T100%)**.
-  - [ ] Update `FilterFidelity` to verify temporal progression of SVG filters (Start/Middle/End).
-  - [ ] Assert `Frame(Optimal) == Frame(High-Fidelity)` using the Node-task bridge.
+> [!IMPORTANT]
+> **DEFERRED**: This phase has been moved to GitHub Issue [#28](https://github.com/GehDoc/svg-to-video/issues/28) to decouple Storybook stabilization from the infrastructure enhancement.
+
+- [~] **Implement Vitest Node Tasks**: (Won't do now - see #28)
+- [~] **Temporal & Fidelity Verification**: (Won't do now - see #28)
 
 ## 🧪 Verification Plan
 
 - [x] Storybook launches and renders correctly.
 - [x] Decoupled `test:visual` command executes without Storybook sandbox interference.
-- [ ] Visual regression produces viewable, binary `.png` files in `__snapshots__/`.
-- [ ] Temporal tests fail if animation is frozen or "jumping" between Start/Middle/End.
+- [x] Visual regression produces stable base64 snapshots in `__snapshots__/`.
 - [ ] CI pipeline fully green in headless mode.
 
 ## 📝 Change Log
 
 - _2026-03-24: Initial spec created for Issue #13._
 - _2026-04-13: Migrated to native decoupled runners and established stable base64 snapshots._
-- _2026-04-18: Redrafted Phase 3: Implementing Node-task bridge for binary PNG storage, expanding temporal checks to Filter story, and removing redundant AnimationStressTest._
+- _2026-04-18: Upgraded Storybook to 10.3.5, fixed Vitest 4.1.4 version conflict via root overrides, and deferred Phase 3 to Issue #28._
