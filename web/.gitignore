@@ -25,3 +25,7 @@ dist-ssr
 
 *storybook.log
 storybook-static
+
+# Vitest
+.vitest-attachments
+__screenshots__

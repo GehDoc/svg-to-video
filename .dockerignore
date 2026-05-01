@@ -31,6 +31,10 @@ docker-compose.yml
 .git/
 .gitignore
 
+# Vitest / Visual regression artifacts
+.vitest-attachments
+__screenshots__
+
 # Logs
 npm-debug.log*
 
