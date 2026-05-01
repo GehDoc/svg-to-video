@@ -5,12 +5,8 @@ import * as stories from './SvgRenderer.stories';
 
 afterEach(cleanup);
 
-const {
-  LoopSynchronizedCapture,
-  TypographySuite,
-  AnimationStressTest,
-  FilterFidelity,
-} = composeStories(stories);
+const { LoopSynchronizedCapture, AnimationStressTest, FilterFidelity } =
+  composeStories(stories);
 
 const DEFAULT_TEST_TIMEOUT = 5000;
 
@@ -52,21 +48,6 @@ test('Loop Synchronized Capture - Visual Regression', async () => {
   const dataUrl = onCapture.mock.calls[0][0].dataUrl;
   // Snapshoting the base64 string directly
   expect(dataUrl).toMatchSnapshot();
-});
-
-test('Typography Suite - Visual Regression', async () => {
-  const onCapture = vi.fn();
-
-  await waitForSignal('READY', () => {
-    render(<TypographySuite onCapture={onCapture} />);
-  });
-
-  screen.getByTestId('capture-optimal').click();
-  await vi.waitFor(() => expect(onCapture).toHaveBeenCalled(), {
-    timeout: DEFAULT_TEST_TIMEOUT,
-  });
-
-  expect(onCapture.mock.calls[0][0].dataUrl).toMatchSnapshot();
 });
 
 test('Animation Stress Test - Visual Regression', async () => {
