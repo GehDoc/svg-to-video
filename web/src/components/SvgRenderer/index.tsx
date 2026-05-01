@@ -46,11 +46,15 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
     window.addEventListener('message', handler);
 
     const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
     if (iframeRef.current) {
-      iframeRef.current.src = URL.createObjectURL(blob);
+      iframeRef.current.src = url;
     }
 
-    return () => window.removeEventListener('message', handler);
+    return () => {
+      URL.revokeObjectURL(url);
+      window.removeEventListener('message', handler);
+    };
   }, []);
 
   useImperativeHandle(ref, () => ({
@@ -63,7 +67,9 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
       setReady(false);
       setDimensions({ width, height });
       const iframe = iframeRef.current;
-      if (!iframe) return;
+      if (!iframe) {
+        return;
+      }
 
       // Wait for script to be loaded if it hasn't already
       if (!scriptLoaded) {
