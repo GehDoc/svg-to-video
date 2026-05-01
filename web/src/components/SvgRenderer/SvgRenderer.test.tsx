@@ -52,20 +52,28 @@ test('Animation Stress Test - Visual Regression', async () => {
 
   try {
     // 2. Render with 0 first
-    const { rerender } = render(<AnimationStressTest onCapture={onCapture} seekTime={0} />);
-    
+    const { rerender } = render(
+      <AnimationStressTest onCapture={onCapture} seekTime={0} />
+    );
+
     // 3. Wait for READY
-    await vi.waitFor(() => {
-      expect(receivedMessages).toContain('READY');
-    }, { timeout: 10000 });
+    await vi.waitFor(
+      () => {
+        expect(receivedMessages).toContain('READY');
+      },
+      { timeout: 10000 }
+    );
 
     // 4. Trigger the seek via prop change
     rerender(<AnimationStressTest onCapture={onCapture} seekTime={1000} />);
 
     // 5. Wait for SEEKED
-    await vi.waitFor(() => {
-      expect(receivedMessages).toContain('SEEKED');
-    }, { timeout: 10000 });
+    await vi.waitFor(
+      () => {
+        expect(receivedMessages).toContain('SEEKED');
+      },
+      { timeout: 10000 }
+    );
 
     // 6. Capture
     screen.getByTestId('capture-optimal').click();

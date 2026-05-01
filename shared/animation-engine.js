@@ -27,7 +27,7 @@ function seekAnimations(timeInMilliseconds) {
     } catch (_error) {
       /* ignored */
     }
-  })
+  });
 }
 
 // Support ESM

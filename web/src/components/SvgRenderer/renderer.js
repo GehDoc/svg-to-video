@@ -63,7 +63,7 @@ export function getRendererScript(seekAnimations) {
     if (type === 'LOAD_SVG') {
       isReady = false;
       const { svgContent, width, height, backgroundColor } = payload;
-      svgContainer.innerHTML = svgContent;      
+      svgContainer.innerHTML = svgContent;
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';
       svgContainer.style.backgroundColor = backgroundColor;
@@ -95,13 +95,23 @@ export function getRendererScript(seekAnimations) {
       if (!svg || !ctx) return;
 
       const clone = svg.cloneNode(true);
-      
-      // Remove all animation elements from the clone to prevent "re-animation" 
-      // when drawing the clone to the canvas.
-      const animationTags = clone.querySelectorAll('animate, animateTransform, animateMotion, set');
-      animationTags.forEach(tag => tag.remove());
 
-      const originalElements = [svg, ...Array.from(svg.querySelectorAll('*')).filter(el => !['animate', 'animateTransform', 'animateMotion', 'set'].includes(el.tagName.toLowerCase()))];
+      // Remove all animation elements from the clone to prevent "re-animation"
+      // when drawing the clone to the canvas.
+      const animationTags = clone.querySelectorAll(
+        'animate, animateTransform, animateMotion, set'
+      );
+      animationTags.forEach((tag) => tag.remove());
+
+      const originalElements = [
+        svg,
+        ...Array.from(svg.querySelectorAll('*')).filter(
+          (el) =>
+            !['animate', 'animateTransform', 'animateMotion', 'set'].includes(
+              el.tagName.toLowerCase()
+            )
+        ),
+      ];
       const cloneElements = [clone, ...Array.from(clone.querySelectorAll('*'))];
 
       originalElements.forEach((el, i) => {

@@ -54,7 +54,6 @@ Establish visual component testing using Storybook and a robust, headless-compat
 
 _These issues are now tracked as part of the visual validation infrastructure requirements._
 
-
 ## 📝 Change Log
 
 - _2026-03-24: Initial spec created for Issue #13._
