@@ -63,21 +63,20 @@ export function getRendererScript(seekAnimations) {
     if (type === 'LOAD_SVG') {
       isReady = false;
       const { svgContent, width, height, backgroundColor } = payload;
-      svgContainer.innerHTML = svgContent.replace(
-        /--play-state:\s*running\s*;/g,
-        '--play-state: paused;'
-      );
+      svgContainer.innerHTML = svgContent;      
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';
       svgContainer.style.backgroundColor = backgroundColor;
       captureCanvas.width = width;
       captureCanvas.height = height;
 
+      // Position all animations at the correct frame before the first render
+      seekAnimations(payload.timeMs);
+
       // Wait for a frame to ensure the innerHTML is parsed and rendered
       requestAnimationFrame(() => {
         isReady = true;
         // Signal that the SVG is ready to be captured
-        svgContainer.setAttribute('data-loaded', 'true');
         window.parent.postMessage({ type: 'READY' }, '*');
       });
     }
@@ -94,11 +93,6 @@ export function getRendererScript(seekAnimations) {
       const svg = svgContainer.querySelector('svg');
       const ctx = captureCanvas.getContext('2d');
       if (!svg || !ctx) return;
-
-      // ATOMIC CAPTURE: Pause all animations and SVGs before reading styles
-      const animations = svg.getAnimations({ subtree: true });
-      animations.forEach((anim) => anim.pause());
-      if (typeof svg.pauseAnimations === 'function') svg.pauseAnimations();
 
       const clone = svg.cloneNode(true);
       
@@ -131,10 +125,6 @@ export function getRendererScript(seekAnimations) {
           }
         }
       });
-      
-      // Resume animations after capture state is read
-      animations.forEach((anim) => anim.play());
-      if (typeof svg.unpauseAnimations === 'function') svg.unpauseAnimations();
 
       const svgData = new XMLSerializer().serializeToString(clone);
       const svgBlob = new Blob([svgData], {

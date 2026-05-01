@@ -35,7 +35,6 @@ export default defineConfig({
             '--disable-dev-shm-usage',
             '--no-first-run',
             '--no-zygote',
-            '--single-process',
           ],
         },
       }),
