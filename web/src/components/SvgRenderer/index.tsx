@@ -96,7 +96,13 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
         iframe.contentWindow?.postMessage(
           {
             type: 'LOAD_SVG',
-            payload: { svgContent, width, height, backgroundColor },
+            payload: {
+              svgContent,
+              width,
+              height,
+              backgroundColor,
+              timeMs: 0,
+            },
           },
           '*'
         );

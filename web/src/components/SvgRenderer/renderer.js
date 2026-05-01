@@ -62,7 +62,7 @@ export function getRendererScript(seekAnimations) {
 
     if (type === 'LOAD_SVG') {
       isReady = false;
-      const { svgContent, width, height, backgroundColor } = payload;
+      const { svgContent, width, height, backgroundColor, timeMs } = payload;
       svgContainer.innerHTML = svgContent;
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';
@@ -71,7 +71,7 @@ export function getRendererScript(seekAnimations) {
       captureCanvas.height = height;
 
       // Position all animations at the correct frame before the first render
-      seekAnimations(payload.timeMs);
+      seekAnimations(timeMs);
 
       // Wait for a frame to ensure the innerHTML is parsed and rendered
       requestAnimationFrame(() => {
