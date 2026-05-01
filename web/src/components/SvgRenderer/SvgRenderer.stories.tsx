@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { within, expect, fn } from 'storybook/test';
 import SvgRenderer from './index';
@@ -23,15 +23,10 @@ const Wrapper = ({
   svgContent,
   width,
   height,
-  seekTime: initialSeekTime,
+  seekTime,
   onCapture,
 }: WrapperProps) => {
   const ref = useRef<RendererHandle>(null);
-  const [currentSeek, setCurrentSeek] = useState(initialSeekTime);
-
-  useEffect(() => {
-    setCurrentSeek(initialSeekTime);
-  }, [initialSeekTime]);
 
   useEffect(() => {
     if (ref.current) {
@@ -41,9 +36,9 @@ const Wrapper = ({
 
   useEffect(() => {
     if (ref.current) {
-      ref.current.seek(currentSeek);
+      ref.current.seek(seekTime);
     }
-  }, [currentSeek]);
+  }, [seekTime]);
 
   const handleCapture = async (method: 'optimal' | 'high-fidelity') => {
     if (ref.current) {
@@ -93,11 +88,8 @@ const Wrapper = ({
         >
           Capture (High-Fidelity)
         </button>
-        <button onClick={() => setCurrentSeek(1000)} data-testid="seek-1s">
-          Seek to 1s
-        </button>
         <span style={{ fontSize: '12px', color: '#666' }}>
-          Current Seek: {currentSeek}ms
+          Current Seek: {seekTime}ms
         </span>
       </div>
       <div
@@ -187,16 +179,46 @@ export const AnimationStressTest: Story = {
       <svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" fill="#1a1a1a" />
         <g transform="translate(300, 300)">
-          ${Array.from({ length: 20 })
-            .map(
-              (_, i) => `
-            <circle r="${20 + i * 12}" fill="none" stroke="hsl(${i * 18}, 70%, 60%)" stroke-width="2">
-              <animate attributeName="stroke-dasharray" from="0, 1000" to="1000, 0" dur="${1 + i * 0.2}s" repeatCount="indefinite" />
-              <animateTransform attributeName="transform" type="rotate" from="0" to="${i % 2 === 0 ? 360 : -360}" dur="${2 + i * 0.5}s" repeatCount="indefinite" />
-            </circle>
-          `
-            )
-            .join('')}
+          <circle r="20" fill="none" stroke="hsl(0, 70%, 60%)" stroke-width="2">
+            <animate attributeName="stroke-dasharray" from="0, 1000" to="1000, 0" dur="1s" repeatCount="indefinite" />
+            <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <circle r="32" fill="none" stroke="hsl(18, 70%, 60%)" stroke-width="2">
+            <animate attributeName="stroke-dasharray" from="0, 1000" to="1000, 0" dur="1.2s" repeatCount="indefinite" />
+            <animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="2.5s" repeatCount="indefinite" />
+          </circle>
+          <circle r="44" fill="none" stroke="hsl(36, 70%, 60%)" stroke-width="2">
+            <animate attributeName="stroke-dasharray" from="0, 1000" to="1000, 0" dur="1.4s" repeatCount="indefinite" />
+            <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="3s" repeatCount="indefinite" />
+          </circle>
+          <circle r="56" fill="none" stroke="hsl(54, 70%, 60%)" stroke-width="2">
+            <animate attributeName="stroke-dasharray" from="0, 1000" to="1000, 0" dur="1.6s" repeatCount="indefinite" />
+            <animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="3.5s" repeatCount="indefinite" />
+          </circle>
+          <circle r="68" fill="none" stroke="hsl(72, 70%, 60%)" stroke-width="2">
+            <animate attributeName="stroke-dasharray" from="0, 1000" to="1000, 0" dur="1.8s" repeatCount="indefinite" />
+            <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="4s" repeatCount="indefinite" />
+          </circle>
+          <circle r="80" fill="none" stroke="hsl(90, 70%, 60%)" stroke-width="2">
+            <animate attributeName="stroke-dasharray" from="0, 1000" to="1000, 0" dur="2s" repeatCount="indefinite" />
+            <animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="4.5s" repeatCount="indefinite" />
+          </circle>
+          <circle r="92" fill="none" stroke="hsl(108, 70%, 60%)" stroke-width="2">
+            <animate attributeName="stroke-dasharray" from="0, 1000" to="1000, 0" dur="2.2s" repeatCount="indefinite" />
+            <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="5s" repeatCount="indefinite" />
+          </circle>
+          <circle r="104" fill="none" stroke="hsl(126, 70%, 60%)" stroke-width="2">
+            <animate attributeName="stroke-dasharray" from="0, 1000" to="1000, 0" dur="2.4s" repeatCount="indefinite" />
+            <animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="5.5s" repeatCount="indefinite" />
+          </circle>
+          <circle r="116" fill="none" stroke="hsl(144, 70%, 60%)" stroke-width="2">
+            <animate attributeName="stroke-dasharray" from="0, 1000" to="1000, 0" dur="2.6s" repeatCount="indefinite" />
+            <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="6s" repeatCount="indefinite" />
+          </circle>
+          <circle r="128" fill="none" stroke="hsl(162, 70%, 60%)" stroke-width="2">
+            <animate attributeName="stroke-dasharray" from="0, 1000" to="1000, 0" dur="2.8s" repeatCount="indefinite" />
+            <animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="6.5s" repeatCount="indefinite" />
+          </circle>
         </g>
       </svg>
     `,

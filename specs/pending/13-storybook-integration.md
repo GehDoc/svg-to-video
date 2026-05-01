@@ -26,7 +26,7 @@ Establish visual component testing using Storybook and a robust, headless-compat
 - [x] **Exhaustive Component controls**
 - [x] **Visual Test Gallery** (Typography, Filters, Loop)
 - [x] **Automated Deployment** configuration
-- [ ] **Remove AnimationStressTest**: Drop the redundant/unstable stress test as it is no longer required.
+- [x] **Demo/Stress Test Strategy**: Retain `AnimationStressTest` as a permanent demo/performance benchmark. Stabilized snapshots by using deterministic 1s seeking before capture.
 
 ### ✨ Phase 3: Robust Visual Validation (Node-Bridge)
 
@@ -42,6 +42,18 @@ Establish visual component testing using Storybook and a robust, headless-compat
 - [x] Decoupled `test:visual` command executes without Storybook sandbox interference.
 - [x] Visual regression produces stable base64 snapshots in `__snapshots__/`.
 - [ ] CI pipeline fully green in headless mode.
+
+### ⚠️ Known Limitations & Risks
+
+> [!CAUTION]
+> The current visual regression suite relies on base64 snapshots. These are **not** 100% reliable due to the following architectural gaps:
+
+1. **Live Preview Interference**: The live monitor currently displays the "live" SVG. If the SVG is not explicitly frozen before a snapshot, the browser's rendering cycle might capture a frame while the animation is still progressing.
+2. **Temporal Mismatch**: The snapshot moment in the test suite must be strictly identical to the moment used for actual MP4 generation. Any drift between the test capture and the production encoder will result in visual mismatches.
+3. **Animation State Management**: The `seekAnimations` engine is expected to control playing status. The current implementation relies on "pausing" and "cloning," but the animation state (playing vs. paused) must be globally enforced as "always paused, only seeked" to ensure deterministic captures.
+
+_These issues are now tracked as part of the visual validation infrastructure requirements._
+
 
 ## 📝 Change Log
 

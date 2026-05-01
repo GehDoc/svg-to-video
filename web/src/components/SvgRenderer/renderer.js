@@ -55,11 +55,13 @@ export function getRendererScript(seekAnimations) {
 
   const svgContainer = document.getElementById('svg-container');
   const captureCanvas = document.getElementById('capture-canvas');
+  let isReady = false;
 
   window.addEventListener('message', async (event) => {
     const { type, payload } = event.data;
 
     if (type === 'LOAD_SVG') {
+      isReady = false;
       const { svgContent, width, height, backgroundColor } = payload;
       svgContainer.innerHTML = svgContent.replace(
         /--play-state:\s*running\s*;/g,
@@ -73,6 +75,7 @@ export function getRendererScript(seekAnimations) {
 
       // Wait for a frame to ensure the innerHTML is parsed and rendered
       requestAnimationFrame(() => {
+        isReady = true;
         // Signal that the SVG is ready to be captured
         svgContainer.setAttribute('data-loaded', 'true');
         window.parent.postMessage({ type: 'READY' }, '*');
@@ -80,19 +83,31 @@ export function getRendererScript(seekAnimations) {
     }
 
     if (type === 'SEEK') {
+      if (!isReady) return;
       seekAnimations(payload.timeMs);
-      await new Promise((r) => requestAnimationFrame(r));
       await new Promise((r) => requestAnimationFrame(r));
       window.parent.postMessage({ type: 'SEEKED' }, '*');
     }
 
     if (type === 'CAPTURE') {
+      if (!isReady) return;
       const svg = svgContainer.querySelector('svg');
       const ctx = captureCanvas.getContext('2d');
       if (!svg || !ctx) return;
 
+      // ATOMIC CAPTURE: Pause all animations and SVGs before reading styles
+      const animations = svg.getAnimations({ subtree: true });
+      animations.forEach((anim) => anim.pause());
+      if (typeof svg.pauseAnimations === 'function') svg.pauseAnimations();
+
       const clone = svg.cloneNode(true);
-      const originalElements = [svg, ...Array.from(svg.querySelectorAll('*'))];
+      
+      // Remove all animation elements from the clone to prevent "re-animation" 
+      // when drawing the clone to the canvas.
+      const animationTags = clone.querySelectorAll('animate, animateTransform, animateMotion, set');
+      animationTags.forEach(tag => tag.remove());
+
+      const originalElements = [svg, ...Array.from(svg.querySelectorAll('*')).filter(el => !['animate', 'animateTransform', 'animateMotion', 'set'].includes(el.tagName.toLowerCase()))];
       const cloneElements = [clone, ...Array.from(clone.querySelectorAll('*'))];
 
       originalElements.forEach((el, i) => {
@@ -116,6 +131,10 @@ export function getRendererScript(seekAnimations) {
           }
         }
       });
+      
+      // Resume animations after capture state is read
+      animations.forEach((anim) => anim.play());
+      if (typeof svg.unpauseAnimations === 'function') svg.unpauseAnimations();
 
       const svgData = new XMLSerializer().serializeToString(clone);
       const svgBlob = new Blob([svgData], {
