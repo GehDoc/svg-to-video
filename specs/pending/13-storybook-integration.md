@@ -29,7 +29,7 @@ Establish visual component testing using Storybook and a robust, headless-compat
 - [x] **Automated Deployment** configuration
 - [x] **Demo/Stress Test Strategy**: Retain `AnimationStressTest` as a permanent demo/performance benchmark. Stabilized snapshots by using deterministic 1s seeking.
 - [x] **Font Standardization**: Standardized Typography suite using a robust CJK-aware font stack to prevent environmental rendering drift between local and CI.
-- [ ] **DRY Fixture Management**: Deduplicate `font-test.svg` between CLI tests and Storybook gallery by centralizing fixtures.
+- [x] **DRY Fixture Management**: Deduplicated by removing the redundant Typography story. `font-test.svg` is now a CLI-only fixture.
 
 ### ✨ Phase 3: Robust Visual Validation (Node-Bridge)
 
