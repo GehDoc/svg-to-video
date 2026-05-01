@@ -71,7 +71,12 @@ export function getRendererScript(seekAnimations) {
       captureCanvas.width = width;
       captureCanvas.height = height;
 
-      window.parent.postMessage({ type: 'READY' }, '*');
+      // Wait for a frame to ensure the innerHTML is parsed and rendered
+      requestAnimationFrame(() => {
+        // Signal that the SVG is ready to be captured
+        svgContainer.setAttribute('data-loaded', 'true');
+        window.parent.postMessage({ type: 'READY' }, '*');
+      });
     }
 
     if (type === 'SEEK') {
@@ -82,7 +87,7 @@ export function getRendererScript(seekAnimations) {
     }
 
     if (type === 'CAPTURE') {
-      const svg = document.querySelector('svg');
+      const svg = svgContainer.querySelector('svg');
       const ctx = captureCanvas.getContext('2d');
       if (!svg || !ctx) return;
 
@@ -93,7 +98,7 @@ export function getRendererScript(seekAnimations) {
       originalElements.forEach((el, i) => {
         const style = window.getComputedStyle(el);
         const cloneEl = cloneElements[i];
-        if (!cloneEl.style) return;
+        if (!cloneEl || !cloneEl.style) return;
 
         if (payload.method === 'high-fidelity') {
           for (let j = 0; j < style.length; j++) {
