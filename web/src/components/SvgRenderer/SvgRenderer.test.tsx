@@ -12,14 +12,41 @@ const {
   FilterFidelity,
 } = composeStories(stories);
 
+const DEFAULT_TEST_TIMEOUT = 5000;
+
+/**
+ * Helper to wait for a specific signal from the iframe renderer
+ */
+async function waitForSignal(signal: string, action: () => void) {
+  const receivedMessages: string[] = [];
+  const handler = (event: MessageEvent) => {
+    if (event.data?.type) receivedMessages.push(event.data.type);
+  };
+  window.addEventListener('message', handler);
+
+  try {
+    action();
+    await vi.waitFor(
+      () => {
+        expect(receivedMessages).toContain(signal);
+      },
+      { timeout: 10000 }
+    );
+  } finally {
+    window.removeEventListener('message', handler);
+  }
+}
+
 test('Loop Synchronized Capture - Visual Regression', async () => {
   const onCapture = vi.fn();
-  render(<LoopSynchronizedCapture onCapture={onCapture} />);
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  await waitForSignal('READY', () => {
+    render(<LoopSynchronizedCapture onCapture={onCapture} />);
+  });
 
   screen.getByTestId('capture-optimal').click();
   await vi.waitFor(() => expect(onCapture).toHaveBeenCalled(), {
-    timeout: 5000,
+    timeout: DEFAULT_TEST_TIMEOUT,
   });
 
   const dataUrl = onCapture.mock.calls[0][0].dataUrl;
@@ -29,12 +56,14 @@ test('Loop Synchronized Capture - Visual Regression', async () => {
 
 test('Typography Suite - Visual Regression', async () => {
   const onCapture = vi.fn();
-  render(<TypographySuite onCapture={onCapture} />);
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  await waitForSignal('READY', () => {
+    render(<TypographySuite onCapture={onCapture} />);
+  });
 
   screen.getByTestId('capture-optimal').click();
   await vi.waitFor(() => expect(onCapture).toHaveBeenCalled(), {
-    timeout: 5000,
+    timeout: DEFAULT_TEST_TIMEOUT,
   });
 
   expect(onCapture.mock.calls[0][0].dataUrl).toMatchSnapshot();
@@ -44,19 +73,16 @@ test('Animation Stress Test - Visual Regression', async () => {
   const onCapture = vi.fn();
   const receivedMessages: string[] = [];
 
-  // 1. Attach collector
   const handler = (event: MessageEvent) => {
     if (event.data?.type) receivedMessages.push(event.data.type);
   };
   window.addEventListener('message', handler);
 
   try {
-    // 2. Render with 0 first
     const { rerender } = render(
       <AnimationStressTest onCapture={onCapture} seekTime={0} />
     );
 
-    // 3. Wait for READY
     await vi.waitFor(
       () => {
         expect(receivedMessages).toContain('READY');
@@ -64,10 +90,8 @@ test('Animation Stress Test - Visual Regression', async () => {
       { timeout: 10000 }
     );
 
-    // 4. Trigger the seek via prop change
     rerender(<AnimationStressTest onCapture={onCapture} seekTime={1000} />);
 
-    // 5. Wait for SEEKED
     await vi.waitFor(
       () => {
         expect(receivedMessages).toContain('SEEKED');
@@ -75,10 +99,9 @@ test('Animation Stress Test - Visual Regression', async () => {
       { timeout: 10000 }
     );
 
-    // 6. Capture
     screen.getByTestId('capture-optimal').click();
     await vi.waitFor(() => expect(onCapture).toHaveBeenCalled(), {
-      timeout: 5000,
+      timeout: DEFAULT_TEST_TIMEOUT,
     });
 
     expect(onCapture.mock.calls[0][0].dataUrl).toMatchSnapshot();
@@ -89,12 +112,14 @@ test('Animation Stress Test - Visual Regression', async () => {
 
 test('Filter Fidelity - Visual Regression', async () => {
   const onCapture = vi.fn();
-  render(<FilterFidelity onCapture={onCapture} />);
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  await waitForSignal('READY', () => {
+    render(<FilterFidelity onCapture={onCapture} />);
+  });
 
   screen.getByTestId('capture-optimal').click();
   await vi.waitFor(() => expect(onCapture).toHaveBeenCalled(), {
-    timeout: 5000,
+    timeout: DEFAULT_TEST_TIMEOUT,
   });
 
   expect(onCapture.mock.calls[0][0].dataUrl).toMatchSnapshot();
