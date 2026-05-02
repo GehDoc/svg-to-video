@@ -49,10 +49,7 @@ export const RenderingView = () => {
       ) : (
         <>
           {svgContent && (
-            <div
-              className="progress-overlay"
-              style={{ background: 'rgba(15, 23, 42, 0.6)' }}
-            >
+            <div className="progress-overlay">
               <div className="meta-grid">
                 <div className="meta-item">
                   <strong>Source</strong> {originalDim.width}x
