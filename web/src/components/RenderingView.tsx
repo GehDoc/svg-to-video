@@ -1,6 +1,6 @@
 import { StudioContext } from '../context/StudioContext';
 import { useContext } from 'react';
-import SvgRenderer from './SvgRenderer';
+import { RendererMonitor } from './RendererMonitor';
 import './RenderingView.scss';
 
 export const RenderingView = () => {
@@ -9,9 +9,7 @@ export const RenderingView = () => {
 
   return (
     <>
-      <div className="monitor-wrapper">
-        <SvgRenderer ref={rendererRef} />
-      </div>
+      <RendererMonitor rendererRef={rendererRef} />
 
       {state.isRendering ? (
         <div className="progress-overlay">
