@@ -1,6 +1,7 @@
 import { StudioContext } from '../context/StudioContext';
 import { useContext } from 'react';
 import { RendererMonitor } from './RendererMonitor';
+import { ProgressOverlay } from './ProgressOverlay';
 import './RenderingView.scss';
 
 export const RenderingView = () => {
@@ -12,21 +13,11 @@ export const RenderingView = () => {
       <RendererMonitor rendererRef={rendererRef} />
 
       {state.isRendering ? (
-        <div className="progress-overlay">
-          <div className="progress-status">
-            <span>{state.status}</span>
-            <button className="cancel-button" onClick={cancel}>
-              Cancel
-            </button>
-            <span>{state.progress}%</span>
-          </div>
-          <div className="progress-bar-container">
-            <div
-              className="progress-bar-fill"
-              style={{ width: `${state.progress}%` }}
-            ></div>
-          </div>
-
+        <ProgressOverlay
+          status={state.status}
+          progress={state.progress}
+          onCancel={cancel}
+        >
           {state.meta && (
             <div className="meta-grid">
               <div className="meta-item">
@@ -43,11 +34,11 @@ export const RenderingView = () => {
               </div>
             </div>
           )}
-        </div>
+        </ProgressOverlay>
       ) : (
         <>
           {svgContent && (
-            <div className="progress-overlay">
+            <ProgressOverlay>
               <div className="meta-grid">
                 <div className="meta-item">
                   <strong>Source</strong> {originalDim.width}x
@@ -57,7 +48,7 @@ export const RenderingView = () => {
                   <strong>Export</strong> {targetDim.width}x{targetDim.height}
                 </div>
               </div>
-            </div>
+            </ProgressOverlay>
           )}
         </>
       )}
