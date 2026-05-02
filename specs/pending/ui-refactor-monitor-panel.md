@@ -29,6 +29,7 @@ Refactor the `MonitorPanel` into mutually exclusive `SuccessView`, `RenderingVie
   - [x] Add legal disclaimer (MIT link + no-warranty clause) to footer.
   - [x] Pin legal/version footer to the absolute bottom of the viewport.
 - [ ] **Cleanup & CSS Modularization**
+  - [ ] Extract Dropzone into a dedicated component.
   - [ ] Migrate component-specific styles (ConfigPanel, header, etc.) from `App.css` to dedicated SCSS files.
   - [ ] Remove redundant/broken styles from `App.css`.
 
