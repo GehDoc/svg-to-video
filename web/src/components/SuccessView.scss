@@ -1,0 +1,74 @@
+.success-card {
+  background: var(--panel);
+  padding: 2.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 1.5rem;
+}
+
+.success-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+}
+
+.success-meta {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.success-preview {
+  background: black;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border);
+  aspect-ratio: 16 / 9;
+  display: flex;
+}
+
+.success-preview video {
+  width: 100%;
+  height: 100%;
+}
+
+.success-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.success-actions .render-button {
+  flex: 2;
+}
+
+.success-actions .secondary-button {
+  flex: 1;
+}

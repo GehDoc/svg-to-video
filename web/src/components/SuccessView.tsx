@@ -1,6 +1,6 @@
 import { StudioContext } from '../context/StudioContext';
 import { useContext } from 'react';
-import './SuccessView.css';
+import './SuccessView.scss';
 
 export const SuccessView = () => {
   const { fileName, fileSize, renderedUrl, setRenderedUrl, downloadResult } =

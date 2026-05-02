@@ -1,7 +1,7 @@
 import { StudioContext } from '../context/StudioContext';
 import { useContext } from 'react';
 import SvgRenderer from './SvgRenderer';
-import './RenderingView.css';
+import './RenderingView.scss';
 
 export const RenderingView = () => {
   const { state, cancel, svgContent, originalDim, targetDim, rendererRef } =

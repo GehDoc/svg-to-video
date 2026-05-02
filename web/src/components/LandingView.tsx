@@ -1,6 +1,6 @@
 import { FaGithub } from 'react-icons/fa';
 import pkg from '../../../package.json';
-import './LandingView.css';
+import './LandingView.scss';
 
 export const LandingView = () => {
   return (
