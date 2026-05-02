@@ -7,28 +7,27 @@
 function seekAnimations(timeInMilliseconds) {
   // 1. Seek CSS Animations (Web Animations API)
   const animations = document.getAnimations();
-  for (let i = 0; i < animations.length; i++) {
-    const animation = animations[i];
+  animations.forEach((animation) => {
     try {
       animation.pause();
     } catch (_error) {
       /* ignored */
     }
     animation.currentTime = timeInMilliseconds;
-  }
+  });
 
   // 2. Seek SMIL Animations
   const svgs = document.querySelectorAll('svg');
-  for (let i = 0; i < svgs.length; i++) {
-    const svg = svgs[i];
+  svgs.forEach((svg) => {
     try {
+      if (typeof svg.pauseAnimations === 'function') svg.pauseAnimations();
       if (typeof svg.setCurrentTime === 'function') {
         svg.setCurrentTime(timeInMilliseconds / 1000);
       }
     } catch (_error) {
       /* ignored */
     }
-  }
+  });
 }
 
 // Support ESM

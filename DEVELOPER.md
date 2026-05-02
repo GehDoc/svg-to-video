@@ -10,6 +10,29 @@ Welcome! This repository uses **Spec-Driven Development (SDD)** to maintain a cl
 
 ## 🔄 Workflow & Automation
 
+### 🚦 Type Safety & Commit Hooks
+
+To prevent the introduction of breaking changes, the project uses **Husky** to enforce type safety:
+
+- **Pre-commit**: The `.husky/pre-commit` hook automatically runs `npm run type-check` alongside linting and formatting. Commits will fail if `tsc` detects any errors.
+- **Manual Check**: You can always run `npm run check:fast` to validate types, linting, and formatting locally.
+
+### 📦 Dependency Management (Vitest & Storybook)
+
+This project requires strict version alignment between **Storybook** and **Vitest** to avoid `Mock` type mismatches.
+
+- **The Problem**: Storybook's `composeStories` often pulls in an internal version of `@vitest/spy` that can conflict with the project's direct Vitest dependency, leading to "Type 'Mock' is not assignable" errors in tests.
+- **The Solution**: We use the `overrides` field in the root `package.json` to force a unified version for all Vitest-related packages:
+  ```json
+  "overrides": {
+    "vitest": "4.1.4",
+    "@vitest/spy": "4.1.4",
+    "@vitest/expect": "4.1.4",
+    ...
+  }
+  ```
+- **Future Upgrades**: When upgrading Storybook or Vitest, ensure all `@vitest/*` packages in the `overrides` section are updated to the same version. Run `rm -rf node_modules package-lock.json && npm install` to ensure the dependency tree is correctly rebuilt.
+
 ### 🤖 Starting with an AI Agent (Recommended)
 
 To initiate a new feature, simply provide the following command to your AI collaborator:
@@ -42,10 +65,48 @@ If working without an agent, follow these steps to keep the project state synchr
 | `npm run fix` | Auto-fixes linting and formatting issues. |
 | `npm run lint` | Checks for linting issues in both CLI and Web Studio code. |
 | `npm run lint:fix` | Fixes linting issues in both CLI and Web Studio code. |
+| `npm run storybook` | Launches the Storybook UI for component development. |
 | `npm run format` | Checks for formatting issues. |
 | `npm run format:fix` | Fixes formatting issues. |
-| `npm run test` | Runs all tests (CLI and Web Studio E2E). |
+| `npm run test` | Runs all tests (CLI, Web Studio E2E, Storybook, and Visual). |
+| `npm run test:storybook` | Runs Storybook interaction tests using Vitest. |
+| `npm run test:visual` | Runs native visual regression tests (pixel matching). |
+| `npm run test:visual:update` | Updates visual regression baseline screenshots. |
+| `npm run build-storybook` | Builds the Storybook static site for deployment. |
 | `npm run type-check` | Validates TypeScript types. |
+
+## 📸 Visual Regression Testing
+
+The `SvgRenderer` component is monitored for visual regressions using native Vitest matchers.
+
+### Running Visual Tests
+
+Snapshots are captured in a headless browser (Chromium) to ensure frame-accurate rendering consistency across different environments.
+
+```bash
+# In the web/ directory
+npm run test:visual
+```
+
+### Updating Baselines
+
+When intentional changes are made to the rendering logic, update the stored snapshots:
+
+```bash
+# In the root or web/ directory
+npm run test:visual:update
+```
+
+### Configuring Pixel-Match Thresholds
+
+To adjust the sensitivity of the visual comparison (e.g., to ignore minor anti-aliasing differences), you can provide a threshold in the visual test configuration:
+
+```typescript
+// Example: web/vitest.visual.config.ts
+screenshotOptions: {
+  threshold: 0.1, // Allow 10% pixel difference
+}
+```
 
 ## 🐳 Docker & Hardening
 
@@ -53,8 +114,10 @@ The project includes a hardened Dockerfile for both development and production u
 
 ## 🌐 Web Studio Deployment
 
-The Web Studio is configured to deploy automatically to **GitHub Pages** via GitHub Actions.
+The Web Studio and Storybook Gallery are configured to deploy automatically to **GitHub Pages** via GitHub Actions.
 
+- **Web Studio**: [https://gehdoc.github.io/svg-to-video/](https://gehdoc.github.io/svg-to-video/)
+- **Storybook Gallery**: [https://gehdoc.github.io/svg-to-video/storybook/](https://gehdoc.github.io/svg-to-video/storybook/)
 - **Asset Pathing**: The project uses an environment-aware `base` path (`/svg-to-video/`) in `web/vite.config.ts`. This ensures all assets load correctly when deployed as a GitHub Project Site.
 - **CI Pipeline**: Deployment is triggered automatically on pushes to the `main` branch via `.github/workflows/deploy.yml`.
 

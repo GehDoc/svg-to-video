@@ -24,6 +24,7 @@ export interface RendererHandle {
 const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [ready, setReady] = useState(false);
+  const [scriptLoaded, setScriptLoaded] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   // Initialize iframe with blob to ensure COOP/COEP header inheritance
@@ -36,10 +37,24 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
       ${rendererScript}
     `
     );
+
+    const handler = (event: MessageEvent) => {
+      if (event.data.type === 'SCRIPT_LOADED') {
+        setScriptLoaded(true);
+      }
+    };
+    window.addEventListener('message', handler);
+
     const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
     if (iframeRef.current) {
-      iframeRef.current.src = URL.createObjectURL(blob);
+      iframeRef.current.src = url;
     }
+
+    return () => {
+      URL.revokeObjectURL(url);
+      window.removeEventListener('message', handler);
+    };
   }, []);
 
   useImperativeHandle(ref, () => ({
@@ -52,7 +67,22 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
       setReady(false);
       setDimensions({ width, height });
       const iframe = iframeRef.current;
-      if (!iframe) return;
+      if (!iframe) {
+        return;
+      }
+
+      // Wait for script to be loaded if it hasn't already
+      if (!scriptLoaded) {
+        await new Promise<void>((resolve) => {
+          const handler = (event: MessageEvent) => {
+            if (event.data.type === 'SCRIPT_LOADED') {
+              window.removeEventListener('message', handler);
+              resolve();
+            }
+          };
+          window.addEventListener('message', handler);
+        });
+      }
 
       return new Promise<void>((resolve) => {
         const handler = (event: MessageEvent) => {
@@ -66,7 +96,13 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
         iframe.contentWindow?.postMessage(
           {
             type: 'LOAD_SVG',
-            payload: { svgContent, width, height, backgroundColor },
+            payload: {
+              svgContent,
+              width,
+              height,
+              backgroundColor,
+              timeMs: 0,
+            },
           },
           '*'
         );
@@ -109,7 +145,7 @@ const SvgRenderer = forwardRef<RendererHandle>((_, ref) => {
   }));
 
   return (
-    <div className="renderer-monitor">
+    <div className="renderer-monitor" data-testid="svg-renderer">
       <p className="monitor-label">Live Monitor</p>
       <div className="monitor-viewport">
         <iframe

@@ -122,8 +122,6 @@ async function createFrames(
   // Animations API (`document.getAnimations()`) and set `currentTime` on
   // each animation, which works for any SVG regardless of how its
   // animations are defined.
-  svg = svg.replace(/--play-state:\s*running\s*;/g, '--play-state: paused;');
-
   const browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', ...puppeteerArgs],

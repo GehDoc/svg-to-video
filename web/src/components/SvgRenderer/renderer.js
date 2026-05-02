@@ -55,44 +55,69 @@ export function getRendererScript(seekAnimations) {
 
   const svgContainer = document.getElementById('svg-container');
   const captureCanvas = document.getElementById('capture-canvas');
+  let isReady = false;
 
   window.addEventListener('message', async (event) => {
     const { type, payload } = event.data;
 
     if (type === 'LOAD_SVG') {
-      const { svgContent, width, height, backgroundColor } = payload;
-      svgContainer.innerHTML = svgContent.replace(
-        /--play-state:\s*running\s*;/g,
-        '--play-state: paused;'
-      );
+      isReady = false;
+      const { svgContent, width, height, backgroundColor, timeMs } = payload;
+      svgContainer.innerHTML = svgContent;
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';
       svgContainer.style.backgroundColor = backgroundColor;
       captureCanvas.width = width;
       captureCanvas.height = height;
-      window.parent.postMessage({ type: 'READY' }, '*');
+
+      // Position all animations at the correct frame before the first render
+      seekAnimations(timeMs);
+
+      // Wait for a frame to ensure the innerHTML is parsed and rendered
+      requestAnimationFrame(() => {
+        isReady = true;
+        // Signal that the SVG is ready to be captured
+        window.parent.postMessage({ type: 'READY' }, '*');
+      });
     }
 
     if (type === 'SEEK') {
+      if (!isReady) return;
       seekAnimations(payload.timeMs);
-      await new Promise((r) => requestAnimationFrame(r));
       await new Promise((r) => requestAnimationFrame(r));
       window.parent.postMessage({ type: 'SEEKED' }, '*');
     }
 
     if (type === 'CAPTURE') {
-      const svg = document.querySelector('svg');
+      if (!isReady) return;
+      const svg = svgContainer.querySelector('svg');
       const ctx = captureCanvas.getContext('2d');
       if (!svg || !ctx) return;
 
       const clone = svg.cloneNode(true);
-      const originalElements = [svg, ...Array.from(svg.querySelectorAll('*'))];
+
+      // Remove all animation elements from the clone to prevent "re-animation"
+      // when drawing the clone to the canvas.
+      const animationTags = clone.querySelectorAll(
+        'animate, animateTransform, animateMotion, set'
+      );
+      animationTags.forEach((tag) => tag.remove());
+
+      const originalElements = [
+        svg,
+        ...Array.from(svg.querySelectorAll('*')).filter(
+          (el) =>
+            !['animate', 'animateTransform', 'animateMotion', 'set'].includes(
+              el.tagName.toLowerCase()
+            )
+        ),
+      ];
       const cloneElements = [clone, ...Array.from(clone.querySelectorAll('*'))];
 
       originalElements.forEach((el, i) => {
         const style = window.getComputedStyle(el);
         const cloneEl = cloneElements[i];
-        if (!cloneEl.style) return;
+        if (!cloneEl || !cloneEl.style) return;
 
         if (payload.method === 'high-fidelity') {
           for (let j = 0; j < style.length; j++) {
@@ -126,12 +151,14 @@ export function getRendererScript(seekAnimations) {
       ctx.drawImage(img, 0, 0, captureCanvas.width, captureCanvas.height);
       URL.revokeObjectURL(url);
       const bitmap = await createImageBitmap(captureCanvas);
-      const channel = new MessageChannel();
       window.parent.postMessage(
         { type: 'CAPTURE_RESULT', payload: bitmap },
         '*',
-        [channel.port2]
+        [bitmap]
       );
     }
   });
+
+  // Signal that the script is loaded and listening
+  window.parent.postMessage({ type: 'SCRIPT_LOADED' }, '*');
 }

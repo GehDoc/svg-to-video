@@ -11,6 +11,8 @@ out-dir-test/
 # Web Studio source (Not needed for the CLI runtime)
 web/
 playwright.config.ts
+storybook-static/
+.storybook-cache/
 
 # Dev/Tooling configs
 .github/
@@ -28,6 +30,10 @@ docker-compose.yml
 # Git
 .git/
 .gitignore
+
+# Vitest / Visual regression artifacts
+.vitest-attachments
+__screenshots__
 
 # Logs
 npm-debug.log*
