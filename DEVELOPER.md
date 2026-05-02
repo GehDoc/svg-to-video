@@ -114,8 +114,10 @@ The project includes a hardened Dockerfile for both development and production u
 
 ## 🌐 Web Studio Deployment
 
-The Web Studio is configured to deploy automatically to **GitHub Pages** via GitHub Actions.
+The Web Studio and Storybook Gallery are configured to deploy automatically to **GitHub Pages** via GitHub Actions.
 
+- **Web Studio**: [https://gehdoc.github.io/svg-to-video/](https://gehdoc.github.io/svg-to-video/)
+- **Storybook Gallery**: [https://gehdoc.github.io/svg-to-video/storybook/](https://gehdoc.github.io/svg-to-video/storybook/)
 - **Asset Pathing**: The project uses an environment-aware `base` path (`/svg-to-video/`) in `web/vite.config.ts`. This ensures all assets load correctly when deployed as a GitHub Project Site.
 - **CI Pipeline**: Deployment is triggered automatically on pushes to the `main` branch via `.github/workflows/deploy.yml`.
 
