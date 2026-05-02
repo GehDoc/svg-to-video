@@ -21,10 +21,10 @@ Refactor the `MonitorPanel` into mutually exclusive `SuccessView`, `RenderingVie
   - [x] Refactor `MonitorPanel` to act as the main controller.
 - [ ] **Testing & Validation**
   - [ ] Create Storybook stories for `SuccessView`, `RenderingView`, and `LandingView`.
-- [ ] **UI Implementation (LandingView)**
-  - [ ] Implement centered upload prompt using flexbox.
-  - [ ] Add legal disclaimer (MIT link + no-warranty clause) to footer.
-  - [ ] Pin legal/version footer to the absolute bottom of the viewport.
+- [x] **UI Implementation (LandingView)**
+  - [x] Implement centered upload prompt using flexbox.
+  - [x] Add legal disclaimer (MIT link + no-warranty clause) to footer.
+  - [x] Pin legal/version footer to the absolute bottom of the viewport.
 - [ ] **Cleanup**
   - [ ] Remove redundant/broken styles from `App.css`.
 
