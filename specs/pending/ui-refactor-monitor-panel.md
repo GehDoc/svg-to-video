@@ -16,12 +16,13 @@ Refactor the `MonitorPanel` into mutually exclusive `SuccessView`, `RenderingVie
 
 ## ✅ Task List
 
-- [x] **Prerequisite: SCSS Integration**
+- [ ] **Prerequisite: SCSS Integration**
   - [x] Install `sass` dev dependency in `web/`.
   - [x] Convert CSS files to SCSS.
-- [x] **Structural Refactoring**
+- [ ] **Structural Refactoring**
   - [x] Create `SuccessView`, `RenderingView`, `LandingView` components.
   - [x] Refactor `MonitorPanel` to act as the main controller.
+  - [ ] Decompose `RenderingView` into `RendererMonitor`, `ProgressOverlay`, and `MetaDisplay`.
 - [ ] **Testing & Validation**
   - [ ] Create Storybook stories for `SuccessView`, `RenderingView`, and `LandingView`.
 - [x] **UI Implementation (LandingView)**
