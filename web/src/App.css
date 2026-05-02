@@ -154,39 +154,6 @@ header p {
   margin-top: 0.4rem;
 }
 
-.dropzone {
-  border: 2px dashed var(--border);
-  border-radius: 8px;
-  padding: 1.5rem;
-  text-align: center;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--text-muted);
-}
-
-.dropzone:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--primary);
-  color: var(--text);
-}
-
-.dropzone.dragging {
-  background: rgba(99, 102, 241, 0.1);
-  border-color: var(--primary);
-  transform: scale(1.02);
-}
-
-.dropzone.has-content {
-  border-style: solid;
-  border-color: var(--accent);
-  background: rgba(16, 185, 129, 0.05);
-}
-
-.dropzone label {
-  cursor: pointer;
-}
-
 .secondary-button {
   background: transparent;
   color: var(--text-muted);

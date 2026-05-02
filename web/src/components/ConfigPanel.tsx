@@ -2,6 +2,7 @@ import { StudioContext } from '../context/StudioContext';
 import { useContext, type ChangeEvent } from 'react';
 import type { ResolutionPreset } from '../hooks/useRenderer';
 import './ConfigPanel.scss';
+import './Dropzone.scss';
 
 export const ConfigPanel = () => {
   const {
