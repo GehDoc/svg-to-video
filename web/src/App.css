@@ -71,40 +71,14 @@ header p {
   filter: grayscale(0.2);
 }
 
-.config-panel {
-  width: 350px;
-  background: var(--panel);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  position: relative;
-}
-
-.config-section {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.config-section h2 {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-}
-
 .monitor-panel {
   flex: 1;
   background: var(--bg);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1em;
-  position: relative;
+  height: 100%;
 }
+
 
 .monitor-wrapper {
   width: 100%;
