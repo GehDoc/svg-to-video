@@ -16,7 +16,10 @@ Refactor the `MonitorPanel` into mutually exclusive `SuccessView`, `RenderingVie
 
 ## ✅ Task List
 
-- [x] **Structural Refactoring**
+- [ ] **Prerequisite: SCSS Integration**
+  - [ ] Install `sass` dev dependency in `web/`.
+  - [ ] Convert CSS files to SCSS.
+- [ ] **Structural Refactoring**
   - [x] Create `SuccessView`, `RenderingView`, `LandingView` components.
   - [x] Refactor `MonitorPanel` to act as the main controller.
 - [ ] **Testing & Validation**
@@ -25,7 +28,8 @@ Refactor the `MonitorPanel` into mutually exclusive `SuccessView`, `RenderingVie
   - [x] Implement centered upload prompt using flexbox.
   - [x] Add legal disclaimer (MIT link + no-warranty clause) to footer.
   - [x] Pin legal/version footer to the absolute bottom of the viewport.
-- [ ] **Cleanup**
+- [ ] **Cleanup & CSS Modularization**
+  - [ ] Migrate component-specific styles (ConfigPanel, header, etc.) from `App.css` to dedicated SCSS files.
   - [ ] Remove redundant/broken styles from `App.css`.
 
 ## 🧪 Verification Plan
