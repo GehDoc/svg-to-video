@@ -16,9 +16,11 @@ Refactor the `MonitorPanel` into mutually exclusive `SuccessView`, `RenderingVie
 
 ## ✅ Task List
 
-- [ ] **Structural Refactoring**
-  - [ ] Create `SuccessView`, `RenderingView`, `LandingView` components.
-  - [ ] Refactor `MonitorPanel` to act as the main controller.
+- [x] **Structural Refactoring**
+  - [x] Create `SuccessView`, `RenderingView`, `LandingView` components.
+  - [x] Refactor `MonitorPanel` to act as the main controller.
+- [ ] **Testing & Validation**
+  - [ ] Create Storybook stories for `SuccessView`, `RenderingView`, and `LandingView`.
 - [ ] **UI Implementation (LandingView)**
   - [ ] Implement centered upload prompt using flexbox.
   - [ ] Add legal disclaimer (MIT link + no-warranty clause) to footer.
