@@ -1,7 +1,7 @@
 # Spec: 13 - Storybook Component Testing
 
 **GitHub Issue**: [https://github.com/GehDoc/svg-to-video/issues/13](https://github.com/GehDoc/svg-to-video/issues/13)
-**Status**: 🟡 In-Progress (Decoupled architecture stable; implementing Node-task visual validation)
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -62,3 +62,4 @@ _These issues are now tracked as part of the visual validation infrastructure re
 - _2026-03-24: Initial spec created for Issue #13._
 - _2026-04-13: Migrated to native decoupled runners and established stable base64 snapshots._
 - _2026-04-18: Upgraded Storybook to 10.3.5, fixed Vitest 4.1.4 version conflict via root overrides, and deferred Phase 3 to Issue #28._
+- _2026-05-01: Finalized Phase 2: Implemented 'Always Paused, Only Seeked' architecture, stabilized renderer message flow (READY/SEEKED), refactored tests for robust event-based synchronization, and archived the spec._
