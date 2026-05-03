@@ -2,6 +2,7 @@ import { StudioContext } from '../context/StudioContext';
 import { useContext } from 'react';
 import { RendererMonitor } from './RendererMonitor';
 import { ProgressOverlay } from './ProgressOverlay';
+import { MetaDisplay } from './MetaDisplay';
 import './RenderingView.scss';
 
 export const RenderingView = () => {
@@ -18,36 +19,20 @@ export const RenderingView = () => {
           progress={state.progress}
           onCancel={cancel}
         >
-          {state.meta && (
-            <div className="meta-grid">
-              <div className="meta-item">
-                <strong>Source</strong> {state.meta.originalSize}
-              </div>
-              <div className="meta-item">
-                <strong>Export</strong> {state.meta.finalSize}
-              </div>
-              <div className="meta-item">
-                <strong>Codec</strong> {state.meta.codec}
-              </div>
-              <div className="meta-item">
-                <strong>ETA</strong> {state.meta.eta}s
-              </div>
-            </div>
-          )}
+          {state.meta && <MetaDisplay meta={state.meta} />}
         </ProgressOverlay>
       ) : (
         <>
           {svgContent && (
             <ProgressOverlay>
-              <div className="meta-grid">
-                <div className="meta-item">
-                  <strong>Source</strong> {originalDim.width}x
-                  {originalDim.height}
-                </div>
-                <div className="meta-item">
-                  <strong>Export</strong> {targetDim.width}x{targetDim.height}
-                </div>
-              </div>
+              <MetaDisplay
+                dimensions={{
+                  width: originalDim.width,
+                  height: originalDim.height,
+                  targetWidth: targetDim.width,
+                  targetHeight: targetDim.height,
+                }}
+              />
             </ProgressOverlay>
           )}
         </>

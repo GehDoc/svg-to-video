@@ -1,0 +1,14 @@
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.meta-item strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.85rem;
+}
