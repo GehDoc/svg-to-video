@@ -91,25 +91,6 @@ body {
   font-size: 0.8rem;
 }
 
-.error-container {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg);
-  z-index: 100;
-}
-
-.error-card {
-  background: var(--panel);
-  padding: 2.5rem;
-  border-radius: 12px;
-  border: 1px solid var(--error);
-  text-align: center;
-  max-width: 400px;
-}
-
 .footer-mini {
   margin-top: 1.5rem;
   padding-top: 1rem;
