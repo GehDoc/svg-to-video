@@ -108,6 +108,45 @@ screenshotOptions: {
 }
 ```
 
+## 🧪 Testing Strategy
+
+Beyond end-to-end and visual regression testing, we use unit testing to validate the behavior of individual UI components.
+
+### Unit Testing Components
+
+We use **Vitest** combined with **Storybook**'s `composeStories` utility. This approach allows us to:
+
+1. Re-use Storybook setup for component testing.
+2. Isolate components and mock their context/state via decorators and `MockStudioProvider`.
+
+#### Implementation Pattern
+
+Create a `ComponentName.test.tsx` file for the component:
+
+```tsx
+// @vitest-environment jsdom
+import { render, screen, cleanup } from '@testing-library/react';
+import { test, expect, afterEach } from 'vitest';
+import '@testing-library/jest-dom/vitest';
+import { composeStories } from '@storybook/react';
+import * as stories from './ComponentName.stories';
+
+afterEach(cleanup);
+
+const { Default } = composeStories(stories);
+
+test('Component renders correctly', () => {
+  render(<Default />);
+  expect(screen.getByText(/Some text/i)).toBeInTheDocument();
+});
+```
+
+#### Key Rules:
+
+- **Always** use `// @vitest-environment jsdom` at the top.
+- **Always** import `import '@testing-library/jest-dom/vitest';` for DOM matchers like `toBeInTheDocument()`.
+- **Prefer** `composeStories` over manually mocking context to stay in sync with Storybook definitions.
+
 ## 🐳 Docker & Hardening
 
 The project includes a hardened Dockerfile for both development and production use.
