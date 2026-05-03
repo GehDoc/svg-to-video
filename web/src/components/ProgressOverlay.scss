@@ -40,3 +40,14 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+.cancel-button {
+  background: var(--error);
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
