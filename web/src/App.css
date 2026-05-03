@@ -34,26 +34,17 @@ body {
   overflow: hidden;
 }
 
-.studio-layout {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-}
-
 .is-locked {
   opacity: 0.6;
   pointer-events: none;
   filter: grayscale(0.2);
 }
 
-.monitor-panel {
-  flex: 1;
-  background: var(--bg);
+.studio-layout {
   display: flex;
-  flex-direction: column;
-  height: 100%;
+  flex: 1;
+  overflow: hidden;
 }
-
 .secondary-button {
   background: transparent;
   color: var(--text-muted);

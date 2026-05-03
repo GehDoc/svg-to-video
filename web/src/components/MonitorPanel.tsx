@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { SuccessView } from './SuccessView';
 import { RenderingView } from './RenderingView';
 import { LandingView } from './LandingView';
+import './MonitorPanel.scss';
 
 export const MonitorPanel = () => {
   const { svgContent, renderedUrl, state } = useContext(StudioContext)!;
