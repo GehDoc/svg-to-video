@@ -34,31 +34,6 @@ body {
   overflow: hidden;
 }
 
-header {
-  padding: 1rem 2rem;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-header p {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
 .studio-layout {
   display: flex;
   flex: 1;
