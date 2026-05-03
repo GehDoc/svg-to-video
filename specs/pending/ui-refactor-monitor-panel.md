@@ -22,17 +22,17 @@ Refactor the `MonitorPanel` into mutually exclusive `SuccessView`, `RenderingVie
 - [ ] **Structural Refactoring**
   - [x] Create `SuccessView`, `RenderingView`, `LandingView` components.
   - [x] Refactor `MonitorPanel` to act as the main controller.
-  - [ ] Decompose `RenderingView` into `RendererMonitor`, `ProgressOverlay`, and `MetaDisplay`.
-- [ ] **Testing & Validation**
-  - [ ] Create Storybook stories for `SuccessView`, `RenderingView`, and `LandingView`.
-- [x] **UI Implementation (LandingView)**
+  - [x] Decompose `RenderingView` into `RendererMonitor`, `ProgressOverlay`, and `MetaDisplay`.
+- [ ] **UI Implementation (LandingView)**
   - [x] Implement centered upload prompt using flexbox.
   - [x] Add legal disclaimer (MIT link + no-warranty clause) to footer.
   - [x] Pin legal/version footer to the absolute bottom of the viewport.
 - [ ] **Cleanup & CSS Modularization**
-  - [ ] Extract Dropzone into a dedicated component.
+  - [ ] Extract Dropzone into a dedicated component (with Storybook story).
   - [ ] Migrate component-specific styles (ConfigPanel, header, etc.) from `App.css` to dedicated SCSS files.
   - [ ] Remove redundant/broken styles from `App.css`.
+- [ ] **Testing & Validation**
+  - [ ] Create Storybook stories for `SuccessView`, `RenderingView`, and `LandingView`.
 
 ## 🧪 Verification Plan
 
