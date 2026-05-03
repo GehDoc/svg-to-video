@@ -1,8 +1,8 @@
 import { StudioContext } from '../context/StudioContext';
 import { useContext, type ChangeEvent } from 'react';
 import type { ResolutionPreset } from '../hooks/useRenderer';
+import { Dropzone } from './Dropzone';
 import './ConfigPanel.scss';
-import './Dropzone.scss';
 
 export const ConfigPanel = () => {
   const {
@@ -46,13 +46,6 @@ export const ConfigPanel = () => {
     if (e.target.files?.[0]) processFile(e.target.files[0]);
   };
 
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') setIsDragging(true);
-    else if (e.type === 'dragleave') setIsDragging(false);
-  };
-
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -71,28 +64,14 @@ export const ConfigPanel = () => {
     >
       <section className="config-section">
         <h2>1. Source</h2>
-        <div
-          className={`dropzone ${isDragging ? 'dragging' : ''} ${svgContent ? 'has-content' : ''}`}
-          onDragEnter={handleDrag}
-          onDragOver={handleDrag}
-          onDragLeave={handleDrag}
+        <Dropzone
+          svgContent={svgContent}
+          isDragging={isDragging}
+          setIsDragging={setIsDragging}
+          onFileChange={handleFileChange}
           onDrop={handleDrop}
-        >
-          <div className="input-group" style={{ marginBottom: 0 }}>
-            <label htmlFor="svg-upload">
-              {svgContent ? 'Change SVG' : 'Drop SVG here or click to upload'}
-            </label>
-            <div className="file-input-wrapper">
-              <input
-                type="file"
-                id="svg-upload"
-                accept=".svg"
-                onChange={handleFileChange}
-                disabled={state.isRendering || !!renderedUrl}
-              />
-            </div>
-          </div>
-        </div>
+          disabled={state.isRendering || !!renderedUrl}
+        />
       </section>
 
       <section className="config-section">
