@@ -33,6 +33,7 @@ Refactor the `MonitorPanel` into mutually exclusive `SuccessView`, `RenderingVie
   - [ ] Remove redundant/broken styles from `App.css`.
 - [ ] **Testing & Validation**
   - [ ] Create Storybook stories for `SuccessView`, `RenderingView`, and `LandingView`.
+  - [ ] Create Vitest unit tests for `SuccessView`, `RenderingView`, and `LandingView` using `composeStories`.
 
 ## 🧪 Verification Plan
 
