@@ -124,3 +124,12 @@
     cursor: not-allowed;
   }
 }
+
+.file-input-wrapper {
+  position: relative;
+
+  input[type='file'] {
+    width: 100%;
+    font-size: 0.8rem;
+  }
+}
