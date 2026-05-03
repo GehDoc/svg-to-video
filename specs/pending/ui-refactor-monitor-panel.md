@@ -31,9 +31,9 @@ Refactor the `MonitorPanel` into mutually exclusive `SuccessView`, `RenderingVie
   - [ ] Extract Dropzone into a dedicated component (with Storybook story).
   - [ ] Migrate component-specific styles (ConfigPanel, header, etc.) from `App.css` to dedicated SCSS files.
   - [ ] Remove redundant/broken styles from `App.css`.
-- [ ] **Testing & Validation**
-  - [ ] Create Storybook stories for `SuccessView`, `RenderingView`, and `LandingView`.
-  - [ ] Create Vitest unit tests for `SuccessView`, `RenderingView`, and `LandingView` using `composeStories`.
+- [x] **Testing & Validation**
+  - [x] Create Storybook stories for `SuccessView`, `RenderingView`, and `LandingView`.
+  - [x] Create Vitest unit tests for `SuccessView`, `RenderingView`, and `LandingView` using `composeStories`.
 
 ## 🧪 Verification Plan
 
