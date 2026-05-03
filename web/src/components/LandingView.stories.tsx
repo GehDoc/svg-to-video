@@ -1,20 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { LandingView } from './LandingView';
-import { StudioProvider } from '../context/StudioProvider';
-import { useRef } from 'react';
+import { MockStudioProvider } from '../context/MockStudioProvider';
 
 const meta: Meta<typeof LandingView> = {
   title: 'Components/LandingView',
   component: LandingView,
-  decorators: [
-    (Story) => {
-      const ref = useRef(null);
-      return <StudioProvider rendererRef={ref}>{Story()}</StudioProvider>;
-    },
-  ],
 };
 
 export default meta;
 type Story = StoryObj<typeof LandingView>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  decorators: [
+    (Story) => (
+      <MockStudioProvider mockValues={{}}>{Story()}</MockStudioProvider>
+    ),
+  ],
+};
