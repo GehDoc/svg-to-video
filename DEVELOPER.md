@@ -68,7 +68,8 @@ If working without an agent, follow these steps to keep the project state synchr
 | `npm run storybook` | Launches the Storybook UI for component development. |
 | `npm run format` | Checks for formatting issues. |
 | `npm run format:fix` | Fixes formatting issues. |
-| `npm run test` | Runs all tests (CLI, Web Studio E2E, Storybook, and Visual). |
+| `npm run test` | Runs all tests (CLI, Web Studio E2E, Unit, Storybook, and Visual). |
+| `npm run test:unit` | Runs component-level unit tests using Vitest. |
 | `npm run test:storybook` | Runs Storybook interaction tests using Vitest. |
 | `npm run test:visual` | Runs native visual regression tests (pixel matching). |
 | `npm run test:visual:update` | Updates visual regression baseline screenshots. |
