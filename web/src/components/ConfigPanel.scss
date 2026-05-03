@@ -1,0 +1,135 @@
+.config-panel {
+  width: 350px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  position: relative;
+}
+
+.config-section {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+  h2 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.input-group {
+  margin-bottom: 1.25rem;
+
+  label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  input[type='number'],
+  select,
+  input[type='text'] {
+    width: 100%;
+    padding: 0.6rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+  width: 100%;
+
+  .input-group {
+    margin-bottom: 0;
+
+    input[type='number'] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.4rem;
+    }
+
+    label {
+      text-align: center;
+      font-size: 0.65rem;
+      margin-bottom: 0.25rem;
+    }
+  }
+}
+
+.color-picker-wrapper {
+  display: flex;
+  gap: 0.5rem;
+
+  input[type='color'] {
+    width: 40px;
+    height: 38px;
+    padding: 0;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
+.hint-text {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+}
+
+.render-actions {
+  padding: 1.5rem 1.5rem;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  position: sticky;
+  bottom: 0;
+  margin-top: 0;
+}
+
+.render-button {
+  width: 100%;
+  padding: 0.85rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.file-input-wrapper {
+  position: relative;
+
+  input[type='file'] {
+    width: 100%;
+    font-size: 0.8rem;
+  }
+}
