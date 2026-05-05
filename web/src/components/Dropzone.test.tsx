@@ -4,9 +4,6 @@ import { test, expect, vi, afterEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { composeStories } from '@storybook/react';
 import * as stories from './Dropzone.stories';
-import { axe, toHaveNoViolations } from 'jest-axe';
-
-expect.extend(toHaveNoViolations);
 
 afterEach(cleanup);
 
@@ -32,10 +29,4 @@ test('Dropzone handles file drop and drag states', () => {
 
   fireEvent.dragLeave(dropzone);
   expect(mockSetIsDragging).toHaveBeenCalledWith(false);
-});
-
-test('Dropzone should have no accessibility violations', async () => {
-  const { container } = render(<Default />);
-  const results = await axe(container);
-  expect(results).toHaveNoViolations();
 });

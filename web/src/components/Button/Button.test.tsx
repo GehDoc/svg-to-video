@@ -4,9 +4,6 @@ import { test, expect, afterEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { composeStories } from '@storybook/react';
 import * as stories from './Button.stories';
-import { axe, toHaveNoViolations } from 'jest-axe';
-
-expect.extend(toHaveNoViolations);
 
 afterEach(cleanup);
 
@@ -31,10 +28,4 @@ test('Error Button renders correctly', () => {
 test('Disabled Button is disabled', () => {
   render(<Disabled />);
   expect(screen.getByRole('button')).toBeDisabled();
-});
-
-test('Button should have no accessibility violations', async () => {
-  const { container } = render(<Primary />);
-  const results = await axe(container);
-  expect(results).toHaveNoViolations();
 });

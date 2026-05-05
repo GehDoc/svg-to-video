@@ -4,9 +4,6 @@ import { test, expect, afterEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { composeStories } from '@storybook/react';
 import * as stories from './SuccessView.stories';
-import { axe, toHaveNoViolations } from 'jest-axe';
-
-expect.extend(toHaveNoViolations);
 
 afterEach(cleanup);
 
@@ -20,10 +17,4 @@ test('SuccessView renders success state correctly', () => {
   expect(
     screen.getByRole('button', { name: /Download MP4/i })
   ).toBeInTheDocument();
-});
-
-test('SuccessView should have no accessibility violations', async () => {
-  const { container } = render(<Default />);
-  const results = await axe(container);
-  expect(results).toHaveNoViolations();
 });

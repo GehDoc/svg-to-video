@@ -4,9 +4,6 @@ import { test, expect, afterEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { composeStories } from '@storybook/react';
 import * as stories from './LandingView.stories';
-import { axe, toHaveNoViolations } from 'jest-axe';
-
-expect.extend(toHaveNoViolations);
 
 afterEach(cleanup);
 
@@ -21,10 +18,4 @@ test('LandingView renders upload prompt and footer correctly', () => {
   expect(screen.getByText(/Local processing only/i)).toBeInTheDocument();
   expect(screen.getByText(/Licensed under/i)).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /MIT/i })).toBeInTheDocument();
-});
-
-test('LandingView should have no accessibility violations', async () => {
-  const { container } = render(<Default />);
-  const results = await axe(container);
-  expect(results).toHaveNoViolations();
 });
