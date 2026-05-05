@@ -1,0 +1,46 @@
+.btn {
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0.6rem;
+  border: none;
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.btn--primary {
+  background-color: var(--primary);
+  color: white;
+  width: 100%;
+  padding: 0.85rem;
+  font-size: 1rem;
+
+  &:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+}
+
+.btn--secondary {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+
+  &:hover:not(:disabled) {
+    color: var(--text);
+    border-color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.btn--error {
+  background: var(--error);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+}

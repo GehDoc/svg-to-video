@@ -9,17 +9,17 @@ Improve UI readability and accessibility by ensuring Storybook correctly loads g
 
 ## 🛠 Technical Strategy
 
-- **CSS Loading**: Ensure Storybook's loads global CSS ( and ) so theme variables are available.
-- **A11y Addon**: Enable and configure to audit stories for contrast and WCAG compliance.
-- **Automation**: Extend CI tests to perform automated accessibility checks using axe-core within the Storybook test suite.
+- **CSS Loading**: Ensure Storybook loads global CSS (`index.css` and `App.css`) so theme variables are available.
+- **A11y Addon**: Enable and configure `@storybook/addon-a11y` to audit stories for contrast and WCAG compliance.
+- **Automation**: Extend CI tests to perform automated accessibility checks using `axe-core` within the Storybook test suite.
 
 ## ✅ Task List
 
-- [ ] **Storybook Styling**
-  - [ ] Configure Storybook to import global CSS/variables.
-- [ ] **Accessibility Tooling**
-  - [ ] Register .
-  - [ ] Verify accessibility audits in Storybook UI.
+- [x] **Storybook Styling**
+  - [x] Configure Storybook to import global CSS/variables.
+- [x] **Accessibility Tooling**
+  - [x] Register `@storybook/addon-a11y`.
+  - [x] Verify accessibility audits in Storybook UI.
 - [ ] **CI Integration**
   - [ ] Add automated A11y tests to CI pipeline.
 

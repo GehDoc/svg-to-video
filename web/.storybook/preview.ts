@@ -1,4 +1,6 @@
-import type { Preview } from '@storybook/react-vite';
+import type { Preview } from '@storybook/react';
+import '../src/index.css';
+import '../src/App.css';
 
 const preview: Preview = {
   parameters: {
@@ -10,7 +12,16 @@ const preview: Preview = {
     },
 
     a11y: {
-      test: 'todo',
+      context: '#storybook-root',
+      config: {
+        rules: [
+          {
+            // Some specific rules if needed
+            id: 'color-contrast',
+            enabled: true,
+          },
+        ],
+      },
     },
   },
 };

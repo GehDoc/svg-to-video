@@ -1,5 +1,6 @@
 import { StudioContext } from '../context/StudioContext';
 import { useContext } from 'react';
+import { Button } from './Button/Button';
 import './SuccessView.scss';
 
 export const SuccessView = () => {
@@ -17,15 +18,12 @@ export const SuccessView = () => {
         <video src={renderedUrl!} controls autoPlay loop />
       </div>
       <div className="success-actions">
-        <button className="render-button" onClick={downloadResult}>
+        <Button variant="primary" onClick={downloadResult}>
           Download MP4
-        </button>
-        <button
-          className="secondary-button"
-          onClick={() => setRenderedUrl(null)}
-        >
+        </Button>
+        <Button variant="secondary" onClick={() => setRenderedUrl(null)}>
           Back to Studio
-        </button>
+        </Button>
       </div>
     </div>
   );

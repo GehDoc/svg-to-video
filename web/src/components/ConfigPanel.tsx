@@ -2,6 +2,7 @@ import { StudioContext } from '../context/StudioContext';
 import { useContext, type ChangeEvent } from 'react';
 import type { ResolutionPreset } from '../hooks/useRenderer';
 import { Dropzone } from './Dropzone';
+import { Button } from './Button/Button';
 import './ConfigPanel.scss';
 
 export const ConfigPanel = () => {
@@ -195,13 +196,13 @@ export const ConfigPanel = () => {
       </section>
 
       <div className="render-actions">
-        <button
-          className="render-button"
+        <Button
+          variant="primary"
           onClick={handleStartRender}
           disabled={!svgContent || state.isRendering || !!renderedUrl}
         >
           {state.isRendering ? 'Processing...' : 'Export MP4'}
-        </button>
+        </Button>
       </div>
     </aside>
   );

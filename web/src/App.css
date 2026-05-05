@@ -45,19 +45,3 @@ body {
   flex: 1;
   overflow: hidden;
 }
-.secondary-button {
-  background: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-  padding: 0.6rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.secondary-button:hover {
-  color: var(--text);
-  border-color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.05);
-}

@@ -110,7 +110,6 @@ const Wrapper = ({
 const meta = {
   title: 'Components/SvgRenderer',
   component: Wrapper,
-  tags: ['autodocs'],
   args: {
     onCapture: fn(),
     backgroundColor: '#ffffff',
