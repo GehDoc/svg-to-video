@@ -20,8 +20,14 @@ Improve UI readability and accessibility by ensuring Storybook correctly loads g
 - [x] **Accessibility Tooling**
   - [x] Register `@storybook/addon-a11y`.
   - [x] Verify accessibility audits in Storybook UI.
-- [ ] **CI Integration**
-  - [ ] Add automated A11y tests to CI pipeline.
+- [ ] **CI Integration & Remediation**
+  - [x] Identify and create missing Storybook stories for UI components (Header, ErrorView, etc.).
+  - [x] Add automated A11y tests to CI pipeline (via `test:unit`).
+  - [x] Extend A11y test coverage to `ConfigPanel` and fix discovered violations.
+  - [x] Extend A11y test coverage to `Dropzone` and fix discovered violations.
+  - [x] Fix A11y violations in all newly created stories.
+  - [ ] Fix Storybook "run tests" command within the UI.
+  - [ ] Verify A11y tests execution in GitHub Actions logs.
 
 ## 🧪 Verification Plan
 

@@ -12,7 +12,6 @@ const preview: Preview = {
     },
 
     a11y: {
-      context: '#storybook-root',
       config: {
         rules: [
           {

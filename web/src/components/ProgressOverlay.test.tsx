@@ -3,7 +3,7 @@ import { render, screen, cleanup } from '@testing-library/react';
 import { test, expect, afterEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { composeStories } from '@storybook/react';
-import * as stories from './LandingView.stories';
+import * as stories from './ProgressOverlay.stories';
 import { axe, toHaveNoViolations } from 'jest-axe';
 
 expect.extend(toHaveNoViolations);
@@ -12,18 +12,13 @@ afterEach(cleanup);
 
 const { Default } = composeStories(stories);
 
-test('LandingView renders upload prompt and footer correctly', () => {
+test('ProgressOverlay renders status and progress', () => {
   render(<Default />);
-
-  expect(
-    screen.getByText(/Upload an SVG to begin preview/i)
-  ).toBeInTheDocument();
-  expect(screen.getByText(/Local processing only/i)).toBeInTheDocument();
-  expect(screen.getByText(/Licensed under/i)).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /MIT/i })).toBeInTheDocument();
+  expect(screen.getByText(/Capturing frames/i)).toBeInTheDocument();
+  expect(screen.getByText(/45%/i)).toBeInTheDocument();
 });
 
-test('LandingView should have no accessibility violations', async () => {
+test('ProgressOverlay should have no accessibility violations', async () => {
   const { container } = render(<Default />);
   const results = await axe(container);
   expect(results).toHaveNoViolations();

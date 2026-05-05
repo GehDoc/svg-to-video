@@ -1,7 +1,16 @@
 // @vitest-environment jsdom
-import { render, screen, fireEvent } from '@testing-library/react';
-import { test, expect, vi } from 'vitest';
-import { Dropzone } from './Dropzone';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { test, expect, vi, afterEach } from 'vitest';
+import '@testing-library/jest-dom/vitest';
+import { composeStories } from '@storybook/react';
+import * as stories from './Dropzone.stories';
+import { axe, toHaveNoViolations } from 'jest-axe';
+
+expect.extend(toHaveNoViolations);
+
+afterEach(cleanup);
+
+const { Default } = composeStories(stories);
 
 test('Dropzone handles file drop and drag states', () => {
   const mockSetIsDragging = vi.fn();
@@ -9,9 +18,7 @@ test('Dropzone handles file drop and drag states', () => {
   const mockOnFileChange = vi.fn();
 
   render(
-    <Dropzone
-      svgContent={null}
-      isDragging={false}
+    <Default
       setIsDragging={mockSetIsDragging}
       onFileChange={mockOnFileChange}
       onDrop={mockOnDrop}
@@ -25,4 +32,10 @@ test('Dropzone handles file drop and drag states', () => {
 
   fireEvent.dragLeave(dropzone);
   expect(mockSetIsDragging).toHaveBeenCalledWith(false);
+});
+
+test('Dropzone should have no accessibility violations', async () => {
+  const { container } = render(<Default />);
+  const results = await axe(container);
+  expect(results).toHaveNoViolations();
 });

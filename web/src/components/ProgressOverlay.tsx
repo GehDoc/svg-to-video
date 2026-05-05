@@ -1,3 +1,4 @@
+import { Button } from './Button/Button';
 import './ProgressOverlay.scss';
 
 interface ProgressOverlayProps {
@@ -18,9 +19,9 @@ export const ProgressOverlay = ({
       {status && progress !== undefined && onCancel && (
         <div className="progress-status">
           <span>{status}</span>
-          <button className="cancel-button" onClick={onCancel}>
+          <Button variant="error" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
           <span>{progress}%</span>
         </div>
       )}

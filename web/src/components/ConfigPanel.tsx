@@ -176,6 +176,7 @@ export const ConfigPanel = () => {
               onChange={(e) => setBackgroundColor(e.target.value)}
               disabled={state.isRendering || !!renderedUrl}
               className="color-text-input"
+              aria-label="Background color hex code"
             />
           </div>
         </div>
