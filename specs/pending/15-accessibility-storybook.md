@@ -61,8 +61,8 @@ Improve UI readability and accessibility by ensuring Storybook correctly loads g
       - Quality Control: Verify test passes and matches snapshot against `SvgRenderer.test.tsx.bak`.
   - [x] **Verify Test Pass**: Run and confirm all unit tests pass after decoupling.
   - [x] **Refactor SvgRenderer Stories**: Remove buttons from UI and simplify.
-  - [ ] **Fix Header Favicon**: Replace Storybook favicon with application icon.
-  - [ ] **Restore Header Aesthetics**: Fix 'Studio' badge/name color and font.
+  - [x] **Fix Header Favicon**: Replace Storybook favicon with application icon.
+  - [x] **Restore Header Aesthetics**: Fix 'Studio' badge/name color and font.
   - [ ] **Refine "Live Monitor" label**: Adjust style for better integration.
 - [ ] **Final Cleanup & Verification**
   - [ ] Remove `jest-axe` dependency and references.
