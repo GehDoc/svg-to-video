@@ -59,4 +59,4 @@ Improve UI readability and accessibility by ensuring Storybook correctly loads g
 ## 📝 Change Log
 
 - 2026-05-02: Initial spec created by Gemini CLI.
-- 2026-05-05: Finalized migration to Storybook Test Runner and unified Vitest configuration. Remediation complete for all contrast violations. Refactored E2E locators for robustness. Optimized CI pipeline performance and fixed Storybook server execution in CI.
+- 2026-05-05: Finalized migration to Storybook Test Runner and unified Vitest configuration. Remediation complete for all contrast violations. Refactored E2E locators for robustness. Optimized CI pipeline performance (caching, Chromium target) and fixed Storybook server execution in CI. Upgraded GitHub Actions runtime to Node.js 24.
