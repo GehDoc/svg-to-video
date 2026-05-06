@@ -111,42 +111,24 @@ screenshotOptions: {
 
 ## 🧪 Testing Strategy
 
-Beyond end-to-end and visual regression testing, we use unit testing to validate the behavior of individual UI components.
+Beyond end-to-end testing, we use a two-tiered strategy for component and accessibility validation:
 
-### Unit Testing Components
+1.  **Component Unit Tests**: Validate logic using Vitest and JSDOM.
+2.  **Accessibility & Interaction Tests**: Validate visual/accessibility compliance (e.g., color contrast) using **Storybook Interaction Tests** running in a real browser environment (Chromium).
 
-We use **Vitest** combined with **Storybook**'s `composeStories` utility. This approach allows us to:
+### Accessibility Audits
 
-1. Re-use Storybook setup for component testing.
-2. Isolate components and mock their context/state via decorators and `MockStudioProvider`.
+We use `addon-a11y` within Storybook. To ensure consistent results:
 
-#### Implementation Pattern
+- **Manual Audit**: Use the "Accessibility" panel in the Storybook UI.
+- **Automated Audit**: Run the Storybook interaction test suite.
 
-Create a `ComponentName.test.tsx` file for the component:
-
-```tsx
-// @vitest-environment jsdom
-import { render, screen, cleanup } from '@testing-library/react';
-import { test, expect, afterEach } from 'vitest';
-import '@testing-library/jest-dom/vitest';
-import { composeStories } from '@storybook/react';
-import * as stories from './ComponentName.stories';
-
-afterEach(cleanup);
-
-const { Default } = composeStories(stories);
-
-test('Component renders correctly', () => {
-  render(<Default />);
-  expect(screen.getByText(/Some text/i)).toBeInTheDocument();
-});
+```bash
+# Run real-browser accessibility and interaction tests
+npm run test:storybook
 ```
 
-#### Key Rules:
-
-- **Always** use `// @vitest-environment jsdom` at the top.
-- **Always** import `import '@testing-library/jest-dom/vitest';` for DOM matchers like `toBeInTheDocument()`.
-- **Prefer** `composeStories` over manually mocking context to stay in sync with Storybook definitions.
+_Note: Avoid using `jest-axe` in JSDOM unit tests, as it cannot calculate computed styles and will miss contrast violations._
 
 ## 🐳 Docker & Hardening
 

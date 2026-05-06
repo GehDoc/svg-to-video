@@ -11,21 +11,8 @@ Improve UI readability and accessibility by ensuring Storybook correctly loads g
 
 - **CSS Loading**: Ensure Storybook loads global CSS (`index.css` and `App.css`) so theme variables are available.
 - **A11y Addon**: Enable and configure `@storybook/addon-a11y` to audit stories for contrast and WCAG compliance.
-- **Automation**: Extend CI tests to perform automated accessibility checks using `axe-core` within the Storybook test suite.
-
-## ✅ Task List
-
-- [x] **Storybook Styling**
-  - [x] Configure Storybook to import global CSS/variables.
-- [x] **Accessibility Tooling**
-  - [x] Register `@storybook/addon-a11y`.
-  - [x] Verify accessibility audits in Storybook UI.
-
-## 🛠 Technical Strategy
-
-- **CSS Loading**: Ensure Storybook loads global CSS (`index.css` and `App.css`).
-- **A11y Addon**: Enable and configure `@storybook/addon-a11y` for WCAG audits.
-- **Interaction Testing**: Use Storybook Interaction Tests (via Vitest Browser Mode/Playwright) to perform real-browser accessibility audits, replacing unreliable JSDOM unit tests.
+- **Automation**: Use official Storybook Test Runner to perform real-browser accessibility checks, replacing unreliable JSDOM unit tests.
+- **Unified Config**: Merge Storybook-specific Vitest configuration into `vite.config.ts` to enable integrated UI testing features.
 
 ## ✅ Task List
 
@@ -36,47 +23,37 @@ Improve UI readability and accessibility by ensuring Storybook correctly loads g
   - [x] Verify accessibility audits in Storybook UI.
 - [x] **CI Integration & Remediation**
   - [x] Identify and create missing Storybook stories for UI components.
-  - [x] Add automated A11y tests to CI pipeline.
-  - [x] Extend A11y test coverage to `ConfigPanel` and `Dropzone` (JSDOM-based).
-  - [x] Fix discovered A11y violations in components.
+  - [x] Add automated A11y tests to CI pipeline (via `npm run test:storybook`).
+  - [x] Extend A11y test coverage to all major components.
+  - [x] Fix discovered A11y violations in components (contrast, labels).
 - [x] **Real-Browser Interaction Testing (New Strategy)**
   - [x] Configure Storybook Test Runner to run A11y audits.
   - [x] Migrate component accessibility tests from JSDOM to Storybook Interaction tests.
-- [ ] **UI/UX Refinements**
+  - [x] Fix Storybook "run tests" command within the UI.
+- [x] **UI/UX Refinements**
   - [x] **Decouple SvgRenderer Tests (Parity Plan)**:
     - [x] **Test: Loop Synchronized Capture**
-      - Input: SVG with circle animation, 400x100, '#eee'.
-      - Steps: Render `SvgRenderer`, load SVG, capture via `ref`.
-      - Assertions: `READY` signal received, `onCapture` callback called, dataUrl matches snapshot.
-      - Quality Control: Verify test passes and matches snapshot against `SvgRenderer.test.tsx.bak`.
     - [x] **Test: Animation Stress Test**
-      - Input: Empty SVG, 600x600, '#1a1a1a'.
-      - Steps: Render `SvgRenderer`, load SVG, seek(1000), capture via `ref`.
-      - Assertions: `READY` signal received, `SEEKED` signal received, `onCapture` callback called, dataUrl matches snapshot.
-      - Quality Control: Verify test passes and matches snapshot against `SvgRenderer.test.tsx.bak`.
     - [x] **Test: Filter Fidelity**
-      - Input: SVG with blur/matrix filters, 500x300, '#eee'.
-      - Steps: Render `SvgRenderer`, load SVG, capture via `ref`.
-      - Assertions: `READY` signal received, `onCapture` callback called, dataUrl matches snapshot.
-      - Quality Control: Verify test passes and matches snapshot against `SvgRenderer.test.tsx.bak`.
   - [x] **Verify Test Pass**: Run and confirm all unit tests pass after decoupling.
   - [x] **Refactor SvgRenderer Stories**: Remove buttons from UI and simplify.
-  - [x] **Fix Header Favicon**: Replace Storybook favicon with application icon.
+  - [x] **Fix Header Favicon**: Replace Storybook favicon with application icon via `vite-plugin-svgr`.
   - [x] **Restore Header Aesthetics**: Fix 'Studio' badge/name color and font.
-  - [ ] **Refine "Live Monitor" label**: Adjust style for better integration.
+  - [x] ~~**Refine "Live Monitor" label**: Adjust style for better integration.~~ (Won't Do)
 - [ ] **Final Cleanup & Verification**
-  - [ ] Remove `jest-axe` dependency and references.
-  - [ ] Fix Storybook "run tests" command within the UI.
+  - [x] Remove `jest-axe` dependency and references.
+  - [x] Verify Storybook "run tests" button works in UI.
   - [ ] Verify A11y tests execution in GitHub Actions logs.
-- [ ] **Documentation Update**
-  - [ ] Update `DEVELOPER.md` with the new testing strategy (Real-browser vs JSDOM).
-  - [ ] Add Accessibility Protocol to `AGENTS.md`.
+- [x] **Documentation Update**
+  - [x] Update `DEVELOPER.md` with the new testing strategy (Real-browser vs JSDOM).
+  - [x] Add Accessibility Protocol to `AGENTS.md`.
 
 ## 🧪 Verification Plan
 
-- [ ] **Manual Test**: Verify Storybook components render with correct colors and high-contrast accessibility tools.
-- [ ] **Automated Test**: Run CI to confirm accessibility check pass.
+- [x] **Manual Test**: Verified Storybook components pass A11y audits in the UI panel.
+- [x] **Automated Test**: `npm run test:storybook` passes locally with 0 violations.
 
 ## 📝 Change Log
 
 - 2026-05-02: Initial spec created by Gemini CLI.
+- 2026-05-05: Finalized migration to Storybook Test Runner and unified Vitest configuration. Remediation complete for all contrast violations.
