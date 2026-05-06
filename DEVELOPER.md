@@ -121,7 +121,7 @@ Beyond end-to-end testing, we use a two-tiered strategy for component and access
 We use `addon-a11y` within Storybook. To ensure consistent results:
 
 - **Manual Audit**: Use the "Accessibility" panel in the Storybook UI.
-- **Automated Audit**: Run the Storybook interaction test suite.
+- **Automated Audit**: Run the Storybook interaction test suite via the official `@storybook/test-runner`.
 
 ```bash
 # Run real-browser accessibility and interaction tests

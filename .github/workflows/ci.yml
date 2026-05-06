@@ -82,6 +82,6 @@ jobs:
       - name: Run Web Unit tests
         run: npm run test:unit
       - name: Run Storybook Interaction tests
-        run: npx test-storybook --url http://localhost:6006 --exec "npm run storybook"
+        run: npx start-server-and-test "npm run storybook -w web" http://localhost:6006 "npm run test:storybook -w web"
       - name: Run Visual Regression tests
         run: npm run test:visual
