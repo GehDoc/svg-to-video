@@ -12,10 +12,10 @@ const preview: Preview = {
     },
 
     a11y: {
+      test: 'error',
       config: {
         rules: [
           {
-            // Some specific rules if needed
             id: 'color-contrast',
             enabled: true,
           },

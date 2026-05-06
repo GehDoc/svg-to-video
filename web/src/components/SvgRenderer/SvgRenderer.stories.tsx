@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { within, expect, fn } from 'storybook/test';
+import './SvgRenderer.stories.scss';
 import SvgRenderer from './index';
 import type { RendererHandle } from './index';
 
@@ -61,21 +62,8 @@ const Wrapper = ({
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: '#f5f5f5',
-        padding: '20px',
-        minHeight: '100vh',
-      }}
-    >
-      <div
-        style={{
-          marginBottom: '20px',
-          display: 'flex',
-          gap: '10px',
-          alignItems: 'center',
-        }}
-      >
+    <div className="story-wrapper">
+      <div className="capture-controls">
         <button
           onClick={() => handleCapture('optimal')}
           data-testid="capture-optimal"
@@ -92,15 +80,7 @@ const Wrapper = ({
           Current Seek: {seekTime}ms
         </span>
       </div>
-      <div
-        style={{
-          display: 'inline-block',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-          backgroundColor: 'white',
-          borderRadius: '4px',
-          overflow: 'hidden',
-        }}
-      >
+      <div className="renderer-container">
         <SvgRenderer ref={ref} />
       </div>
     </div>
@@ -112,7 +92,7 @@ const meta = {
   component: Wrapper,
   args: {
     onCapture: fn(),
-    backgroundColor: '#ffffff',
+    backgroundColor: '#0f172a',
     width: 500,
     height: 500,
     seekTime: 0,

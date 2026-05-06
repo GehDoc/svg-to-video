@@ -1,14 +1,14 @@
 :root {
   --primary: #6366f1;
-  --primary-hover: #4f46e5;
+  --primary-hover: #3730a3;
   --bg: #0f172a;
   --panel: #1e293b;
   --card: #334155;
   --text: #f8fafc;
-  --text-muted: #94a3b8;
-  --border: #334155;
-  --error: #ef4444;
-  --accent: #10b981;
+  --text-muted: #cbd5e1;
+  --border: #475569;
+  --error: #dc2626;
+  --accent: #059669;
 }
 
 body {

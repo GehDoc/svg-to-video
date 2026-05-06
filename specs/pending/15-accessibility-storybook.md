@@ -24,7 +24,7 @@ Improve UI readability and accessibility by ensuring Storybook correctly loads g
 ## 🛠 Technical Strategy
 
 - **CSS Loading**: Ensure Storybook loads global CSS (`index.css` and `App.css`).
-- **A11y Addon**: Enable `@storybook/addon-a11y` for WCAG audits.
+- **A11y Addon**: Enable and configure `@storybook/addon-a11y` for WCAG audits.
 - **Interaction Testing**: Use Storybook Interaction Tests (via Vitest Browser Mode/Playwright) to perform real-browser accessibility audits, replacing unreliable JSDOM unit tests.
 
 ## ✅ Task List
@@ -39,11 +39,19 @@ Improve UI readability and accessibility by ensuring Storybook correctly loads g
   - [x] Add automated A11y tests to CI pipeline.
   - [x] Extend A11y test coverage to `ConfigPanel` and `Dropzone` (JSDOM-based).
   - [x] Fix discovered A11y violations in components.
-- [ ] **Real-Browser Interaction Testing (New Strategy)**
+- [x] **Real-Browser Interaction Testing (New Strategy)**
+  - [x] Configure Storybook Test Runner to run A11y audits.
+  - [x] Migrate component accessibility tests from JSDOM to Storybook Interaction tests.
+- [ ] **UI/UX Refinements**
+  - [ ] **Decouple SvgRenderer Tests**: Update tests to use ref API directly, avoiding reliance on story UI buttons.
+  - [ ] **Verify Test Pass**: Run and confirm all unit tests pass after decoupling.
+  - [ ] **Refactor SvgRenderer Stories**: Remove buttons from UI and simplify.
+  - [ ] **Fix Header Favicon**: Replace Storybook favicon with application icon.
+  - [ ] **Restore Header Aesthetics**: Fix 'Studio' badge/name color and font.
+  - [ ] **Refine "Live Monitor" label**: Adjust style for better integration.
+- [ ] **Final Cleanup & Verification**
   - [ ] Remove `jest-axe` dependency and references.
-  - [ ] Configure `vitest.storybook.ts` to run A11y audits for all components.
-  - [ ] Migrate component accessibility tests from JSDOM to Storybook Interaction tests.
-  - [ ] Fix Storybook "run tests" command.
+  - [ ] Fix Storybook "run tests" command within the UI.
   - [ ] Verify A11y tests execution in GitHub Actions logs.
 - [ ] **Documentation Update**
   - [ ] Update `DEVELOPER.md` with the new testing strategy (Real-browser vs JSDOM).
