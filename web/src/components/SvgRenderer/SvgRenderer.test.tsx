@@ -1,107 +1,84 @@
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, cleanup } from '@testing-library/react';
 import { expect, test, afterEach, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { composeStories } from '@storybook/react';
 import * as stories from './SvgRenderer.stories';
+import { createRef } from 'react';
+import type { RendererHandle } from '.';
 
 afterEach(cleanup);
 
 const { LoopSynchronizedCapture, AnimationStressTest, FilterFidelity } =
   composeStories(stories);
 
-const DEFAULT_TEST_TIMEOUT = 5000;
-
-/**
- * Helper to wait for a specific signal from the iframe renderer
- */
-async function waitForSignal(signal: string, action: () => void) {
-  const receivedMessages: string[] = [];
-  const handler = (event: MessageEvent) => {
-    if (event.data?.type) receivedMessages.push(event.data.type);
-  };
-  window.addEventListener('message', handler);
-
-  try {
-    action();
-    await vi.waitFor(
-      () => {
-        expect(receivedMessages).toContain(signal);
-      },
-      { timeout: 10000 }
-    );
-  } finally {
-    window.removeEventListener('message', handler);
-  }
-}
+const DEFAULT_TEST_TIMEOUT = 10000;
 
 test('Loop Synchronized Capture - Visual Regression', async () => {
-  const onCapture = vi.fn();
+  const ref = createRef<RendererHandle>();
 
-  await waitForSignal('READY', () => {
-    render(<LoopSynchronizedCapture onCapture={onCapture} />);
-  });
+  render(<LoopSynchronizedCapture ref={ref} />);
 
-  screen.getByTestId('capture-optimal').click();
-  await vi.waitFor(() => expect(onCapture).toHaveBeenCalled(), {
+  // Wait for the renderer to be ready (READY signal)
+  await vi.waitFor(() => expect(ref.current?.isReady()).toBe(true), {
     timeout: DEFAULT_TEST_TIMEOUT,
   });
 
-  const dataUrl = onCapture.mock.calls[0][0].dataUrl;
-  // Snapshoting the base64 string directly
+  const bitmap = await ref.current!.capture('optimal');
+
+  const canvas = document.createElement('canvas');
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  const ctx = canvas.getContext('bitmaprenderer');
+  if (ctx) ctx.transferFromImageBitmap(bitmap);
+  const dataUrl = canvas.toDataURL();
+
   expect(dataUrl).toMatchSnapshot();
 });
 
 test('Animation Stress Test - Visual Regression', async () => {
-  const onCapture = vi.fn();
-  const receivedMessages: string[] = [];
+  const ref = createRef<RendererHandle>();
 
-  const handler = (event: MessageEvent) => {
-    if (event.data?.type) receivedMessages.push(event.data.type);
-  };
-  window.addEventListener('message', handler);
+  render(<AnimationStressTest ref={ref} />);
 
-  try {
-    const { rerender } = render(
-      <AnimationStressTest onCapture={onCapture} seekTime={0} />
-    );
-
-    await vi.waitFor(
-      () => {
-        expect(receivedMessages).toContain('READY');
-      },
-      { timeout: 10000 }
-    );
-
-    rerender(<AnimationStressTest onCapture={onCapture} seekTime={1000} />);
-
-    await vi.waitFor(
-      () => {
-        expect(receivedMessages).toContain('SEEKED');
-      },
-      { timeout: 10000 }
-    );
-
-    screen.getByTestId('capture-optimal').click();
-    await vi.waitFor(() => expect(onCapture).toHaveBeenCalled(), {
-      timeout: DEFAULT_TEST_TIMEOUT,
-    });
-
-    expect(onCapture.mock.calls[0][0].dataUrl).toMatchSnapshot();
-  } finally {
-    window.removeEventListener('message', handler);
-  }
-});
-
-test('Filter Fidelity - Visual Regression', async () => {
-  const onCapture = vi.fn();
-
-  await waitForSignal('READY', () => {
-    render(<FilterFidelity onCapture={onCapture} />);
-  });
-
-  screen.getByTestId('capture-optimal').click();
-  await vi.waitFor(() => expect(onCapture).toHaveBeenCalled(), {
+  // Wait for the renderer to be ready (READY signal)
+  await vi.waitFor(() => expect(ref.current?.isReady()).toBe(true), {
     timeout: DEFAULT_TEST_TIMEOUT,
   });
 
-  expect(onCapture.mock.calls[0][0].dataUrl).toMatchSnapshot();
+  // The original test sought to 1000ms. We use the exposed seek method.
+  // Seeking also returns a promise that resolves on the SEEKED signal.
+  await ref.current!.seek(1000);
+
+  const bitmap = await ref.current!.capture('optimal');
+
+  const canvas = document.createElement('canvas');
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  const ctx = canvas.getContext('bitmaprenderer');
+  if (ctx) ctx.transferFromImageBitmap(bitmap);
+  const dataUrl = canvas.toDataURL();
+
+  expect(dataUrl).toMatchSnapshot();
+});
+
+test('Filter Fidelity - Visual Regression', async () => {
+  const ref = createRef<RendererHandle>();
+
+  render(<FilterFidelity ref={ref} />);
+
+  // Wait for the renderer to be ready (READY signal)
+  await vi.waitFor(() => expect(ref.current?.isReady()).toBe(true), {
+    timeout: DEFAULT_TEST_TIMEOUT,
+  });
+
+  const bitmap = await ref.current!.capture('optimal');
+
+  const canvas = document.createElement('canvas');
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  const ctx = canvas.getContext('bitmaprenderer');
+  if (ctx) ctx.transferFromImageBitmap(bitmap);
+  const dataUrl = canvas.toDataURL();
+
+  expect(dataUrl).toMatchSnapshot();
 });

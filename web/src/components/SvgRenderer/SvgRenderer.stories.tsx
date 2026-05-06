@@ -1,9 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { within, expect, fn } from 'storybook/test';
+import { within, expect } from 'storybook/test';
 import './SvgRenderer.stories.scss';
-import SvgRenderer from './index';
-import type { RendererHandle } from './index';
+import SvgRenderer, { type RendererHandle } from './index';
 
 interface WrapperProps {
   backgroundColor: string;
@@ -11,87 +10,50 @@ interface WrapperProps {
   width: number;
   height: number;
   seekTime: number;
-  onCapture?: (data: {
-    method: string;
-    width: number;
-    height: number;
-    dataUrl: string;
-  }) => void;
 }
 
-const Wrapper = ({
-  backgroundColor,
-  svgContent,
-  width,
-  height,
-  seekTime,
-  onCapture,
-}: WrapperProps) => {
-  const ref = useRef<RendererHandle>(null);
+const Wrapper = forwardRef<
+  {
+    loadSvg: RendererHandle['loadSvg'];
+    seek: RendererHandle['seek'];
+    capture: RendererHandle['capture'];
+  },
+  WrapperProps
+>(({ backgroundColor, svgContent, width, height, seekTime }, ref) => {
+  const rendererRef = useRef<RendererHandle>(null);
+
+  useImperativeHandle(ref, () => ({
+    loadSvg: (s, w, h, b) => rendererRef.current!.loadSvg(s, w, h, b),
+    seek: (t) => rendererRef.current!.seek(t),
+    capture: (m) => rendererRef.current!.capture(m),
+  }));
 
   useEffect(() => {
-    if (ref.current) {
-      ref.current.loadSvg(svgContent, width, height, backgroundColor);
+    if (rendererRef.current) {
+      rendererRef.current.loadSvg(svgContent, width, height, backgroundColor);
     }
   }, [backgroundColor, svgContent, width, height]);
 
   useEffect(() => {
-    if (ref.current) {
-      ref.current.seek(seekTime);
+    if (rendererRef.current) {
+      rendererRef.current.seek(seekTime);
     }
   }, [seekTime]);
 
-  const handleCapture = async (method: 'optimal' | 'high-fidelity') => {
-    if (ref.current) {
-      const bitmap = await ref.current.capture(method);
-      const canvas = document.createElement('canvas');
-      canvas.width = bitmap.width;
-      canvas.height = bitmap.height;
-      const ctx = canvas.getContext('bitmaprenderer');
-      if (ctx) ctx.transferFromImageBitmap(bitmap);
-      const dataUrl = canvas.toDataURL();
-      onCapture?.({
-        method,
-        width: bitmap.width,
-        height: bitmap.height,
-        dataUrl,
-      });
-      return dataUrl;
-    }
-    return null;
-  };
-
   return (
     <div className="story-wrapper">
-      <div className="capture-controls">
-        <button
-          onClick={() => handleCapture('optimal')}
-          data-testid="capture-optimal"
-        >
-          Capture (Optimal)
-        </button>
-        <button
-          onClick={() => handleCapture('high-fidelity')}
-          data-testid="capture-hifi"
-        >
-          Capture (High-Fidelity)
-        </button>
-        <span style={{ fontSize: '12px', color: '#666' }}>
-          Current Seek: {seekTime}ms
-        </span>
-      </div>
       <div className="renderer-container">
-        <SvgRenderer ref={ref} />
+        <SvgRenderer ref={rendererRef} />
       </div>
     </div>
   );
-};
+});
+Wrapper.displayName = 'Wrapper';
 
 const meta = {
   title: 'Components/SvgRenderer',
   component: Wrapper,
   args: {
-    onCapture: fn(),
     backgroundColor: '#0f172a',
     width: 500,
     height: 500,

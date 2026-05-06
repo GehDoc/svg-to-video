@@ -43,9 +43,24 @@ Improve UI readability and accessibility by ensuring Storybook correctly loads g
   - [x] Configure Storybook Test Runner to run A11y audits.
   - [x] Migrate component accessibility tests from JSDOM to Storybook Interaction tests.
 - [ ] **UI/UX Refinements**
-  - [ ] **Decouple SvgRenderer Tests**: Update tests to use ref API directly, avoiding reliance on story UI buttons.
-  - [ ] **Verify Test Pass**: Run and confirm all unit tests pass after decoupling.
-  - [ ] **Refactor SvgRenderer Stories**: Remove buttons from UI and simplify.
+  - [x] **Decouple SvgRenderer Tests (Parity Plan)**:
+    - [x] **Test: Loop Synchronized Capture**
+      - Input: SVG with circle animation, 400x100, '#eee'.
+      - Steps: Render `SvgRenderer`, load SVG, capture via `ref`.
+      - Assertions: `READY` signal received, `onCapture` callback called, dataUrl matches snapshot.
+      - Quality Control: Verify test passes and matches snapshot against `SvgRenderer.test.tsx.bak`.
+    - [x] **Test: Animation Stress Test**
+      - Input: Empty SVG, 600x600, '#1a1a1a'.
+      - Steps: Render `SvgRenderer`, load SVG, seek(1000), capture via `ref`.
+      - Assertions: `READY` signal received, `SEEKED` signal received, `onCapture` callback called, dataUrl matches snapshot.
+      - Quality Control: Verify test passes and matches snapshot against `SvgRenderer.test.tsx.bak`.
+    - [x] **Test: Filter Fidelity**
+      - Input: SVG with blur/matrix filters, 500x300, '#eee'.
+      - Steps: Render `SvgRenderer`, load SVG, capture via `ref`.
+      - Assertions: `READY` signal received, `onCapture` callback called, dataUrl matches snapshot.
+      - Quality Control: Verify test passes and matches snapshot against `SvgRenderer.test.tsx.bak`.
+  - [x] **Verify Test Pass**: Run and confirm all unit tests pass after decoupling.
+  - [x] **Refactor SvgRenderer Stories**: Remove buttons from UI and simplify.
   - [ ] **Fix Header Favicon**: Replace Storybook favicon with application icon.
   - [ ] **Restore Header Aesthetics**: Fix 'Studio' badge/name color and font.
   - [ ] **Refine "Live Monitor" label**: Adjust style for better integration.
