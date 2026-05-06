@@ -12,42 +12,38 @@ interface WrapperProps {
   seekTime: number;
 }
 
-const Wrapper = forwardRef<
-  {
-    loadSvg: RendererHandle['loadSvg'];
-    seek: RendererHandle['seek'];
-    capture: RendererHandle['capture'];
-  },
-  WrapperProps
->(({ backgroundColor, svgContent, width, height, seekTime }, ref) => {
-  const rendererRef = useRef<RendererHandle>(null);
+const Wrapper = forwardRef<RendererHandle, WrapperProps>(
+  ({ backgroundColor, svgContent, width, height, seekTime }, ref) => {
+    const rendererRef = useRef<RendererHandle>(null);
 
-  useImperativeHandle(ref, () => ({
-    loadSvg: (s, w, h, b) => rendererRef.current!.loadSvg(s, w, h, b),
-    seek: (t) => rendererRef.current!.seek(t),
-    capture: (m) => rendererRef.current!.capture(m),
-  }));
+    useImperativeHandle(ref, () => ({
+      loadSvg: (s, w, h, b) => rendererRef.current!.loadSvg(s, w, h, b),
+      seek: (t) => rendererRef.current!.seek(t),
+      capture: (m) => rendererRef.current!.capture(m),
+      isReady: () => rendererRef.current!.isReady(),
+    }));
 
-  useEffect(() => {
-    if (rendererRef.current) {
-      rendererRef.current.loadSvg(svgContent, width, height, backgroundColor);
-    }
-  }, [backgroundColor, svgContent, width, height]);
+    useEffect(() => {
+      if (rendererRef.current) {
+        rendererRef.current.loadSvg(svgContent, width, height, backgroundColor);
+      }
+    }, [backgroundColor, svgContent, width, height]);
 
-  useEffect(() => {
-    if (rendererRef.current) {
-      rendererRef.current.seek(seekTime);
-    }
-  }, [seekTime]);
+    useEffect(() => {
+      if (rendererRef.current) {
+        rendererRef.current.seek(seekTime);
+      }
+    }, [seekTime]);
 
-  return (
-    <div className="story-wrapper">
-      <div className="renderer-container">
-        <SvgRenderer ref={rendererRef} />
+    return (
+      <div className="story-wrapper">
+        <div className="renderer-container">
+          <SvgRenderer ref={rendererRef} />
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
 Wrapper.displayName = 'Wrapper';
 
 const meta = {
