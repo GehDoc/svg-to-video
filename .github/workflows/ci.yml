@@ -66,13 +66,19 @@ jobs:
           node-version: '20'
       - name: Install dependencies
         run: npm ci
+      - name: Cache Playwright Browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install chromium --with-deps
       - name: Run Web E2E tests
         run: npm run test:web
       - name: Run Web Unit tests
         run: npm run test:unit
       - name: Run Storybook Interaction tests
-        run: npm run test:storybook
+        run: npx test-storybook --url http://localhost:6006 --exec "npm run storybook"
       - name: Run Visual Regression tests
         run: npm run test:visual
