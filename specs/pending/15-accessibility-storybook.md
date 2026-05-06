@@ -29,7 +29,7 @@ Improve UI readability and accessibility by ensuring Storybook correctly loads g
 - [x] **Real-Browser Interaction Testing (New Strategy)**
   - [x] Configure Storybook Test Runner to run A11y audits.
   - [x] Migrate component accessibility tests from JSDOM to Storybook Interaction tests.
-  - [x] Fix Storybook "run tests" command within the UI.
+  - [x] ~~**Fix Storybook "run tests" command within the UI**~~ (Won't Do)
 - [x] **UI/UX Refinements**
   - [x] **Decouple SvgRenderer Tests (Parity Plan)**:
     - [x] **Test: Loop Synchronized Capture**
@@ -42,7 +42,7 @@ Improve UI readability and accessibility by ensuring Storybook correctly loads g
   - [x] ~~**Refine "Live Monitor" label**: Adjust style for better integration.~~ (Won't Do)
 - [ ] **Final Cleanup & Verification**
   - [x] Remove `jest-axe` dependency and references.
-  - [x] Verify Storybook "run tests" button works in UI.
+  - [x] Update E2E test locators (Golden Path and Smoke Tests) to be robust.
   - [ ] Verify A11y tests execution in GitHub Actions logs.
 - [x] **Documentation Update**
   - [x] Update `DEVELOPER.md` with the new testing strategy (Real-browser vs JSDOM).
@@ -56,4 +56,4 @@ Improve UI readability and accessibility by ensuring Storybook correctly loads g
 ## 📝 Change Log
 
 - 2026-05-02: Initial spec created by Gemini CLI.
-- 2026-05-05: Finalized migration to Storybook Test Runner and unified Vitest configuration. Remediation complete for all contrast violations.
+- 2026-05-05: Finalized migration to Storybook Test Runner and unified Vitest configuration. Remediation complete for all contrast violations. Refactored E2E locators for robustness.

@@ -9,7 +9,9 @@ test.describe('SVG to Video Web Smoke Test', () => {
 
   test('should have a disabled render button by default', async ({ page }) => {
     await page.goto('/');
-    const renderButton = page.locator('button.render-button');
+    const renderButton = page.getByRole('button', {
+      name: /Export MP4|Processing/i,
+    });
     await expect(renderButton).toBeDisabled();
     await expect(renderButton).toContainText('Export MP4');
   });
