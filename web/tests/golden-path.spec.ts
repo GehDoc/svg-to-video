@@ -29,7 +29,9 @@ test.describe('SVG to Video Golden Path', () => {
     );
 
     // 4. Trigger Render
-    const renderButton = page.locator('button.render-button');
+    const renderButton = page.getByRole('button', {
+      name: /Export MP4|Processing/i,
+    });
     await renderButton.click();
 
     // 5. Wait for completion (Success Card appears)
@@ -60,7 +62,9 @@ test.describe('SVG to Video Golden Path', () => {
     await expect(successCard).toBeHidden();
 
     // 8. Assert Studio controls are active again
-    const exportButton = page.locator('button.render-button');
+    const exportButton = page.getByRole('button', {
+      name: /Export MP4|Processing/i,
+    });
     await expect(exportButton).toBeEnabled();
   });
 });

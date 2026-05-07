@@ -4,6 +4,11 @@ import { test, expect, afterEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { composeStories } from '@storybook/react';
 import * as stories from './RenderingView.stories';
+import { vi } from 'vitest';
+
+vi.mock('./RendererMonitor', () => ({
+  RendererMonitor: () => <div data-testid="mock-monitor" />,
+}));
 
 afterEach(cleanup);
 

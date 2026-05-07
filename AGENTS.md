@@ -29,3 +29,9 @@ When asked to start a new feature:
 - `specs/pending/`: Active "Source of Truth" for current work.
 - `specs/completed/`: Historical record of technical decisions.
 - `specs/template.md`: The blueprint for all new work.
+
+## ♿ Accessibility Testing Protocol
+
+1.  **Real Browser First**: When testing accessibility (e.g., color contrast, focus order), NEVER use JSDOM unit tests. Always use **Storybook Interaction Tests** (`npm run test:storybook`).
+2.  **Integration**: If you identify an A11y violation via the Storybook UI panel, it MUST be remediated, and a corresponding test case should be added to the component's story to prevent regression.
+3.  **Spec-First**: Follow the standard Spec-Driven Development process for any accessibility-related tickets.

@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { within, expect, fn } from 'storybook/test';
-import SvgRenderer from './index';
-import type { RendererHandle } from './index';
+import { within, expect } from 'storybook/test';
+import './SvgRenderer.stories.scss';
+import SvgRenderer, { type RendererHandle } from './index';
 
 interface WrapperProps {
   backgroundColor: string;
@@ -10,110 +10,47 @@ interface WrapperProps {
   width: number;
   height: number;
   seekTime: number;
-  onCapture?: (data: {
-    method: string;
-    width: number;
-    height: number;
-    dataUrl: string;
-  }) => void;
 }
 
-const Wrapper = ({
-  backgroundColor,
-  svgContent,
-  width,
-  height,
-  seekTime,
-  onCapture,
-}: WrapperProps) => {
-  const ref = useRef<RendererHandle>(null);
+const Wrapper = forwardRef<RendererHandle, WrapperProps>(
+  ({ backgroundColor, svgContent, width, height, seekTime }, ref) => {
+    const rendererRef = useRef<RendererHandle>(null);
 
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.loadSvg(svgContent, width, height, backgroundColor);
-    }
-  }, [backgroundColor, svgContent, width, height]);
+    useImperativeHandle(ref, () => ({
+      loadSvg: (s, w, h, b) => rendererRef.current!.loadSvg(s, w, h, b),
+      seek: (t) => rendererRef.current!.seek(t),
+      capture: (m) => rendererRef.current!.capture(m),
+      isReady: () => rendererRef.current!.isReady(),
+    }));
 
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.seek(seekTime);
-    }
-  }, [seekTime]);
+    useEffect(() => {
+      if (rendererRef.current) {
+        rendererRef.current.loadSvg(svgContent, width, height, backgroundColor);
+      }
+    }, [backgroundColor, svgContent, width, height]);
 
-  const handleCapture = async (method: 'optimal' | 'high-fidelity') => {
-    if (ref.current) {
-      const bitmap = await ref.current.capture(method);
-      const canvas = document.createElement('canvas');
-      canvas.width = bitmap.width;
-      canvas.height = bitmap.height;
-      const ctx = canvas.getContext('bitmaprenderer');
-      if (ctx) ctx.transferFromImageBitmap(bitmap);
-      const dataUrl = canvas.toDataURL();
-      onCapture?.({
-        method,
-        width: bitmap.width,
-        height: bitmap.height,
-        dataUrl,
-      });
-      return dataUrl;
-    }
-    return null;
-  };
+    useEffect(() => {
+      if (rendererRef.current) {
+        rendererRef.current.seek(seekTime);
+      }
+    }, [seekTime]);
 
-  return (
-    <div
-      style={{
-        backgroundColor: '#f5f5f5',
-        padding: '20px',
-        minHeight: '100vh',
-      }}
-    >
-      <div
-        style={{
-          marginBottom: '20px',
-          display: 'flex',
-          gap: '10px',
-          alignItems: 'center',
-        }}
-      >
-        <button
-          onClick={() => handleCapture('optimal')}
-          data-testid="capture-optimal"
-        >
-          Capture (Optimal)
-        </button>
-        <button
-          onClick={() => handleCapture('high-fidelity')}
-          data-testid="capture-hifi"
-        >
-          Capture (High-Fidelity)
-        </button>
-        <span style={{ fontSize: '12px', color: '#666' }}>
-          Current Seek: {seekTime}ms
-        </span>
+    return (
+      <div className="story-wrapper">
+        <div className="renderer-container">
+          <SvgRenderer ref={rendererRef} />
+        </div>
       </div>
-      <div
-        style={{
-          display: 'inline-block',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-          backgroundColor: 'white',
-          borderRadius: '4px',
-          overflow: 'hidden',
-        }}
-      >
-        <SvgRenderer ref={ref} />
-      </div>
-    </div>
-  );
-};
+    );
+  }
+);
+Wrapper.displayName = 'Wrapper';
 
 const meta = {
   title: 'Components/SvgRenderer',
   component: Wrapper,
-  tags: ['autodocs'],
   args: {
-    onCapture: fn(),
-    backgroundColor: '#ffffff',
+    backgroundColor: '#0f172a',
     width: 500,
     height: 500,
     seekTime: 0,

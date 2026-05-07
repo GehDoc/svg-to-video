@@ -3,10 +3,10 @@ import { StudioContext, type StudioContextType } from './StudioContext';
 
 export const MockStudioProvider = ({
   children,
-  mockValues,
+  mockValues = {},
 }: {
   children: ReactNode;
-  mockValues: Partial<StudioContextType>;
+  mockValues?: Partial<StudioContextType>;
 }) => {
   const defaultValue: Partial<StudioContextType> = {
     svgContent: null,
