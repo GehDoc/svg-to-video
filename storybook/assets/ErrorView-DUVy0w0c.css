@@ -1,0 +1,1 @@
+.error-container{background:var(--bg);z-index:100;justify-content:center;align-items:center;display:flex;position:fixed;inset:0}.error-card{background:var(--panel);border:1px solid var(--error);text-align:center;border-radius:12px;max-width:400px;padding:2.5rem}
