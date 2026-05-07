@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import './ConfigPanel.stories.scss';
 import { ConfigPanel } from './ConfigPanel';
 import { MockStudioProvider } from '../context/MockStudioProvider';
 
@@ -8,7 +9,7 @@ const meta: Meta<typeof ConfigPanel> = {
   decorators: [
     (Story) => (
       <MockStudioProvider>
-        <div style={{ width: '350px', height: '100vh', display: 'flex' }}>
+        <div className="story-wrapper">
           <Story />
         </div>
       </MockStudioProvider>
@@ -17,7 +18,7 @@ const meta: Meta<typeof ConfigPanel> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ConfigPanel>;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
@@ -30,7 +31,7 @@ export const WithSvg: Story = {
           originalDim: { width: 500, height: 500, isDimensionsDetected: true },
         }}
       >
-        <div style={{ width: '350px', height: '100vh', display: 'flex' }}>
+        <div className="story-wrapper">
           <Story />
         </div>
       </MockStudioProvider>
@@ -47,7 +48,7 @@ export const Rendering: Story = {
           state: { isRendering: true, status: 'Processing...', progress: 45 },
         }}
       >
-        <div style={{ width: '350px', height: '100vh', display: 'flex' }}>
+        <div className="story-wrapper">
           <Story />
         </div>
       </MockStudioProvider>
