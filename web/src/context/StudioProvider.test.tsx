@@ -1,10 +1,31 @@
 // @vitest-environment jsdom
-import { render, cleanup, waitFor } from '@testing-library/react';
-import { test, expect, vi, afterEach, type Mock } from 'vitest';
+import { render, cleanup, waitFor, screen } from '@testing-library/react';
+import { test, expect, vi, afterEach } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { StudioProvider } from './StudioProvider';
 import { StudioContext, type StudioContextType } from './StudioContext';
 import { useContext, useEffect } from 'react';
-import type { RendererHandle } from '../components/SvgRenderer';
+import { RenderingView } from '../components/RenderingView';
+
+vi.mock('../components/SvgRenderer', () => ({
+  default: vi.fn(
+    ({
+      svgContent,
+      width,
+      height,
+      backgroundColor,
+    }: {
+      svgContent: string;
+      width: number;
+      height: number;
+      backgroundColor: string;
+    }) => (
+      <div data-testid="mock-svg-renderer">
+        {svgContent} {width}x{height} {backgroundColor}
+      </div>
+    )
+  ),
+}));
 
 afterEach(cleanup);
 
@@ -20,19 +41,13 @@ const MockConsumer = ({
   return null;
 };
 
-test('StudioProvider triggers loadSvg on renderer when svgContent is set', async () => {
-  const rendererRef = {
-    current: {
-      loadSvg: vi.fn().mockResolvedValue(undefined),
-      seek: vi.fn().mockResolvedValue(undefined),
-      capture: vi.fn(),
-      isReady: () => true,
-    } as unknown as RendererHandle,
-  };
+test('StudioProvider triggers preview on SvgRenderer when svgContent is set', async () => {
+  const rendererRef = { current: null };
 
   let studioCtx: StudioContextType | undefined;
   render(
     <StudioProvider rendererRef={rendererRef}>
+      <RenderingView />
       <MockConsumer onReady={(ctx) => (studioCtx = ctx)} />
     </StudioProvider>
   );
@@ -40,57 +55,47 @@ test('StudioProvider triggers loadSvg on renderer when svgContent is set', async
   // Set SVG content
   studioCtx?.setSvgContent('<svg><rect /></svg>');
 
-  // Wait for the debounced effect (300ms)
+  // Wait for the debounced effect and verify the mock renderer has the content
   await waitFor(
     () => {
-      expect(rendererRef.current.loadSvg).toHaveBeenCalledWith(
-        '<svg><rect /></svg>',
-        expect.any(Number),
-        expect.any(Number),
-        '#ffffff'
-      );
+      const renderer = screen.getByTestId('mock-svg-renderer');
+      expect(renderer).toHaveTextContent('<svg><rect /></svg>');
+      expect(renderer).toHaveTextContent('1920x1080');
+      expect(renderer).toHaveTextContent('#ffffff');
     },
-    { timeout: 1000 }
+    { timeout: 1500 }
   );
 });
 
 test('StudioProvider updates preview when backgroundColor changes', async () => {
-  const rendererRef = {
-    current: {
-      loadSvg: vi.fn().mockResolvedValue(undefined),
-      seek: vi.fn().mockResolvedValue(undefined),
-      capture: vi.fn(),
-      isReady: () => true,
-    } as unknown as RendererHandle,
-  };
+  const rendererRef = { current: null };
 
   let studioCtx: StudioContextType | undefined;
   render(
     <StudioProvider rendererRef={rendererRef}>
+      <RenderingView />
       <MockConsumer onReady={(ctx) => (studioCtx = ctx)} />
     </StudioProvider>
   );
 
   // 1. Initial SVG set
   studioCtx?.setSvgContent('<svg />');
-  await waitFor(() =>
-    expect(rendererRef.current.loadSvg).toHaveBeenCalledTimes(1)
-  );
+  await waitFor(() => {
+    expect(screen.getByTestId('mock-svg-renderer')).toHaveTextContent(
+      '<svg />'
+    );
+  });
 
   // 2. Change Background Color
-  (rendererRef.current.loadSvg as Mock).mockClear();
   studioCtx?.setBackgroundColor('#ff0000');
 
-  // Wait for debounce
+  // Wait for debounce and verify color update
   await waitFor(
     () => {
-      expect(rendererRef.current.loadSvg).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.any(Number),
-        expect.any(Number),
+      expect(screen.getByTestId('mock-svg-renderer')).toHaveTextContent(
         '#ff0000'
       );
     },
-    { timeout: 1000 }
+    { timeout: 1500 }
   );
 });

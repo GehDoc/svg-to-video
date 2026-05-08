@@ -41,19 +41,27 @@ Improve the Web Studio's visual layout, responsiveness, and interactive feedback
 
 ### Step 3: Live Preview & Interaction Sync (Integration)
 
-- [x] **Initial Frame Preview**
-  - [x] Update `useRenderer` / `StudioProvider` to render the initial frame as soon as `svgContent` is available.
-  - [x] _Verification_: Manual test: dropping an SVG shows it immediately in the monitor.
+### Step 3: Live Preview & Interaction Sync (Integration)
+
+- [x] **Refactor SvgRenderer to use Props for Preview**
+  - [x] Add `svgContent`, `width`, `height`, and `backgroundColor` props to `SvgRenderer`.
+  - [x] Implement internal `useEffect` in `SvgRenderer` to call `loadSvg` when these props change (only when not in an active rendering session).
+  - [x] _Verification_: Drop an SVG and verify it appears immediately without manual trigger.
 - [x] **Real-time Param Sync**
-  - [x] Ensure changes to `duration`, `fps`, `scale`, and `backgroundColor` in the `ConfigPanel` trigger a re-render of the preview frame in `SvgRenderer`.
-  - [x] _Verification_: Vitest unit tests in `StudioProvider.test.tsx` confirm `loadSvg` is called with updated params.
+  - [x] Pass `targetDim` and `backgroundColor` from `StudioProvider` to `SvgRenderer` props.
+  - [x] Ensure changes in `ConfigPanel` reflect instantly in the monitor.
+  - [x] _Verification_: Vitest unit tests in `StudioProvider.test.tsx` and manual interaction.
 
-### Step 4: Progress Overlay Stability (UI Polish)
+### Step 4: Progress Overlay Stability & Monitor Constraints (UI Polish)
 
-- [ ] **Refactor ProgressOverlay**
-  - [ ] Replace conditional rendering of `MetaDisplay` and status text with visibility/opacity/disabled patterns.
-  - [ ] Define fixed height/slots for all potential overlay elements to prevent layout "pop".
-  - [ ] _Verification_: Storybook "Chromatic" or manual visual inspection of the transition from "Idle" to "Rendering".
+- [ ] **Monitor Height Constraint**
+  - [ ] Wrap `RendererMonitor` and `ProgressOverlay` in a flex container (`.rendering-view`).
+  - [ ] Constrain `.monitor-wrapper` with `flex: 1` and `min-height: 0` to ensure it shrinks to fit available space without pushing the overlay out.
+  - [ ] _Verification_: Test with high-resolution presets (1080p) on small viewports.
+- [ ] **Stable MetaDisplay & Overlay**
+  - [ ] Refactor `MetaDisplay` to use a 4-column stable grid with "---" placeholders.
+  - [ ] Update `ProgressOverlay` to maintain a consistent height.
+  - [ ] _Verification_: Manual state transition check (Idle -> Rendering).
 
 ### Step 5: Form Control Refinement (Nice to Have)
 

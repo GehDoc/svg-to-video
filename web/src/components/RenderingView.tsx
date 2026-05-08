@@ -6,12 +6,26 @@ import { MetaDisplay } from './MetaDisplay';
 import './RenderingView.scss';
 
 export const RenderingView = () => {
-  const { state, cancel, svgContent, originalDim, targetDim, rendererRef } =
-    useContext(StudioContext)!;
+  const {
+    state,
+    cancel,
+    svgContent,
+    originalDim,
+    targetDim,
+    rendererRef,
+    backgroundColor,
+  } = useContext(StudioContext)!;
 
   return (
     <>
-      <RendererMonitor rendererRef={rendererRef} />
+      <RendererMonitor
+        rendererRef={rendererRef}
+        svgContent={svgContent}
+        width={targetDim.width}
+        height={targetDim.height}
+        backgroundColor={backgroundColor}
+        isRendering={state.isRendering}
+      />
 
       {state.isRendering ? (
         <ProgressOverlay
