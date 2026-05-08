@@ -1,20 +1,38 @@
 .progress-overlay {
-  background: rgba(15, 23, 42, 0.9);
+  background: var(--panel);
   backdrop-filter: blur(8px);
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 12px;
   border: 1px solid var(--border);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-  margin: 1rem;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.progress-header {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.progress-percentage {
+  width: 3ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .progress-bar-container {
   width: 100%;
-  height: 6px;
+  height: 4px;
   background: var(--border);
-  border-radius: 3px;
+  border-radius: 2px;
   overflow: hidden;
-  margin-top: 1rem;
 }
 
 .progress-bar-fill {
@@ -23,9 +41,13 @@
   transition: width 0.1s linear;
 }
 
-.progress-status {
+.progress-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  font-size: 0.85rem;
+
+  .invisible {
+    visibility: hidden;
+    pointer-events: none;
+  }
 }

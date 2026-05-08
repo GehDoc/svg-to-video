@@ -1,3 +1,4 @@
+import { Button } from './Button/Button';
 import './ErrorView.scss';
 
 interface ErrorViewProps {
@@ -10,8 +11,10 @@ export const ErrorView = ({ message, onClose }: ErrorViewProps) => {
     <div className="error-container">
       <div className="error-card">
         <h3>Error</h3>
-        <p>{message}</p>
-        <button onClick={onClose}>Close</button>
+        <p className="error-message">{message}</p>
+        <Button variant="secondary" onClick={onClose}>
+          Close
+        </Button>
       </div>
     </div>
   );

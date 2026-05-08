@@ -16,24 +16,28 @@ export const ProgressOverlay = ({
 }: ProgressOverlayProps) => {
   return (
     <div className="progress-overlay">
-      {status && progress !== undefined && onCancel && (
-        <div className="progress-status">
-          <span>{status}</span>
-          <Button variant="error" onClick={onCancel}>
-            Cancel
-          </Button>
-          <span>{progress}%</span>
+      <div className="progress-header">
+        <span className="status-text">{status || 'Ready'}</span>
+        <div className="progress-actions">
+          <div className={!onCancel ? 'invisible' : ''}>
+            <Button variant="error" onClick={onCancel || (() => {})}>
+              Cancel
+            </Button>
+          </div>
         </div>
-      )}
-      {progress !== undefined && (
-        <div className="progress-bar-container">
-          <div
-            className="progress-bar-fill"
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
-      )}
-      {children}
+        <span className="progress-percentage">
+          {progress !== undefined ? `${progress}%` : '--%'}
+        </span>
+      </div>
+
+      <div className="progress-bar-container">
+        <div
+          className="progress-bar-fill"
+          style={{ width: `${progress ?? 0}%` }}
+        ></div>
+      </div>
+
+      <div className="children-container">{children}</div>
     </div>
   );
 };

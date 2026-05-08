@@ -17,12 +17,19 @@
   }
 
   h2 {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text-muted);
+    color: var(--text);
     margin-top: 0;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  &.is-locked {
+    h2 {
+      color: var(--text-muted);
+    }
   }
 }
 
@@ -31,21 +38,36 @@
 
   label {
     display: block;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 0.5rem;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
   }
 
   input[type='number'],
   select,
   input[type='text'] {
     width: 100%;
-    padding: 0.6rem;
+    padding: 0.75rem;
     background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 6px;
     color: var(--text);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(94, 97, 230, 0.2);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   }
 }
 
@@ -89,7 +111,7 @@
 
 .hint-text {
   font-size: 0.7rem;
-  color: var(--text-muted);
+  color: var(--error);
   margin-top: 0.4rem;
 }
 
@@ -100,13 +122,4 @@
   position: sticky;
   bottom: 0;
   margin-top: 0;
-}
-
-.file-input-wrapper {
-  position: relative;
-
-  input[type='file'] {
-    width: 100%;
-    font-size: 0.8rem;
-  }
 }

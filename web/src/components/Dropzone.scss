@@ -22,11 +22,20 @@
 
   &.has-content {
     border-style: solid;
-    border-color: var(--accent);
-    background: rgba(16, 185, 129, 0.05);
+    border-color: var(--primary);
+    background: var(--panel);
   }
 
   label {
     cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  input[type='file'] {
+    margin-top: 0.5rem;
+    width: 100%;
+    font-size: 0.95rem;
+    color: var(--text-muted);
   }
 }
