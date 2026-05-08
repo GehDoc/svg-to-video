@@ -55,3 +55,20 @@ export const Rendering: Story = {
     ),
   ],
 };
+
+export const WithError: Story = {
+  decorators: [
+    (Story) => (
+      <MockStudioProvider
+        mockValues={{
+          svgContent: '<svg></svg>',
+          originalDim: { width: 0, height: 0, isDimensionsDetected: false },
+        }}
+      >
+        <div className="story-wrapper">
+          <Story />
+        </div>
+      </MockStudioProvider>
+    ),
+  ],
+};
