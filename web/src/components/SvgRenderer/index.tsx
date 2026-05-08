@@ -68,9 +68,14 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
     }, []);
 
     const internalLoad = useCallback(
-      async (s: string, w: number, h: number, b: string) => {
+      async (
+        targetSvgcontent: string,
+        targetWidth: number,
+        targetHeight: number,
+        targetBackground: string
+      ) => {
         setReady(false);
-        setDimensions({ width: w, height: h });
+        setDimensions({ width: targetWidth, height: targetHeight });
         const iframe = iframeRef.current;
         if (!iframe) {
           return;
@@ -102,10 +107,10 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
             {
               type: 'LOAD_SVG',
               payload: {
-                svgContent: s,
-                width: w,
-                height: h,
-                backgroundColor: b,
+                svgContent: targetSvgcontent,
+                width: targetWidth,
+                height: targetHeight,
+                backgroundColor: targetBackground,
                 timeMs: 0,
               },
             },
