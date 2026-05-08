@@ -17,7 +17,7 @@ export const RenderingView = () => {
   } = useContext(StudioContext)!;
 
   return (
-    <>
+    <div className="rendering-view">
       <RendererMonitor
         rendererRef={rendererRef}
         svgContent={svgContent}
@@ -27,30 +27,21 @@ export const RenderingView = () => {
         isRendering={state.isRendering}
       />
 
-      {state.isRendering ? (
-        <ProgressOverlay
-          status={state.status}
-          progress={state.progress}
-          onCancel={cancel}
-        >
-          {state.meta && <MetaDisplay meta={state.meta} />}
-        </ProgressOverlay>
-      ) : (
-        <>
-          {svgContent && (
-            <ProgressOverlay>
-              <MetaDisplay
-                dimensions={{
-                  width: originalDim.width,
-                  height: originalDim.height,
-                  targetWidth: targetDim.width,
-                  targetHeight: targetDim.height,
-                }}
-              />
-            </ProgressOverlay>
-          )}
-        </>
-      )}
-    </>
+      <ProgressOverlay
+        status={state.isRendering ? state.status : 'Ready to Export'}
+        progress={state.isRendering ? state.progress : undefined}
+        onCancel={state.isRendering ? cancel : undefined}
+      >
+        <MetaDisplay
+          meta={state.meta}
+          dimensions={{
+            width: originalDim.width,
+            height: originalDim.height,
+            targetWidth: targetDim.width,
+            targetHeight: targetDim.height,
+          }}
+        />
+      </ProgressOverlay>
+    </div>
   );
 };
