@@ -28,5 +28,14 @@
 
   label {
     cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  input[type='file'] {
+    margin-top: 0.5rem;
+    width: 100%;
+    font-size: 0.95rem;
+    color: var(--text-muted);
   }
 }
