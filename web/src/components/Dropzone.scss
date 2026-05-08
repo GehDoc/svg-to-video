@@ -22,8 +22,8 @@
 
   &.has-content {
     border-style: solid;
-    border-color: var(--accent);
-    background: rgba(16, 185, 129, 0.05);
+    border-color: var(--primary);
+    background: var(--panel);
   }
 
   label {

@@ -32,6 +32,9 @@ export const ConfigPanel = () => {
     renderedUrl,
   } = useContext(StudioContext)!;
 
+  const isRenderingOrSuccess = state.isRendering || !!renderedUrl;
+  const isOptionsDisabled = isRenderingOrSuccess || !svgContent;
+
   const processFile = (file: File) => {
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -60,10 +63,10 @@ export const ConfigPanel = () => {
   };
 
   return (
-    <aside
-      className={`config-panel ${state.isRendering || !!renderedUrl ? 'is-locked' : ''}`}
-    >
-      <section className="config-section">
+    <aside className="config-panel">
+      <section
+        className={`config-section ${isRenderingOrSuccess ? 'is-locked' : ''}`}
+      >
         <h2>1. Source</h2>
         <Dropzone
           svgContent={svgContent}
@@ -71,11 +74,13 @@ export const ConfigPanel = () => {
           setIsDragging={setIsDragging}
           onFileChange={handleFileChange}
           onDrop={handleDrop}
-          disabled={state.isRendering || !!renderedUrl}
+          disabled={isRenderingOrSuccess}
         />
       </section>
 
-      <section className="config-section">
+      <section
+        className={`config-section ${isOptionsDisabled ? 'is-locked' : ''}`}
+      >
         <h2>2. Format</h2>
         <div className="input-group">
           <label htmlFor="resolution">Resolution</label>
@@ -85,11 +90,7 @@ export const ConfigPanel = () => {
             onChange={(e: ChangeEvent<HTMLSelectElement>) =>
               setPreset(e.target.value as ResolutionPreset)
             }
-            disabled={
-              state.isRendering ||
-              !!renderedUrl ||
-              !originalDim.isDimensionsDetected
-            }
+            disabled={isOptionsDisabled || !originalDim.isDimensionsDetected}
           >
             <option value="original">Original Size</option>
             <option value="720p">720p (Fit)</option>
@@ -113,7 +114,7 @@ export const ConfigPanel = () => {
               step="0.5"
               value={scale}
               onChange={(e) => setScale(parseFloat(e.target.value))}
-              disabled={state.isRendering || !!renderedUrl}
+              disabled={isOptionsDisabled}
               style={{ width: '100%' }}
             />
           </div>
@@ -128,7 +129,7 @@ export const ConfigPanel = () => {
               value={duration}
               onChange={(e) => setDuration(parseFloat(e.target.value))}
               min={1}
-              disabled={state.isRendering || !!renderedUrl}
+              disabled={isOptionsDisabled}
             />
           </div>
           <div className="input-group">
@@ -140,7 +141,7 @@ export const ConfigPanel = () => {
               onChange={(e) => setHold(parseFloat(e.target.value))}
               min={0}
               step={0.5}
-              disabled={state.isRendering || !!renderedUrl}
+              disabled={isOptionsDisabled}
             />
           </div>
           <div className="input-group">
@@ -152,13 +153,15 @@ export const ConfigPanel = () => {
               onChange={(e) => setFps(parseInt(e.target.value))}
               min={1}
               max={60}
-              disabled={state.isRendering || !!renderedUrl}
+              disabled={isOptionsDisabled}
             />
           </div>
         </div>
       </section>
 
-      <section className="config-section">
+      <section
+        className={`config-section ${isOptionsDisabled ? 'is-locked' : ''}`}
+      >
         <h2>3. Canvas</h2>
         <div className="input-group">
           <label htmlFor="bg-color">Background</label>
@@ -168,13 +171,13 @@ export const ConfigPanel = () => {
               id="bg-color"
               value={backgroundColor}
               onChange={(e) => setBackgroundColor(e.target.value)}
-              disabled={state.isRendering || !!renderedUrl}
+              disabled={isOptionsDisabled}
             />
             <input
               type="text"
               value={backgroundColor}
               onChange={(e) => setBackgroundColor(e.target.value)}
-              disabled={state.isRendering || !!renderedUrl}
+              disabled={isOptionsDisabled}
               className="color-text-input"
               aria-label="Background color hex code"
             />
@@ -188,7 +191,7 @@ export const ConfigPanel = () => {
             onChange={(e: ChangeEvent<HTMLSelectElement>) =>
               setCaptureMethod(e.target.value as 'optimal' | 'high-fidelity')
             }
-            disabled={state.isRendering || !!renderedUrl}
+            disabled={isOptionsDisabled}
           >
             <option value="optimal">Optimal (Fast)</option>
             <option value="high-fidelity">High Fidelity (Slow)</option>
@@ -200,7 +203,7 @@ export const ConfigPanel = () => {
         <Button
           variant="primary"
           onClick={handleStartRender}
-          disabled={!svgContent || state.isRendering || !!renderedUrl}
+          disabled={!svgContent || isRenderingOrSuccess}
         >
           {state.isRendering ? 'Processing...' : 'Export MP4'}
         </Button>

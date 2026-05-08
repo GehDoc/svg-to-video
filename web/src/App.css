@@ -1,43 +1,16 @@
-:root {
-  --primary: #5e61e6;
-  --primary-hover: #3730a3;
-  --bg: #0f172a;
-  --panel: #1e293b;
-  --card: #334155;
-  --text: #f8fafc;
-  --text-muted: #cbd5e1;
-  --border: #475569;
-  --error: #dc2626;
-  --accent: #059669;
-}
-
-body {
-  margin: 0;
-  font-family:
-    'Inter',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: 100vw;
+  width: 100vw;
   overflow: hidden;
+  background-color: var(--bg);
+  color: var(--text);
 }
 
 .is-locked {
-  opacity: 0.6;
   pointer-events: none;
-  filter: grayscale(0.2);
+  filter: grayscale(0.4);
 }
 
 .studio-layout {

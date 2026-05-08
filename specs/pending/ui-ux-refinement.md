@@ -19,21 +19,23 @@ Improve the Web Studio's visual layout, responsiveness, and interactive feedback
 
 ### Step 1: Layout & Theme Unification (Infrastructure)
 
-- [ ] **Full-Width Layout Implementation**
-  - [ ] Remove fixed `1126px` width from `#root` in `index.css`.
-  - [ ] Ensure `app-container` and `studio-layout` correctly fill the viewport.
-  - [ ] _Verification_: Visual inspection and Storybook "Viewport" tests.
-- [ ] **CSS Variable Unification**
-  - [ ] Consolidate variables from `web/src/App.css` and `web/src/index.css` into `web/src/index.css`.
-  - [ ] Standardize naming (e.g., `--studio-bg`, `--studio-panel`, etc.).
-  - [ ] _Verification_: Storybook smoke test to ensure colors are consistent across components.
+### Step 1: Layout & Theme Unification (Infrastructure)
+
+- [x] **Full-Width Layout Implementation**
+  - [x] Remove fixed `1126px` width from `#root` in `index.css`.
+  - [x] Ensure `app-container` and `studio-layout` correctly fill the viewport.
+  - [x] _Verification_: Visual inspection and Storybook "Viewport" tests.
+- [x] **CSS Variable Unification**
+  - [x] Consolidate variables from `web/src/App.css` and `web/src/index.css` into `web/src/index.css`.
+  - [x] Standardize naming (e.g., `--studio-bg`, `--studio-panel`, etc.).
+  - [x] _Verification_: Storybook smoke test to ensure colors are consistent across components.
 
 ### Step 2: ConfigPanel State & Locking (Core Logic)
 
-- [ ] **Context-Aware Locking**
-  - [ ] Modify `ConfigPanel` sections to be disabled when `!svgContent`.
-  - [ ] Ensure inputs are functionally disabled AND visually styled as such.
-  - [ ] _Verification_: Vitest unit test for `ConfigPanel` (checking disabled attributes when no SVG).
+- [x] **Context-Aware Locking**
+  - [x] Modify `ConfigPanel` sections to be disabled when `!svgContent`.
+  - [x] Ensure inputs are functionally disabled AND visually styled as such.
+  - [x] _Verification_: Vitest unit test for `ConfigPanel` (checking disabled attributes when no SVG).
 
 ### Step 3: Live Preview & Interaction Sync (Integration)
 

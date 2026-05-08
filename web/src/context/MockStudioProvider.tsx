@@ -33,7 +33,7 @@ export const MockStudioProvider = ({
     setRenderedUrl: () => {},
     fileSize: null,
     setFileSize: () => {},
-    originalDim: { width: 500, height: 500, isDimensionsDetected: true },
+    originalDim: { width: 0, height: 0, isDimensionsDetected: false },
     targetDim: { width: 1920, height: 1080 },
     state: { isRendering: false, status: 'Idle', progress: 0, meta: undefined },
     handleStartRender: async () => {},
