@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState, type ReactNode, useEffect } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
 import { StudioContext } from './StudioContext';
 import {
@@ -52,6 +52,39 @@ export const StudioProvider = ({
       /* ignore */
     }
   }
+
+  // Live Preview Sync (Debounced)
+  useEffect(() => {
+    if (
+      svgContent &&
+      rendererRef.current &&
+      !state.isRendering &&
+      !renderedUrl
+    ) {
+      const timeoutId = setTimeout(async () => {
+        try {
+          await rendererRef.current?.loadSvg(
+            svgContent,
+            targetDim.width,
+            targetDim.height,
+            backgroundColor
+          );
+        } catch (e) {
+          console.error('Failed to update preview:', e);
+        }
+      }, 300);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [
+    svgContent,
+    targetDim.width,
+    targetDim.height,
+    backgroundColor,
+    state.isRendering,
+    renderedUrl,
+    rendererRef,
+  ]);
 
   const handleStartRender = async () => {
     if (!svgContent) return;

@@ -39,12 +39,14 @@ Improve the Web Studio's visual layout, responsiveness, and interactive feedback
 
 ### Step 3: Live Preview & Interaction Sync (Integration)
 
-- [ ] **Initial Frame Preview**
-  - [ ] Update `useRenderer` / `StudioProvider` to render the initial frame as soon as `svgContent` is available.
-  - [ ] _Verification_: Manual test: dropping an SVG shows it immediately in the monitor.
-- [ ] **Real-time Param Sync**
-  - [ ] Ensure changes to `duration`, `fps`, `scale`, and `backgroundColor` in the `ConfigPanel` trigger a re-render of the preview frame in `SvgRenderer`.
-  - [ ] _Verification_: Storybook Interaction tests to confirm `SvgRenderer` receives updated props.
+### Step 3: Live Preview & Interaction Sync (Integration)
+
+- [x] **Initial Frame Preview**
+  - [x] Update `useRenderer` / `StudioProvider` to render the initial frame as soon as `svgContent` is available.
+  - [x] _Verification_: Manual test: dropping an SVG shows it immediately in the monitor.
+- [x] **Real-time Param Sync**
+  - [x] Ensure changes to `duration`, `fps`, `scale`, and `backgroundColor` in the `ConfigPanel` trigger a re-render of the preview frame in `SvgRenderer`.
+  - [x] _Verification_: Vitest unit tests in `StudioProvider.test.tsx` confirm `loadSvg` is called with updated params.
 
 ### Step 4: Progress Overlay Stability (UI Polish)
 
