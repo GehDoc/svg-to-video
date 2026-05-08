@@ -1,7 +1,7 @@
 # Spec: UI-UX-Refinement - Web Studio UI/UX Enhancements
 
 **GitHub Issue**: [None](https://github.com/GehDoc/svg-to-video/issues)
-**Status**: 🟠 Pending
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -16,8 +16,6 @@ Improve the Web Studio's visual layout, responsiveness, and interactive feedback
 - **Stability**: Refactor `ProgressOverlay` to use "placeholder/disabled" patterns instead of conditional mounting to prevent layout shifts.
 
 ## ✅ Task List
-
-### Step 1: Layout & Theme Unification (Infrastructure)
 
 ### Step 1: Layout & Theme Unification (Infrastructure)
 
@@ -39,10 +37,6 @@ Improve the Web Studio's visual layout, responsiveness, and interactive feedback
 
 ### Step 3: Live Preview & Interaction Sync (Integration)
 
-### Step 3: Live Preview & Interaction Sync (Integration)
-
-### Step 3: Live Preview & Interaction Sync (Integration)
-
 - [x] **Refactor SvgRenderer to use Props for Preview**
   - [x] Add `svgContent`, `width`, `height`, and `backgroundColor` props to `SvgRenderer`.
   - [x] Implement internal `useEffect` in `SvgRenderer` to call `loadSvg` when these props change (only when not in an active rendering session).
@@ -54,20 +48,22 @@ Improve the Web Studio's visual layout, responsiveness, and interactive feedback
 
 ### Step 4: Progress Overlay Stability & Monitor Constraints (UI Polish)
 
-- [ ] **Monitor Height Constraint**
-  - [ ] Wrap `RendererMonitor` and `ProgressOverlay` in a flex container (`.rendering-view`).
-  - [ ] Constrain `.monitor-wrapper` with `flex: 1` and `min-height: 0` to ensure it shrinks to fit available space without pushing the overlay out.
-  - [ ] _Verification_: Test with high-resolution presets (1080p) on small viewports.
-- [ ] **Stable MetaDisplay & Overlay**
-  - [ ] Refactor `MetaDisplay` to use a 4-column stable grid with "---" placeholders.
-  - [ ] Update `ProgressOverlay` to maintain a consistent height.
-  - [ ] _Verification_: Manual state transition check (Idle -> Rendering).
+- [x] **Monitor Height Constraint**
+  - [x] Wrap `RendererMonitor` and `ProgressOverlay` in a flex container (`.rendering-view`).
+  - [x] Constrain `.monitor-wrapper` with `flex: 1` and `min-height: 0` to ensure it shrinks to fit available space without pushing the overlay out.
+  - [x] _Verification_: Test with high-resolution presets (1080p) on small viewports.
+- [x] **Refactor ProgressOverlay & MetaDisplay**
+  - [x] Refactor `MetaDisplay` to use a 4-column stable grid with "---" placeholders.
+  - [x] Update `ProgressOverlay` to maintain a consistent height.
+  - [x] _Verification_: Manual state transition check (Idle -> Rendering).
 
 ### Step 5: Form Control Refinement (Nice to Have)
 
-- [ ] **Modernize Inputs**
-  - [ ] Update SCSS for `select`, `input[type='number']`, and `input[type='text']` with custom focus rings and consistent padding.
-  - [ ] _Verification_: Visual review in Storybook.
+- [x] **Modernize Inputs**
+  - [x] Update SCSS for `select`, `input[type='number']`, and `input[type='text']` with custom focus rings and consistent padding.
+  - [x] _Verification_: Visual review in Storybook.
+- [x] **Add "With SVG + error" story**
+  - [x] Added `WithError` to `ConfigPanel.stories.tsx`.
 
 ## 🧪 Verification Plan
 
@@ -93,3 +89,4 @@ Improve the Web Studio's visual layout, responsiveness, and interactive feedback
 ## 📝 Change Log
 
 - 2026-05-08: Initial spec created by Gemini CLI.
+- 2026-05-09: All UI/UX enhancement steps implemented, verified, and merged.
