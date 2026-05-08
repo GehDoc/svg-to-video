@@ -179,7 +179,7 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
               aspectRatio: `${dimensions.width} / ${dimensions.height}`,
               border: 'none',
               pointerEvents: 'none',
-              backgroundColor: 'white',
+              backgroundColor: 'transparent',
             }}
           />
         </div>
