@@ -1,0 +1,40 @@
+import{a as e,n as t}from"./chunk-BneVvdWh.js";import{t as n}from"./react-D1sJ83FZ.js";import{t as r}from"./jsx-runtime-fcfuQg7E.js";import{n as i,t as a}from"./Button-5s7pM6cD.js";import{i as o,n as s,r as c,t as l}from"./MockStudioProvider-CpLgaQFw.js";import{n as u,t as d}from"./Dropzone-DV0H8ItP.js";var f=t((()=>{})),p=t((()=>{})),m,h,g,_=t((()=>{o(),m=e(n(),1),u(),i(),p(),h=r(),g=()=>{let{svgContent:e,setSvgContent:t,setFileName:n,duration:r,setDuration:i,hold:o,setHold:s,fps:l,setFps:u,preset:f,setPreset:p,scale:g,setScale:_,backgroundColor:v,setBackgroundColor:y,captureMethod:b,setCaptureMethod:x,isDragging:S,setIsDragging:C,state:w,handleStartRender:T,originalDim:E,renderedUrl:D}=(0,m.useContext)(c),O=w.isRendering||!!D,k=O||!e,A=e=>{let r=new FileReader;r.onload=r=>{let i=r.target?.result;t(i),n(`${e.name.replace(/\.svg$/i,``)}.mp4`)},r.readAsText(e)};return(0,h.jsxs)(`aside`,{className:`config-panel`,children:[(0,h.jsxs)(`section`,{className:`config-section ${O?`is-locked`:``}`,children:[(0,h.jsx)(`h2`,{children:`1. Source`}),(0,h.jsx)(d,{svgContent:e,isDragging:S,setIsDragging:C,onFileChange:e=>{e.target.files?.[0]&&A(e.target.files[0])},onDrop:e=>{e.preventDefault(),e.stopPropagation(),C(!1),e.dataTransfer.files?.[0]&&e.dataTransfer.files[0].type===`image/svg+xml`&&A(e.dataTransfer.files[0])},disabled:O})]}),(0,h.jsxs)(`section`,{className:`config-section ${k?`is-locked`:``}`,children:[(0,h.jsx)(`h2`,{children:`2. Format`}),(0,h.jsxs)(`div`,{className:`input-group`,children:[(0,h.jsx)(`label`,{htmlFor:`resolution`,children:`Resolution`}),(0,h.jsxs)(`select`,{id:`resolution`,value:E.isDimensionsDetected?f:`1080p`,onChange:e=>p(e.target.value),disabled:k||!E.isDimensionsDetected,children:[(0,h.jsx)(`option`,{value:`original`,children:`Original Size`}),(0,h.jsx)(`option`,{value:`720p`,children:`720p (Fit)`}),(0,h.jsx)(`option`,{value:`1080p`,children:`1080p (Fit)`})]}),e&&!E.isDimensionsDetected&&(0,h.jsx)(`p`,{className:`hint-text`,style:{color:`var(--error)`},children:`Warning: Could not detect SVG dimensions. Defaulting to 1080p.`})]}),f===`original`&&(0,h.jsxs)(`div`,{className:`input-group`,children:[(0,h.jsxs)(`label`,{htmlFor:`scale`,children:[`Scale (`,g,`x)`]}),(0,h.jsx)(`input`,{type:`range`,id:`scale`,min:`1`,max:`4`,step:`0.5`,value:g,onChange:e=>_(parseFloat(e.target.value)),disabled:k,style:{width:`100%`}})]}),(0,h.jsxs)(`div`,{className:`grid-3`,children:[(0,h.jsxs)(`div`,{className:`input-group`,children:[(0,h.jsx)(`label`,{htmlFor:`duration`,children:`Dur. (s)`}),(0,h.jsx)(`input`,{type:`number`,id:`duration`,value:r,onChange:e=>i(parseFloat(e.target.value)),min:1,disabled:k})]}),(0,h.jsxs)(`div`,{className:`input-group`,children:[(0,h.jsx)(`label`,{htmlFor:`hold`,children:`Hold (s)`}),(0,h.jsx)(`input`,{type:`number`,id:`hold`,value:o,onChange:e=>s(parseFloat(e.target.value)),min:0,step:.5,disabled:k})]}),(0,h.jsxs)(`div`,{className:`input-group`,children:[(0,h.jsx)(`label`,{htmlFor:`fps`,children:`FPS`}),(0,h.jsx)(`input`,{type:`number`,id:`fps`,value:l,onChange:e=>u(parseInt(e.target.value)),min:1,max:60,disabled:k})]})]})]}),(0,h.jsxs)(`section`,{className:`config-section ${k?`is-locked`:``}`,children:[(0,h.jsx)(`h2`,{children:`3. Canvas`}),(0,h.jsxs)(`div`,{className:`input-group`,children:[(0,h.jsx)(`label`,{htmlFor:`bg-color`,children:`Background`}),(0,h.jsxs)(`div`,{className:`color-picker-wrapper`,children:[(0,h.jsx)(`input`,{type:`color`,id:`bg-color`,value:v,onChange:e=>y(e.target.value),disabled:k}),(0,h.jsx)(`input`,{type:`text`,value:v,onChange:e=>y(e.target.value),disabled:k,className:`color-text-input`,"aria-label":`Background color hex code`})]})]}),(0,h.jsxs)(`div`,{className:`input-group`,children:[(0,h.jsx)(`label`,{htmlFor:`capture-method`,children:`Capture Method`}),(0,h.jsxs)(`select`,{id:`capture-method`,value:b,onChange:e=>x(e.target.value),disabled:k,children:[(0,h.jsx)(`option`,{value:`optimal`,children:`Optimal (Fast)`}),(0,h.jsx)(`option`,{value:`high-fidelity`,children:`High Fidelity (Slow)`})]})]})]}),(0,h.jsx)(`div`,{className:`render-actions`,children:(0,h.jsx)(a,{variant:`primary`,onClick:T,disabled:!e||O,children:w.isRendering?`Processing...`:`Export MP4`})})]})},g.__docgenInfo={description:``,methods:[],displayName:`ConfigPanel`}})),v,y,b,x,S,C,w;t((()=>{f(),_(),s(),v=r(),y={title:`Components/ConfigPanel`,component:g,decorators:[e=>(0,v.jsx)(l,{children:(0,v.jsx)(`div`,{className:`story-wrapper`,children:(0,v.jsx)(e,{})})})]},b={},x={decorators:[e=>(0,v.jsx)(l,{mockValues:{svgContent:`<svg></svg>`,originalDim:{width:500,height:500,isDimensionsDetected:!0}},children:(0,v.jsx)(`div`,{className:`story-wrapper`,children:(0,v.jsx)(e,{})})})]},S={decorators:[e=>(0,v.jsx)(l,{mockValues:{svgContent:`<svg></svg>`,state:{isRendering:!0,status:`Processing...`,progress:45}},children:(0,v.jsx)(`div`,{className:`story-wrapper`,children:(0,v.jsx)(e,{})})})]},C={decorators:[e=>(0,v.jsx)(l,{mockValues:{svgContent:`<svg></svg>`,originalDim:{width:0,height:0,isDimensionsDetected:!1}},children:(0,v.jsx)(`div`,{className:`story-wrapper`,children:(0,v.jsx)(e,{})})})]},b.parameters={...b.parameters,docs:{...b.parameters?.docs,source:{originalSource:`{}`,...b.parameters?.docs?.source}}},x.parameters={...x.parameters,docs:{...x.parameters?.docs,source:{originalSource:`{
+  decorators: [Story => <MockStudioProvider mockValues={{
+    svgContent: '<svg></svg>',
+    originalDim: {
+      width: 500,
+      height: 500,
+      isDimensionsDetected: true
+    }
+  }}>
+        <div className="story-wrapper">
+          <Story />
+        </div>
+      </MockStudioProvider>]
+}`,...x.parameters?.docs?.source}}},S.parameters={...S.parameters,docs:{...S.parameters?.docs,source:{originalSource:`{
+  decorators: [Story => <MockStudioProvider mockValues={{
+    svgContent: '<svg></svg>',
+    state: {
+      isRendering: true,
+      status: 'Processing...',
+      progress: 45
+    }
+  }}>
+        <div className="story-wrapper">
+          <Story />
+        </div>
+      </MockStudioProvider>]
+}`,...S.parameters?.docs?.source}}},C.parameters={...C.parameters,docs:{...C.parameters?.docs,source:{originalSource:`{
+  decorators: [Story => <MockStudioProvider mockValues={{
+    svgContent: '<svg></svg>',
+    originalDim: {
+      width: 0,
+      height: 0,
+      isDimensionsDetected: false
+    }
+  }}>
+        <div className="story-wrapper">
+          <Story />
+        </div>
+      </MockStudioProvider>]
+}`,...C.parameters?.docs?.source}}},w=[`Default`,`WithSvg`,`Rendering`,`WithError`]}))();export{b as Default,S as Rendering,C as WithError,x as WithSvg,w as __namedExportsOrder,y as default};
