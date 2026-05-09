@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import path from 'path';
+import Sitemap from 'vite-plugin-sitemap';
 
 export default defineConfig({
   // Required for GitHub Pages project site deployment at https://gehdoc.github.io/svg-to-video/
@@ -11,6 +12,10 @@ export default defineConfig({
     react(),
     svgr({
       include: '**/*.svg?react',
+    }),
+    Sitemap({
+      hostname: 'https://gehdoc.github.io/svg-to-video/',
+      outDir: 'dist',
     }),
   ],
   resolve: {
