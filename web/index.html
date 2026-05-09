@@ -18,13 +18,13 @@
         var el = document.createElement('script');
         el.async = true;
         el.defer = true;
-        el.crossOrigin = 'anonymous';
         el.setAttribute(
           'data-website-id',
           '4489aba4-cf29-439e-9491-e36f2a531a63'
         );
         el.setAttribute('data-domains', 'gehdoc.github.io');
-        el.src = 'https://cloud.umami.is/script.js';
+        el.setAttribute('data-host-url', 'https://cloud.umami.is');
+        el.src = './assets/3rd-party/analytics.js';
         document.head.appendChild(el);
       })();
     </script>
