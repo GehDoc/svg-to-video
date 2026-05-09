@@ -23,7 +23,12 @@ export const LandingView = () => {
       </div>
 
       <footer className="studio-footer">
-        <p>Local processing only. Files never leave your browser.</p>
+        <p>
+          Local processing only. Files never leave your browser.{' '}
+          <span style={{ opacity: 0.6, fontSize: '0.85em' }}>
+            (Anonymous usage tracked to improve the tool)
+          </span>
+        </p>
         <p className="legal-disclaimer">
           Licensed under{' '}
           <a

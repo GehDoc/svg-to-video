@@ -19,22 +19,22 @@ Integrate Umami Analytics into the Vite/React SPA to track page visits and user 
 
 ## ✅ Task List
 
-- [ ] **Infrastructure**
-  - [ ] Add Umami script to `web/index.html` with conditional loading (production only).
-  - [ ] Configure `data-website-id`, `src`, and `data-domains` attributes.
-- [ ] **Functional Tracking**
-  - [ ] Add `data-umami-event="Open Converter"` to the file input label or a relevant button in `Dropzone.tsx`.
-  - [ ] **Conversion Flow**:
-    - [ ] Trigger `conversion-start` in `useRenderer.ts`.
-    - [ ] Trigger `conversion-success` in `useRenderer.ts` with metadata `{ format: 'mp4' }`.
-    - [ ] Trigger `conversion-failed` in `useRenderer.ts` with metadata `{ error: error.message }`.
-  - [ ] **Result Actions (SuccessView.tsx)**:
-    - [ ] Trigger `download-mp4` when the download button is clicked.
-    - [ ] Trigger `back-to-studio` when the back button is clicked (to track users who didn't download).
-- [ ] **Safety & Validation**
-  - [ ] Ensure `window.umami` check before programmatic calls.
-  - [ ] Verify script is excluded from Storybook (`web/.storybook/preview-head.html`).
-  - [ ] Verify script does not load in development mode.
+- [x] **Infrastructure**
+  - [x] Add Umami script to `web/index.html` with conditional loading (production only).
+  - [x] Configure `data-website-id`, `src`, and `data-domains` attributes.
+- [x] **Functional Tracking**
+  - [x] Add `data-umami-event="Open Converter"` to the file input label or a relevant button in `Dropzone.tsx`.
+  - [x] **Conversion Flow**:
+    - [x] Trigger `conversion-start` in `useRenderer.ts`.
+    - [x] Trigger `conversion-success` in `useRenderer.ts` with metadata `{ format: 'mp4' }`.
+    - [x] Trigger `conversion-failed` in `useRenderer.ts` with metadata `{ error: error.message }`.
+  - [x] **Result Actions (SuccessView.tsx)**:
+    - [x] Trigger `download-mp4` when the download button is clicked.
+    - [x] Trigger `back-to-studio` when the back button is clicked (to track users who didn't download).
+- [x] **Safety & Validation**
+  - [x] Ensure `window.umami` check before programmatic calls (using `typeof umami !== 'undefined'`).
+  - [x] Verify script is excluded from Storybook (`web/.storybook/preview-head.html`).
+  - [x] Verify script does not load in development mode.
 
 ## 🧪 Verification Plan
 
