@@ -13,7 +13,6 @@ export const LandingView = () => {
           fill="none"
           stroke="currentColor"
           strokeWidth="1"
-          style={{ opacity: 0.5, marginBottom: '1rem' }}
         >
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
           <polyline points="17 8 12 3 7 8" />
@@ -23,11 +22,13 @@ export const LandingView = () => {
       </div>
 
       <footer className="studio-footer">
-        <p>
-          Local processing only. Files never leave your browser.{' '}
-          <span style={{ opacity: 0.6, fontSize: '0.85em' }}>
-            (Anonymous usage tracked to improve the tool)
-          </span>
+        <p>Local processing only. Files never leave your browser.</p>
+        <p className="legal-disclaimer">
+          Anonymous usage tracked via{' '}
+          <a href="https://umami.is" target="_blank" rel="noopener noreferrer">
+            Umami
+          </a>{' '}
+          to improve the tool.
         </p>
         <p className="legal-disclaimer">
           Licensed under{' '}
