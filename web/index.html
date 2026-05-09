@@ -7,13 +7,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SVG to Video</title>
     <script>
-      (function() {
+      (function () {
         if (window.navigator.webdriver) return;
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.includes('192.168.')) return;
+        if (
+          window.location.hostname === 'localhost' ||
+          window.location.hostname === '127.0.0.1' ||
+          window.location.hostname.includes('192.168.')
+        )
+          return;
         var el = document.createElement('script');
         el.async = true;
         el.defer = true;
-        el.setAttribute('data-website-id', '4489aba4-cf29-439e-9491-e36f2a531a63');
+        el.setAttribute(
+          'data-website-id',
+          '4489aba4-cf29-439e-9491-e36f2a531a63'
+        );
         el.setAttribute('data-domains', 'gehdoc.github.io');
         el.src = 'https://cloud.umami.is/script.js';
         document.head.appendChild(el);
