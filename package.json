@@ -1,6 +1,6 @@
 {
   "name": "svg-to-video",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Professional animated SVG to MP4 converter featuring a frame-accurate CLI and an online, serverless Web Studio.",
   "author": "GehDoc",
   "repository": {
