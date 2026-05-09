@@ -118,6 +118,10 @@ export const useRenderer = (
       cancelRef.current = false;
       setState({ isRendering: true, progress: 0, status: 'Initializing...' });
 
+      if (typeof umami !== 'undefined') {
+        umami.track('conversion-start');
+      }
+
       try {
         const { width: origWidth, height: origHeight } =
           parseSvgDimensions(svgContent);
@@ -266,6 +270,11 @@ export const useRenderer = (
         const blob = new Blob([resultBuffer], { type: 'video/mp4' });
         const url = URL.createObjectURL(blob);
         setState({ isRendering: false, progress: 100, status: 'Done!' });
+
+        if (typeof umami !== 'undefined') {
+          umami.track('conversion-success', { format: 'mp4' });
+        }
+
         return url;
       } catch (err) {
         const error = err as Error;
@@ -274,6 +283,11 @@ export const useRenderer = (
           progress: 0,
           status: `Error: ${error.message}`,
         });
+
+        if (typeof umami !== 'undefined') {
+          umami.track('conversion-failed', { error: error.message });
+        }
+
         throw error;
       }
     },

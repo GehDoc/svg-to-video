@@ -143,5 +143,22 @@ The Web Studio and Storybook Gallery are configured to deploy automatically to *
 - **Asset Pathing**: The project uses an environment-aware `base` path (`/svg-to-video/`) in `web/vite.config.ts`. This ensures all assets load correctly when deployed as a GitHub Project Site.
 - **CI Pipeline**: Deployment is triggered automatically on pushes to the `main` branch via `.github/workflows/deploy.yml`.
 
+### 📊 Analytics (Umami)
+
+The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tracking.
+
+> [!IMPORTANT]
+> **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
+>
+> 1. The hostname is `localhost`, `127.0.0.1`, or a local network IP.
+> 2. `window.navigator.webdriver` is true (e.g., in Playwright, Puppeteer, or CI environments).
+> 3. The hostname does not match the `data-domains` attribute.
+
+- **Implementation**: The tracker is injected via `web/index.html` with pre-flight checks.
+- **Configuration**: The `data-website-id` and `data-domains` are hardcoded in `web/index.html`. For local forks, update these values to point to your own Umami instance.
+- **Events**: We track the conversion lifecycle (`conversion-start`, `conversion-success`, `conversion-failed`) and user actions (`download-mp4`, `back-to-studio`).
+- **Types**: We use `@types/umami` for full TypeScript support. Always use `typeof umami !== 'undefined'` to safely trigger events programmatically.
+
 * **Security**: The application runs as the non-root `node` user.
+
 * **Exclusions**: Development-only files like `specs/`, `AGENTS.md`, and `DEVELOPER.md` are excluded from the image via `.dockerignore`.

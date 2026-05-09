@@ -5,7 +5,7 @@
     "useDefineForClassFields": true,
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "types": ["vite/client", "@vitest/browser/matchers"],
+    "types": ["vite/client", "@vitest/browser/matchers", "umami"],
     "skipLibCheck": true,
 
     /* Bundler mode */
