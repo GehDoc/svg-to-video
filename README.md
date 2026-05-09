@@ -4,6 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/version-0.7.3-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
 
+![Social Preview](./docs/assets/social-preview.svg)
+
 A high-fidelity tool to render CSS-animated SVGs into MP4 videos.
 
 Unlike standard converters that struggle with complex CSS keyframes or transitions, this project provides a unified engine to scrub through the Web Animations API, ensuring every frame is captured exactly as the browser renders it.
