@@ -147,10 +147,17 @@ The Web Studio and Storybook Gallery are configured to deploy automatically to *
 
 The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tracking.
 
-- **Implementation**: The tracker is injected via `web/index.html` only when the hostname matches production domains (to avoid tracking local development).
+> [!IMPORTANT]
+> **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
+>
+> 1. The hostname is `localhost`, `127.0.0.1`, or a local network IP.
+> 2. `window.navigator.webdriver` is true (e.g., in Playwright, Puppeteer, or CI environments).
+> 3. The hostname does not match the `data-domains` attribute.
+
+- **Implementation**: The tracker is injected via `web/index.html` with pre-flight checks.
 - **Configuration**: The `data-website-id` and `data-domains` are hardcoded in `web/index.html`. For local forks, update these values to point to your own Umami instance.
 - **Events**: We track the conversion lifecycle (`conversion-start`, `conversion-success`, `conversion-failed`) and user actions (`download-mp4`, `back-to-studio`).
-- **Types**: We use `@types/umami` for full TypeScript support. Use `typeof umami !== 'undefined'` to safely trigger events programmatically.
+- **Types**: We use `@types/umami` for full TypeScript support. Always use `typeof umami !== 'undefined'` to safely trigger events programmatically.
 
 * **Security**: The application runs as the non-root `node` user.
 
