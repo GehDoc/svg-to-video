@@ -82,8 +82,10 @@ export const Rendering: Story = {
     (Story) => (
       <MockStudioProvider
         mockValues={{
-          svgContent: '<svg></svg>',
           state: { isRendering: true, status: 'Processing...', progress: 45 },
+          svgContent: '<svg></svg>',
+          originalDim: { width: 500, height: 500, isDimensionsDetected: true },
+          targetDim: { width: 1920, height: 1080 },
         }}
       >
         <div className="story-wrapper">
