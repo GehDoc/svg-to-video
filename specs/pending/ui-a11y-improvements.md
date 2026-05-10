@@ -5,7 +5,7 @@
 
 ## 🎯 Objective
 
-Improve the visual distinction of disabled UI elements and ensure accessibility compliance for the application's dark mode, including automated CI testing.
+Improve the visual distinction of disabled UI elements, ensure accessibility compliance for dark mode, and provide persistent access to project information.
 
 ## 🛠 Technical Strategy
 
@@ -15,6 +15,7 @@ Improve the visual distinction of disabled UI elements and ensure accessibility 
   - Enhance visual feedback for `:disabled` and `.is-locked` states.
   - Implement automated A11Y testing in Storybook for both light and dark modes.
   - Integrate A11Y checks into the CI pipeline.
+  - Integrate project information (GitHub, License, version) into the persistent header.
 
 ## ✅ Task List
 
@@ -31,6 +32,10 @@ Improve the visual distinction of disabled UI elements and ensure accessibility 
 - [x] **Storybook Updates**
   - [x] Add "Disabled" stories to all components.
   - [x] Add "Locked" state story for `ConfigPanel`.
+- [ ] **Persistent Project Information**
+  - [ ] Add utility area with links (GitHub, License) to `Header.tsx`.
+  - [ ] Update `Header.scss` for new layout.
+  - [ ] Cleanup `LandingView.tsx` (remove redundant footer).
 
 ## 🧪 Verification Plan
 
