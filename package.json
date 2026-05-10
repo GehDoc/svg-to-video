@@ -1,7 +1,7 @@
 {
   "name": "svg-to-video",
   "version": "0.7.4",
-  "description": "Professional animated SVG to MP4 converter featuring a frame-accurate CLI and an online, serverless Web Studio.",
+  "description": "Professional animated SVG to MP4/WebM converter featuring frame-accurate rendering, transparent background support, and a serverless Web Studio.",
   "author": "GehDoc",
   "repository": {
     "type": "git",
@@ -16,7 +16,11 @@
     "video",
     "svg",
     "convert",
-    "mp4"
+    "mp4",
+    "webm",
+    "transparency",
+    "alpha-channel",
+    "web-animations-api"
   ],
   "license": "MIT",
   "dependencies": {
