@@ -227,13 +227,10 @@ export const useRenderer = (
             settings.captureMethod,
             settings.isTransparent
           );
+          ctx.clearRect(0, 0, width, height);
           if (!settings.isTransparent) {
-            console.log('Filling background with:', settings.backgroundColor);
-            ctx.clearRect(0, 0, width, height);
             ctx.fillStyle = settings.backgroundColor;
             ctx.fillRect(0, 0, width, height);
-          } else {
-            console.log('Skipping background fill (Transparent)');
           }
           ctx.drawImage(bitmap, 0, 0, width, height);
           bitmap.close();
@@ -274,12 +271,8 @@ export const useRenderer = (
               return;
             }
             const currentFrame = totalAnimationFrames + frame;
+            ctx.clearRect(0, 0, width, height);
             if (!settings.isTransparent) {
-              console.log(
-                'Filling background (hold) with:',
-                settings.backgroundColor
-              );
-              ctx.clearRect(0, 0, width, height);
               ctx.fillStyle = settings.backgroundColor;
               ctx.fillRect(0, 0, width, height);
             }
