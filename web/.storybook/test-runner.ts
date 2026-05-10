@@ -2,10 +2,10 @@ import { type TestRunnerConfig } from '@storybook/test-runner';
 import { injectAxe, checkA11y } from 'axe-playwright';
 
 const config: TestRunnerConfig = {
-  async preRender(page) {
+  async preVisit(page) {
     await injectAxe(page);
   },
-  async postRender(page) {
+  async postVisit(page) {
     // Determine color scheme from environment variable or default to light
     const colorScheme =
       (process.env.STORYBOOK_THEME as 'light' | 'dark') || 'light';
