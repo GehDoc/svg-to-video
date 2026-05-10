@@ -35,6 +35,7 @@ Improve the visual distinction of disabled UI elements, ensure accessibility com
 - [ ] **Persistent Project Information**
   - [ ] Add utility area with links (GitHub, License) to `Header.tsx`.
   - [ ] Update `Header.scss` for new layout.
+  - [ ] Add `Header.test.tsx` to verify link rendering and accessibility.
   - [ ] Cleanup `LandingView.tsx` (remove redundant footer).
 
 ## 🧪 Verification Plan

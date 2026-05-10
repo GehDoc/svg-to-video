@@ -6,6 +6,11 @@ header {
   justify-content: space-between;
   align-items: center;
 
+  .header-brand {
+    display: flex;
+    flex-direction: column;
+  }
+
   .header-title {
     margin: 0;
     font-size: 1.25rem;
@@ -22,7 +27,7 @@ header {
   }
 
   .header-badge {
-    font-size: 1.2rem;
+    font-size: 0.8rem;
     margin-left: 0.5rem;
     padding: 0.2rem 0.5rem;
     background: var(--primary);
@@ -35,5 +40,31 @@ header {
     margin: 0;
     font-size: 0.85rem;
     color: var(--text-muted);
+  }
+
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .header-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+
+  .header-version {
+    font-family: var(--mono);
+    font-size: 0.75rem;
   }
 }

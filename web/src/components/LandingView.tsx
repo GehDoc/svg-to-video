@@ -1,5 +1,3 @@
-import { FaGithub } from 'react-icons/fa';
-import pkg from '../../../package.json';
 import './LandingView.scss';
 
 export const LandingView = () => {
@@ -41,14 +39,6 @@ export const LandingView = () => {
           </a>
           . Software provided "as is", without warranty of any kind.
         </p>
-        <a
-          href="https://github.com/GehDoc/svg-to-video"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="github-link"
-        >
-          <FaGithub size={16} /> <span>v{pkg.version}</span>
-        </a>
       </footer>
     </div>
   );
