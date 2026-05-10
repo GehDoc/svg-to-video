@@ -1,6 +1,7 @@
 import { StudioContext } from '../context/StudioContext';
 import { useContext, type ChangeEvent } from 'react';
 import type { ResolutionPreset } from '../hooks/useRenderer';
+import { isTransparencySupported } from '../utils/isTransparencySupported';
 import { Dropzone } from './Dropzone';
 import { Button } from './Button/Button';
 import './ConfigPanel.scss';
@@ -9,6 +10,7 @@ export const ConfigPanel = () => {
   const {
     svgContent,
     setSvgContent,
+    fileName,
     setFileName,
     duration,
     setDuration,
@@ -22,6 +24,10 @@ export const ConfigPanel = () => {
     setScale,
     backgroundColor,
     setBackgroundColor,
+    format,
+    setFormat,
+    isTransparent,
+    setIsTransparent,
     captureMethod,
     setCaptureMethod,
     isDragging,
@@ -63,7 +69,7 @@ export const ConfigPanel = () => {
   };
 
   return (
-    <aside className="config-panel">
+    <aside className="config-panel" tabIndex={0}>
       <section
         className={`config-section ${isRenderingOrSuccess ? 'is-locked' : ''}`}
       >
@@ -82,6 +88,26 @@ export const ConfigPanel = () => {
         className={`config-section ${isOptionsDisabled ? 'is-locked' : ''}`}
       >
         <h2>2. Format</h2>
+        <div className="input-group">
+          <label htmlFor="format">Output Format</label>
+          <select
+            id="format"
+            value={format}
+            onChange={(e) => {
+              setFormat(e.target.value as 'mp4' | 'webm');
+              const newName = fileName.replace(
+                /\.[^/.]+$/,
+                `.${e.target.value}`
+              );
+              setFileName(newName);
+            }}
+            disabled={isOptionsDisabled}
+          >
+            <option value="mp4">MP4</option>
+            <option value="webm">WebM</option>
+          </select>
+        </div>
+
         <div className="input-group">
           <label htmlFor="resolution">Resolution</label>
           <select
@@ -164,6 +190,23 @@ export const ConfigPanel = () => {
       >
         <h2>3. Canvas</h2>
         <div className="input-group">
+          <label htmlFor="transparent">
+            <input
+              type="checkbox"
+              id="transparent"
+              checked={isTransparent}
+              onChange={(e) => setIsTransparent(e.target.checked)}
+              disabled={isOptionsDisabled || !isTransparencySupported(format)}
+            />
+            Transparent Background
+          </label>
+          {!isTransparencySupported(format) && (
+            <p className="hint-text" style={{ color: 'var(--secondary)' }}>
+              Transparency only supported for WebM
+            </p>
+          )}
+        </div>
+        <div className="input-group">
           <label htmlFor="bg-color">Background</label>
           <div className="color-picker-wrapper">
             <input
@@ -171,13 +214,13 @@ export const ConfigPanel = () => {
               id="bg-color"
               value={backgroundColor}
               onChange={(e) => setBackgroundColor(e.target.value)}
-              disabled={isOptionsDisabled}
+              disabled={isOptionsDisabled || isTransparent}
             />
             <input
               type="text"
               value={backgroundColor}
               onChange={(e) => setBackgroundColor(e.target.value)}
-              disabled={isOptionsDisabled}
+              disabled={isOptionsDisabled || isTransparent}
               className="color-text-input"
               aria-label="Background color hex code"
             />
@@ -205,7 +248,9 @@ export const ConfigPanel = () => {
           onClick={handleStartRender}
           disabled={!svgContent || isRenderingOrSuccess}
         >
-          {state.isRendering ? 'Processing...' : 'Export MP4'}
+          {state.isRendering
+            ? 'Processing...'
+            : `Export ${format.toUpperCase()}`}
         </Button>
       </div>
     </aside>

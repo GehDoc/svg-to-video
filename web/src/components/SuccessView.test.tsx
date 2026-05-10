@@ -2,19 +2,42 @@
 import { render, screen, cleanup } from '@testing-library/react';
 import { test, expect, afterEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
-import { composeStories } from '@storybook/react';
-import * as stories from './SuccessView.stories';
+import { SuccessView } from './SuccessView';
+import { StudioContext } from '../context/StudioContext';
+import { createMockStudioContext } from '../../tests/fixtures/studioContext';
 
 afterEach(cleanup);
 
-const { Default } = composeStories(stories);
+test('SuccessView renders MP4 success state correctly', () => {
+  const mockContext = createMockStudioContext({
+    fileName: 'test.mp4',
+    renderedUrl: 'blob:test',
+  });
 
-test('SuccessView renders success state correctly', () => {
-  render(<Default />);
+  render(
+    <StudioContext.Provider value={mockContext}>
+      <SuccessView />
+    </StudioContext.Provider>
+  );
 
   expect(screen.getByText(/Render Complete/i)).toBeInTheDocument();
-  expect(screen.getByText(/animation.mp4/i)).toBeInTheDocument();
-  expect(
-    screen.getByRole('button', { name: /Download MP4/i })
-  ).toBeInTheDocument();
+  expect(screen.getByText(/test.mp4/i)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /Download/i })).toBeInTheDocument();
+});
+
+test('SuccessView renders WebM success state correctly', () => {
+  const mockContext = createMockStudioContext({
+    fileName: 'test.webm',
+    renderedUrl: 'blob:test',
+  });
+
+  render(
+    <StudioContext.Provider value={mockContext}>
+      <SuccessView />
+    </StudioContext.Provider>
+  );
+
+  expect(screen.getByText(/Render Complete/i)).toBeInTheDocument();
+  expect(screen.getByText(/test.webm/i)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /Download/i })).toBeInTheDocument();
 });

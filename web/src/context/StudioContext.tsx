@@ -19,6 +19,10 @@ export interface StudioContextType {
   setScale: (s: number) => void;
   backgroundColor: string;
   setBackgroundColor: (c: string) => void;
+  format: 'mp4' | 'webm';
+  setFormat: (f: 'mp4' | 'webm') => void;
+  isTransparent: boolean;
+  setIsTransparent: (t: boolean) => void;
   captureMethod: 'optimal' | 'high-fidelity';
   setCaptureMethod: (m: 'optimal' | 'high-fidelity') => void;
   isDragging: boolean;
@@ -32,6 +36,7 @@ export interface StudioContextType {
   state: RenderState;
   handleStartRender: () => Promise<void>;
   cancel: () => void;
+  clearError: () => void;
   downloadResult: () => void;
   rendererRef: React.RefObject<RendererHandle | null>;
 }

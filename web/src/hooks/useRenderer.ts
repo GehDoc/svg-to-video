@@ -1,13 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
-import {
-  Output,
-  Mp4OutputFormat,
-  CanvasSource,
-  BufferTarget,
-  QUALITY_HIGH,
-  getFirstEncodableVideoCodec,
-} from 'mediabunny';
+import * as Mediabunny from 'mediabunny';
 
 export type ResolutionPreset = 'original' | '720p' | '1080p';
 export type CaptureMethod = 'optimal' | 'high-fidelity';
@@ -18,6 +11,8 @@ export interface RenderSettings {
   preset: ResolutionPreset;
   scale: number;
   backgroundColor: string;
+  format: 'mp4' | 'webm';
+  isTransparent: boolean;
   captureMethod: CaptureMethod;
   hold: number;
 }
@@ -92,12 +87,22 @@ export const calculateFinalDimensions = (
   return { width, height };
 };
 
-export const getBestCodec = async (width: number, height: number) => {
-  const format = new Mp4OutputFormat();
-  return await getFirstEncodableVideoCodec(format.getSupportedVideoCodecs(), {
-    width,
-    height,
-  });
+export const getBestCodec = async (
+  width: number,
+  height: number,
+  format: 'mp4' | 'webm'
+) => {
+  const outputFormat =
+    format === 'webm'
+      ? new Mediabunny.WebMOutputFormat()
+      : new Mediabunny.Mp4OutputFormat();
+  return await Mediabunny.getFirstEncodableVideoCodec(
+    outputFormat.getSupportedVideoCodecs(),
+    {
+      width,
+      height,
+    }
+  );
 };
 
 export const useRenderer = (
@@ -119,7 +124,10 @@ export const useRenderer = (
       setState({ isRendering: true, progress: 0, status: 'Initializing...' });
 
       if (typeof umami !== 'undefined') {
-        umami.track('conversion-start');
+        umami.track('conversion-start', {
+          format: settings.format,
+          isTransparent: settings.isTransparent,
+        });
       }
 
       try {
@@ -138,13 +146,17 @@ export const useRenderer = (
           settings.backgroundColor
         );
 
-        const target = new BufferTarget();
-        const output = new Output({
-          format: new Mp4OutputFormat(),
+        const target = new Mediabunny.BufferTarget();
+        const outputFormat =
+          settings.format === 'webm'
+            ? new Mediabunny.WebMOutputFormat()
+            : new Mediabunny.Mp4OutputFormat();
+        const output = new Mediabunny.Output({
+          format: outputFormat,
           target,
         });
 
-        const videoCodec = await getBestCodec(width, height);
+        const videoCodec = await getBestCodec(width, height, settings.format);
         if (!videoCodec) {
           throw new Error('No supported video codec found.');
         }
@@ -162,12 +174,18 @@ export const useRenderer = (
         const canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { alpha: settings.isTransparent });
         if (!ctx) throw new Error('Could not get 2D context');
 
-        const source = new CanvasSource(canvas, {
+        if (!settings.isTransparent) {
+          ctx.fillStyle = settings.backgroundColor;
+          ctx.fillRect(0, 0, width, height);
+        }
+
+        const source = new Mediabunny.CanvasSource(canvas, {
           codec: videoCodec,
-          bitrate: QUALITY_HIGH,
+          bitrate: Mediabunny.QUALITY_HIGH,
+          alpha: settings.isTransparent ? 'keep' : 'discard',
         });
         output.addVideoTrack(source);
 
@@ -191,10 +209,14 @@ export const useRenderer = (
           const timeMs = ((frame - 1) / settings.fps) * 1000;
           await rendererRef.current.seek(timeMs);
           const bitmap = await rendererRef.current.capture(
-            settings.captureMethod
+            settings.captureMethod,
+            settings.isTransparent
           );
-          ctx.fillStyle = settings.backgroundColor;
-          ctx.fillRect(0, 0, width, height);
+          ctx.clearRect(0, 0, width, height);
+          if (!settings.isTransparent) {
+            ctx.fillStyle = settings.backgroundColor;
+            ctx.fillRect(0, 0, width, height);
+          }
           ctx.drawImage(bitmap, 0, 0, width, height);
           bitmap.close();
           await source.add((frame - 1) * frameDuration, frameDuration);
@@ -220,7 +242,8 @@ export const useRenderer = (
         if (totalHoldFrames > 0) {
           await rendererRef.current.seek(settings.duration * 1000);
           const finalBitmap = await rendererRef.current.capture(
-            settings.captureMethod
+            settings.captureMethod,
+            settings.isTransparent
           );
 
           for (let frame = 1; frame <= totalHoldFrames; frame++) {
@@ -233,8 +256,11 @@ export const useRenderer = (
               return;
             }
             const currentFrame = totalAnimationFrames + frame;
-            ctx.fillStyle = settings.backgroundColor;
-            ctx.fillRect(0, 0, width, height);
+            ctx.clearRect(0, 0, width, height);
+            if (!settings.isTransparent) {
+              ctx.fillStyle = settings.backgroundColor;
+              ctx.fillRect(0, 0, width, height);
+            }
             ctx.drawImage(finalBitmap, 0, 0, width, height);
             await source.add((currentFrame - 1) * frameDuration, frameDuration);
 
@@ -264,15 +290,22 @@ export const useRenderer = (
           progress: 100,
           status: 'Finalizing video...',
         });
+
         await output.finalize();
+
         const resultBuffer = target.buffer;
         if (!resultBuffer) throw new Error('Output buffer is empty');
-        const blob = new Blob([resultBuffer], { type: 'video/mp4' });
+        const blob = new Blob([resultBuffer], {
+          type: settings.format === 'webm' ? 'video/webm' : 'video/mp4',
+        });
         const url = URL.createObjectURL(blob);
         setState({ isRendering: false, progress: 100, status: 'Done!' });
 
         if (typeof umami !== 'undefined') {
-          umami.track('conversion-success', { format: 'mp4' });
+          umami.track('conversion-success', {
+            format: settings.format,
+            isTransparent: settings.isTransparent,
+          });
         }
 
         return url;
@@ -285,7 +318,11 @@ export const useRenderer = (
         });
 
         if (typeof umami !== 'undefined') {
-          umami.track('conversion-failed', { error: error.message });
+          umami.track('conversion-failed', {
+            error: error.message,
+            format: settings.format,
+            isTransparent: settings.isTransparent,
+          });
         }
 
         throw error;
@@ -296,7 +333,12 @@ export const useRenderer = (
 
   const cancel = useCallback(() => {
     cancelRef.current = true;
+    setState({ isRendering: false, progress: 0, status: 'Ready' });
   }, []);
 
-  return { render, cancel, state };
+  const clearError = useCallback(() => {
+    setState((s) => ({ ...s, status: 'Ready' }));
+  }, []);
+
+  return { render, cancel, clearError, state };
 };

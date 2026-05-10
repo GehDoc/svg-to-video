@@ -24,6 +24,8 @@ export const StudioProvider = ({
   const [preset, setPreset] = useState<ResolutionPreset>('original');
   const [scale, setScale] = useState(1);
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
+  const [format, setFormat] = useState<'mp4' | 'webm'>('mp4');
+  const [isTransparent, setIsTransparent] = useState(false);
   const [captureMethod, setCaptureMethod] = useState<
     'optimal' | 'high-fidelity'
   >('optimal');
@@ -31,7 +33,7 @@ export const StudioProvider = ({
   const [renderedUrl, setRenderedUrl] = useState<string | null>(null);
   const [fileSize, setFileSize] = useState<string | null>(null);
 
-  const { render, cancel, state } = useRenderer(rendererRef);
+  const { render, cancel, clearError, state } = useRenderer(rendererRef);
 
   let originalDim = { width: 0, height: 0, isDimensionsDetected: false };
   let targetDim = { width: 0, height: 0 };
@@ -64,6 +66,8 @@ export const StudioProvider = ({
       preset,
       scale,
       backgroundColor,
+      format,
+      isTransparent,
       captureMethod,
       hold,
     };
@@ -108,6 +112,10 @@ export const StudioProvider = ({
         setScale,
         backgroundColor,
         setBackgroundColor,
+        format,
+        setFormat,
+        isTransparent,
+        setIsTransparent,
         captureMethod,
         setCaptureMethod,
         isDragging,
@@ -121,6 +129,7 @@ export const StudioProvider = ({
         state,
         handleStartRender,
         cancel,
+        clearError,
         downloadResult,
         rendererRef,
       }}

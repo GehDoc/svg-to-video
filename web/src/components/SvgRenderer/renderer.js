@@ -66,7 +66,7 @@ export function getRendererScript(seekAnimations) {
       svgContainer.innerHTML = svgContent;
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';
-      svgContainer.style.backgroundColor = backgroundColor;
+      svgContainer.style.backgroundColor = 'transparent';
       captureCanvas.width = width;
       captureCanvas.height = height;
 

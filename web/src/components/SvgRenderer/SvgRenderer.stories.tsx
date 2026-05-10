@@ -19,7 +19,7 @@ const Wrapper = forwardRef<RendererHandle, WrapperProps>(
     useImperativeHandle(ref, () => ({
       loadSvg: (s, w, h, b) => rendererRef.current!.loadSvg(s, w, h, b),
       seek: (t) => rendererRef.current!.seek(t),
-      capture: (m) => rendererRef.current!.capture(m),
+      capture: (m) => rendererRef.current!.capture(m, false),
       isReady: () => rendererRef.current!.isReady(),
     }));
 

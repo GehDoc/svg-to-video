@@ -18,7 +18,10 @@ export interface RendererHandle {
     backgroundColor: string
   ) => Promise<void>;
   seek: (timeMs: number) => Promise<void>;
-  capture: (method: 'optimal' | 'high-fidelity') => Promise<ImageBitmap>;
+  capture: (
+    method: 'optimal' | 'high-fidelity',
+    transparent: boolean
+  ) => Promise<ImageBitmap>;
   isReady: () => boolean;
 }
 
@@ -27,11 +30,15 @@ interface SvgRendererProps {
   width?: number;
   height?: number;
   backgroundColor?: string;
+  isTransparent?: boolean;
   isRendering?: boolean;
 }
 
 const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
-  ({ svgContent, width, height, backgroundColor, isRendering }, ref) => {
+  (
+    { svgContent, width, height, backgroundColor, isTransparent, isRendering },
+    ref
+  ) => {
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const [ready, setReady] = useState(false);
     const [scriptLoaded, setScriptLoaded] = useState(false);
@@ -123,13 +130,27 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
 
     // Sync from Props (Debounced Preview)
     useEffect(() => {
-      if (svgContent && width && height && backgroundColor && !isRendering) {
+      if (
+        svgContent &&
+        width &&
+        height &&
+        backgroundColor &&
+        (!isRendering || dimensions.width === 0)
+      ) {
         const timeoutId = setTimeout(() => {
           internalLoad(svgContent, width, height, backgroundColor);
         }, 100);
         return () => clearTimeout(timeoutId);
       }
-    }, [svgContent, width, height, backgroundColor, isRendering, internalLoad]);
+    }, [
+      svgContent,
+      width,
+      height,
+      backgroundColor,
+      isRendering,
+      dimensions.width,
+      internalLoad,
+    ]);
 
     useImperativeHandle(ref, () => ({
       loadSvg: internalLoad,
@@ -150,7 +171,10 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
         });
       },
 
-      capture: async (method: 'optimal' | 'high-fidelity') => {
+      capture: async (
+        method: 'optimal' | 'high-fidelity',
+        transparent: boolean
+      ) => {
         return new Promise<ImageBitmap>((resolve) => {
           const handler = (event: MessageEvent) => {
             if (event.data.type === 'CAPTURE_RESULT') {
@@ -160,7 +184,7 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
           };
           window.addEventListener('message', handler);
           iframeRef.current?.contentWindow?.postMessage(
-            { type: 'CAPTURE', payload: { method } },
+            { type: 'CAPTURE', payload: { method, transparent } },
             '*'
           );
         });
@@ -172,7 +196,16 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
     return (
       <div className="renderer-monitor" data-testid="svg-renderer">
         <p className="monitor-label">Live Monitor</p>
-        <div className="monitor-viewport">
+        <div
+          className="monitor-viewport"
+          style={{
+            backgroundColor: isTransparent ? 'transparent' : backgroundColor,
+            backgroundImage: isTransparent
+              ? 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%)'
+              : 'none',
+            backgroundSize: isTransparent ? '20px 20px' : 'auto',
+          }}
+        >
           <iframe
             ref={iframeRef}
             title="svg-renderer"

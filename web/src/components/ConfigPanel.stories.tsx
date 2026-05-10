@@ -39,13 +39,53 @@ export const WithSvg: Story = {
   ],
 };
 
-export const Rendering: Story = {
+export const TransparentEnabled: Story = {
   decorators: [
     (Story) => (
       <MockStudioProvider
         mockValues={{
           svgContent: '<svg></svg>',
+          format: 'webm',
+          isTransparent: true,
+          originalDim: { width: 500, height: 500, isDimensionsDetected: true },
+        }}
+      >
+        <div className="story-wrapper">
+          <Story />
+        </div>
+      </MockStudioProvider>
+    ),
+  ],
+};
+
+export const TransparentDisabled: Story = {
+  decorators: [
+    (Story) => (
+      <MockStudioProvider
+        mockValues={{
+          svgContent: '<svg></svg>',
+          format: 'mp4',
+          isTransparent: false,
+          originalDim: { width: 500, height: 500, isDimensionsDetected: true },
+        }}
+      >
+        <div className="story-wrapper">
+          <Story />
+        </div>
+      </MockStudioProvider>
+    ),
+  ],
+};
+
+export const Rendering: Story = {
+  decorators: [
+    (Story) => (
+      <MockStudioProvider
+        mockValues={{
           state: { isRendering: true, status: 'Processing...', progress: 45 },
+          svgContent: '<svg></svg>',
+          originalDim: { width: 500, height: 500, isDimensionsDetected: true },
+          targetDim: { width: 1920, height: 1080 },
         }}
       >
         <div className="story-wrapper">
