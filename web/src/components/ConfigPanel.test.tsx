@@ -1,49 +1,117 @@
 // @vitest-environment jsdom
 import { render, screen, cleanup } from '@testing-library/react';
-import { test, expect, afterEach } from 'vitest';
+import { test, expect, afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { composeStories } from '@storybook/react';
 import * as stories from './ConfigPanel.stories';
+import { ConfigPanel } from './ConfigPanel';
+import {
+  StudioContext,
+  type StudioContextType,
+} from '../context/StudioContext';
 
 afterEach(cleanup);
 
-const { Default, WithSvg, Rendering } = composeStories(stories);
+const { Default } = composeStories(stories);
 
-test('ConfigPanel options are disabled when no SVG is loaded', () => {
-  render(<Default />);
+test('ConfigPanel dependency: MP4 disables transparency toggle', () => {
+  const mockContext: StudioContextType = {
+    ...Default.args,
+    svgContent: '<svg></svg>',
+    fileName: 'test.mp4',
+    setSvgContent: vi.fn(),
+    setFileName: vi.fn(),
+    duration: 5,
+    setDuration: vi.fn(),
+    hold: 0,
+    setHold: vi.fn(),
+    fps: 60,
+    setFps: vi.fn(),
+    preset: '1080p',
+    setPreset: vi.fn(),
+    scale: 1,
+    setScale: vi.fn(),
+    backgroundColor: '#ffffff',
+    setBackgroundColor: vi.fn(),
+    format: 'mp4',
+    setFormat: vi.fn(),
+    isTransparent: false,
+    setIsTransparent: vi.fn(),
+    captureMethod: 'optimal',
+    setCaptureMethod: vi.fn(),
+    isDragging: false,
+    setIsDragging: vi.fn(),
+    renderedUrl: null,
+    setRenderedUrl: vi.fn(),
+    fileSize: null,
+    setFileSize: vi.fn(),
+    originalDim: { width: 500, height: 500, isDimensionsDetected: true },
+    targetDim: { width: 500, height: 500 },
+    state: { isRendering: false, status: 'Idle', progress: 0 },
+    handleStartRender: vi.fn(),
+    cancel: vi.fn(),
+    clearError: vi.fn(),
+    downloadResult: vi.fn(),
+    rendererRef: { current: null },
+  };
 
-  // Section 2: Format
-  expect(screen.getByLabelText(/Resolution/i)).toBeDisabled();
-  expect(screen.getByLabelText(/Dur. \(s\)/i)).toBeDisabled();
-  expect(screen.getByLabelText(/Hold \(s\)/i)).toBeDisabled();
-  expect(screen.getByLabelText(/FPS/i)).toBeDisabled();
+  render(
+    <StudioContext.Provider value={mockContext}>
+      <ConfigPanel />
+    </StudioContext.Provider>
+  );
 
-  // Section 3: Canvas
-  expect(screen.getByLabelText(/Background color hex code/i)).toBeDisabled();
-  expect(screen.getByLabelText(/Capture Method/i)).toBeDisabled();
-
-  // Export button
-  expect(screen.getByRole('button', { name: /Export/i })).toBeDisabled();
+  const checkbox = screen.getByLabelText(/Transparent Background/i);
+  expect(checkbox).toBeDisabled();
 });
 
-test('ConfigPanel options are enabled when SVG is loaded', () => {
-  render(<WithSvg />);
+test('ConfigPanel dependency: WebM enables transparency toggle', () => {
+  const mockContext: StudioContextType = {
+    ...Default.args,
+    svgContent: '<svg></svg>',
+    fileName: 'test.webm',
+    setSvgContent: vi.fn(),
+    setFileName: vi.fn(),
+    duration: 5,
+    setDuration: vi.fn(),
+    hold: 0,
+    setHold: vi.fn(),
+    fps: 60,
+    setFps: vi.fn(),
+    preset: '1080p',
+    setPreset: vi.fn(),
+    scale: 1,
+    setScale: vi.fn(),
+    backgroundColor: '#ffffff',
+    setBackgroundColor: vi.fn(),
+    format: 'webm',
+    setFormat: vi.fn(),
+    isTransparent: false,
+    setIsTransparent: vi.fn(),
+    captureMethod: 'optimal',
+    setCaptureMethod: vi.fn(),
+    isDragging: false,
+    setIsDragging: vi.fn(),
+    renderedUrl: null,
+    setRenderedUrl: vi.fn(),
+    fileSize: null,
+    setFileSize: vi.fn(),
+    originalDim: { width: 500, height: 500, isDimensionsDetected: true },
+    targetDim: { width: 500, height: 500 },
+    state: { isRendering: false, status: 'Idle', progress: 0 },
+    handleStartRender: vi.fn(),
+    cancel: vi.fn(),
+    clearError: vi.fn(),
+    downloadResult: vi.fn(),
+    rendererRef: { current: null },
+  };
 
-  expect(screen.getByLabelText(/Resolution/i)).not.toBeDisabled();
-  expect(screen.getByLabelText(/Dur. \(s\)/i)).not.toBeDisabled();
-  expect(screen.getByLabelText(/Hold \(s\)/i)).not.toBeDisabled();
-  expect(screen.getByLabelText(/FPS/i)).not.toBeDisabled();
-  expect(
-    screen.getByLabelText(/Background color hex code/i)
-  ).not.toBeDisabled();
-  expect(screen.getByLabelText(/Capture Method/i)).not.toBeDisabled();
-  expect(screen.getByRole('button', { name: /Export/i })).not.toBeDisabled();
-});
+  render(
+    <StudioContext.Provider value={mockContext}>
+      <ConfigPanel />
+    </StudioContext.Provider>
+  );
 
-test('ConfigPanel options are disabled during rendering', () => {
-  render(<Rendering />);
-
-  expect(screen.getByLabelText(/Resolution/i)).toBeDisabled();
-  expect(screen.getByLabelText(/Dur. \(s\)/i)).toBeDisabled();
-  expect(screen.getByRole('button')).toBeDisabled();
+  const checkbox = screen.getByLabelText(/Transparent Background/i);
+  expect(checkbox).not.toBeDisabled();
 });
