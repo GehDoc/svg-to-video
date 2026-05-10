@@ -23,7 +23,7 @@ test('ConfigPanel options are disabled when no SVG is loaded', () => {
   expect(screen.getByLabelText(/Capture Method/i)).toBeDisabled();
 
   // Export button
-  expect(screen.getByRole('button', { name: /Export MP4/i })).toBeDisabled();
+  expect(screen.getByRole('button', { name: /Export/i })).toBeDisabled();
 });
 
 test('ConfigPanel options are enabled when SVG is loaded', () => {
@@ -37,9 +37,7 @@ test('ConfigPanel options are enabled when SVG is loaded', () => {
     screen.getByLabelText(/Background color hex code/i)
   ).not.toBeDisabled();
   expect(screen.getByLabelText(/Capture Method/i)).not.toBeDisabled();
-  expect(
-    screen.getByRole('button', { name: /Export MP4/i })
-  ).not.toBeDisabled();
+  expect(screen.getByRole('button', { name: /Export/i })).not.toBeDisabled();
 });
 
 test('ConfigPanel options are disabled during rendering', () => {

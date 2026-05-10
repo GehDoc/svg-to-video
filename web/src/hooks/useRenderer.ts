@@ -92,7 +92,6 @@ export const getBestCodec = async (
   height: number,
   format: 'mp4' | 'webm'
 ) => {
-  console.log('Mediabunny exports:', Mediabunny);
   const outputFormat =
     format === 'webm'
       ? new Mediabunny.WebMOutputFormat()
@@ -288,9 +287,9 @@ export const useRenderer = (
           progress: 100,
           status: 'Finalizing video...',
         });
-        console.log('Finalizing output...');
+
         await output.finalize();
-        console.log('Output finalized.');
+
         const resultBuffer = target.buffer;
         if (!resultBuffer) throw new Error('Output buffer is empty');
         const blob = new Blob([resultBuffer], {
