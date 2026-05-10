@@ -18,19 +18,19 @@ Improve the visual distinction of disabled UI elements and ensure accessibility 
 
 ## ✅ Task List
 
-- [ ] **Research & Audit**
-  - [ ] Audit `index.css` for contrast "improvements" that reduced distinction.
-  - [ ] Audit `ConfigPanel.scss` and `Button.scss` for unnecessary properties in disabled states.
-- [ ] **UI Implementation**
-  - [ ] Update `.config-panel` input/select/range disabled styles.
-  - [ ] Update `.btn:disabled` styles.
-  - [ ] Strengthen `.is-locked` visual feedback in `App.css`.
-- [ ] **Automated Testing & CI**
-  - [ ] Create `web/.storybook/test-runner.ts` with `axe-playwright` integration.
-  - [ ] Update `.github/workflows/ci.yml` to run Storybook A11Y tests for both themes.
-- [ ] **Storybook Updates**
-  - [ ] Add "Disabled" stories to all components.
-  - [ ] Add "Locked" state story for `ConfigPanel`.
+- [x] **Research & Audit**
+  - [x] Audit `index.css` for contrast "improvements" that reduced distinction.
+  - [x] Audit `ConfigPanel.scss` and `Button.scss` for unnecessary properties in disabled states.
+- [x] **UI Implementation**
+  - [x] Update `.config-panel` input/select/range disabled styles.
+  - [x] Update `.btn:disabled` styles.
+  - [x] Strengthen `.is-locked` visual feedback in `App.css`.
+- [x] **Automated Testing & CI**
+  - [x] Create `web/.storybook/test-runner.ts` with `axe-playwright` integration.
+  - [x] Update `.github/workflows/ci.yml` to run Storybook A11Y tests for both themes.
+- [x] **Storybook Updates**
+  - [x] Add "Disabled" stories to all components.
+  - [x] Add "Locked" state story for `ConfigPanel`.
 
 ## 🧪 Verification Plan
 

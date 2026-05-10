@@ -22,3 +22,17 @@ export const HasContent: Story = {
     isDragging: false,
   },
 };
+
+export const Disabled: Story = {
+  args: {
+    svgContent: null,
+    disabled: true,
+  },
+};
+
+export const DisabledWithContent: Story = {
+  args: {
+    svgContent: '<svg></svg>',
+    disabled: true,
+  },
+};

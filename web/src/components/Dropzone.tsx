@@ -19,6 +19,7 @@ export const Dropzone = ({
   disabled,
 }: DropzoneProps) => {
   const handleDrag = (e: React.DragEvent) => {
+    if (disabled) return;
     e.preventDefault();
     e.stopPropagation();
     if (e.type === 'dragenter' || e.type === 'dragover') setIsDragging(true);
@@ -27,11 +28,11 @@ export const Dropzone = ({
 
   return (
     <div
-      className={`dropzone ${isDragging ? 'dragging' : ''} ${svgContent ? 'has-content' : ''}`}
+      className={`dropzone ${isDragging ? 'dragging' : ''} ${svgContent ? 'has-content' : ''} ${disabled ? 'disabled' : ''}`}
       onDragEnter={handleDrag}
       onDragOver={handleDrag}
       onDragLeave={handleDrag}
-      onDrop={onDrop}
+      onDrop={disabled ? undefined : onDrop}
     >
       <div className="input-group" style={{ marginBottom: 0 }}>
         <label htmlFor="svg-upload" data-umami-event="Open Converter">

@@ -123,7 +123,7 @@ export const ConfigPanel = () => {
             <option value="1080p">1080p (Fit)</option>
           </select>
           {svgContent && !originalDim.isDimensionsDetected && (
-            <p className="hint-text" style={{ color: 'var(--error)' }}>
+            <p className="hint-text">
               Warning: Could not detect SVG dimensions. Defaulting to 1080p.
             </p>
           )}
@@ -141,7 +141,6 @@ export const ConfigPanel = () => {
               value={scale}
               onChange={(e) => setScale(parseFloat(e.target.value))}
               disabled={isOptionsDisabled}
-              style={{ width: '100%' }}
             />
           </div>
         )}
@@ -201,7 +200,7 @@ export const ConfigPanel = () => {
             Transparent Background
           </label>
           {!isTransparencySupported(format) && (
-            <p className="hint-text" style={{ color: 'var(--secondary)' }}>
+            <p className="hint-text hint-text--info">
               Transparency only supported for WebM
             </p>
           )}

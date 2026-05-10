@@ -20,7 +20,7 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text);
+    color: var(--text-h);
     margin-top: 0;
     margin-bottom: 1rem;
     font-weight: 700;
@@ -30,11 +30,22 @@
     h2 {
       color: var(--text-muted);
     }
+
+    .hint-text {
+      opacity: 0.5;
+    }
   }
 }
 
 .input-group {
   margin-bottom: 1.25rem;
+
+  &:has(:disabled) {
+    label {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
 
   label {
     display: block;
@@ -44,6 +55,21 @@
     text-transform: uppercase;
     letter-spacing: 0.02em;
     color: var(--text-muted);
+
+    &:has(input[type='checkbox']) {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-transform: none;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-bottom: 0;
+
+      input {
+        margin: 0;
+        width: auto;
+      }
+    }
   }
 
   input[type='number'],
@@ -58,14 +84,28 @@
     font-size: 0.95rem;
     transition: all 0.2s ease;
 
-    &:focus {
+    &:focus:not(:disabled) {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(94, 97, 230, 0.2);
     }
 
     &:disabled {
-      opacity: 0.6;
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: var(--panel);
+      border-color: var(--border);
+      color: var(--text-muted);
+    }
+  }
+
+  input[type='range'] {
+    width: 100%;
+    margin: 0.5rem 0;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.5;
       cursor: not-allowed;
     }
   }
@@ -106,6 +146,11 @@
     border: 1px solid var(--border);
     border-radius: 4px;
     cursor: pointer;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 }
 
@@ -113,6 +158,10 @@
   font-size: 0.7rem;
   color: var(--error);
   margin-top: 0.4rem;
+
+  &--info {
+    color: var(--text-muted);
+  }
 }
 
 .render-actions {

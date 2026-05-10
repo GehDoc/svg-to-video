@@ -81,7 +81,9 @@ jobs:
         run: npm run test:web
       - name: Run Web Unit tests
         run: npm run test:unit
-      - name: Run Storybook Interaction tests
-        run: npx start-server-and-test "npm run storybook -w web" http://localhost:6006 "npm run test:storybook -w web"
+      - name: Run Storybook A11Y and Interaction tests
+        run: |
+          npx start-server-and-test "npm run storybook -w web" http://localhost:6006 \
+          "STORYBOOK_THEME=light npm run test:storybook -w web && STORYBOOK_THEME=dark npm run test:storybook -w web"
       - name: Run Visual Regression tests
         run: npm run test:visual

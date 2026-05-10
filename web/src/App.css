@@ -10,7 +10,8 @@
 
 .is-locked {
   pointer-events: none;
-  filter: grayscale(0.4);
+  filter: grayscale(0.8);
+  opacity: 0.8;
 }
 
 .studio-layout {
