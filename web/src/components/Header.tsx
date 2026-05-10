@@ -6,15 +6,10 @@ import pkg from '../../../package.json';
 export const Header = () => {
   return (
     <header className="header">
-      <div className="header-brand">
-        <h1 className="header-title">
-          <Logo className="header-logo" width="24" height="24" />
-          SVG to Video <small className="header-badge">STUDIO</small>
-        </h1>
-        <p className="header-description">
-          Zero-server high-fidelity rendering
-        </p>
-      </div>
+      <h1 className="header-title">
+        <Logo className="header-logo" width="24" height="24" />
+        SVG to Video <small className="header-badge">STUDIO</small>
+      </h1>
 
       <nav className="header-nav">
         <a
