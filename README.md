@@ -2,11 +2,11 @@
 
 [![CI](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml/badge.svg)](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-0.7.3-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
+[![Version](https://img.shields.io/badge/version-0.8.0-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
 
 ![Social Preview](./docs/assets/social-preview.svg)
 
-A high-fidelity tool to render CSS-animated SVGs into MP4 videos.
+A high-fidelity tool to render CSS-animated SVGs into high-quality MP4 or WebM videos.
 
 Unlike standard converters that struggle with complex CSS keyframes or transitions, this project provides a unified engine to scrub through the Web Animations API, ensuring every frame is captured exactly as the browser renders it.
 
@@ -14,6 +14,7 @@ Unlike standard converters that struggle with complex CSS keyframes or transitio
 
 - **Privacy-First**: The Web Studio runs entirely in your browser using **WebCodecs**—your SVG files never leave your computer.
 - **Frame-Accurate**: Our engine scrubs the **Web Animations API**, ensuring every frame is captured exactly as rendered.
+- **Transparent Backgrounds**: Export your animations with a full alpha channel using WebM, perfect for overlays in video editing tools like Premiere or DaVinci Resolve.
 - **Versatile**: Whether you need an accessible [Web Studio](#web-studio) for quick conversions or a powerful [CLI tool](#cli--docker-tool) for batch automation and CI/CD pipelines, this project has you covered.
 
 ## 🌐 Web Studio
@@ -31,7 +32,8 @@ Explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video
 1. Open the [Web Studio](https://gehdoc.github.io/svg-to-video/).
 2. Drag and drop your `.svg` file.
 3. Adjust resolution, duration, and FPS.
-4. Click **Export MP4**.
+4. Select your format (**MP4** or **WebM**) and toggle **Transparent Background** if needed.
+5. Click **Export**.
 
 ---
 
@@ -60,6 +62,8 @@ docker compose run --rm svg-to-video example.svg 5 60 output.mp4
 ## 🛠 Features
 
 - **Frame-Accurate Rendering**: Uses Puppeteer (CLI) or WebCodecs (Web) to scrub through the Web Animations API.
+- **Multiple Formats**: Export to high-quality MP4 or WebM.
+- **Transparency Support**: Capture the full alpha channel for transparent video overlays (WebM).
 - **High-Fidelity Capture**: Handles external fonts and images with robust pre-flight asset checks.
 - **Production-Ready**: A hardened Docker environment and automated CI/CD pipeline.
 
@@ -109,8 +113,8 @@ The tool works by:
 
 1. **Isolation**: Loading the SVG into a headless browser or isolated iframe.
 2. **Scrubbing**: Pausing the animation and manually incrementing `currentTime`.
-3. **Capture**: Taking a high-resolution snapshot for every frame.
-4. **Encoding**: Using FFmpeg to compile the frames into a high-quality H.264 MP4.
+3. **Capture**: Taking a high-resolution snapshot for every frame, with optional alpha channel support.
+4. **Encoding**: Using WebCodecs (Web) or FFmpeg (CLI) to compile the frames into a high-quality video file.
 
 ## 📜 License
 
