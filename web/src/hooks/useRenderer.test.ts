@@ -1,29 +1,48 @@
-import { describe, it, expect, vi } from 'vitest';
-import { getBestCodec } from './useRenderer';
-import * as Mediabunny from 'mediabunny';
+/**
+ * @vitest-environment jsdom
+ */
+import { describe, it, expect } from 'vitest';
+import { parseSvgDimensions, calculateFinalDimensions } from './useRenderer';
 
-vi.mock('mediabunny', async () => {
-  const actual = await vi.importActual('mediabunny');
-  return {
-    ...actual,
-    getFirstEncodableVideoCodec: vi.fn().mockResolvedValue('vp9'),
-    Mp4OutputFormat: class {
-      getSupportedVideoCodecs() {
-        return ['avc1'];
-      }
-    },
-    WebMOutputFormat: class {
-      getSupportedVideoCodecs() {
-        return ['vp9'];
-      }
-    },
-  };
-});
+describe('useRenderer helpers', () => {
+  describe('parseSvgDimensions', () => {
+    it('should parse width and height attributes', () => {
+      const svg = '<svg width="100" height="200"></svg>';
+      expect(parseSvgDimensions(svg)).toEqual({
+        width: 100,
+        height: 200,
+        isDimensionsDetected: true,
+      });
+    });
 
-describe('getBestCodec', () => {
-  it('should select codec based on format', async () => {
-    const codec = await getBestCodec(500, 500, 'webm');
-    expect(codec).toBe('vp9');
-    expect(Mediabunny.WebMOutputFormat).toHaveBeenCalled();
+    it('should parse viewBox if attributes are missing', () => {
+      const svg = '<svg viewBox="0 0 100 200"></svg>';
+      expect(parseSvgDimensions(svg)).toEqual({
+        width: 100,
+        height: 200,
+        isDimensionsDetected: true,
+      });
+    });
+
+    it('should fallback to default dimensions', () => {
+      const svg = '<svg></svg>';
+      const result = parseSvgDimensions(svg);
+      expect(result.width).toBe(1920);
+      expect(result.isDimensionsDetected).toBe(false);
+    });
+  });
+
+  describe('calculateFinalDimensions', () => {
+    it('should calculate 720p resolution', () => {
+      expect(
+        calculateFinalDimensions(1920, 1080, { preset: '720p', scale: 1 })
+      ).toEqual({ width: 1280, height: 720 });
+    });
+
+    it('should apply scale in original mode', () => {
+      expect(
+        calculateFinalDimensions(100, 100, { preset: 'original', scale: 2 })
+      ).toEqual({ width: 200, height: 200 });
+    });
   });
 });
