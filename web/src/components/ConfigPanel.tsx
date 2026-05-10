@@ -69,7 +69,7 @@ export const ConfigPanel = () => {
   };
 
   return (
-    <aside className="config-panel">
+    <aside className="config-panel" tabIndex={0}>
       <section
         className={`config-section ${isRenderingOrSuccess ? 'is-locked' : ''}`}
       >
