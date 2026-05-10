@@ -1,6 +1,10 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { render, screen } from '@testing-library/react';
 import { Header } from './Header';
 import { expect, test } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 
 test('Header renders project links and version', () => {
   render(<Header />);
