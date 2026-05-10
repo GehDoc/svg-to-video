@@ -185,6 +185,7 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
         <div
           className="monitor-viewport"
           style={{
+            backgroundColor: isTransparent ? 'transparent' : backgroundColor,
             backgroundImage: isTransparent
               ? 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%)'
               : 'none',
