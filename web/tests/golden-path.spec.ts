@@ -29,17 +29,17 @@ test.describe('SVG to Video Golden Path', () => {
     );
 
     // 4. Trigger Render
-    const renderButton = page.getByRole('button', {
-      name: /Export MP4|Processing/i,
+    const exportButton = page.getByRole('button', {
+      name: /Export/i,
     });
-    await renderButton.click();
+    await exportButton.click();
 
     // 5. Wait for completion (Success Card appears)
     const successCard = page.locator('.success-card');
     await expect(successCard).toBeVisible({ timeout: 30000 }); // Increase timeout for rendering
 
     // 6. Verify Result (Download button exists)
-    const downloadButton = page.locator('text=Download MP4');
+    const downloadButton = page.locator('text=Download');
     await expect(downloadButton).toBeVisible();
 
     // Start waiting for download before clicking
@@ -62,9 +62,9 @@ test.describe('SVG to Video Golden Path', () => {
     await expect(successCard).toBeHidden();
 
     // 8. Assert Studio controls are active again
-    const exportButton = page.getByRole('button', {
-      name: /Export MP4|Processing/i,
+    const exportButtonAgain = page.getByRole('button', {
+      name: /Export/i,
     });
-    await expect(exportButton).toBeEnabled();
+    await expect(exportButtonAgain).toBeEnabled();
   });
 });
