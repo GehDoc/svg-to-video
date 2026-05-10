@@ -1,7 +1,7 @@
 import { StudioContext } from '../context/StudioContext';
 import { useContext, type ChangeEvent } from 'react';
 import type { ResolutionPreset } from '../hooks/useRenderer';
-import { isTransparencySupported } from '../hooks/isTransparencySupported';
+import { isTransparencySupported } from '../utils/isTransparencySupported';
 import { Dropzone } from './Dropzone';
 import { Button } from './Button/Button';
 import './ConfigPanel.scss';
