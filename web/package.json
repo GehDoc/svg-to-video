@@ -1,6 +1,6 @@
 {
   "name": "@svg-to-video/web",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "The Web Studio interface for svg-to-video",
   "author": "GehDoc",
   "private": true,
@@ -59,6 +59,7 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^8.0.5",
+    "vite-plugin-sitemap": "^0.8.2",
     "vite-plugin-svgr": "^5.2.0",
     "vitest": "^4.1.1"
   }

@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://gehdoc.github.io/svg-to-video/sitemap.xml

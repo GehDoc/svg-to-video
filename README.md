@@ -1,16 +1,30 @@
-# SVG to Video (svg-to-video)
+# SVG to Video
+
+[![CI](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml/badge.svg)](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-0.7.3-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
+
+![Social Preview](./docs/assets/social-preview.svg)
 
 A high-fidelity tool to render CSS-animated SVGs into MP4 videos.
 
 Unlike standard converters that struggle with complex CSS keyframes or transitions, this project provides a unified engine to scrub through the Web Animations API, ensuring every frame is captured exactly as the browser renders it.
 
+## 🌟 Why SVG to Video?
+
+- **Privacy-First**: The Web Studio runs entirely in your browser using **WebCodecs**—your SVG files never leave your computer.
+- **Frame-Accurate**: Our engine scrubs the **Web Animations API**, ensuring every frame is captured exactly as rendered.
+- **Versatile**: Whether you need an accessible [Web Studio](#web-studio) for quick conversions or a powerful [CLI tool](#cli--docker-tool) for batch automation and CI/CD pipelines, this project has you covered.
+
 ## 🌐 Web Studio
 
-Prefer a GUI? Our **[Web Studio](https://gehdoc.github.io/svg-to-video/)** is a serverless, client-side rendering tool. It runs entirely in your browser using **WebCodecs**—your SVG files never leave your computer, ensuring absolute privacy.
+**[🚀 Try the Web Studio](https://gehdoc.github.io/svg-to-video/)**
+
+Our **Web Studio** is a serverless, client-side rendering tool. It runs entirely in your browser using **WebCodecs**—your SVG files never leave your computer, ensuring absolute privacy.
 
 > **Privacy Note**: We use [Umami Analytics](https://umami.is/) to collect anonymous usage data (e.g., number of conversions) to help us improve the tool. This tracking is cookie-less, respects "Do Not Track" settings, and never collects personal information.
 
-You can also explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video/storybook/)** to see how the engine handles complex CSS and fonts.
+Explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video/storybook/)** to see how the engine handles complex CSS and fonts.
 
 ### Quick Start
 
@@ -18,6 +32,8 @@ You can also explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io
 2. Drag and drop your `.svg` file.
 3. Adjust resolution, duration, and FPS.
 4. Click **Export MP4**.
+
+---
 
 ## 🚀 CLI / Docker Tool
 
