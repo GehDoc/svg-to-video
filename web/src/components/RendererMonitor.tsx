@@ -8,6 +8,7 @@ export const RendererMonitor = ({
   width,
   height,
   backgroundColor,
+  isTransparent,
   isRendering,
 }: {
   rendererRef: RefObject<RendererHandle | null>;
@@ -15,6 +16,7 @@ export const RendererMonitor = ({
   width?: number;
   height?: number;
   backgroundColor?: string;
+  isTransparent?: boolean;
   isRendering?: boolean;
 }) => {
   return (
@@ -25,6 +27,7 @@ export const RendererMonitor = ({
         width={width}
         height={height}
         backgroundColor={backgroundColor}
+        isTransparent={isTransparent}
         isRendering={isRendering}
       />
     </div>

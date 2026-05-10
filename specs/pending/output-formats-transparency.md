@@ -49,10 +49,10 @@ Enable users to select different output formats (MP4, WebM) and achieve a "Trans
 
 ## Task List
 
-- [ ] Implement `isTransparencySupported` utility.
-- [ ] Update `StudioContext` to store `format` and `isTransparent` state (with defaults).
-- [ ] Refactor `ConfigPanel`: Add dropdown, checkbox, and dependency-enforcing logic.
-- [ ] Modify `renderer.js`: Add conditional clear-canvas logic for `CAPTURE` event.
-- [ ] Modify `useRenderer.ts`: Update `render` method to dynamically initialize `OutputFormat` and set `alpha` encoding options.
+- [x] Implement `isTransparencySupported` utility.
+- [x] Update `StudioContext` to store `format` and `isTransparent` state (with defaults).
+- [x] Refactor `ConfigPanel`: Add dropdown, checkbox, and dependency-enforcing logic.
+- [x] Modify `renderer.js`: Add conditional clear-canvas logic for `CAPTURE` event.
+- [x] Modify `useRenderer.ts`: Update `render` method to dynamically initialize `OutputFormat` and set `alpha` encoding options.
 - [ ] Add unit tests for `useRenderer` format/alpha handling.
 - [ ] Add Storybook test for UI interaction.

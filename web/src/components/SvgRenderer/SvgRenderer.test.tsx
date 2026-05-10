@@ -23,7 +23,7 @@ test('Loop Synchronized Capture - Visual Regression', async () => {
     timeout: DEFAULT_TEST_TIMEOUT,
   });
 
-  const bitmap = await ref.current!.capture('optimal');
+  const bitmap = await ref.current!.capture('optimal', false);
 
   const canvas = document.createElement('canvas');
   canvas.width = bitmap.width;
@@ -49,7 +49,7 @@ test('Animation Stress Test - Visual Regression', async () => {
   // Seeking also returns a promise that resolves on the SEEKED signal.
   await ref.current!.seek(1000);
 
-  const bitmap = await ref.current!.capture('optimal');
+  const bitmap = await ref.current!.capture('optimal', false);
 
   const canvas = document.createElement('canvas');
   canvas.width = bitmap.width;
@@ -71,7 +71,7 @@ test('Filter Fidelity - Visual Regression', async () => {
     timeout: DEFAULT_TEST_TIMEOUT,
   });
 
-  const bitmap = await ref.current!.capture('optimal');
+  const bitmap = await ref.current!.capture('optimal', false);
 
   const canvas = document.createElement('canvas');
   canvas.width = bitmap.width;

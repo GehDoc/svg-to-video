@@ -24,6 +24,8 @@ export const StudioProvider = ({
   const [preset, setPreset] = useState<ResolutionPreset>('original');
   const [scale, setScale] = useState(1);
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
+  const [format, setFormat] = useState<'mp4' | 'webm'>('mp4');
+  const [isTransparent, setIsTransparent] = useState(false);
   const [captureMethod, setCaptureMethod] = useState<
     'optimal' | 'high-fidelity'
   >('optimal');
@@ -64,6 +66,8 @@ export const StudioProvider = ({
       preset,
       scale,
       backgroundColor,
+      format,
+      isTransparent,
       captureMethod,
       hold,
     };
@@ -108,6 +112,10 @@ export const StudioProvider = ({
         setScale,
         backgroundColor,
         setBackgroundColor,
+        format,
+        setFormat,
+        isTransparent,
+        setIsTransparent,
         captureMethod,
         setCaptureMethod,
         isDragging,

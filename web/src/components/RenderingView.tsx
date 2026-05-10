@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { RendererMonitor } from './RendererMonitor';
 import { ProgressOverlay } from './ProgressOverlay';
 import { MetaDisplay } from './MetaDisplay';
+import { ErrorView } from './ErrorView';
 import './RenderingView.scss';
 
 export const RenderingView = () => {
@@ -14,34 +15,50 @@ export const RenderingView = () => {
     targetDim,
     rendererRef,
     backgroundColor,
+    isTransparent,
+    setRenderedUrl,
   } = useContext(StudioContext)!;
+
+  const isError = state.status.startsWith('Error:');
 
   return (
     <div className="rendering-view">
-      <RendererMonitor
-        rendererRef={rendererRef}
-        svgContent={svgContent}
-        width={targetDim.width}
-        height={targetDim.height}
-        backgroundColor={backgroundColor}
-        isRendering={state.isRendering}
-      />
-
-      <ProgressOverlay
-        status={state.isRendering ? state.status : 'Ready to Export'}
-        progress={state.isRendering ? state.progress : undefined}
-        onCancel={state.isRendering ? cancel : undefined}
-      >
-        <MetaDisplay
-          meta={state.meta}
-          dimensions={{
-            width: originalDim.width,
-            height: originalDim.height,
-            targetWidth: targetDim.width,
-            targetHeight: targetDim.height,
+      {isError ? (
+        <ErrorView
+          message={state.status}
+          onClose={() => {
+            setRenderedUrl(null);
           }}
         />
-      </ProgressOverlay>
+      ) : (
+        <>
+          <RendererMonitor
+            rendererRef={rendererRef}
+            svgContent={svgContent}
+            width={targetDim.width}
+            height={targetDim.height}
+            backgroundColor={backgroundColor}
+            isTransparent={isTransparent}
+            isRendering={state.isRendering}
+          />
+
+          <ProgressOverlay
+            status={state.isRendering ? state.status : 'Ready to Export'}
+            progress={state.isRendering ? state.progress : undefined}
+            onCancel={state.isRendering ? cancel : undefined}
+          >
+            <MetaDisplay
+              meta={state.meta}
+              dimensions={{
+                width: originalDim.width,
+                height: originalDim.height,
+                targetWidth: targetDim.width,
+                targetHeight: targetDim.height,
+              }}
+            />
+          </ProgressOverlay>
+        </>
+      )}
     </div>
   );
 };
