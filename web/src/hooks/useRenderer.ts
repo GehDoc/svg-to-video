@@ -1,7 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
 import * as Mediabunny from 'mediabunny';
-import { CanvasSource, BufferTarget, QUALITY_HIGH } from 'mediabunny';
 
 export type ResolutionPreset = 'original' | '720p' | '1080p';
 export type CaptureMethod = 'optimal' | 'high-fidelity';
@@ -130,8 +129,6 @@ export const useRenderer = (
       }
 
       try {
-        console.log('--- RENDER START ---');
-        console.log('Settings:', settings);
         const { width: origWidth, height: origHeight } =
           parseSvgDimensions(svgContent);
         const { width, height } = calculateFinalDimensions(
@@ -139,7 +136,6 @@ export const useRenderer = (
           origHeight,
           settings
         );
-        console.log('Dimensions:', width, height);
 
         await rendererRef.current.loadSvg(
           svgContent,
@@ -148,28 +144,17 @@ export const useRenderer = (
           settings.backgroundColor
         );
 
-        const target = new BufferTarget();
-        console.log('Initializing output format:', settings.format);
-        let outputFormat;
-        try {
-          outputFormat =
-            settings.format === 'webm'
-              ? new Mediabunny.WebMOutputFormat()
-              : new Mediabunny.Mp4OutputFormat();
-          console.log('Output format object created:', outputFormat);
-        } catch (e) {
-          console.error('Failed to create output format object:', e);
-          throw e;
-        }
-        console.log('Output format object:', outputFormat);
+        const target = new Mediabunny.BufferTarget();
+        const outputFormat =
+          settings.format === 'webm'
+            ? new Mediabunny.WebMOutputFormat()
+            : new Mediabunny.Mp4OutputFormat();
         const output = new Mediabunny.Output({
           format: outputFormat,
           target,
         });
-        console.log('Output format initialized.');
 
         const videoCodec = await getBestCodec(width, height, settings.format);
-        console.log('Video Codec Selected:', videoCodec);
         if (!videoCodec) {
           throw new Error('No supported video codec found.');
         }
@@ -187,24 +172,22 @@ export const useRenderer = (
         const canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
-        const ctx = canvas.getContext('2d', { alpha: !settings.isTransparent });
+        const ctx = canvas.getContext('2d', { alpha: settings.isTransparent });
         if (!ctx) throw new Error('Could not get 2D context');
-        ctx.globalCompositeOperation = 'source-over';
+
         if (!settings.isTransparent) {
           ctx.fillStyle = settings.backgroundColor;
           ctx.fillRect(0, 0, width, height);
         }
 
-        const source = new CanvasSource(canvas, {
+        const source = new Mediabunny.CanvasSource(canvas, {
           codec: videoCodec,
-          bitrate: QUALITY_HIGH,
+          bitrate: Mediabunny.QUALITY_HIGH,
           alpha: settings.isTransparent ? 'keep' : 'discard',
         });
         output.addVideoTrack(source);
-        console.log('Video track added.');
 
         await output.start();
-        console.log('Output started.');
 
         const totalAnimationFrames = Math.ceil(
           settings.duration * settings.fps
