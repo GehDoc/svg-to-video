@@ -72,8 +72,9 @@ export const ConfigPanel = () => {
     <aside className="config-panel" tabIndex={0}>
       <section
         className={`config-section ${isRenderingOrSuccess ? 'is-locked' : ''}`}
+        aria-disabled={isRenderingOrSuccess}
       >
-        <h2>1. Source</h2>
+        <h2 aria-disabled={isRenderingOrSuccess}>1. Source</h2>
         <Dropzone
           svgContent={svgContent}
           isDragging={isDragging}
@@ -86,8 +87,9 @@ export const ConfigPanel = () => {
 
       <section
         className={`config-section ${isOptionsDisabled ? 'is-locked' : ''}`}
+        aria-disabled={isOptionsDisabled}
       >
-        <h2>2. Format</h2>
+        <h2 aria-disabled={isOptionsDisabled}>2. Format</h2>
         <div className="input-group">
           <label htmlFor="format">Output Format</label>
           <select
@@ -123,7 +125,12 @@ export const ConfigPanel = () => {
             <option value="1080p">1080p (Fit)</option>
           </select>
           {svgContent && !originalDim.isDimensionsDetected && (
-            <p className="hint-text">
+            <p
+              className="hint-text"
+              aria-disabled={
+                isOptionsDisabled || !originalDim.isDimensionsDetected
+              }
+            >
               Warning: Could not detect SVG dimensions. Defaulting to 1080p.
             </p>
           )}
@@ -186,8 +193,9 @@ export const ConfigPanel = () => {
 
       <section
         className={`config-section ${isOptionsDisabled ? 'is-locked' : ''}`}
+        aria-disabled={isOptionsDisabled}
       >
-        <h2>3. Canvas</h2>
+        <h2 aria-disabled={isOptionsDisabled}>3. Canvas</h2>
         <div className="input-group">
           <label htmlFor="transparent">
             <input
@@ -200,7 +208,10 @@ export const ConfigPanel = () => {
             Transparent Background
           </label>
           {!isTransparencySupported(format) && (
-            <p className="hint-text hint-text--info">
+            <p
+              className="hint-text hint-text--info"
+              aria-disabled={isOptionsDisabled}
+            >
               Transparency only supported for WebM
             </p>
           )}
