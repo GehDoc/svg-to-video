@@ -130,13 +130,27 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
 
     // Sync from Props (Debounced Preview)
     useEffect(() => {
-      if (svgContent && width && height && backgroundColor && !isRendering) {
+      if (
+        svgContent &&
+        width &&
+        height &&
+        backgroundColor &&
+        (!isRendering || dimensions.width === 0)
+      ) {
         const timeoutId = setTimeout(() => {
           internalLoad(svgContent, width, height, backgroundColor);
         }, 100);
         return () => clearTimeout(timeoutId);
       }
-    }, [svgContent, width, height, backgroundColor, isRendering, internalLoad]);
+    }, [
+      svgContent,
+      width,
+      height,
+      backgroundColor,
+      isRendering,
+      dimensions.width,
+      internalLoad,
+    ]);
 
     useImperativeHandle(ref, () => ({
       loadSvg: internalLoad,
