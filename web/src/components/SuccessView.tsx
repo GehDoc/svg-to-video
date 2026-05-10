@@ -33,7 +33,7 @@ export const SuccessView = () => {
       </div>
       <div className="success-actions">
         <Button variant="primary" onClick={handleDownload}>
-          Download MP4
+          Download
         </Button>
         <Button variant="secondary" onClick={handleBack}>
           Back to Studio

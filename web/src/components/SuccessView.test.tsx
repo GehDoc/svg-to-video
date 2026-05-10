@@ -14,7 +14,5 @@ test('SuccessView renders success state correctly', () => {
 
   expect(screen.getByText(/Render Complete/i)).toBeInTheDocument();
   expect(screen.getByText(/animation.mp4/i)).toBeInTheDocument();
-  expect(
-    screen.getByRole('button', { name: /Download MP4/i })
-  ).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /Download/i })).toBeInTheDocument();
 });
