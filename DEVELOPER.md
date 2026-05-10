@@ -161,6 +161,44 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
 - **Events**: We track the conversion lifecycle (`conversion-start`, `conversion-success`, `conversion-failed`) and user actions (`download-mp4`, `back-to-studio`).
 - **Types**: We use `@types/umami` for full TypeScript support. Always use `typeof umami !== 'undefined'` to safely trigger events programmatically.
 
-* **Security**: The application runs as the non-root `node` user.
+## 🐳 Docker & Hardening
 
-* **Exclusions**: Development-only files like `specs/`, `AGENTS.md`, and `DEVELOPER.md` are excluded from the image via `.dockerignore`.
+- **Security**: The application runs as the non-root `node` user.
+
+- **Exclusions**: Development-only files like `specs/`, `AGENTS.md`, and `DEVELOPER.md` are excluded from the image via `.dockerignore`.
+
+## 🎥 Extending Output Formats and Transparency Support
+
+This section documents how to add new output formats and manage the alpha channel for transparency.
+
+### Adding New Formats
+
+1.  **Format Support**: Ensure the new format is supported by `mediabunny`.
+2.  **Dependencies**: In `web/src/hooks/useRenderer.ts`, update the `getBestCodec` and `render` functions to handle the new `OutputFormat` class.
+3.  **UI Dependencies**: Update `isTransparencySupported` in `web/src/utils/isTransparencySupported.ts` to reflect if the format supports transparency.
+
+### Handling Transparency (Alpha Channel)
+
+- **Canvas Initialization**: Always use `canvas.getContext('2d', { alpha: true })` for transparency support. For non-transparent exports, explicitly fill the background with the chosen color.
+- **Encoder Configuration**: When using transparency, ensure `alpha: 'keep'` is passed to the `CanvasSource` configuration.
+- **Renderer Script**: The internal renderer iframe must clear the canvas (`ctx.clearRect`) instead of filling it when `isTransparent` is true.
+
+### Verification of Transparency
+
+To verify if an export correctly contains an alpha channel:
+
+1.  **Metadata Check**: Use `ffprobe`:
+    ```bash
+    ffprobe -v error -select_streams v:0 -show_entries stream=pix_fmt -of default=noprint_wrappers=1:nokey=1 your-video.webm
+    ```
+    An output of `yuva420p` or `ya8` confirms alpha support.
+2.  **Visual Test**: Import the video into an editor like Figma or DaVinci Resolve and place it over a colored background layer.
+
+### UI Dependency Logic
+
+The `ConfigPanel` implements a two-way dependency:
+
+- **Format Change**: Changing format to one that doesn't support transparency disables the "Transparent Background" checkbox.
+- **Transparency Toggle**: Checking "Transparent Background" filters the format dropdown to only show supported formats.
+
+Use the `ConfigPanel.test.tsx` to verify this logic.
