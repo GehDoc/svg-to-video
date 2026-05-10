@@ -109,24 +109,6 @@ export const ConfigPanel = () => {
         </div>
 
         <div className="input-group">
-          <label htmlFor="transparent">
-            <input
-              type="checkbox"
-              id="transparent"
-              checked={isTransparent}
-              onChange={(e) => setIsTransparent(e.target.checked)}
-              disabled={isOptionsDisabled || !isTransparencySupported(format)}
-            />
-            Transparent Background
-          </label>
-          {!isTransparencySupported(format) && (
-            <p className="hint-text" style={{ color: 'var(--secondary)' }}>
-              Transparency only supported for WebM
-            </p>
-          )}
-        </div>
-
-        <div className="input-group">
           <label htmlFor="resolution">Resolution</label>
           <select
             id="resolution"
@@ -208,6 +190,23 @@ export const ConfigPanel = () => {
       >
         <h2>3. Canvas</h2>
         <div className="input-group">
+          <label htmlFor="transparent">
+            <input
+              type="checkbox"
+              id="transparent"
+              checked={isTransparent}
+              onChange={(e) => setIsTransparent(e.target.checked)}
+              disabled={isOptionsDisabled || !isTransparencySupported(format)}
+            />
+            Transparent Background
+          </label>
+          {!isTransparencySupported(format) && (
+            <p className="hint-text" style={{ color: 'var(--secondary)' }}>
+              Transparency only supported for WebM
+            </p>
+          )}
+        </div>
+        <div className="input-group">
           <label htmlFor="bg-color">Background</label>
           <div className="color-picker-wrapper">
             <input
@@ -215,13 +214,13 @@ export const ConfigPanel = () => {
               id="bg-color"
               value={backgroundColor}
               onChange={(e) => setBackgroundColor(e.target.value)}
-              disabled={isOptionsDisabled}
+              disabled={isOptionsDisabled || isTransparent}
             />
             <input
               type="text"
               value={backgroundColor}
               onChange={(e) => setBackgroundColor(e.target.value)}
-              disabled={isOptionsDisabled}
+              disabled={isOptionsDisabled || isTransparent}
               className="color-text-input"
               aria-label="Background color hex code"
             />
