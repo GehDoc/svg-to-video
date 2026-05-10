@@ -124,7 +124,10 @@ export const useRenderer = (
       setState({ isRendering: true, progress: 0, status: 'Initializing...' });
 
       if (typeof umami !== 'undefined') {
-        umami.track('conversion-start');
+        umami.track('conversion-start', {
+          format: settings.format,
+          isTransparent: settings.isTransparent,
+        });
       }
 
       try {
@@ -299,7 +302,10 @@ export const useRenderer = (
         setState({ isRendering: false, progress: 100, status: 'Done!' });
 
         if (typeof umami !== 'undefined') {
-          umami.track('conversion-success', { format: settings.format });
+          umami.track('conversion-success', {
+            format: settings.format,
+            isTransparent: settings.isTransparent,
+          });
         }
 
         return url;
@@ -312,7 +318,11 @@ export const useRenderer = (
         });
 
         if (typeof umami !== 'undefined') {
-          umami.track('conversion-failed', { error: error.message });
+          umami.track('conversion-failed', {
+            error: error.message,
+            format: settings.format,
+            isTransparent: settings.isTransparent,
+          });
         }
 
         throw error;

@@ -4,19 +4,26 @@ import { Button } from './Button/Button';
 import './SuccessView.scss';
 
 export const SuccessView = () => {
-  const { fileName, fileSize, renderedUrl, setRenderedUrl, downloadResult } =
-    useContext(StudioContext)!;
+  const {
+    fileName,
+    fileSize,
+    renderedUrl,
+    setRenderedUrl,
+    downloadResult,
+    format,
+    isTransparent,
+  } = useContext(StudioContext)!;
 
   const handleDownload = () => {
     if (typeof umami !== 'undefined') {
-      umami.track('download-mp4');
+      umami.track('download-result', { format, isTransparent });
     }
     downloadResult();
   };
 
   const handleBack = () => {
     if (typeof umami !== 'undefined') {
-      umami.track('back-to-studio');
+      umami.track('back-to-studio', { format, isTransparent });
     }
     setRenderedUrl(null);
   };
