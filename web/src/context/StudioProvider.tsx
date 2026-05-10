@@ -33,7 +33,7 @@ export const StudioProvider = ({
   const [renderedUrl, setRenderedUrl] = useState<string | null>(null);
   const [fileSize, setFileSize] = useState<string | null>(null);
 
-  const { render, cancel, state } = useRenderer(rendererRef);
+  const { render, cancel, clearError, state } = useRenderer(rendererRef);
 
   let originalDim = { width: 0, height: 0, isDimensionsDetected: false };
   let targetDim = { width: 0, height: 0 };
@@ -129,6 +129,7 @@ export const StudioProvider = ({
         state,
         handleStartRender,
         cancel,
+        clearError,
         downloadResult,
         rendererRef,
       }}

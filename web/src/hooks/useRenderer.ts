@@ -351,5 +351,9 @@ export const useRenderer = (
     setState({ isRendering: false, progress: 0, status: 'Ready' });
   }, []);
 
-  return { render, cancel, state };
+  const clearError = useCallback(() => {
+    setState((s) => ({ ...s, status: 'Ready' }));
+  }, []);
+
+  return { render, cancel, clearError, state };
 };

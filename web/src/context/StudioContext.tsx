@@ -36,6 +36,7 @@ export interface StudioContextType {
   state: RenderState;
   handleStartRender: () => Promise<void>;
   cancel: () => void;
+  clearError: () => void;
   downloadResult: () => void;
   rendererRef: React.RefObject<RendererHandle | null>;
 }

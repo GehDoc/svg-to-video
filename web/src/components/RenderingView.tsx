@@ -10,13 +10,13 @@ export const RenderingView = () => {
   const {
     state,
     cancel,
+    clearError,
     svgContent,
     originalDim,
     targetDim,
     rendererRef,
     backgroundColor,
     isTransparent,
-    setRenderedUrl,
   } = useContext(StudioContext)!;
 
   const isError = state.status.startsWith('Error:');
@@ -27,7 +27,7 @@ export const RenderingView = () => {
         <ErrorView
           message={state.status}
           onClose={() => {
-            setRenderedUrl(null);
+            clearError();
           }}
         />
       ) : (
