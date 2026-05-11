@@ -10,10 +10,14 @@ interface WrapperProps {
   width: number;
   height: number;
   seekTime: number;
+  isTransparent?: boolean;
 }
 
 const Wrapper = forwardRef<RendererHandle, WrapperProps>(
-  ({ backgroundColor, svgContent, width, height, seekTime }, ref) => {
+  (
+    { backgroundColor, svgContent, width, height, seekTime, isTransparent },
+    ref
+  ) => {
     const rendererRef = useRef<RendererHandle>(null);
 
     useImperativeHandle(ref, () => ({
@@ -23,11 +27,8 @@ const Wrapper = forwardRef<RendererHandle, WrapperProps>(
       isReady: () => rendererRef.current!.isReady(),
     }));
 
-    useEffect(() => {
-      if (rendererRef.current) {
-        rendererRef.current.loadSvg(svgContent, width, height, backgroundColor);
-      }
-    }, [backgroundColor, svgContent, width, height]);
+    // We no longer call loadSvg manually here.
+    // SvgRenderer has an internal useEffect that syncs from props.
 
     useEffect(() => {
       if (rendererRef.current) {
@@ -36,10 +37,15 @@ const Wrapper = forwardRef<RendererHandle, WrapperProps>(
     }, [seekTime]);
 
     return (
-      <div className="story-wrapper">
-        <div className="renderer-container">
-          <SvgRenderer ref={rendererRef} />
-        </div>
+      <div className="svg-renderer-story-wrapper">
+        <SvgRenderer
+          ref={rendererRef}
+          svgContent={svgContent}
+          width={width}
+          height={height}
+          backgroundColor={backgroundColor}
+          isTransparent={isTransparent}
+        />
       </div>
     );
   }
@@ -54,6 +60,7 @@ const meta = {
     width: 500,
     height: 500,
     seekTime: 0,
+    isTransparent: false,
     svgContent:
       '<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg"><polygon points="0,0 500,0 0,500" fill="blue" opacity="0.8" /><circle cx="350" cy="150" r="100" fill="yellow"><animate attributeName="r" from="50" to="150" dur="2s" repeatCount="indefinite" /></circle></svg>',
   },
@@ -112,15 +119,15 @@ export const CSSAnimation: Story = {
 export const MaliciousXSS: Story = {
   args: {
     backgroundColor: '#ffffff',
-    width: 200,
+    width: 400,
     height: 200,
     svgContent: `
-      <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+      <svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" fill="#fee2e2" />
-        <circle cx="100" cy="100" r="50" fill="red" />
+        <circle cx="200" cy="80" r="50" fill="red" />
         <script>alert('XSS Successful: Script Tag');</script>
         <rect x="0" y="0" width="100" height="100" fill="transparent" onload="alert('XSS Successful: Inline Event')" />
-        <text x="10" y="190" font-size="12" fill="red">Check console/alerts - should be blocked</text>
+        <text x="20" y="180" font-size="16" font-weight="bold" fill="red">Check console/alerts - should be blocked</text>
       </svg>
     `,
   },

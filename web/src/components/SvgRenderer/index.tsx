@@ -10,6 +10,7 @@ import DOMPurify from 'dompurify';
 import { seekAnimations } from '@shared/animation-engine';
 import { getRendererScript } from './renderer';
 import rendererTemplate from './renderer.html?raw';
+import './SvgRenderer.scss';
 
 // Configure DOMPurify to allow SVG animations
 const PURIFY_CONFIG = {
@@ -65,7 +66,10 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const [ready, setReady] = useState(false);
     const [scriptLoaded, setScriptLoaded] = useState(false);
-    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+    const [dimensions, setDimensions] = useState({
+      width: width || 0,
+      height: height || 0,
+    });
 
     // Initialize iframe with blob to ensure COOP/COEP header inheritance
     useEffect(() => {
