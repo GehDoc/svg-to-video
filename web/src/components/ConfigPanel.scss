@@ -42,8 +42,7 @@
   margin-bottom: 1.25rem;
 
   &:has(:disabled) {
-    label,
-    .hint-text {
+    label {
       opacity: 0.5;
       cursor: not-allowed;
     }
@@ -169,6 +168,11 @@
   font-size: 0.7rem;
   color: var(--error);
   margin-top: 0.4rem;
+
+  &[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
   &--info {
     color: var(--text-muted);
