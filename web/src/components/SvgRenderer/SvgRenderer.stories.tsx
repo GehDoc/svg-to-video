@@ -69,11 +69,22 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const BackgroundTest: Story = {
+  name: 'Background Color Test',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const renderer = canvas.getByTestId('svg-renderer');
     await expect(renderer).toBeInTheDocument();
+  },
+};
+
+export const TransparentBackgroundTest: Story = {
+  name: 'Transparent Background Test',
+  args: {
+    backgroundColor: '#0f172a',
+    isTransparent: true,
+    svgContent:
+      '<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg"><circle cx="250" cy="250" r="100" fill="red" /></svg>',
   },
 };
 
