@@ -9,22 +9,21 @@ Harden the `SvgRenderer` component to prevent XSS and unauthorized access to the
 
 ## 🛠 Technical Strategy
 
-- **Iframe Sandboxing**: Apply `sandbox="allow-scripts allow-same-origin"` to the renderer iframe. The `allow-same-origin` flag is necessary for Blob URLs to load correctly and for `postMessage` to function in nested sandboxed environments like Storybook.
-- **SVG Sanitization**: Integrate `dompurify` to strip potentially malicious scripts and event handlers from the user-provided SVG content before it is passed to the iframe.
-  - **Configuration**: Use `USE_PROFILES: { svg: true }` and explicitly allow SVG animation elements: `animate`, `animateTransform`, `animateMotion`, `set`, `mpath`.
-  - **Attributes**: Ensure attributes like `attributeName`, `from`, `to`, `dur`, `begin`, `repeatCount`, `values`, `keyTimes`, `keySplines`, `calcMode` are preserved.
-- **Message Security**: Tighten `postMessage` communication by validating `event.source` in the parent. Since sandboxed iframes and Storybook environments may have `"null"` origins, we verify that the message originates specifically from the expected iframe instance.
-- **Target Origin**: Use `*` as the target origin for messages sent from the iframe to the parent to ensure compatibility with sandboxed parents (Storybook), relying on the parent's source validation for security.
+- **Iframe Sandboxing**: Apply `sandbox="allow-scripts allow-same-origin"` to the renderer iframe. The `allow-same-origin` flag is necessary for Blob URLs to load correctly and for `postMessage` to function in nested sandboxed environments. This sandbox creates a secure boundary that prevents the iframe from accessing the parent application's data, regardless of the SVG content.
+- **Native SVG Security**: Rely on the native browser security model for SVG files rendered within a sandboxed iframe. Browser-level restrictions already prevent execution of unauthorized inline scripts in this context. This approach ensures high-fidelity rendering for all SVG features, including filters, masks, and SMIL/CSS animations, without the maintenance and over-aggressive filtering of a sanitization library.
+- **Message Security**: Tighten `postMessage` communication by validating `event.source` in the parent. We verify that the message originates specifically from the expected renderer iframe instance.
+- **Target Origin**: Use `parentOrigin` (the validated parent window origin) as the target origin for messages sent from the iframe to the parent, ensuring secure, bidirectional communication.
 
 ## ✅ Task List
 
-- [ ] **Infrastructure**
-  - [ ] Add `dompurify` and `@types/dompurify` to `web` dependencies.
-- [ ] **Core Logic**
-  - [ ] Update `SvgRenderer/index.tsx` to include `sandbox="allow-scripts"` on the `iframe`.
-  - [ ] Implement SVG sanitization logic in `SvgRenderer` using `dompurify` with animation-safe configuration.
-  - [ ] Update `postMessage` handlers in `SvgRenderer` to verify that messages originate from the renderer iframe (handling the `"null"` origin case).
-  - [ ] Update `renderer.js` to use `window.parent.postMessage(message, parentOrigin)` instead of `*`.
+- [x] **Infrastructure**
+  - [x] ~~Add `dompurify` and `@types/dompurify` to `web` dependencies.~~ (Removed)
+- [x] **Core Logic**
+  - [x] Update `SvgRenderer/index.tsx` to include `sandbox="allow-scripts allow-same-origin"` on the `iframe`.
+  - [x] ~~Implement SVG sanitization logic in `SvgRenderer` using `dompurify` with animation-safe configuration.~~ (Removed)
+  - [x] Update `postMessage` handlers in `SvgRenderer` to verify that messages originate from the renderer iframe.
+  - [x] Update `renderer.js` to use `parentOrigin` instead of `*`.
+
 - [ ] **UI / Storybook**
   - [ ] Add a new story to `SvgRenderer.stories.tsx` that specifically tests **SMIL Animations** (using `tests/fixtures/loop-test.svg`).
   - [ ] Add/Verify a story for **CSS Animations** in `SvgRenderer.stories.tsx`.

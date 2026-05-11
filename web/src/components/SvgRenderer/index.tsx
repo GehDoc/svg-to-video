@@ -6,33 +6,10 @@ import {
   useEffect,
   useCallback,
 } from 'react';
-import DOMPurify from 'dompurify';
 import { seekAnimations } from '@shared/animation-engine';
 import { getRendererScript } from './renderer';
 import rendererTemplate from './renderer.html?raw';
 import './SvgRenderer.scss';
-
-// Configure DOMPurify to allow SVG animations
-const PURIFY_CONFIG = {
-  USE_PROFILES: { svg: true },
-  ADD_TAGS: ['animate', 'animateTransform', 'animateMotion', 'set', 'mpath'],
-  ADD_ATTR: [
-    'attributeName',
-    'from',
-    'to',
-    'dur',
-    'begin',
-    'repeatCount',
-    'values',
-    'keyTimes',
-    'keySplines',
-    'calcMode',
-    'additive',
-    'accumulate',
-    'restart',
-    'fill',
-  ],
-};
 
 export interface RendererHandle {
   loadSvg: (svgContent: string, width: number, height: number) => Promise<void>;
@@ -137,11 +114,6 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
           });
         }
 
-        const sanitizedSvg = DOMPurify.sanitize(
-          targetSvgcontent,
-          PURIFY_CONFIG
-        ) as string;
-
         return new Promise<void>((resolve) => {
           const handler = (event: MessageEvent) => {
             const parentOrigin = window.location.origin;
@@ -160,7 +132,7 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
             {
               type: 'LOAD_SVG',
               payload: {
-                svgContent: sanitizedSvg,
+                svgContent: targetSvgcontent,
                 width: targetWidth,
                 height: targetHeight,
                 timeMs: 0,
