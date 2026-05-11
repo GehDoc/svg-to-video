@@ -35,4 +35,8 @@
   z-index: 5;
   border: 1px solid var(--border);
   text-transform: uppercase;
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--accent);
+  }
 }

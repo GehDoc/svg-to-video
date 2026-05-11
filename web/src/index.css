@@ -3,8 +3,8 @@
   --bg: #ffffff;
   --panel: #f8fafc;
   --border: #e2e8f0;
-  --text: #475569;
-  --text-muted: #5e6e82; /* Improved contrast for a11y */
+  --text: #1e293b;
+  --text-muted: #64748b; /* Slate 500 - Better distinction from Slate 800 */
   --text-h: #0f172a;
   --primary: #5e61e6;
   --primary-hover: #4338ca;
@@ -41,9 +41,9 @@
     --bg: #0f172a;
     --panel: #1e293b;
     --border: #334155;
-    --text: #cbd5e1;
-    --text-muted: #94a3b8;
-    --text-h: #f8fafc;
+    --text: #e2e8f0; /* Slate 200 - High contrast */
+    --text-muted: #94a3b8; /* Slate 400 - Clear distinction from --text */
+    --text-h: #f8fafc; /* Slate 50 */
     --primary: #5e61e6;
     --primary-hover: #4338ca;
     --accent: #c084fc;

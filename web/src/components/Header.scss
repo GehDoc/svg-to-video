@@ -31,9 +31,29 @@ header {
     font-weight: 700;
   }
 
-  .header-description {
-    margin: 0;
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
     font-size: 0.85rem;
     color: var(--text-muted);
+  }
+
+  .header-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+
+  .header-version {
+    font-family: var(--mono);
+    font-size: 0.75rem;
   }
 }

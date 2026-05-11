@@ -8,19 +8,31 @@
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-muted);
 
-  &:hover {
+  &:hover:not(.disabled) {
     background: rgba(255, 255, 255, 0.08);
     border-color: var(--primary);
     color: var(--text);
   }
 
-  &.dragging {
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-style: solid;
+    background: var(--panel);
+
+    label,
+    input {
+      cursor: not-allowed;
+    }
+  }
+
+  &.dragging:not(.disabled) {
     background: rgba(99, 102, 241, 0.1);
     border-color: var(--primary);
     transform: scale(1.02);
   }
 
-  &.has-content {
+  &.has-content:not(.disabled) {
     border-style: solid;
     border-color: var(--primary);
     background: var(--panel);
