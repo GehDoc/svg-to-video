@@ -9,7 +9,7 @@ import type { RendererHandle } from '.';
 afterEach(cleanup);
 
 const {
-  LoopSynchronizedCapture,
+  SMILAnimation,
   AnimationStressTest,
   FilterFidelity,
   TransparentBackgroundTest,
@@ -18,10 +18,10 @@ const {
 
 const DEFAULT_TEST_TIMEOUT = 10000;
 
-test('Loop Synchronized Capture - Visual Regression', async () => {
+test('SMIL Animation - Visual Regression', async () => {
   const ref = createRef<RendererHandle>();
 
-  render(<LoopSynchronizedCapture ref={ref} />);
+  render(<SMILAnimation ref={ref} />); // This needs to be updated
 
   // Wait for the renderer to be ready (READY signal)
   await vi.waitFor(() => expect(ref.current?.isReady()).toBe(true), {

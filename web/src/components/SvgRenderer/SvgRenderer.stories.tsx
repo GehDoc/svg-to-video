@@ -79,7 +79,6 @@ export const BackgroundTest: Story = {
 };
 
 export const TransparentBackgroundTest: Story = {
-  name: 'Transparent Background Test',
   args: {
     backgroundColor: '#0f172a',
     isTransparent: true,
@@ -88,7 +87,7 @@ export const TransparentBackgroundTest: Story = {
   },
 };
 
-export const LoopSynchronizedCapture: Story = {
+export const SMILAnimation: Story = {
   args: {
     backgroundColor: '#f0f0f0',
     svgContent: `
