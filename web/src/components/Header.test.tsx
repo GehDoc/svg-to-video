@@ -3,9 +3,13 @@
  */
 import { render, screen } from '@testing-library/react';
 import { Header } from './Header';
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import pkg from '../../../package.json';
+
+vi.mock('../assets/logo.svg?react', () => ({
+  default: () => <div data-testid="logo" />,
+}));
 
 test('Header renders project links and version', () => {
   render(<Header />);
