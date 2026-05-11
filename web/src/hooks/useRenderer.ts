@@ -139,12 +139,7 @@ export const useRenderer = (
           settings
         );
 
-        await rendererRef.current.loadSvg(
-          svgContent,
-          width,
-          height,
-          settings.backgroundColor
-        );
+        await rendererRef.current.loadSvg(svgContent, width, height);
 
         const target = new Mediabunny.BufferTarget();
         const outputFormat =

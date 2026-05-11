@@ -63,7 +63,7 @@ export function getRendererScript(seekAnimations, parentOrigin) {
 
     if (type === 'LOAD_SVG') {
       isReady = false;
-      const { svgContent, width, height, backgroundColor, timeMs } = payload;
+      const { svgContent, width, height, timeMs } = payload;
       svgContainer.innerHTML = svgContent;
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';

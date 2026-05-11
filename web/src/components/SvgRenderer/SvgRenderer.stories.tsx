@@ -21,14 +21,17 @@ const Wrapper = forwardRef<RendererHandle, WrapperProps>(
     const rendererRef = useRef<RendererHandle>(null);
 
     useImperativeHandle(ref, () => ({
-      loadSvg: (s, w, h, b) => rendererRef.current!.loadSvg(s, w, h, b),
+      loadSvg: (s, w, h) => rendererRef.current!.loadSvg(s, w, h),
       seek: (t) => rendererRef.current!.seek(t),
       capture: (m) => rendererRef.current!.capture(m, false),
       isReady: () => rendererRef.current!.isReady(),
     }));
 
-    // We no longer call loadSvg manually here.
-    // SvgRenderer has an internal useEffect that syncs from props.
+    useEffect(() => {
+      if (rendererRef.current) {
+        rendererRef.current.loadSvg(svgContent, width, height);
+      }
+    }, [svgContent, width, height]);
 
     useEffect(() => {
       if (rendererRef.current) {
@@ -40,9 +43,6 @@ const Wrapper = forwardRef<RendererHandle, WrapperProps>(
       <div className="svg-renderer-story-wrapper">
         <SvgRenderer
           ref={rendererRef}
-          svgContent={svgContent}
-          width={width}
-          height={height}
           backgroundColor={backgroundColor}
           isTransparent={isTransparent}
         />

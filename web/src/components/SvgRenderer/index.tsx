@@ -35,12 +35,7 @@ const PURIFY_CONFIG = {
 };
 
 export interface RendererHandle {
-  loadSvg: (
-    svgContent: string,
-    width: number,
-    height: number,
-    backgroundColor: string
-  ) => Promise<void>;
+  loadSvg: (svgContent: string, width: number, height: number) => Promise<void>;
   seek: (timeMs: number) => Promise<void>;
   capture: (
     method: 'optimal' | 'high-fidelity',
@@ -115,8 +110,7 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
       async (
         targetSvgcontent: string,
         targetWidth: number,
-        targetHeight: number,
-        targetBackground: string
+        targetHeight: number
       ) => {
         setReady(false);
         setDimensions({ width: targetWidth, height: targetHeight });
@@ -169,7 +163,6 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
                 svgContent: sanitizedSvg,
                 width: targetWidth,
                 height: targetHeight,
-                backgroundColor: targetBackground,
                 timeMs: 0,
               },
             },
@@ -186,11 +179,10 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
         svgContent &&
         width &&
         height &&
-        backgroundColor &&
         (!isRendering || dimensions.width === 0)
       ) {
         const timeoutId = setTimeout(() => {
-          internalLoad(svgContent, width, height, backgroundColor);
+          internalLoad(svgContent, width, height);
         }, 100);
         return () => clearTimeout(timeoutId);
       }
@@ -198,7 +190,6 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
       svgContent,
       width,
       height,
-      backgroundColor,
       isRendering,
       dimensions.width,
       internalLoad,
