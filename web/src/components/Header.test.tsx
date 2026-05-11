@@ -5,6 +5,7 @@ import { render, screen } from '@testing-library/react';
 import { Header } from './Header';
 import { expect, test } from 'vitest';
 import '@testing-library/jest-dom/vitest';
+import pkg from '../../../package.json';
 
 test('Header renders project links and version', () => {
   render(<Header />);
@@ -14,7 +15,7 @@ test('Header renders project links and version', () => {
     'href',
     'https://github.com/GehDoc/svg-to-video'
   );
-  expect(githubLink).toHaveTextContent(/v0\.8\.0/i);
+  expect(githubLink).toHaveTextContent(new RegExp(`v${pkg.version}`, 'i'));
 
   const licenseLink = screen.getByRole('link', { name: /mit license/i });
   expect(licenseLink).toHaveAttribute(
