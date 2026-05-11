@@ -42,7 +42,8 @@
   margin-bottom: 1.25rem;
 
   &:has(:disabled) {
-    label {
+    label,
+    .hint-text {
       opacity: 0.5;
       cursor: not-allowed;
     }
@@ -66,9 +67,18 @@
       cursor: pointer;
       margin-bottom: 0;
 
+      &:has(input:disabled) {
+        cursor: not-allowed;
+      }
+
       input {
         margin: 0;
         width: auto;
+        cursor: pointer;
+
+        &:disabled {
+          cursor: not-allowed;
+        }
       }
     }
   }

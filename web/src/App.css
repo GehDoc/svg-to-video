@@ -9,9 +9,9 @@
 }
 
 .is-locked {
-  pointer-events: none;
   filter: grayscale(0.8);
   opacity: 0.8;
+  cursor: not-allowed !important;
 }
 
 .studio-layout {
