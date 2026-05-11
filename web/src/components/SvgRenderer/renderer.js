@@ -2,8 +2,9 @@
  * This is the isolated renderer script that will run inside the iframe.
  * It is injected by SvgRenderer via Blob.
  * @param {(timeMs: number) => void} seekAnimations - The animation seeking function from the shared engine.
+ * @param {string} parentOrigin - The origin of the parent window for secure postMessage.
  */
-export function getRendererScript(seekAnimations) {
+export function getRendererScript(seekAnimations, parentOrigin) {
   const OPTIMAL_PROPS = [
     'fill',
     'fill-opacity',
@@ -77,7 +78,7 @@ export function getRendererScript(seekAnimations) {
       requestAnimationFrame(() => {
         isReady = true;
         // Signal that the SVG is ready to be captured
-        window.parent.postMessage({ type: 'READY' }, '*');
+        window.parent.postMessage({ type: 'READY' }, parentOrigin);
       });
     }
 
@@ -85,7 +86,7 @@ export function getRendererScript(seekAnimations) {
       if (!isReady) return;
       seekAnimations(payload.timeMs);
       await new Promise((r) => requestAnimationFrame(r));
-      window.parent.postMessage({ type: 'SEEKED' }, '*');
+      window.parent.postMessage({ type: 'SEEKED' }, parentOrigin);
     }
 
     if (type === 'CAPTURE') {
@@ -153,12 +154,12 @@ export function getRendererScript(seekAnimations) {
       const bitmap = await createImageBitmap(captureCanvas);
       window.parent.postMessage(
         { type: 'CAPTURE_RESULT', payload: bitmap },
-        '*',
+        parentOrigin,
         [bitmap]
       );
     }
   });
 
   // Signal that the script is loaded and listening
-  window.parent.postMessage({ type: 'SCRIPT_LOADED' }, '*');
+  window.parent.postMessage({ type: 'SCRIPT_LOADED' }, parentOrigin);
 }

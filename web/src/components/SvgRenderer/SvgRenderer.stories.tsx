@@ -86,6 +86,46 @@ export const LoopSynchronizedCapture: Story = {
   },
 };
 
+export const CSSAnimation: Story = {
+  args: {
+    backgroundColor: '#ffffff',
+    width: 400,
+    height: 100,
+    svgContent: `
+      <svg width="400" height="100" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
+        <style>
+          @keyframes slide {
+            from { transform: translateX(0); }
+            to { transform: translateX(300px); }
+          }
+          circle {
+            animation: slide 2s infinite alternate ease-in-out;
+          }
+        </style>
+        <rect width="100%" height="100%" fill="#eee" />
+        <circle cx="50" cy="50" r="20" fill="#f43f5e" />
+      </svg>
+    `,
+  },
+};
+
+export const MaliciousXSS: Story = {
+  args: {
+    backgroundColor: '#ffffff',
+    width: 200,
+    height: 200,
+    svgContent: `
+      <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="#fee2e2" />
+        <circle cx="100" cy="100" r="50" fill="red" />
+        <script>alert('XSS Successful: Script Tag');</script>
+        <rect x="0" y="0" width="100" height="100" fill="transparent" onload="alert('XSS Successful: Inline Event')" />
+        <text x="10" y="190" font-size="12" fill="red">Check console/alerts - should be blocked</text>
+      </svg>
+    `,
+  },
+};
+
 export const AnimationStressTest: Story = {
   args: {
     backgroundColor: '#ffffff',

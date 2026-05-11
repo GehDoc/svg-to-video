@@ -6,9 +6,32 @@ import {
   useEffect,
   useCallback,
 } from 'react';
+import DOMPurify from 'dompurify';
 import { seekAnimations } from '@shared/animation-engine';
 import { getRendererScript } from './renderer';
 import rendererTemplate from './renderer.html?raw';
+
+// Configure DOMPurify to allow SVG animations
+const PURIFY_CONFIG = {
+  USE_PROFILES: { svg: true },
+  ADD_TAGS: ['animate', 'animateTransform', 'animateMotion', 'set', 'mpath'],
+  ADD_ATTR: [
+    'attributeName',
+    'from',
+    'to',
+    'dur',
+    'begin',
+    'repeatCount',
+    'values',
+    'keyTimes',
+    'keySplines',
+    'calcMode',
+    'additive',
+    'accumulate',
+    'restart',
+    'fill',
+  ],
+};
 
 export interface RendererHandle {
   loadSvg: (
@@ -46,7 +69,8 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
 
     // Initialize iframe with blob to ensure COOP/COEP header inheritance
     useEffect(() => {
-      const rendererScript = `(${getRendererScript.toString()})(window.seekAnimations);`;
+      const parentOrigin = window.location.origin;
+      const rendererScript = `(${getRendererScript.toString()})(window.seekAnimations, "${parentOrigin}");`;
       const html = rendererTemplate.replace(
         '// RENDERER_SCRIPT_PLACEHOLDER',
         `
@@ -56,6 +80,15 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
       );
 
       const handler = (event: MessageEvent) => {
+        const parentOrigin = window.location.origin;
+        // Sandboxed iframes might have origin "null" or the parent's origin
+        if (
+          (event.origin !== 'null' && event.origin !== parentOrigin) ||
+          event.source !== iframeRef.current?.contentWindow
+        ) {
+          return;
+        }
+
         if (event.data.type === 'SCRIPT_LOADED') {
           setScriptLoaded(true);
         }
@@ -92,7 +125,12 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
         if (!scriptLoaded) {
           await new Promise<void>((resolve) => {
             const handler = (event: MessageEvent) => {
-              if (event.data.type === 'SCRIPT_LOADED') {
+              const parentOrigin = window.location.origin;
+              if (
+                (event.origin === 'null' || event.origin === parentOrigin) &&
+                event.source === iframe.contentWindow &&
+                event.data.type === 'SCRIPT_LOADED'
+              ) {
                 window.removeEventListener('message', handler);
                 resolve();
               }
@@ -101,9 +139,19 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
           });
         }
 
+        const sanitizedSvg = DOMPurify.sanitize(
+          targetSvgcontent,
+          PURIFY_CONFIG
+        ) as string;
+
         return new Promise<void>((resolve) => {
           const handler = (event: MessageEvent) => {
-            if (event.data.type === 'READY') {
+            const parentOrigin = window.location.origin;
+            if (
+              (event.origin === 'null' || event.origin === parentOrigin) &&
+              event.source === iframe.contentWindow &&
+              event.data.type === 'READY'
+            ) {
               window.removeEventListener('message', handler);
               setReady(true);
               resolve();
@@ -114,7 +162,7 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
             {
               type: 'LOAD_SVG',
               payload: {
-                svgContent: targetSvgcontent,
+                svgContent: sanitizedSvg,
                 width: targetWidth,
                 height: targetHeight,
                 backgroundColor: targetBackground,
@@ -157,14 +205,20 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
 
       seek: async (timeMs: number) => {
         return new Promise<void>((resolve) => {
+          const iframe = iframeRef.current;
           const handler = (event: MessageEvent) => {
-            if (event.data.type === 'SEEKED') {
+            const parentOrigin = window.location.origin;
+            if (
+              (event.origin === 'null' || event.origin === parentOrigin) &&
+              event.source === iframe?.contentWindow &&
+              event.data.type === 'SEEKED'
+            ) {
               window.removeEventListener('message', handler);
               resolve();
             }
           };
           window.addEventListener('message', handler);
-          iframeRef.current?.contentWindow?.postMessage(
+          iframe?.contentWindow?.postMessage(
             { type: 'SEEK', payload: { timeMs } },
             '*'
           );
@@ -176,14 +230,20 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
         transparent: boolean
       ) => {
         return new Promise<ImageBitmap>((resolve) => {
+          const iframe = iframeRef.current;
           const handler = (event: MessageEvent) => {
-            if (event.data.type === 'CAPTURE_RESULT') {
+            const parentOrigin = window.location.origin;
+            if (
+              (event.origin === 'null' || event.origin === parentOrigin) &&
+              event.source === iframe?.contentWindow &&
+              event.data.type === 'CAPTURE_RESULT'
+            ) {
               window.removeEventListener('message', handler);
               resolve(event.data.payload);
             }
           };
           window.addEventListener('message', handler);
-          iframeRef.current?.contentWindow?.postMessage(
+          iframe?.contentWindow?.postMessage(
             { type: 'CAPTURE', payload: { method, transparent } },
             '*'
           );
@@ -209,6 +269,7 @@ const SvgRenderer = forwardRef<RendererHandle, SvgRendererProps>(
           <iframe
             ref={iframeRef}
             title="svg-renderer"
+            sandbox="allow-scripts allow-same-origin"
             style={{
               width: dimensions.width,
               height: dimensions.height,

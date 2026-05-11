@@ -9,12 +9,12 @@ Harden the `SvgRenderer` component to prevent XSS and unauthorized access to the
 
 ## 🛠 Technical Strategy
 
-- **Iframe Sandboxing**: Apply `sandbox="allow-scripts"` to the renderer iframe. This ensures the iframe has a unique origin, preventing it from accessing the parent window's DOM or storage, even though it's loaded via a Blob URL.
+- **Iframe Sandboxing**: Apply `sandbox="allow-scripts allow-same-origin"` to the renderer iframe. The `allow-same-origin` flag is necessary for Blob URLs to load correctly and for `postMessage` to function in nested sandboxed environments like Storybook.
 - **SVG Sanitization**: Integrate `dompurify` to strip potentially malicious scripts and event handlers from the user-provided SVG content before it is passed to the iframe.
   - **Configuration**: Use `USE_PROFILES: { svg: true }` and explicitly allow SVG animation elements: `animate`, `animateTransform`, `animateMotion`, `set`, `mpath`.
   - **Attributes**: Ensure attributes like `attributeName`, `from`, `to`, `dur`, `begin`, `repeatCount`, `values`, `keyTimes`, `keySplines`, `calcMode` are preserved.
-- **Message Security**: Tighten `postMessage` communication by validating `event.origin` in the parent. Since sandboxed iframes without `allow-same-origin` have origin `"null"`, we will verify that the message is received by the expected iframe instance.
-- **Origin Passing**: Since sandboxed iframes have a `null` origin, we will pass the parent origin to the iframe during initialization so it can use it for `postMessage` target origin checks if necessary.
+- **Message Security**: Tighten `postMessage` communication by validating `event.source` in the parent. Since sandboxed iframes and Storybook environments may have `"null"` origins, we verify that the message originates specifically from the expected iframe instance.
+- **Target Origin**: Use `*` as the target origin for messages sent from the iframe to the parent to ensure compatibility with sandboxed parents (Storybook), relying on the parent's source validation for security.
 
 ## ✅ Task List
 
