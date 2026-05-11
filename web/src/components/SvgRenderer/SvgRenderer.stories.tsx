@@ -1,6 +1,6 @@
 import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { within, expect } from 'storybook/test';
+import { within, expect, waitFor } from 'storybook/test';
 import './SvgRenderer.stories.scss';
 import SvgRenderer, { type RendererHandle } from './index';
 
@@ -127,6 +127,8 @@ export const CSSAnimation: Story = {
   },
 };
 
+type WindowExtensionXss = Window & { xss_executed?: boolean };
+
 export const MaliciousXSS: Story = {
   args: {
     backgroundColor: '#ffffff',
@@ -136,11 +138,34 @@ export const MaliciousXSS: Story = {
       <svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" fill="#fee2e2" />
         <circle cx="200" cy="80" r="50" fill="red" />
-        <script>alert('XSS Successful: Script Tag');</script>
-        <rect x="0" y="0" width="100" height="100" fill="transparent" onload="alert('XSS Successful: Inline Event')" />
-        <text x="20" y="180" font-size="16" font-weight="bold" fill="red">Check console/alerts - should be blocked</text>
+        <script>window.xss_executed = true;</script>
+        <rect x="0" y="0" width="100" height="100" fill="transparent" onload="window.xss_executed = true;" />
+        <text x="20" y="180" font-size="16" font-weight="bold" fill="red">No JS execution allowed here ?</text>
       </svg>
     `,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const renderer = canvas.getByTestId('svg-renderer');
+
+    // Wait until the renderer has injected the iframe with the blob src
+    await waitFor(
+      () => {
+        const iframe = renderer.querySelector('iframe');
+        if (!iframe || !iframe.src.startsWith('blob:')) {
+          throw new Error('Renderer not ready');
+        }
+      },
+      { timeout: 2000 }
+    );
+
+    // Wait for internal script execution
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    await expect((window as WindowExtensionXss).xss_executed).toBeUndefined();
+
+    // Teardown
+    (window as WindowExtensionXss).xss_executed = undefined;
   },
 };
 
