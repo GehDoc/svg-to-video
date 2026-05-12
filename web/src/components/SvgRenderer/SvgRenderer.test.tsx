@@ -44,31 +44,24 @@ async function captureFrameAsDataUrl(
 test('SMIL Animation - Frame Comparison and Visual Regression', async () => {
   const ref = createRef<RendererHandle>();
 
-  // Render the SMILAnimation story
   render(<SMILAnimation ref={ref} />);
 
-  // Wait for the renderer to be ready (READY signal)
   await vi.waitFor(() => expect(ref.current?.isReady()).toBe(true), {
     timeout: DEFAULT_TEST_TIMEOUT,
   });
 
-  // Capture the initial frame (at time 0)
   const initialDataUrl = await captureFrameAsDataUrl(ref);
 
   // Seek to the midpoint of the animation (2s duration, so 1000ms)
   // The SMILAnimation story uses an SVG with dur="2s"
   await ref.current!.seek(1000);
 
-  // Capture the midway frame
   const midwayDataUrl = await captureFrameAsDataUrl(ref);
 
   // Assert that the initial frame is different from the midway frame, proving animation
   expect(initialDataUrl).not.toBe(midwayDataUrl);
 
-  // Snapshot the initial frame
   expect(initialDataUrl).toMatchSnapshot('SMIL Animation - Initial Frame');
-
-  // Keep the snapshot assertion for the midway frame
   expect(midwayDataUrl).toMatchSnapshot('SMIL Animation - Midway Frame');
 });
 
@@ -77,7 +70,6 @@ test('Animation Stress Test - Visual Regression', async () => {
 
   render(<AnimationStressTest ref={ref} />);
 
-  // Wait for the renderer to be ready (READY signal)
   await vi.waitFor(() => expect(ref.current?.isReady()).toBe(true), {
     timeout: DEFAULT_TEST_TIMEOUT,
   });
@@ -96,7 +88,6 @@ test('Filter Fidelity - Visual Regression', async () => {
 
   render(<FilterFidelity ref={ref} />);
 
-  // Wait for the renderer to be ready (READY signal)
   await vi.waitFor(() => expect(ref.current?.isReady()).toBe(true), {
     timeout: DEFAULT_TEST_TIMEOUT,
   });
@@ -111,7 +102,6 @@ test('Transparent Background Test - Visual Regression', async () => {
 
   render(<TransparentBackgroundTest ref={ref} />);
 
-  // Wait for the renderer to be ready (READY signal)
   await vi.waitFor(() => expect(ref.current?.isReady()).toBe(true), {
     timeout: DEFAULT_TEST_TIMEOUT,
   });
@@ -127,27 +117,20 @@ test('CSS Animation Test - Frame Comparison and Visual Regression', async () => 
 
   render(<CSSAnimation ref={ref} />);
 
-  // Wait for the renderer to be ready (READY signal)
   await vi.waitFor(() => expect(ref.current?.isReady()).toBe(true), {
     timeout: DEFAULT_TEST_TIMEOUT,
   });
 
-  // Capture the initial frame (at time 0, after readiness)
   const initialDataUrl = await captureFrameAsDataUrl(ref);
 
   // Seek to the midpoint of the animation (2s duration, so 1000ms)
   await ref.current!.seek(1000);
 
-  // Capture the frame after the delay
   const midwayDataUrl = await captureFrameAsDataUrl(ref);
 
-  // Assert that the initial frame is different from the frame after the delay, proving animation
   expect(initialDataUrl).not.toBe(midwayDataUrl);
 
-  // Snapshot the initial frame
   expect(initialDataUrl).toMatchSnapshot('CSS Animation - Initial Frame');
-
-  // Keep the snapshot assertion for the midway frame
   expect(midwayDataUrl).toMatchSnapshot('CSS Animation - Midway Frame');
 });
 
@@ -156,22 +139,18 @@ test('Stripped Tags Animation (set, animateMotion) - Frame Comparison', async ()
 
   render(<StrippedTagsAnimation ref={ref} />);
 
-  // Wait for the renderer to be ready
   await vi.waitFor(() => expect(ref.current?.isReady()).toBe(true), {
     timeout: DEFAULT_TEST_TIMEOUT,
   });
 
-  // 1. Initial Frame (at 0s)
   const initialDataUrl = await captureFrameAsDataUrl(ref);
 
   // 2. Seek to 1.5s (set should have triggered, animateMotion should be midway)
   await ref.current!.seek(1500);
   const midwayDataUrl = await captureFrameAsDataUrl(ref);
 
-  // Assert visual difference
   expect(initialDataUrl).not.toBe(midwayDataUrl);
 
-  // Snapshots
   expect(initialDataUrl).toMatchSnapshot('Stripped Tags - Initial Frame');
   expect(midwayDataUrl).toMatchSnapshot('Stripped Tags - Midway Frame');
 });
