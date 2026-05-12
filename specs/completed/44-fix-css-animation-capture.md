@@ -1,7 +1,7 @@
 # Spec: 44 - Fix CSS Animation Capture
 
 **GitHub Issue**: [#44](https://github.com/GehDoc/svg-to-video/issues/44)
-**Status**: 🟠 Pending
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -33,10 +33,11 @@ Resolve the issue where CSS animations appear static in video output by implemen
 
 ## 🧪 Verification Plan
 
-- [ ] Manual Test: Open Storybook and verify `CSSAnimation` and `SMILAnimation` stories display accurate frame-by-frame previews.
+- [x] Manual Test: Open Storybook and verify `CSSAnimation` and `SMILAnimation` stories display accurate frame-by-frame previews.
 - [x] Automated Test: `npm run test:visual` must pass with all frame-comparison assertions active.
 
 ## 📝 Change Log
 
 - 2026-05-12: Initial spec created by Gemini CLI.
 - 2026-05-12: Implementation of "Bake & Clean" strategy and test refactoring complete. Refactored `renderer.js` for elegance.
+- 2026-05-12: Verified and marked as completed.
