@@ -248,3 +248,29 @@ export const FilterFidelity: Story = {
     `,
   },
 };
+
+export const StrippedTagsAnimation: Story = {
+  args: {
+    backgroundColor: '#ffffff',
+    width: 400,
+    height: 200,
+    svgContent: `
+      <svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="#f8fafc" />
+        
+        <!-- set tag test -->
+        <rect x="50" y="50" width="50" height="50" fill="blue">
+          <set attributeName="fill" to="red" begin="1s" />
+        </rect>
+
+        <!-- animateMotion test -->
+        <circle r="15" fill="green">
+          <animateMotion 
+            path="M 50 150 L 350 150" 
+            dur="2s" 
+            repeatCount="indefinite" />
+        </circle>
+      </svg>
+    `,
+  },
+};

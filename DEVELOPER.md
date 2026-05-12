@@ -76,6 +76,35 @@ If working without an agent, follow these steps to keep the project state synchr
 | `npm run build-storybook` | Builds the Storybook static site for deployment. |
 | `npm run type-check` | Validates TypeScript types. |
 
+## 🎨 High-Fidelity SVG Rendering (Bake & Clean)
+
+The `SvgRenderer` uses a specialized "Bake & Clean" algorithm to capture frame-accurate snapshots of SVGs, particularly those with complex CSS or SMIL animations.
+
+### The Challenge
+
+Standard methods like `cloneNode` and `XMLSerializer` often fail to capture the active state of a CSS animation because:
+
+1.  **Browser Optimizations**: The animation engine may not apply computed styles to cloned nodes in the same way as live nodes.
+2.  **Style Overrides**: When serializing an SVG with an internal `<style>` block, the original CSS rules (like `@keyframes`) can conflict with or override the static state we intend to capture.
+3.  **Dynamic Tags**: Tags like `<script>` or `<animate>` can trigger side effects or "re-run" animations when drawn to a canvas.
+
+### The Solution: Bake & Clean
+
+The renderer (implemented in `web/src/components/SvgRenderer/renderer.js`) follows these steps for every frame capture:
+
+1.  **Baking**:
+    - Iterate through all elements in the live SVG.
+    - Retrieve the current visual state using `window.getComputedStyle(el)`.
+    - Explicitly copy these computed properties (including the animated `transform` matrix) directly onto the cloned element's inline `style` attribute.
+    - This "freezes" the current frame's visual representation into the DOM structure.
+2.  **Cleaning**:
+    - Once the visual state is baked, remove all dynamic and conflicting tags from the clone: `<style>`, `<script>`, `<animate>`, `<animateTransform>`, `<animateMotion>`, and `<set>`.
+    - Removing `<style>` is critical to ensure the browser's CSS engine doesn't attempt to re-apply animations to our static "baked" elements.
+3.  **Serialization**:
+    - The resulting "inert" SVG clone is serialized to an XML string and drawn onto a canvas via an `Image` object for final frame extraction.
+
+This strategy ensures that what the user sees in the "Live Monitor" is exactly what is captured in the final video output.
+
 ## 📸 Visual Regression Testing
 
 The `SvgRenderer` component is monitored for visual regressions using native Vitest matchers.

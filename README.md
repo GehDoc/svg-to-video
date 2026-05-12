@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml/badge.svg)](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-0.8.2-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
+[![Version](https://img.shields.io/badge/version-0.8.3-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
 
 ![Social Preview](./docs/assets/social-preview.svg)
 
@@ -26,8 +26,6 @@ Our **Web Studio** is a serverless, client-side rendering tool. It runs entirely
 > **Privacy Note**: We use [Umami Analytics](https://umami.is/) to collect anonymous usage data (e.g., number of conversions) to help us improve the tool. This tracking is cookie-less, respects "Do Not Track" settings, and never collects personal information.
 
 Explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video/storybook/)** to see how the engine handles complex CSS and fonts.
-
-**Note:** Some CSS animations are correctly displayed in the live monitor but fail to appear in the final video capture. This is a known issue due to limitations in the style-cloning logic used for frame extraction in the Web Studio.
 
 ### Quick Start
 

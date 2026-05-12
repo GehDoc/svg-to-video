@@ -95,68 +95,89 @@ export function getRendererScript(seekAnimations, parentOrigin) {
       const ctx = captureCanvas.getContext('2d');
       if (!svg || !ctx) return;
 
+      // 1. CLONE THE SVG
       const clone = svg.cloneNode(true);
 
-      // Remove all animation elements from the clone to prevent "re-animation"
-      // when drawing the clone to the canvas.
-      const animationTags = clone.querySelectorAll(
-        'animate, animateTransform, animateMotion, set'
-      );
-      animationTags.forEach((tag) => tag.remove());
-
-      const originalElements = [
-        svg,
-        ...Array.from(svg.querySelectorAll('*')).filter(
-          (el) =>
-            !['animate', 'animateTransform', 'animateMotion', 'set'].includes(
-              el.tagName.toLowerCase()
-            )
-        ),
-      ];
+      // 2. MAP ELEMENTS BETWEEN ORIGINAL AND CLONE
+      // We use a flat list to avoid recursion and index mismatches
+      const svgElements = [svg, ...Array.from(svg.querySelectorAll('*'))];
       const cloneElements = [clone, ...Array.from(clone.querySelectorAll('*'))];
 
-      originalElements.forEach((el, i) => {
-        const style = window.getComputedStyle(el);
-        const cloneEl = cloneElements[i];
-        if (!cloneEl || !cloneEl.style) return;
+      // 3. BAKE COMPUTED STYLES INTO CLONE
+      svgElements.forEach((svgElement, svgElementIndex) => {
+        const cloneElement = cloneElements[svgElementIndex];
+        if (!cloneElement || !cloneElement.style) return;
+
+        // Skip animation, style, and script tags (they will be stripped anyway)
+        const tagName = svgElement.tagName.toLowerCase();
+        if (
+          [
+            'animate',
+            'animatetransform',
+            'animatemotion',
+            'set',
+            'style',
+            'script',
+          ].includes(tagName)
+        ) {
+          return;
+        }
+
+        const style = window.getComputedStyle(svgElement);
 
         if (payload.method === 'high-fidelity') {
-          for (let j = 0; j < style.length; j++) {
-            const prop = style[j];
-            cloneEl.style.setProperty(
-              prop,
-              style.getPropertyValue(prop),
-              style.getPropertyPriority(prop)
+          for (const propertyName of style) {
+            cloneElement.style.setProperty(
+              propertyName,
+              style.getPropertyValue(propertyName),
+              style.getPropertyPriority(propertyName)
             );
           }
         } else {
+          // OPTIMAL MODE: Focus on properties that typically change in animations
           for (const prop of OPTIMAL_PROPS) {
             const val = style.getPropertyValue(prop);
-            if (val) cloneEl.style.setProperty(prop, val);
+            if (val) cloneElement.style.setProperty(prop, val);
           }
         }
       });
 
+      // 4. CLEANUP: Strip dynamic tags AFTER baking styles
+      // This ensures we capture the visual state but prevent "double-running" or script execution
+      const cleanupTags = clone.querySelectorAll(
+        'animate, animateTransform, animateMotion, set, style, script'
+      );
+      cleanupTags.forEach((tag) => tag.remove());
+
+      // 5. SERIALIZE AND DRAW TO CANVAS
       const svgData = new XMLSerializer().serializeToString(clone);
       const svgBlob = new Blob([svgData], {
         type: 'image/svg+xml;charset=utf-8',
       });
       const url = URL.createObjectURL(svgBlob);
       const img = new Image();
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-        img.src = url;
-      });
-      ctx.clearRect(0, 0, captureCanvas.width, captureCanvas.height);
-      ctx.drawImage(img, 0, 0, captureCanvas.width, captureCanvas.height);
-      URL.revokeObjectURL(url);
-      const bitmap = await createImageBitmap(captureCanvas);
-      window.parent.postMessage(
-        { type: 'CAPTURE_RESULT', payload: bitmap },
-        parentOrigin,
-        [bitmap]
-      );
+
+      try {
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = url;
+        });
+
+        ctx.clearRect(0, 0, captureCanvas.width, captureCanvas.height);
+        ctx.drawImage(img, 0, 0, captureCanvas.width, captureCanvas.height);
+
+        const bitmap = await createImageBitmap(captureCanvas);
+        window.parent.postMessage(
+          { type: 'CAPTURE_RESULT', payload: bitmap },
+          parentOrigin,
+          [bitmap]
+        );
+      } catch (err) {
+        console.error('[Renderer] Capture failed:', err);
+      } finally {
+        URL.revokeObjectURL(url);
+      }
     }
   });
 
