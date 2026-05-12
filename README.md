@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml/badge.svg)](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-0.8.0-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
+[![Version](https://img.shields.io/badge/version-0.8.2-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
 
 ![Social Preview](./docs/assets/social-preview.svg)
 
@@ -16,6 +16,10 @@ Unlike standard converters that struggle with complex CSS keyframes or transitio
 - **Frame-Accurate**: Our engine scrubs the **Web Animations API**, ensuring every frame is captured exactly as rendered.
 - **Transparent Backgrounds**: Export your animations with a full alpha channel using WebM, perfect for overlays in video editing tools like Premiere or DaVinci Resolve.
 - **Versatile**: Whether you need an accessible [Web Studio](#web-studio) for quick conversions or a powerful [CLI tool](#cli--docker-tool) for batch automation and CI/CD pipelines, this project has you covered.
+
+## ⚠️ Known Issues
+
+- **CSS Animation Capture**: Some CSS animations are correctly displayed in the live monitor but fail to appear in the final video capture. This is likely due to limitations in the current style-cloning logic when duplicating the SVG node for frame extraction.
 
 ## 🌐 Web Studio
 
@@ -105,6 +109,7 @@ The tool creates the video in the specified `<outDir>`. The filename will match 
 
 ## 🤝 Contributing
 
+Contributions are welcome! Please open an issue or pull request.
 For instructions on contributing, build commands, and the technical roadmap, please see [DEVELOPER.md](./DEVELOPER.md).
 
 ## 🛠 Technical Details
