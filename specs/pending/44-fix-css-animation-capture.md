@@ -11,7 +11,10 @@ Resolve the issue where CSS animations appear static in video output by implemen
 
 - **Bake & Clean Strategy**:
   - **Baking**: Iterate through live SVG elements and explicitly copy computed styles (including animation matrices) to a cloned node.
-  - **Cleaning**: Strip all `<style>`, `<script>`, and `<animate*>` tags from the clone _after_ baking to ensure the serialized SVG is a static, frame-accurate representation that doesn't conflict with original styles or re-run animations.
+  - **Cleaning (Stripping Strategy)**: Remove specific tags to ensure the clone is a static, inert snapshot:
+    - `<animate>`, `<animateTransform>`, `<animateMotion>`, `<set>`: Must be removed to prevent SMIL animations from "double-running" or continuing from the baked state during canvas rendering.
+    - `<style>`: Must be removed because computed styles are now inlined. Keeping original styles (and `@keyframes`) can cause the browser's CSS engine to override the baked "static" attributes.
+    - `<script>`: Must be removed for security and to prevent any side effects or DOM manipulation during the capture process.
 - **Refactoring**: Clean up `renderer.js` for clarity and index-safety. Make `SvgRenderer.test.tsx` more maintainable by extracting a capture helper.
 
 ## ✅ Task List
