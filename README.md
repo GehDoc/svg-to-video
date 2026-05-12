@@ -17,10 +17,6 @@ Unlike standard converters that struggle with complex CSS keyframes or transitio
 - **Transparent Backgrounds**: Export your animations with a full alpha channel using WebM, perfect for overlays in video editing tools like Premiere or DaVinci Resolve.
 - **Versatile**: Whether you need an accessible [Web Studio](#web-studio) for quick conversions or a powerful [CLI tool](#cli--docker-tool) for batch automation and CI/CD pipelines, this project has you covered.
 
-## ⚠️ Known Issues
-
-- **CSS Animation Capture**: Some CSS animations are correctly displayed in the live monitor but fail to appear in the final video capture. This is likely due to limitations in the current style-cloning logic when duplicating the SVG node for frame extraction.
-
 ## 🌐 Web Studio
 
 **[🚀 Try the Web Studio](https://gehdoc.github.io/svg-to-video/)**
@@ -30,6 +26,8 @@ Our **Web Studio** is a serverless, client-side rendering tool. It runs entirely
 > **Privacy Note**: We use [Umami Analytics](https://umami.is/) to collect anonymous usage data (e.g., number of conversions) to help us improve the tool. This tracking is cookie-less, respects "Do Not Track" settings, and never collects personal information.
 
 Explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video/storybook/)** to see how the engine handles complex CSS and fonts.
+
+**Note:** Some CSS animations are correctly displayed in the live monitor but fail to appear in the final video capture. This is a known issue due to limitations in the style-cloning logic used for frame extraction in the Web Studio.
 
 ### Quick Start
 
