@@ -1,4 +1,4 @@
-import{n as e}from"./chunk-DnJy8xQt.js";import{n as t,t as n}from"./Dropzone-DO-9wxRB.js";var r,i,a,o,s,c;e((()=>{t(),r={title:`Components/Dropzone`,component:n},i={args:{svgContent:null,isDragging:!1}},a={args:{svgContent:`<svg></svg>`,isDragging:!1}},o={args:{svgContent:null,disabled:!0}},s={args:{svgContent:`<svg></svg>`,disabled:!0}},i.parameters={...i.parameters,docs:{...i.parameters?.docs,source:{originalSource:`{
+import{n as e}from"./chunk-DnJy8xQt.js";import{n as t,t as n}from"./Dropzone-DKrk2yW9.js";var r,i,a,o,s,c;e((()=>{t(),r={title:`Components/Dropzone`,component:n},i={args:{svgContent:null,isDragging:!1}},a={args:{svgContent:`<svg></svg>`,isDragging:!1}},o={args:{svgContent:null,disabled:!0}},s={args:{svgContent:`<svg></svg>`,disabled:!0}},i.parameters={...i.parameters,docs:{...i.parameters?.docs,source:{originalSource:`{
   args: {
     svgContent: null,
     isDragging: false
