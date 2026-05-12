@@ -63,7 +63,7 @@ export function getRendererScript(seekAnimations, parentOrigin) {
 
     if (type === 'LOAD_SVG') {
       isReady = false;
-      const { svgContent, width, height, backgroundColor, timeMs } = payload;
+      const { svgContent, width, height, timeMs } = payload;
       svgContainer.innerHTML = svgContent;
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';
@@ -108,12 +108,17 @@ export function getRendererScript(seekAnimations, parentOrigin) {
         const cloneElement = cloneElements[svgElementIndex];
         if (!cloneElement || !cloneElement.style) return;
 
-        // Skip animation tags themselves (they will be stripped)
+        // Skip animation, style, and script tags (they will be stripped anyway)
         const tagName = svgElement.tagName.toLowerCase();
         if (
-          ['animate', 'animatetransform', 'animatemotion', 'set'].includes(
-            tagName
-          )
+          [
+            'animate',
+            'animatetransform',
+            'animatemotion',
+            'set',
+            'style',
+            'script',
+          ].includes(tagName)
         ) {
           return;
         }
@@ -130,16 +135,7 @@ export function getRendererScript(seekAnimations, parentOrigin) {
           }
         } else {
           // OPTIMAL MODE: Focus on properties that typically change in animations
-
-          // Special handling for transform: set as attribute to ensure high compatibility in serialized SVG
-          const transformVal = style.getPropertyValue('transform');
-          if (transformVal && transformVal !== 'none') {
-            cloneElement.setAttribute('transform', transformVal);
-            cloneElement.style.removeProperty('transform');
-          }
-
           for (const prop of OPTIMAL_PROPS) {
-            if (prop === 'transform') continue;
             const val = style.getPropertyValue(prop);
             if (val) cloneElement.style.setProperty(prop, val);
           }
