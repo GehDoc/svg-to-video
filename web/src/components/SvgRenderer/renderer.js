@@ -63,7 +63,7 @@ export function getRendererScript(seekAnimations, parentOrigin) {
 
     if (type === 'LOAD_SVG') {
       isReady = false;
-      const { svgContent, width, height, timeMs } = payload;
+      const { svgContent, width, height, backgroundColor, timeMs } = payload;
       svgContainer.innerHTML = svgContent;
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';
@@ -97,13 +97,6 @@ export function getRendererScript(seekAnimations, parentOrigin) {
 
       const clone = svg.cloneNode(true);
 
-      // Remove all animation elements from the clone to prevent "re-animation"
-      // when drawing the clone to the canvas.
-      const animationTags = clone.querySelectorAll(
-        'animate, animateTransform, animateMotion, set'
-      );
-      animationTags.forEach((tag) => tag.remove());
-
       const originalElements = [
         svg,
         ...Array.from(svg.querySelectorAll('*')).filter(
@@ -130,12 +123,26 @@ export function getRendererScript(seekAnimations, parentOrigin) {
             );
           }
         } else {
+          // Always copy 'transform' first to ensure animation state is captured
+          const transformVal = style.getPropertyValue('transform');
+          if (transformVal && transformVal !== 'none') {
+            cloneEl.setAttribute('transform', transformVal);
+            cloneEl.style.removeProperty('transform');
+          }
+
           for (const prop of OPTIMAL_PROPS) {
+            if (prop === 'transform') continue;
             const val = style.getPropertyValue(prop);
             if (val) cloneEl.style.setProperty(prop, val);
           }
         }
       });
+
+      // CLEANUP: Remove all animation, style, and script tags AFTER properties are baked
+      const cleanupTags = clone.querySelectorAll(
+        'animate, animateTransform, animateMotion, set, style, script'
+      );
+      cleanupTags.forEach((tag) => tag.remove());
 
       const svgData = new XMLSerializer().serializeToString(clone);
       const svgBlob = new Blob([svgData], {

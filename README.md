@@ -27,8 +27,6 @@ Our **Web Studio** is a serverless, client-side rendering tool. It runs entirely
 
 Explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video/storybook/)** to see how the engine handles complex CSS and fonts.
 
-**Note:** Some CSS animations are correctly displayed in the live monitor but fail to appear in the final video capture. This is a known issue due to limitations in the style-cloning logic used for frame extraction in the Web Studio.
-
 ### Quick Start
 
 1. Open the [Web Studio](https://gehdoc.github.io/svg-to-video/).
