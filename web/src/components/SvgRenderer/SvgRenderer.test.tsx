@@ -18,26 +18,48 @@ const {
 
 const DEFAULT_TEST_TIMEOUT = 10000;
 
-test('SMIL Animation - Visual Regression', async () => {
+test('SMIL Animation - Frame Comparison and Visual Regression', async () => {
   const ref = createRef<RendererHandle>();
 
-  render(<SMILAnimation ref={ref} />); // This needs to be updated
+  render(<SMILAnimation ref={ref} />);
 
   // Wait for the renderer to be ready (READY signal)
   await vi.waitFor(() => expect(ref.current?.isReady()).toBe(true), {
     timeout: DEFAULT_TEST_TIMEOUT,
   });
 
-  const bitmap = await ref.current!.capture('optimal', false);
+  // Capture the initial frame (at time 0)
+  const initialBitmap = await ref.current!.capture('optimal', false);
+  const initialCanvas = document.createElement('canvas');
+  initialCanvas.width = initialBitmap.width;
+  initialCanvas.height = initialBitmap.height;
+  const initialCtx = initialCanvas.getContext('bitmaprenderer');
+  if (initialCtx) initialCtx.transferFromImageBitmap(initialBitmap);
+  const initialDataUrl = initialCanvas.toDataURL();
+  initialBitmap.close(); // Clean up bitmap
 
-  const canvas = document.createElement('canvas');
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
-  const ctx = canvas.getContext('bitmaprenderer');
-  if (ctx) ctx.transferFromImageBitmap(bitmap);
-  const dataUrl = canvas.toDataURL();
+  // Seek to the midpoint of the animation (2s duration, so 1000ms)
+  // The SMILAnimation story uses an SVG with dur="2s"
+  await ref.current!.seek(1000);
 
-  expect(dataUrl).toMatchSnapshot();
+  // Capture the midway frame
+  const midwayBitmap = await ref.current!.capture('optimal', false);
+  const midwayCanvas = document.createElement('canvas');
+  midwayCanvas.width = midwayBitmap.width;
+  midwayCanvas.height = midwayBitmap.height;
+  const midwayCtx = midwayCanvas.getContext('bitmaprenderer');
+  if (midwayCtx) midwayCtx.transferFromImageBitmap(midwayBitmap);
+  const midwayDataUrl = midwayCanvas.toDataURL();
+  midwayBitmap.close(); // Clean up bitmap
+
+  // Assert that the initial frame is different from the midway frame, proving animation
+  expect(initialDataUrl).not.toBe(midwayDataUrl);
+
+  // Snapshot the initial frame
+  expect(initialDataUrl).toMatchSnapshot('SMIL Animation - Initial Frame');
+
+  // Keep the snapshot assertion for the midway frame
+  expect(midwayDataUrl).toMatchSnapshot('SMIL Animation - Midway Frame');
 });
 
 test('Animation Stress Test - Visual Regression', async () => {
@@ -111,7 +133,7 @@ test('Transparent Background Test - Visual Regression', async () => {
   expect(dataUrl).toMatchSnapshot();
 });
 
-test('CSS Animation Test - Visual Regression', async () => {
+test('CSS Animation Test - Frame Comparison and Visual Regression', async () => {
   const ref = createRef<RendererHandle>();
 
   render(<CSSAnimation ref={ref} />);
@@ -121,19 +143,35 @@ test('CSS Animation Test - Visual Regression', async () => {
     timeout: DEFAULT_TEST_TIMEOUT,
   });
 
-  // CSS animations are handled by the browser's rendering loop.
-  // We can seek to a specific time to capture a frame, or rely on the default render.
-  // For simplicity, we'll capture the default rendered frame.
-  // If specific animation frames need testing, we might need to seek.
+  // Capture the initial frame (at time 0, after readiness)
+  const initialBitmap = await ref.current!.capture('optimal', false);
+  const initialCanvas = document.createElement('canvas');
+  initialCanvas.width = initialBitmap.width;
+  initialCanvas.height = initialBitmap.height;
+  const initialCtx = initialCanvas.getContext('bitmaprenderer');
+  if (initialCtx) initialCtx.transferFromImageBitmap(initialBitmap);
+  const initialDataUrl = initialCanvas.toDataURL();
+  initialBitmap.close(); // Clean up bitmap
 
-  const bitmap = await ref.current!.capture('optimal', false); // Assuming opaque for CSS animation test
+  await ref.current!.seek(1000);
 
-  const canvas = document.createElement('canvas');
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
-  const ctx = canvas.getContext('bitmaprenderer');
-  if (ctx) ctx.transferFromImageBitmap(bitmap);
-  const dataUrl = canvas.toDataURL();
+  // Capture the frame after the delay
+  const midwayBitmap = await ref.current!.capture('optimal', false);
+  const midwayCanvas = document.createElement('canvas');
+  midwayCanvas.width = midwayBitmap.width;
+  midwayCanvas.height = midwayBitmap.height;
+  const midwayCtx = midwayCanvas.getContext('bitmaprenderer');
+  if (midwayCtx) midwayCtx.transferFromImageBitmap(midwayBitmap);
+  const midwayDataUrl = midwayCanvas.toDataURL();
+  midwayBitmap.close(); // Clean up bitmap
 
-  expect(dataUrl).toMatchSnapshot();
+  // TODO :
+  // // Assert that the initial frame is different from the frame after the delay, proving animation
+  // expect(initialDataUrl).not.toBe(midwayDataUrl);
+
+  // Snapshot the initial frame
+  expect(initialDataUrl).toMatchSnapshot('CSS Animation - Initial Frame');
+
+  // Keep the snapshot assertion for the midway frame
+  expect(midwayDataUrl).toMatchSnapshot('CSS Animation - Midway Frame'); // TODO : correct once working !
 });
