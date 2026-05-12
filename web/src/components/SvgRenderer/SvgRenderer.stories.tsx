@@ -1,6 +1,6 @@
 import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { within, expect } from 'storybook/test';
+import { within, expect, waitFor } from 'storybook/test';
 import './SvgRenderer.stories.scss';
 import SvgRenderer, { type RendererHandle } from './index';
 
@@ -10,14 +10,18 @@ interface WrapperProps {
   width: number;
   height: number;
   seekTime: number;
+  isTransparent?: boolean;
 }
 
 const Wrapper = forwardRef<RendererHandle, WrapperProps>(
-  ({ backgroundColor, svgContent, width, height, seekTime }, ref) => {
+  (
+    { backgroundColor, svgContent, width, height, seekTime, isTransparent },
+    ref
+  ) => {
     const rendererRef = useRef<RendererHandle>(null);
 
     useImperativeHandle(ref, () => ({
-      loadSvg: (s, w, h, b) => rendererRef.current!.loadSvg(s, w, h, b),
+      loadSvg: (s, w, h) => rendererRef.current!.loadSvg(s, w, h),
       seek: (t) => rendererRef.current!.seek(t),
       capture: (m) => rendererRef.current!.capture(m, false),
       isReady: () => rendererRef.current!.isReady(),
@@ -25,9 +29,9 @@ const Wrapper = forwardRef<RendererHandle, WrapperProps>(
 
     useEffect(() => {
       if (rendererRef.current) {
-        rendererRef.current.loadSvg(svgContent, width, height, backgroundColor);
+        rendererRef.current.loadSvg(svgContent, width, height);
       }
-    }, [backgroundColor, svgContent, width, height]);
+    }, [svgContent, width, height]);
 
     useEffect(() => {
       if (rendererRef.current) {
@@ -36,10 +40,12 @@ const Wrapper = forwardRef<RendererHandle, WrapperProps>(
     }, [seekTime]);
 
     return (
-      <div className="story-wrapper">
-        <div className="renderer-container">
-          <SvgRenderer ref={rendererRef} />
-        </div>
+      <div className="svg-renderer-story-wrapper">
+        <SvgRenderer
+          ref={rendererRef}
+          backgroundColor={backgroundColor}
+          isTransparent={isTransparent}
+        />
       </div>
     );
   }
@@ -54,6 +60,7 @@ const meta = {
     width: 500,
     height: 500,
     seekTime: 0,
+    isTransparent: false,
     svgContent:
       '<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg"><polygon points="0,0 500,0 0,500" fill="blue" opacity="0.8" /><circle cx="350" cy="150" r="100" fill="yellow"><animate attributeName="r" from="50" to="150" dur="2s" repeatCount="indefinite" /></circle></svg>',
   },
@@ -62,7 +69,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const BackgroundTest: Story = {
+  name: 'Background Color Test',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const renderer = canvas.getByTestId('svg-renderer');
@@ -70,7 +78,16 @@ export const Default: Story = {
   },
 };
 
-export const LoopSynchronizedCapture: Story = {
+export const TransparentBackgroundTest: Story = {
+  args: {
+    backgroundColor: '#0f172a',
+    isTransparent: true,
+    svgContent:
+      '<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg"><circle cx="250" cy="250" r="100" fill="red" /></svg>',
+  },
+};
+
+export const SMILAnimation: Story = {
   args: {
     backgroundColor: '#f0f0f0',
     svgContent: `
@@ -83,6 +100,71 @@ export const LoopSynchronizedCapture: Story = {
     `,
     width: 400,
     height: 100,
+  },
+};
+
+export const CSSAnimation: Story = {
+  args: {
+    backgroundColor: '#ffffff',
+    width: 400,
+    height: 100,
+    svgContent: `
+      <svg width="400" height="100" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
+        <style>
+          @keyframes slide {
+            from { transform: translateX(0); }
+            to { transform: translateX(300px); }
+          }
+          circle {
+            animation: slide 2s infinite alternate ease-in-out;
+          }
+        </style>
+        <rect width="100%" height="100%" fill="#eee" />
+        <circle cx="50" cy="50" r="20" fill="#f43f5e" />
+      </svg>
+    `,
+  },
+};
+
+type WindowExtensionXss = Window & { xss_executed?: boolean };
+
+export const MaliciousXSS: Story = {
+  args: {
+    backgroundColor: '#ffffff',
+    width: 400,
+    height: 200,
+    svgContent: `
+      <svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="#fee2e2" />
+        <circle cx="200" cy="80" r="50" fill="red" />
+        <script>window.xss_executed = true;</script>
+        <rect x="0" y="0" width="100" height="100" fill="transparent" onload="window.xss_executed = true;" />
+        <text x="20" y="180" font-size="16" font-weight="bold" fill="red">No JS execution allowed here ?</text>
+      </svg>
+    `,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const renderer = canvas.getByTestId('svg-renderer');
+
+    // Wait until the renderer has injected the iframe with the blob src
+    await waitFor(
+      () => {
+        const iframe = renderer.querySelector('iframe');
+        if (!iframe || !iframe.src.startsWith('blob:')) {
+          throw new Error('Renderer not ready');
+        }
+      },
+      { timeout: 2000 }
+    );
+
+    // Wait for internal script execution
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    await expect((window as WindowExtensionXss).xss_executed).toBeUndefined();
+
+    // Teardown
+    (window as WindowExtensionXss).xss_executed = undefined;
   },
 };
 

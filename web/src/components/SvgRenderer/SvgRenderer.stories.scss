@@ -1,5 +1,15 @@
-.story-wrapper {
+.svg-renderer-story-wrapper {
   background-color: var(--bg);
-  padding: 20px;
+  padding: 40px;
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+
+  /* Force the renderer to its natural size in Storybook */
+  .renderer-monitor {
+    width: fit-content !important;
+    height: fit-content !important;
+  }
 }
