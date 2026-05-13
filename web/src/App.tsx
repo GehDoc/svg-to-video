@@ -1,25 +1,8 @@
-import { useRef } from 'react';
-import type { RendererHandle } from './components/SvgRenderer';
-import { StudioProvider } from './context/StudioProvider';
-import { Header } from './components/Header';
-import { ConfigPanel } from './components/ConfigPanel';
-import { MonitorPanel } from './components/MonitorPanel';
+import { Studio } from './components/Studio';
 import './App.css';
 
 function App() {
-  const rendererRef = useRef<RendererHandle>(null);
-
-  return (
-    <StudioProvider rendererRef={rendererRef}>
-      <div className="app-container">
-        <Header />
-        <main className="studio-layout">
-          <ConfigPanel />
-          <MonitorPanel />
-        </main>
-      </div>
-    </StudioProvider>
-  );
+  return <Studio />;
 }
 
 export default App;

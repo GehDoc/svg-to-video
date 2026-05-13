@@ -1,6 +1,5 @@
-import { useCallback, useMemo, useState, type ReactNode } from 'react';
-import type { RendererHandle } from '../components/SvgRenderer';
-import { StudioContext } from './StudioContext';
+import { useCallback, useMemo, useState, useRef } from 'react';
+import type { RendererHandle } from './SvgRenderer/index';
 import {
   useRenderer,
   parseSvgDimensions,
@@ -8,14 +7,13 @@ import {
   type ResolutionPreset,
   type RenderSettings,
 } from '../hooks/useRenderer';
+import { Header } from './Header';
+import { ConfigPanel } from './ConfigPanel';
+import { MonitorPanel } from './MonitorPanel';
 
-export const StudioProvider = ({
-  children,
-  rendererRef,
-}: {
-  children: ReactNode;
-  rendererRef: React.RefObject<RendererHandle | null>;
-}) => {
+export const Studio = () => {
+  const rendererRef = useRef<RendererHandle>(null);
+
   const [svgContent, setSvgContent] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>('animation.mp4');
   const [duration, setDuration] = useState(5);
@@ -98,83 +96,79 @@ export const StudioProvider = ({
     render,
   ]);
 
-  const downloadResult = useCallback(() => {
+  const handleDownload = useCallback(() => {
     if (renderedUrl) {
+      if (typeof umami !== 'undefined') {
+        umami.track('download-result', { format, isTransparent });
+      }
       const a = document.createElement('a');
       a.href = renderedUrl;
       a.download = fileName;
       a.click();
     }
-  }, [renderedUrl, fileName]);
+  }, [renderedUrl, fileName, format, isTransparent]);
 
-  const contextValue = useMemo(
-    () => ({
-      svgContent,
-      setSvgContent,
-      fileName,
-      setFileName,
-      duration,
-      setDuration,
-      hold,
-      setHold,
-      fps,
-      setFps,
-      preset,
-      setPreset,
-      scale,
-      setScale,
-      backgroundColor,
-      setBackgroundColor,
-      format,
-      setFormat,
-      isTransparent,
-      setIsTransparent,
-      captureMethod,
-      setCaptureMethod,
-      isDragging,
-      setIsDragging,
-      renderedUrl,
-      setRenderedUrl,
-      fileSize,
-      setFileSize,
-      originalDim,
-      targetDim,
-      state,
-      handleStartRender,
-      cancel,
-      clearError,
-      downloadResult,
-      rendererRef,
-    }),
-    [
-      svgContent,
-      fileName,
-      duration,
-      hold,
-      fps,
-      preset,
-      scale,
-      backgroundColor,
-      format,
-      isTransparent,
-      captureMethod,
-      isDragging,
-      renderedUrl,
-      fileSize,
-      originalDim,
-      targetDim,
-      state,
-      handleStartRender,
-      cancel,
-      clearError,
-      downloadResult,
-      rendererRef,
-    ]
-  );
+  const handleBack = useCallback(() => {
+    if (typeof umami !== 'undefined') {
+      umami.track('back-to-studio', { format, isTransparent });
+    }
+    setRenderedUrl(null);
+  }, [format, isTransparent]);
 
   return (
-    <StudioContext.Provider value={contextValue}>
-      {children}
-    </StudioContext.Provider>
+    <div className="app-container">
+      <Header />
+      <main className="studio-layout">
+        <ConfigPanel
+          svgContent={svgContent}
+          onSvgContentChange={(content, name) => {
+            setSvgContent(content);
+            setFileName(name);
+          }}
+          fileName={fileName}
+          onFileNameChange={setFileName}
+          duration={duration}
+          onDurationChange={setDuration}
+          hold={hold}
+          onHoldChange={setHold}
+          fps={fps}
+          onFpsChange={setFps}
+          preset={preset}
+          onPresetChange={setPreset}
+          scale={scale}
+          onScaleChange={setScale}
+          backgroundColor={backgroundColor}
+          onBackgroundColorChange={setBackgroundColor}
+          format={format}
+          onFormatChange={setFormat}
+          isTransparent={isTransparent}
+          onIsTransparentChange={setIsTransparent}
+          captureMethod={captureMethod}
+          onCaptureMethodChange={setCaptureMethod}
+          isDragging={isDragging}
+          onIsDraggingChange={setIsDragging}
+          state={state}
+          onStartRender={handleStartRender}
+          originalDim={originalDim}
+          renderedUrl={renderedUrl}
+        />
+        <MonitorPanel
+          svgContent={svgContent}
+          renderedUrl={renderedUrl}
+          state={state}
+          fileName={fileName}
+          fileSize={fileSize}
+          onDownload={handleDownload}
+          onBack={handleBack}
+          originalDim={originalDim}
+          targetDim={targetDim}
+          rendererRef={rendererRef}
+          backgroundColor={backgroundColor}
+          isTransparent={isTransparent}
+          onCancel={cancel}
+          onClearError={clearError}
+        />
+      </main>
+    </div>
   );
 };

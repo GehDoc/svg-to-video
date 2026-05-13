@@ -1,35 +1,40 @@
-import { StudioContext } from '../context/StudioContext';
-import { useContext } from 'react';
+import type { RendererHandle } from './SvgRenderer';
 import { RendererMonitor } from './RendererMonitor';
 import { ProgressOverlay } from './ProgressOverlay';
 import { MetaDisplay } from './MetaDisplay';
 import { ErrorView } from './ErrorView';
+import { type RenderState } from '../hooks/useRenderer';
 import './RenderingView.scss';
 
-export const RenderingView = () => {
-  const {
-    state,
-    cancel,
-    clearError,
-    svgContent,
-    originalDim,
-    targetDim,
-    rendererRef,
-    backgroundColor,
-    isTransparent,
-  } = useContext(StudioContext)!;
+interface RenderingViewProps {
+  state: RenderState;
+  svgContent: string | null;
+  originalDim: { width: number; height: number };
+  targetDim: { width: number; height: number };
+  rendererRef: React.RefObject<RendererHandle | null>;
+  backgroundColor: string;
+  isTransparent: boolean;
+  onCancel: () => void;
+  onClearError: () => void;
+}
 
+export const RenderingView = ({
+  state,
+  svgContent,
+  originalDim,
+  targetDim,
+  rendererRef,
+  backgroundColor,
+  isTransparent,
+  onCancel,
+  onClearError,
+}: RenderingViewProps) => {
   const isError = state.status.startsWith('Error:');
 
   return (
     <div className="rendering-view">
       {isError ? (
-        <ErrorView
-          message={state.status}
-          onClose={() => {
-            clearError();
-          }}
-        />
+        <ErrorView message={state.status} onClose={onClearError} />
       ) : (
         <>
           <RendererMonitor
@@ -45,7 +50,7 @@ export const RenderingView = () => {
           <ProgressOverlay
             status={state.isRendering ? state.status : 'Ready to Export'}
             progress={state.isRendering ? state.progress : undefined}
-            onCancel={state.isRendering ? cancel : undefined}
+            onCancel={state.isRendering ? onCancel : undefined}
           >
             <MetaDisplay
               meta={state.meta}
