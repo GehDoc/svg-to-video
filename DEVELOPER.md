@@ -159,9 +159,17 @@ npm run test:storybook
 
 _Note: Avoid using `jest-axe` in JSDOM unit tests, as it cannot calculate computed styles and will miss contrast violations._
 
-## 🐳 Docker & Hardening
+### 🐳 Docker & Hardening
 
 The project includes a hardened Dockerfile for both development and production use.
+
+### ⚙️ Continuous Integration (CI)
+
+The project uses GitHub Actions for automated verification. Key pipeline steps include:
+
+- **Build Verification**: Every PR is built in a production-like environment (`npm run build -w web`) to ensure asset resolution stability.
+- **Fast Checks**: Linting, formatting, and type-checking via `npm run check:fast`.
+- **E2E/Visual Tests**: Full CLI and Web Studio test suites (including Storybook interactions and pixel-matching visual regressions).
 
 ## 🌐 Web Studio Deployment
 
@@ -176,7 +184,7 @@ The Web Studio and Storybook Gallery are configured to deploy automatically to *
 
 ### 📊 Analytics (Umami)
 
-The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tracking.
+The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tracking. Detailed information about tracked events can be found in [docs/ANALYTICS.md](./docs/ANALYTICS.md).
 
 > [!IMPORTANT]
 > **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
@@ -187,7 +195,6 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
 
 - **Implementation**: The tracker is self-hosted at `web/public/assets/3rd-party/analytics.js` (to bypass ad-blockers and COEP issues) and injected via `web/index.html` with pre-flight checks.
 - **Configuration**: The `data-website-id` and `data-domains` are hardcoded in `web/index.html`. For local forks, update these values to point to your own Umami instance.
-- **Events**: We track the conversion lifecycle (`conversion-start`, `conversion-success`, `conversion-failed`) and user actions (`download-mp4`, `back-to-studio`).
 - **Types**: We use `@types/umami` for full TypeScript support. Always use `typeof umami !== 'undefined'` to safely trigger events programmatically.
 
 ## 🐳 Docker & Hardening

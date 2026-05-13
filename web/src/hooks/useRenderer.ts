@@ -115,12 +115,14 @@ export const useRenderer = (
   });
 
   const cancelRef = useRef(false);
+  const settingsRef = useRef<RenderSettings | null>(null);
 
   const render = useCallback(
     async (svgContent: string, settings: RenderSettings) => {
       if (!rendererRef.current) return;
 
       cancelRef.current = false;
+      settingsRef.current = settings;
       setState({ isRendering: true, progress: 0, status: 'Initializing...' });
 
       if (typeof umami !== 'undefined') {
@@ -329,6 +331,13 @@ export const useRenderer = (
   const cancel = useCallback(() => {
     cancelRef.current = true;
     setState({ isRendering: false, progress: 0, status: 'Ready' });
+
+    if (typeof umami !== 'undefined' && settingsRef.current) {
+      umami.track('conversion-cancel', {
+        format: settingsRef.current.format,
+        isTransparent: settingsRef.current.isTransparent,
+      });
+    }
   }, []);
 
   const clearError = useCallback(() => {
