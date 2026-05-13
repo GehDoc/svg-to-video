@@ -12,10 +12,15 @@ const meta: Meta<typeof RenderingView> = {
       progress: 0,
       meta: undefined,
     },
-    svgContent:
-      '<svg width="100" height="100"><rect width="100" height="100" fill="red" /></svg>',
-    originalDim: { width: 100, height: 100 },
-    targetDim: { width: 500, height: 500 },
+    svgContent: `
+      <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+        <rect width="500" height="500" fill="#f8fafc" />
+        <circle cx="250" cy="250" r="120" fill="#6366f1" opacity="0.8" />
+        <text x="250" y="260" font-family="sans-serif" font-size="40" font-weight="bold" text-anchor="middle" fill="white">SVG</text>
+      </svg>
+    `,
+    originalDim: { width: 500, height: 500 },
+    targetDim: { width: 1000, height: 1000 },
     rendererRef: createRef(),
     backgroundColor: '#ffffff',
     isTransparent: false,
@@ -52,7 +57,7 @@ export const IdleWithSvg: Story = {
       meta: undefined,
     },
     originalDim: { width: 500, height: 500 },
-    targetDim: { width: 1920, height: 1080 },
+    targetDim: { width: 1000, height: 1000 },
   },
 };
 
