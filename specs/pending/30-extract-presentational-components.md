@@ -43,10 +43,10 @@ The refactoring will be performed component by component. For each component:
   - [x] Verify tests and commit/push.
 
 - [ ] **Refactoring: ConfigPanel**
-  - [ ] Refactor `ConfigPanel` (this is a large component, may need sub-splitting).
-  - [ ] Update `App.tsx` integration.
-  - [ ] Update `ConfigPanel.test.tsx` and stories.
-  - [ ] Verify tests and commit/push.
+  - [x] Refactor `ConfigPanel` (this is a large component, may need sub-splitting).
+  - [x] Update `App.tsx` integration.
+  - [x] Update `ConfigPanel.test.tsx` and stories.
+  - [x] Verify tests and commit/push.
 
 - [ ] **Refactoring: Header** (if applicable)
   - [ ] Audit `Header.tsx` for context usage.

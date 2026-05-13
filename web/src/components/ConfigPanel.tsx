@@ -1,43 +1,71 @@
-import { StudioContext } from '../context/StudioContext';
-import { useContext, type ChangeEvent } from 'react';
-import type { ResolutionPreset } from '../hooks/useRenderer';
+import { type ChangeEvent } from 'react';
+import type { ResolutionPreset, RenderState } from '../hooks/useRenderer';
 import { isTransparencySupported } from '../utils/isTransparencySupported';
 import { Dropzone } from './Dropzone';
 import { Button } from './Button/Button';
 import './ConfigPanel.scss';
 
-export const ConfigPanel = () => {
-  const {
-    svgContent,
-    setSvgContent,
-    fileName,
-    setFileName,
-    duration,
-    setDuration,
-    hold,
-    setHold,
-    fps,
-    setFps,
-    preset,
-    setPreset,
-    scale,
-    setScale,
-    backgroundColor,
-    setBackgroundColor,
-    format,
-    setFormat,
-    isTransparent,
-    setIsTransparent,
-    captureMethod,
-    setCaptureMethod,
-    isDragging,
-    setIsDragging,
-    state,
-    handleStartRender,
-    originalDim,
-    renderedUrl,
-  } = useContext(StudioContext)!;
+interface ConfigPanelProps {
+  svgContent: string | null;
+  onSvgContentChange: (content: string, fileName: string) => void;
+  fileName: string;
+  onFileNameChange: (name: string) => void;
+  duration: number;
+  onDurationChange: (d: number) => void;
+  hold: number;
+  onHoldChange: (h: number) => void;
+  fps: number;
+  onFpsChange: (f: number) => void;
+  preset: ResolutionPreset;
+  onPresetChange: (p: ResolutionPreset) => void;
+  scale: number;
+  onScaleChange: (s: number) => void;
+  backgroundColor: string;
+  onBackgroundColorChange: (c: string) => void;
+  format: 'mp4' | 'webm';
+  onFormatChange: (f: 'mp4' | 'webm') => void;
+  isTransparent: boolean;
+  onIsTransparentChange: (t: boolean) => void;
+  captureMethod: 'optimal' | 'high-fidelity';
+  onCaptureMethodChange: (m: 'optimal' | 'high-fidelity') => void;
+  isDragging: boolean;
+  onIsDraggingChange: (d: boolean) => void;
+  state: RenderState;
+  onStartRender: () => void;
+  originalDim: { isDimensionsDetected: boolean };
+  renderedUrl: string | null;
+}
 
+export const ConfigPanel = ({
+  svgContent,
+  onSvgContentChange,
+  fileName,
+  onFileNameChange,
+  duration,
+  onDurationChange,
+  hold,
+  onHoldChange,
+  fps,
+  onFpsChange,
+  preset,
+  onPresetChange,
+  scale,
+  onScaleChange,
+  backgroundColor,
+  onBackgroundColorChange,
+  format,
+  onFormatChange,
+  isTransparent,
+  onIsTransparentChange,
+  captureMethod,
+  onCaptureMethodChange,
+  isDragging,
+  onIsDraggingChange,
+  state,
+  onStartRender,
+  originalDim,
+  renderedUrl,
+}: ConfigPanelProps) => {
   const isRenderingOrSuccess = state.isRendering || !!renderedUrl;
   const isOptionsDisabled = isRenderingOrSuccess || !svgContent;
 
@@ -45,9 +73,8 @@ export const ConfigPanel = () => {
     const reader = new FileReader();
     reader.onload = (event) => {
       const content = event.target?.result as string;
-      setSvgContent(content);
       const baseName = file.name.replace(/\.svg$/i, '');
-      setFileName(`${baseName}.mp4`);
+      onSvgContentChange(content, `${baseName}.mp4`);
     };
     reader.readAsText(file);
   };
@@ -59,7 +86,7 @@ export const ConfigPanel = () => {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsDragging(false);
+    onIsDraggingChange(false);
     if (
       e.dataTransfer.files?.[0] &&
       e.dataTransfer.files[0].type === 'image/svg+xml'
@@ -78,7 +105,7 @@ export const ConfigPanel = () => {
         <Dropzone
           svgContent={svgContent}
           isDragging={isDragging}
-          setIsDragging={setIsDragging}
+          setIsDragging={onIsDraggingChange}
           onFileChange={handleFileChange}
           onDrop={handleDrop}
           disabled={isRenderingOrSuccess}
@@ -96,12 +123,10 @@ export const ConfigPanel = () => {
             id="format"
             value={format}
             onChange={(e) => {
-              setFormat(e.target.value as 'mp4' | 'webm');
-              const newName = fileName.replace(
-                /\.[^/.]+$/,
-                `.${e.target.value}`
-              );
-              setFileName(newName);
+              const newFormat = e.target.value as 'mp4' | 'webm';
+              onFormatChange(newFormat);
+              const newName = fileName.replace(/\.[^/.]+$/, `.${newFormat}`);
+              onFileNameChange(newName);
             }}
             disabled={isOptionsDisabled}
           >
@@ -116,7 +141,7 @@ export const ConfigPanel = () => {
             id="resolution"
             value={!originalDim.isDimensionsDetected ? '1080p' : preset}
             onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-              setPreset(e.target.value as ResolutionPreset)
+              onPresetChange(e.target.value as ResolutionPreset)
             }
             disabled={isOptionsDisabled || !originalDim.isDimensionsDetected}
           >
@@ -146,7 +171,7 @@ export const ConfigPanel = () => {
               max="4"
               step="0.5"
               value={scale}
-              onChange={(e) => setScale(parseFloat(e.target.value))}
+              onChange={(e) => onScaleChange(parseFloat(e.target.value))}
               disabled={isOptionsDisabled}
             />
           </div>
@@ -159,7 +184,7 @@ export const ConfigPanel = () => {
               type="number"
               id="duration"
               value={duration}
-              onChange={(e) => setDuration(parseFloat(e.target.value))}
+              onChange={(e) => onDurationChange(parseFloat(e.target.value))}
               min={1}
               disabled={isOptionsDisabled}
             />
@@ -170,7 +195,7 @@ export const ConfigPanel = () => {
               type="number"
               id="hold"
               value={hold}
-              onChange={(e) => setHold(parseFloat(e.target.value))}
+              onChange={(e) => onHoldChange(parseFloat(e.target.value))}
               min={0}
               step={0.5}
               disabled={isOptionsDisabled}
@@ -182,7 +207,7 @@ export const ConfigPanel = () => {
               type="number"
               id="fps"
               value={fps}
-              onChange={(e) => setFps(parseInt(e.target.value))}
+              onChange={(e) => onFpsChange(parseInt(e.target.value))}
               min={1}
               max={60}
               disabled={isOptionsDisabled}
@@ -202,7 +227,7 @@ export const ConfigPanel = () => {
               type="checkbox"
               id="transparent"
               checked={isTransparent}
-              onChange={(e) => setIsTransparent(e.target.checked)}
+              onChange={(e) => onIsTransparentChange(e.target.checked)}
               disabled={isOptionsDisabled || !isTransparencySupported(format)}
             />
             Transparent Background
@@ -223,13 +248,13 @@ export const ConfigPanel = () => {
               type="color"
               id="bg-color"
               value={backgroundColor}
-              onChange={(e) => setBackgroundColor(e.target.value)}
+              onChange={(e) => onBackgroundColorChange(e.target.value)}
               disabled={isOptionsDisabled || isTransparent}
             />
             <input
               type="text"
               value={backgroundColor}
-              onChange={(e) => setBackgroundColor(e.target.value)}
+              onChange={(e) => onBackgroundColorChange(e.target.value)}
               disabled={isOptionsDisabled || isTransparent}
               className="color-text-input"
               aria-label="Background color hex code"
@@ -242,7 +267,9 @@ export const ConfigPanel = () => {
             id="capture-method"
             value={captureMethod}
             onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-              setCaptureMethod(e.target.value as 'optimal' | 'high-fidelity')
+              onCaptureMethodChange(
+                e.target.value as 'optimal' | 'high-fidelity'
+              )
             }
             disabled={isOptionsDisabled}
           >
@@ -255,7 +282,7 @@ export const ConfigPanel = () => {
       <div className="render-actions">
         <Button
           variant="primary"
-          onClick={handleStartRender}
+          onClick={onStartRender}
           disabled={!svgContent || isRenderingOrSuccess}
         >
           {state.isRendering
