@@ -39,13 +39,51 @@ const MockConsumer = ({
   return null;
 };
 
+const MonitorPanelContainer = () => {
+  const {
+    svgContent,
+    renderedUrl,
+    state,
+    fileName,
+    fileSize,
+    downloadResult,
+    setRenderedUrl,
+    isTransparent,
+    originalDim,
+    targetDim,
+    rendererRef,
+    backgroundColor,
+    cancel,
+    clearError,
+  } = useContext(StudioContext)!;
+
+  return (
+    <MonitorPanel
+      svgContent={svgContent}
+      renderedUrl={renderedUrl}
+      state={state}
+      fileName={fileName}
+      fileSize={fileSize}
+      onDownload={downloadResult}
+      onBack={() => setRenderedUrl(null)}
+      originalDim={originalDim}
+      targetDim={targetDim}
+      rendererRef={rendererRef}
+      backgroundColor={backgroundColor}
+      isTransparent={isTransparent}
+      onCancel={cancel}
+      onClearError={clearError}
+    />
+  );
+};
+
 test('StudioProvider triggers preview on SvgRenderer when svgContent is set', async () => {
   const rendererRef = { current: null };
 
   let studioCtx: StudioContextType | undefined;
   render(
     <StudioProvider rendererRef={rendererRef}>
-      <MonitorPanel />
+      <MonitorPanelContainer />
       <MockConsumer onReady={(ctx) => (studioCtx = ctx)} />
     </StudioProvider>
   );
@@ -71,7 +109,7 @@ test('StudioProvider updates preview when backgroundColor changes', async () => 
   let studioCtx: StudioContextType | undefined;
   render(
     <StudioProvider rendererRef={rendererRef}>
-      <MonitorPanel />
+      <MonitorPanelContainer />
       <MockConsumer onReady={(ctx) => (studioCtx = ctx)} />
     </StudioProvider>
   );

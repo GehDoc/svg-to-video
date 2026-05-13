@@ -1,43 +1,43 @@
-import { StudioContext } from '../context/StudioContext';
-import { useContext } from 'react';
+import { type RendererHandle } from './SvgRenderer';
 import { SuccessView } from './SuccessView';
 import { RenderingView } from './RenderingView';
 import { LandingView } from './LandingView';
+import { type RenderState } from '../hooks/useRenderer';
 import './MonitorPanel.scss';
 
-export const MonitorPanel = () => {
-  const {
-    svgContent,
-    renderedUrl,
-    state,
-    fileName,
-    fileSize,
-    downloadResult,
-    setRenderedUrl,
-    format,
-    isTransparent,
-    originalDim,
-    targetDim,
-    rendererRef,
-    backgroundColor,
-    cancel,
-    clearError,
-  } = useContext(StudioContext)!;
+interface MonitorPanelProps {
+  svgContent: string | null;
+  renderedUrl: string | null;
+  state: RenderState;
+  fileName: string;
+  fileSize: string | null;
+  onDownload: () => void;
+  onBack: () => void;
+  originalDim: { width: number; height: number };
+  targetDim: { width: number; height: number };
+  rendererRef: React.RefObject<RendererHandle | null>;
+  backgroundColor: string;
+  isTransparent: boolean;
+  onCancel: () => void;
+  onClearError: () => void;
+}
 
-  const handleDownload = () => {
-    if (typeof umami !== 'undefined') {
-      umami.track('download-result', { format, isTransparent });
-    }
-    downloadResult();
-  };
-
-  const handleBack = () => {
-    if (typeof umami !== 'undefined') {
-      umami.track('back-to-studio', { format, isTransparent });
-    }
-    setRenderedUrl(null);
-  };
-
+export const MonitorPanel = ({
+  svgContent,
+  renderedUrl,
+  state,
+  fileName,
+  fileSize,
+  onDownload,
+  onBack,
+  originalDim,
+  targetDim,
+  rendererRef,
+  backgroundColor,
+  isTransparent,
+  onCancel,
+  onClearError,
+}: MonitorPanelProps) => {
   return (
     <section className="monitor-panel">
       {renderedUrl ? (
@@ -45,8 +45,8 @@ export const MonitorPanel = () => {
           fileName={fileName}
           fileSize={fileSize}
           renderedUrl={renderedUrl}
-          onDownload={handleDownload}
-          onBack={handleBack}
+          onDownload={onDownload}
+          onBack={onBack}
         />
       ) : svgContent || state.isRendering ? (
         <RenderingView
@@ -57,8 +57,8 @@ export const MonitorPanel = () => {
           rendererRef={rendererRef}
           backgroundColor={backgroundColor}
           isTransparent={isTransparent}
-          onCancel={cancel}
-          onClearError={clearError}
+          onCancel={onCancel}
+          onClearError={onClearError}
         />
       ) : (
         <LandingView />

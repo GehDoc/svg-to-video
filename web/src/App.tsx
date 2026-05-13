@@ -36,8 +36,29 @@ const StudioLayout = () => {
     state,
     handleStartRender,
     originalDim,
+    targetDim,
     renderedUrl,
+    setRenderedUrl,
+    fileSize,
+    downloadResult,
+    cancel,
+    clearError,
+    rendererRef,
   } = useContext(StudioContext)!;
+
+  const handleDownload = () => {
+    if (typeof umami !== 'undefined') {
+      umami.track('download-result', { format, isTransparent });
+    }
+    downloadResult();
+  };
+
+  const handleBack = () => {
+    if (typeof umami !== 'undefined') {
+      umami.track('back-to-studio', { format, isTransparent });
+    }
+    setRenderedUrl(null);
+  };
 
   return (
     <div className="app-container">
@@ -76,7 +97,22 @@ const StudioLayout = () => {
           originalDim={originalDim}
           renderedUrl={renderedUrl}
         />
-        <MonitorPanel />
+        <MonitorPanel
+          svgContent={svgContent}
+          renderedUrl={renderedUrl}
+          state={state}
+          fileName={fileName}
+          fileSize={fileSize}
+          onDownload={handleDownload}
+          onBack={handleBack}
+          originalDim={originalDim}
+          targetDim={targetDim}
+          rendererRef={rendererRef}
+          backgroundColor={backgroundColor}
+          isTransparent={isTransparent}
+          onCancel={cancel}
+          onClearError={clearError}
+        />
       </main>
     </div>
   );

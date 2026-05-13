@@ -48,9 +48,14 @@ The refactoring will be performed component by component. For each component:
   - [x] Update `ConfigPanel.test.tsx` and stories.
   - [x] Verify tests and commit/push.
 
-- [ ] **Refactoring: Header** (if applicable)
-  - [ ] Audit `Header.tsx` for context usage.
-  - [ ] Refactor if necessary.
+- [x] **Refactoring: Header** (if applicable)
+  - [x] Audit `Header.tsx` for context usage.
+  - [x] Refactor if necessary (Audited: No context usage).
+
+- [ ] **Refactoring: MonitorPanel**
+  - [x] Refactor `MonitorPanel` to use props.
+  - [x] Update `StudioLayout` integration.
+  - [x] Verify tests and commit/push.
 
 - [ ] **Phase 2: StudioContext Minimization**
   - [ ] Audit remaining usage in `StudioProvider`.
