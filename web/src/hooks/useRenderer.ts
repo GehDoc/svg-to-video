@@ -2,6 +2,8 @@ import { useState, useCallback, useRef } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
 import * as Mediabunny from 'mediabunny';
 
+import { getFormatById } from '../utils/discoverFormats';
+
 export type ResolutionPreset = 'original' | '720p' | '1080p';
 export type CaptureMethod = 'optimal' | 'high-fidelity';
 
@@ -11,7 +13,7 @@ export interface RenderSettings {
   preset: ResolutionPreset;
   scale: number;
   backgroundColor: string;
-  format: 'mp4' | 'webm';
+  format: string;
   isTransparent: boolean;
   captureMethod: CaptureMethod;
   hold: number;
@@ -90,12 +92,12 @@ export const calculateFinalDimensions = (
 export const getBestCodec = async (
   width: number,
   height: number,
-  format: 'mp4' | 'webm'
+  formatId: string
 ) => {
-  const outputFormat =
-    format === 'webm'
-      ? new Mediabunny.WebMOutputFormat()
-      : new Mediabunny.Mp4OutputFormat();
+  const format = getFormatById(formatId);
+  if (!format) throw new Error(`Unknown format: ${formatId}`);
+
+  const outputFormat = new format.OutputFormatClass();
   return await Mediabunny.getFirstEncodableVideoCodec(
     outputFormat.getSupportedVideoCodecs(),
     {
@@ -121,6 +123,9 @@ export const useRenderer = (
     async (svgContent: string, settings: RenderSettings) => {
       if (!rendererRef.current) return;
 
+      const formatInfo = getFormatById(settings.format);
+      if (!formatInfo) throw new Error(`Unknown format: ${settings.format}`);
+
       cancelRef.current = false;
       settingsRef.current = settings;
       setState({ isRendering: true, progress: 0, status: 'Initializing...' });
@@ -144,10 +149,7 @@ export const useRenderer = (
         await rendererRef.current.loadSvg(svgContent, width, height);
 
         const target = new Mediabunny.BufferTarget();
-        const outputFormat =
-          settings.format === 'webm'
-            ? new Mediabunny.WebMOutputFormat()
-            : new Mediabunny.Mp4OutputFormat();
+        const outputFormat = new formatInfo.OutputFormatClass();
         const output = new Mediabunny.Output({
           format: outputFormat,
           target,
@@ -187,6 +189,7 @@ export const useRenderer = (
         output.addVideoTrack(source);
 
         await output.start();
+        // ... (rest of rendering logic remains the same)
 
         const totalAnimationFrames = Math.ceil(
           settings.duration * settings.fps
@@ -293,7 +296,7 @@ export const useRenderer = (
         const resultBuffer = target.buffer;
         if (!resultBuffer) throw new Error('Output buffer is empty');
         const blob = new Blob([resultBuffer], {
-          type: settings.format === 'webm' ? 'video/webm' : 'video/mp4',
+          type: formatInfo.mimeType,
         });
         const url = URL.createObjectURL(blob);
         setState({ isRendering: false, progress: 100, status: 'Done!' });

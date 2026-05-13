@@ -1,6 +1,7 @@
-import { type ChangeEvent } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import type { ResolutionPreset, RenderState } from '../hooks/useRenderer';
 import { isTransparencySupported } from '../utils/isTransparencySupported';
+import { discoverFormats, type VideoFormat } from '../utils/discoverFormats';
 import { Dropzone } from './Dropzone';
 import { Button } from './Button/Button';
 import './ConfigPanel.scss';
@@ -22,8 +23,8 @@ interface ConfigPanelProps {
   onScaleChange: (s: number) => void;
   backgroundColor: string;
   onBackgroundColorChange: (c: string) => void;
-  format: 'mp4' | 'webm';
-  onFormatChange: (f: 'mp4' | 'webm') => void;
+  format: string;
+  onFormatChange: (f: string) => void;
   isTransparent: boolean;
   onIsTransparentChange: (t: boolean) => void;
   captureMethod: 'optimal' | 'high-fidelity';
@@ -66,6 +67,12 @@ export const ConfigPanel = ({
   originalDim,
   renderedUrl,
 }: ConfigPanelProps) => {
+  const [formats, setFormats] = useState<VideoFormat[]>([]);
+
+  useEffect(() => {
+    discoverFormats().then(setFormats);
+  }, []);
+
   const isRenderingOrSuccess = state.isRendering || !!renderedUrl;
   const isOptionsDisabled = isRenderingOrSuccess || !svgContent;
 
@@ -123,15 +130,24 @@ export const ConfigPanel = ({
             id="format"
             value={format}
             onChange={(e) => {
-              const newFormat = e.target.value as 'mp4' | 'webm';
-              onFormatChange(newFormat);
-              const newName = fileName.replace(/\.[^/.]+$/, `.${newFormat}`);
-              onFileNameChange(newName);
+              const newFormatId = e.target.value;
+              const formatInfo = formats.find((f) => f.id === newFormatId);
+              onFormatChange(newFormatId);
+              if (formatInfo) {
+                const newName = fileName.replace(
+                  /\.[^/.]+$/,
+                  formatInfo.extension
+                );
+                onFileNameChange(newName);
+              }
             }}
-            disabled={isOptionsDisabled}
+            disabled={isOptionsDisabled || formats.length === 0}
           >
-            <option value="mp4">MP4</option>
-            <option value="webm">WebM</option>
+            {formats.map((f) => (
+              <option key={f.id} value={f.id}>
+                {f.label}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -237,7 +253,8 @@ export const ConfigPanel = ({
               className="hint-text hint-text--info"
               aria-disabled={isOptionsDisabled}
             >
-              Transparency only supported for WebM
+              Transparency only supported for formats with alpha channel
+              support.
             </p>
           )}
         </div>
