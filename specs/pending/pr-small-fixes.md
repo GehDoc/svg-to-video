@@ -29,11 +29,11 @@ Improve application responsiveness by optimizing the `SvgRenderer` lifecycle and
   - [ ] Create `docs/ANALYTICS.md` to document all Umami events and properties.
   - [ ] Link `docs/ANALYTICS.md` in `DEVELOPER.md`.
 - [ ] **Modernization & Cleanup**
-  - [ ] Convert root `package.json` to `"type": "module"`.
-  - [ ] Refactor `src/index.js` and `shared/animation-engine.js` to pure ESM.
-  - [ ] Fix `index.html` by adding `type="module"` to the `coi-serviceworker.js` script tag.
+  - [x] Fix `index.html` by adding `type="module"` to the `coi-serviceworker.js` script tag.
+  - [ ] Convert root `package.json` to `"type": "module"`. [Skipped: Moved to GitHub Issue #46]
+  - [ ] Refactor `src/index.js` and `shared/animation-engine.js` to pure ESM. [Skipped: Moved to GitHub Issue #46]
 - [ ] **UI Refinement**
-  - [ ] Verify "Back to Studio" transition speed improvement.
+  - [x] Verify "Back to Studio" transition speed improvement.
 
 ## 🧪 Verification Plan
 
