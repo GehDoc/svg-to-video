@@ -176,7 +176,7 @@ The Web Studio and Storybook Gallery are configured to deploy automatically to *
 
 ### 📊 Analytics (Umami)
 
-The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tracking.
+The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tracking. Detailed information about tracked events can be found in [docs/ANALYTICS.md](./docs/ANALYTICS.md).
 
 > [!IMPORTANT]
 > **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
@@ -187,7 +187,6 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
 
 - **Implementation**: The tracker is self-hosted at `web/public/assets/3rd-party/analytics.js` (to bypass ad-blockers and COEP issues) and injected via `web/index.html` with pre-flight checks.
 - **Configuration**: The `data-website-id` and `data-domains` are hardcoded in `web/index.html`. For local forks, update these values to point to your own Umami instance.
-- **Events**: We track the conversion lifecycle (`conversion-start`, `conversion-success`, `conversion-failed`) and user actions (`download-mp4`, `back-to-studio`).
 - **Types**: We use `@types/umami` for full TypeScript support. Always use `typeof umami !== 'undefined'` to safely trigger events programmatically.
 
 ## 🐳 Docker & Hardening
