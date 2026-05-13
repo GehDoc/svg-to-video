@@ -31,10 +31,10 @@ The refactoring will be performed component by component. For each component:
   - [ ] Initialize PR for the feature branch.
 
 - [ ] **Refactoring: SuccessView**
-  - [ ] Refactor `SuccessView` to use props.
-  - [ ] Update `MonitorPanel` integration.
-  - [ ] Update `SuccessView.test.tsx` and stories.
-  - [ ] Verify tests and commit/push.
+  - [x] Refactor `SuccessView` to use props.
+  - [x] Update `MonitorPanel` integration.
+  - [x] Update `SuccessView.test.tsx` and stories.
+  - [x] Verify tests and commit/push.
 
 - [ ] **Refactoring: RenderingView**
   - [ ] Refactor `RenderingView` to use props.
