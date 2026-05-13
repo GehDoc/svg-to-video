@@ -52,12 +52,8 @@ const SvgRenderer = memo(
         height: height || 0,
       });
 
-      console.log('SvgRenderer');
-
       // Initialize iframe with blob to ensure COOP/COEP header inheritance
       useEffect(() => {
-        console.log('SvgRenderer initialize');
-
         const parentOrigin = window.location.origin;
         const rendererScript = `(${getRendererScript.toString()})(window.seekAnimations, "${parentOrigin}");`;
         const html = rendererTemplate.replace(

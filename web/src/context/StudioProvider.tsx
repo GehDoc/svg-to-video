@@ -35,8 +35,6 @@ export const StudioProvider = ({
 
   const { render, cancel, clearError, state } = useRenderer(rendererRef);
 
-  console.log('render');
-
   const originalDim = useMemo(() => {
     if (!svgContent)
       return { width: 0, height: 0, isDimensionsDetected: false };
