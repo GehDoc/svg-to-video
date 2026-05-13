@@ -159,9 +159,17 @@ npm run test:storybook
 
 _Note: Avoid using `jest-axe` in JSDOM unit tests, as it cannot calculate computed styles and will miss contrast violations._
 
-## 🐳 Docker & Hardening
+### 🐳 Docker & Hardening
 
 The project includes a hardened Dockerfile for both development and production use.
+
+### ⚙️ Continuous Integration (CI)
+
+The project uses GitHub Actions for automated verification. Key pipeline steps include:
+
+- **Build Verification**: Every PR is built in a production-like environment (`npm run build -w web`) to ensure asset resolution stability.
+- **Fast Checks**: Linting, formatting, and type-checking via `npm run check:fast`.
+- **E2E/Visual Tests**: Full CLI and Web Studio test suites (including Storybook interactions and pixel-matching visual regressions).
 
 ## 🌐 Web Studio Deployment
 
