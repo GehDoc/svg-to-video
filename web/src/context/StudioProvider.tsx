@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
 import { StudioContext } from './StudioContext';
 import {
@@ -35,27 +35,31 @@ export const StudioProvider = ({
 
   const { render, cancel, clearError, state } = useRenderer(rendererRef);
 
-  let originalDim = { width: 0, height: 0, isDimensionsDetected: false };
-  let targetDim = { width: 0, height: 0 };
-  if (svgContent) {
+  console.log('render');
+
+  const originalDim = useMemo(() => {
+    if (!svgContent)
+      return { width: 0, height: 0, isDimensionsDetected: false };
     try {
       const result = parseSvgDimensions(svgContent);
-      originalDim = {
+      return {
         width: result.width,
         height: result.height,
         isDimensionsDetected: result.isDimensionsDetected,
       };
-      targetDim = calculateFinalDimensions(
-        originalDim.width,
-        originalDim.height,
-        { preset, scale }
-      );
     } catch {
-      /* ignore */
+      return { width: 0, height: 0, isDimensionsDetected: false };
     }
-  }
+  }, [svgContent]);
 
-  const handleStartRender = async () => {
+  const targetDim = useMemo(() => {
+    return calculateFinalDimensions(originalDim.width, originalDim.height, {
+      preset,
+      scale,
+    });
+  }, [originalDim, preset, scale]);
+
+  const handleStartRender = useCallback(async () => {
     if (!svgContent) return;
     setRenderedUrl(null);
     setFileSize(null);
@@ -82,58 +86,96 @@ export const StudioProvider = ({
     } catch {
       /* error handled by state */
     }
-  };
+  }, [
+    svgContent,
+    duration,
+    fps,
+    preset,
+    scale,
+    backgroundColor,
+    format,
+    isTransparent,
+    captureMethod,
+    hold,
+    render,
+  ]);
 
-  const downloadResult = () => {
+  const downloadResult = useCallback(() => {
     if (renderedUrl) {
       const a = document.createElement('a');
       a.href = renderedUrl;
       a.download = fileName;
       a.click();
     }
-  };
+  }, [renderedUrl, fileName]);
+
+  const contextValue = useMemo(
+    () => ({
+      svgContent,
+      setSvgContent,
+      fileName,
+      setFileName,
+      duration,
+      setDuration,
+      hold,
+      setHold,
+      fps,
+      setFps,
+      preset,
+      setPreset,
+      scale,
+      setScale,
+      backgroundColor,
+      setBackgroundColor,
+      format,
+      setFormat,
+      isTransparent,
+      setIsTransparent,
+      captureMethod,
+      setCaptureMethod,
+      isDragging,
+      setIsDragging,
+      renderedUrl,
+      setRenderedUrl,
+      fileSize,
+      setFileSize,
+      originalDim,
+      targetDim,
+      state,
+      handleStartRender,
+      cancel,
+      clearError,
+      downloadResult,
+      rendererRef,
+    }),
+    [
+      svgContent,
+      fileName,
+      duration,
+      hold,
+      fps,
+      preset,
+      scale,
+      backgroundColor,
+      format,
+      isTransparent,
+      captureMethod,
+      isDragging,
+      renderedUrl,
+      fileSize,
+      originalDim,
+      targetDim,
+      state,
+      handleStartRender,
+      cancel,
+      clearError,
+      downloadResult,
+      rendererRef,
+    ]
+  );
 
   return (
-    <StudioContext.Provider
-      value={{
-        svgContent,
-        setSvgContent,
-        fileName,
-        setFileName,
-        duration,
-        setDuration,
-        hold,
-        setHold,
-        fps,
-        setFps,
-        preset,
-        setPreset,
-        scale,
-        setScale,
-        backgroundColor,
-        setBackgroundColor,
-        format,
-        setFormat,
-        isTransparent,
-        setIsTransparent,
-        captureMethod,
-        setCaptureMethod,
-        isDragging,
-        setIsDragging,
-        renderedUrl,
-        setRenderedUrl,
-        fileSize,
-        setFileSize,
-        originalDim,
-        targetDim,
-        state,
-        handleStartRender,
-        cancel,
-        clearError,
-        downloadResult,
-        rendererRef,
-      }}
-    >
+    <StudioContext.Provider value={contextValue}>
       {children}
     </StudioContext.Provider>
   );
