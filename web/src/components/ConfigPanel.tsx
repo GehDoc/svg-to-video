@@ -1,9 +1,14 @@
-import { useEffect, useState, type ChangeEvent } from 'react';
+import { useEffect, useState, type ChangeEvent, useCallback } from 'react';
 import type { ResolutionPreset, RenderState } from '../hooks/useRenderer';
 import { isTransparencySupported } from '../utils/isTransparencySupported';
-import { discoverFormats, type VideoFormat } from '../utils/discoverFormats';
+import {
+  discoverFormats,
+  type VideoFormat,
+  getFormatById,
+} from '../utils/discoverFormats';
 import { Dropzone } from './Dropzone';
 import { Button } from './Button/Button';
+import { FormatSelector } from './FormatSelector/FormatSelector';
 import './ConfigPanel.scss';
 
 interface ConfigPanelProps {
@@ -102,6 +107,21 @@ export const ConfigPanel = ({
     }
   };
 
+  const handleFormatChange = useCallback(
+    (newFormatId: string) => {
+      const formatInfo = getFormatById(newFormatId);
+      onFormatChange(newFormatId);
+      if (formatInfo) {
+        const newName = fileName.replace(/\.[^/.]+$/, formatInfo.extension);
+        onFileNameChange(newName);
+        if (!formatInfo.supportsAlpha) {
+          onIsTransparentChange(false);
+        }
+      }
+    },
+    [fileName, onFileNameChange, onFormatChange, onIsTransparentChange]
+  );
+
   return (
     <aside className="config-panel" tabIndex={0}>
       <section
@@ -124,32 +144,12 @@ export const ConfigPanel = ({
         aria-disabled={isOptionsDisabled}
       >
         <h2 aria-disabled={isOptionsDisabled}>2. Format</h2>
-        <div className="input-group">
-          <label htmlFor="format">Output Format</label>
-          <select
-            id="format"
-            value={format}
-            onChange={(e) => {
-              const newFormatId = e.target.value;
-              const formatInfo = formats.find((f) => f.id === newFormatId);
-              onFormatChange(newFormatId);
-              if (formatInfo) {
-                const newName = fileName.replace(
-                  /\.[^/.]+$/,
-                  formatInfo.extension
-                );
-                onFileNameChange(newName);
-              }
-            }}
-            disabled={isOptionsDisabled || formats.length === 0}
-          >
-            {formats.map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FormatSelector
+          formats={formats}
+          value={format}
+          onChange={handleFormatChange}
+          disabled={isOptionsDisabled}
+        />
 
         <div className="input-group">
           <label htmlFor="resolution">Resolution</label>
