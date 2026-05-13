@@ -5,25 +5,23 @@ import '@testing-library/jest-dom/vitest';
 import { StudioProvider } from './StudioProvider';
 import { StudioContext, type StudioContextType } from './StudioContext';
 import { useContext, useEffect } from 'react';
-import { RenderingView } from '../components/RenderingView';
+import { MonitorPanel } from '../components/MonitorPanel';
 
 vi.mock('../components/SvgRenderer', () => ({
-  default: vi.fn(
-    ({
-      svgContent,
-      width,
-      height,
-      backgroundColor,
-    }: {
-      svgContent: string;
-      width: number;
-      height: number;
-      backgroundColor: string;
-    }) => (
-      <div data-testid="mock-svg-renderer">
-        {svgContent} {width}x{height} {backgroundColor}
-      </div>
-    )
+  default: ({
+    svgContent,
+    width,
+    height,
+    backgroundColor,
+  }: {
+    svgContent: string;
+    width: number;
+    height: number;
+    backgroundColor: string;
+  }) => (
+    <div data-testid="mock-svg-renderer">
+      {svgContent} {width}x{height} {backgroundColor}
+    </div>
   ),
 }));
 
@@ -47,7 +45,7 @@ test('StudioProvider triggers preview on SvgRenderer when svgContent is set', as
   let studioCtx: StudioContextType | undefined;
   render(
     <StudioProvider rendererRef={rendererRef}>
-      <RenderingView />
+      <MonitorPanel />
       <MockConsumer onReady={(ctx) => (studioCtx = ctx)} />
     </StudioProvider>
   );
@@ -73,7 +71,7 @@ test('StudioProvider updates preview when backgroundColor changes', async () => 
   let studioCtx: StudioContextType | undefined;
   render(
     <StudioProvider rendererRef={rendererRef}>
-      <RenderingView />
+      <MonitorPanel />
       <MockConsumer onReady={(ctx) => (studioCtx = ctx)} />
     </StudioProvider>
   );

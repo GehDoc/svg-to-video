@@ -37,10 +37,10 @@ The refactoring will be performed component by component. For each component:
   - [x] Verify tests and commit/push.
 
 - [ ] **Refactoring: RenderingView**
-  - [ ] Refactor `RenderingView` to use props.
-  - [ ] Update `MonitorPanel` integration.
-  - [ ] Update `RenderingView.test.tsx` and stories.
-  - [ ] Verify tests and commit/push.
+  - [x] Refactor `RenderingView` to use props.
+  - [x] Update `MonitorPanel` integration.
+  - [x] Update `RenderingView.test.tsx` and stories.
+  - [x] Verify tests and commit/push.
 
 - [ ] **Refactoring: ConfigPanel**
   - [ ] Refactor `ConfigPanel` (this is a large component, may need sub-splitting).

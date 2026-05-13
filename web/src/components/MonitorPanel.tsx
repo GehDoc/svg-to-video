@@ -16,6 +16,12 @@ export const MonitorPanel = () => {
     setRenderedUrl,
     format,
     isTransparent,
+    originalDim,
+    targetDim,
+    rendererRef,
+    backgroundColor,
+    cancel,
+    clearError,
   } = useContext(StudioContext)!;
 
   const handleDownload = () => {
@@ -43,7 +49,17 @@ export const MonitorPanel = () => {
           onBack={handleBack}
         />
       ) : svgContent || state.isRendering ? (
-        <RenderingView />
+        <RenderingView
+          state={state}
+          svgContent={svgContent}
+          originalDim={originalDim}
+          targetDim={targetDim}
+          rendererRef={rendererRef}
+          backgroundColor={backgroundColor}
+          isTransparent={isTransparent}
+          onCancel={cancel}
+          onClearError={clearError}
+        />
       ) : (
         <LandingView />
       )}
