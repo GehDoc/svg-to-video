@@ -1,5 +1,3 @@
-import DOMPurify from 'dompurify';
-
 /**
  * This is the isolated renderer script that will run inside the iframe.
  * It is injected by SvgRenderer via Blob.
@@ -80,10 +78,7 @@ export function getRendererScript(seekAnimations, parentOrigin) {
 
       isReady = false;
       const { svgContent, width, height, timeMs } = payload;
-      const sanitizedSvgContent = DOMPurify.sanitize(svgContent, {
-        USE_PROFILES: { svg: true, svgFilters: true },
-      });
-      svgContainer.innerHTML = sanitizedSvgContent;
+      svgContainer.innerHTML = svgContent;
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';
       svgContainer.style.backgroundColor = 'transparent';
