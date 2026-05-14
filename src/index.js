@@ -6,6 +6,7 @@ import { Command } from 'commander';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { seekAnimations } from '../shared/animation-engine.js';
+import { validateOptions } from './utils/validateOptions.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,6 +49,23 @@ async function main() {
       'overwrite existing output files without asking',
       false
     )
+    .option(
+      '--resolution <preset>',
+      'resolution preset: 720p, 1080p, or original',
+      'original'
+    )
+    .option(
+      '--scale <number>',
+      'scale factor for original resolution (1-4)',
+      (v) => parseFloat(v),
+      1
+    )
+    .option('--transparent', 'render with a transparent background', false)
+    .option(
+      '--bg-color <hex>',
+      'background color for the video (e.g., #FFFFFF)',
+      '#ffffff'
+    )
     .action(run);
 
   program.parse(process.argv);
@@ -59,16 +77,25 @@ async function main() {
  * @param {number} duration
  * @param {number} fps
  * @param {string} outDir
- * @param {{ keepFrames: boolean; hold: number; force: boolean }} options
+ * @param {{ keepFrames: boolean; hold: number; force: boolean; resolution: string; scale: number; transparent: boolean; bgColor: string }} options
  */
 async function run(svgPath, duration, fps, outDir, options) {
   const inputBasename = path.basename(svgPath, path.extname(svgPath));
-  const outputFileName = `${inputBasename}.mp4`;
+  const outputFileName = `${inputBasename}${options.transparent ? '.webm' : '.mp4'}`;
   const outputFullPath = path.join(outDir, outputFileName);
 
   if (fs.existsSync(outputFullPath) && !options.force) {
     console.error(`❌ Error: Output file "${outputFullPath}" already exists.`);
     console.error(`   Use the --force (-f) flag to overwrite it.`);
+    process.exit(1);
+  }
+
+  try {
+    validateOptions(options);
+  } catch (error) {
+    console.error(
+      `❌ Error: ${error instanceof Error ? error.message : error}`
+    );
     process.exit(1);
   }
 
@@ -84,8 +111,9 @@ async function run(svgPath, duration, fps, outDir, options) {
   console.log('🚀 Starting conversion:');
   console.log(`  Source:     ${svgPath}`);
   console.log(`  Target:     ${path.join(outDir, outputFileName)}`);
+
   console.log(
-    `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s)`
+    `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'})`
   );
   if (puppeteerArgs.length > 0) {
     console.log(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
@@ -95,8 +123,26 @@ async function run(svgPath, duration, fps, outDir, options) {
 
   fs.mkdirSync(outDir, { recursive: true });
 
-  await createFrames(svg, fps, totalFrames, padWidth, outDir, puppeteerArgs);
-  convertToMP4(outputFileName, fps, padWidth, options.hold, outDir);
+  await createFrames(
+    svg,
+    fps,
+    totalFrames,
+    padWidth,
+    outDir,
+    puppeteerArgs,
+    options.resolution,
+    options.scale,
+    options.transparent,
+    options.bgColor
+  );
+  convertToMP4(
+    outputFileName,
+    fps,
+    padWidth,
+    options.hold,
+    outDir,
+    options.transparent
+  );
 
   if (!options.keepFrames) {
     cleanupFrames(totalFrames, padWidth, outDir);
@@ -113,6 +159,10 @@ async function run(svgPath, duration, fps, outDir, options) {
  * @param {number} padWidth
  * @param {string} outDir
  * @param {string[]} puppeteerArgs
+ * @param {string} resolution
+ * @param {number} scale
+ * @param {boolean} transparent
+ * @param {string} bgColor
  */
 async function createFrames(
   svg,
@@ -120,7 +170,11 @@ async function createFrames(
   totalFrames,
   padWidth,
   outDir,
-  puppeteerArgs
+  puppeteerArgs,
+  resolution,
+  scale,
+  transparent,
+  bgColor
 ) {
   // advance every animation to the desired timestamp. we use the Web
   // Animations API (`document.getAnimations()`) and set `currentTime` on
@@ -132,17 +186,94 @@ async function createFrames(
   });
 
   const page = await browser.newPage();
+
   await page.goto('about:blank');
   await page.setContent(svg);
 
-  await page.evaluate(seekAnimations, 0); // ensure all animations are at the start
+  // Set resolution
+  let width = 1920;
+  let height = 1080;
+  if (resolution === '720p') {
+    width = 1280;
+    height = 720;
+  } else if (resolution === '1080p') {
+    width = 1920;
+    height = 1080;
+  } else if (resolution === 'original') {
+    // We need the original dimensions of the SVG.
+    // For now, let's just set the viewport to a safe default that fits everything
+    // and let the screenshotting handle the actual svg element size if possible.
+    // Or we should extract the viewbox/width/height attribute from the SVG string.
+    const dimensions = await page.evaluate(() => {
+      const svg = document.querySelector('svg');
+      if (!svg) return { width: 1920, height: 1080 };
+      return {
+        width: svg.width.baseVal.value,
+        height: svg.height.baseVal.value,
+      };
+    });
+    width = dimensions.width * scale;
+    height = dimensions.height * scale;
+  }
+
+  if (resolution !== 'original') {
+    await page.setViewport({ width, height });
+    const { width: svgW, height: svgH } = await page.evaluate(() => {
+      const svg = document.querySelector('svg');
+      if (!svg) return { width: 1920, height: 1080 };
+      return {
+        width: svg.width.baseVal.value,
+        height: svg.height.baseVal.value,
+      };
+    });
+    const scaleX = width / svgW;
+    const scaleY = height / svgH;
+    await page.addStyleTag({
+      content: `
+        svg {
+          transform: scale(${scaleX}, ${scaleY});
+          transform-origin: top left;
+          width: ${svgW}px;
+          height: ${svgH}px;
+        }
+      `,
+    });
+  } else {
+    // For original size, we need to inject the scale via CSS transform
+    await page.setViewport({ width, height });
+    await page.addStyleTag({
+      content: `
+            svg {
+              transform: scale(${scale});
+              transform-origin: top left;
+            }
+          `,
+    });
+  }
+
+  if (transparent) {
+    await page.addStyleTag({
+      content: `
+        svg {
+          background: transparent !important;
+        }
+      `,
+    });
+  } else if (bgColor) {
+    await page.addStyleTag({
+      content: `
+        svg {
+          background-color: ${bgColor} !important;
+        }
+      `,
+    });
+  }
 
   const renderSettings = {
     type: frameFileExtension,
-    omitBackground: false,
+    omitBackground: transparent,
     path: '',
   };
-
   console.log('🎨 Creating frames...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
     const animationTimeInSeconds = (frame - 1) / fps; // seconds from start
@@ -178,8 +309,16 @@ async function createFrames(
  * @param {number} padWidth
  * @param {number} hold
  * @param {string} outDir
+ * @param {boolean} transparent
  */
-function convertToMP4(outputFileName, fps, padWidth, hold, outDir) {
+function convertToMP4(
+  outputFileName,
+  fps,
+  padWidth,
+  hold,
+  outDir,
+  transparent
+) {
   console.log('📦 Encoding video with FFmpeg...');
 
   const filters = [];
@@ -206,19 +345,32 @@ function convertToMP4(outputFileName, fps, padWidth, hold, outDir) {
   if (filters.length) {
     args.push('-vf', filters.join(','));
   }
-  args.push(
-    '-c:v',
-    'libx264',
-    '-crf',
-    '20',
-    '-preset',
-    'slow',
-    '-pix_fmt',
-    'yuv420p',
-    '-movflags',
-    '+faststart',
-    outputFullPath
-  );
+
+  if (transparent) {
+    args.push(
+      '-c:v',
+      'libvpx-vp9',
+      '-pix_fmt',
+      'yuva420p',
+      '-f',
+      'webm',
+      outputFullPath
+    );
+  } else {
+    args.push(
+      '-c:v',
+      'libx264',
+      '-crf',
+      '20',
+      '-preset',
+      'slow',
+      '-pix_fmt',
+      'yuv420p',
+      '-movflags',
+      '+faststart',
+      outputFullPath
+    );
+  }
 
   try {
     const output = child_process.execFileSync('ffmpeg', args, {

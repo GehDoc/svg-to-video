@@ -84,11 +84,15 @@ node src/index.js <svgPath> <duration> <fps> <outDir> [options]
 
 ### Options
 
-| Option                 | Description                                                                        |
-| ---------------------- | ---------------------------------------------------------------------------------- |
-| `-h, --hold <seconds>` | Number of seconds to freeze the last frame at the end of the video. (Default: `0`) |
-| `-f, --force`          | Overwrite the output video if it already exists.                                   |
-| `--keep-frames`        | Prevents the automatic deletion of temporary `.png` frames after video creation.   |
+| Option                  | Description                                                                                          |
+| ----------------------- | ---------------------------------------------------------------------------------------------------- |
+| `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                   |
+| `-f, --force`           | Overwrite the output video if it already exists.                                                     |
+| `--resolution <preset>` | Resolution preset: `720p`, `1080p`, or `original`. (Default: `original`)                             |
+| `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`. |
+| `--transparent`         | Render with a transparent background. (Cannot be used with `--bg-color`)                             |
+| `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`) - (Cannot be used with `--transparent`)         |
+| `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                     |
 
 ### Environment Variables
 
