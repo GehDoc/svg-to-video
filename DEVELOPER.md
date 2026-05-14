@@ -257,7 +257,8 @@ To maintain consistent, high-quality release notes, all agents and contributors 
 ### 1. Title Structure
 
 - **Format**: `Release [Version] - [Short Descriptive Title]`
-- **Version**: Use the raw version number (e.g., `0.9.1`) without a `v` prefix.
+- **Version**: Use the raw version number (e.g., `0.9.2`) without a `v` prefix.
+- **Prerequisite**: Ensure the version has been incremented in the root `package.json`, `web/package.json`, and `README.md` (via version badge) before finalizing release notes.
 
 ### 2. Content Structure
 
