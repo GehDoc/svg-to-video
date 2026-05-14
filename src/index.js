@@ -64,6 +64,10 @@ async function main() {
       'render with a transparent background',
       false
     )
+    .option(
+      '--bg-color <hex>',
+      'background color for the video (e.g., #FFFFFF)'
+    )
     .action(run);
 
     program.parse(process.argv);
@@ -75,7 +79,7 @@ async function main() {
      * @param {number} duration
      * @param {number} fps
      * @param {string} outDir
-     * @param {{ keepFrames: boolean; hold: number; force: boolean; resolution: string; scale: number; transparent: boolean }} options
+     * @param {{ keepFrames: boolean; hold: number; force: boolean; resolution: string; scale: number; transparent: boolean; bgColor: string }} options
      */
     async function run(svgPath, duration, fps, outDir, options) {
       const inputBasename = path.basename(svgPath, path.extname(svgPath));
@@ -101,7 +105,7 @@ async function main() {
       console.log(`  Source:     ${svgPath}`);
       console.log(`  Target:     ${path.join(outDir, outputFileName)}`);
       console.log(
-        `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent})`
+        `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'})`
       );
       if (puppeteerArgs.length > 0) {
         console.log(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
@@ -111,7 +115,7 @@ async function main() {
 
       fs.mkdirSync(outDir, { recursive: true });
 
-      await createFrames(svg, fps, totalFrames, padWidth, outDir, puppeteerArgs, options.resolution, options.scale, options.transparent);
+      await createFrames(svg, fps, totalFrames, padWidth, outDir, puppeteerArgs, options.resolution, options.scale, options.transparent, options.bgColor);
       convertToMP4(outputFileName, fps, padWidth, options.hold, outDir, options.transparent);
 
       if (!options.keepFrames) {
@@ -132,6 +136,7 @@ async function main() {
      * @param {string} resolution
      * @param {number} scale
      * @param {boolean} transparent
+     * @param {string} bgColor
      */
     async function createFrames(
       svg,
@@ -142,7 +147,8 @@ async function main() {
       puppeteerArgs,
       resolution,
       scale,
-      transparent
+      transparent,
+      bgColor
     ) {
       // advance every animation to the desired timestamp. we use the Web
       // Animations API (`document.getAnimations()`) and set `currentTime` on
@@ -192,12 +198,21 @@ async function main() {
         });
       }
 
+      if (bgColor && !transparent) {
+        await page.addStyleTag({
+          content: `
+            body {
+              background-color: ${bgColor};
+            }
+          `,
+        });
+      }
+
       const renderSettings = {
         type: frameFileExtension,
         omitBackground: transparent,
         path: '',
-      };
-  console.log('🎨 Creating frames...');
+      };  console.log('🎨 Creating frames...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
     const animationTimeInSeconds = (frame - 1) / fps; // seconds from start
 
