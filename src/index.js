@@ -66,7 +66,8 @@ async function main() {
     )
     .option(
       '--bg-color <hex>',
-      'background color for the video (e.g., #FFFFFF)'
+      'background color for the video (e.g., #FFFFFF)',
+      '#ffffff'
     )
     .action(run);
 
