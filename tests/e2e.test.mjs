@@ -73,6 +73,38 @@ describe('End-to-End Rendering', () => {
     assert.ok(!data['TAG:alpha_mode'] || data['TAG:alpha_mode'] !== '1');
   });
 
+  test('should render font-test.svg with explicit 1080p resolution', () => {
+    const TEST_SVG_NAME = 'font-test';
+    const inputFile = path.join(FIXTURE_DIR_RELATIVE, `${TEST_SVG_NAME}.svg`);
+    const outputFile = path.join(outputDir, `${TEST_SVG_NAME}.mp4`);
+
+    const result = spawnSync(
+      'node',
+      [
+        'src/index.js',
+        inputFile,
+        '1',
+        '30',
+        outputDir,
+        '--resolution',
+        '1080p',
+        '--force',
+      ],
+      { encoding: 'utf-8' }
+    );
+
+    assert.strictEqual(
+      result.status,
+      0,
+      `Process failed with stderr: ${result.stderr}`
+    );
+    assert.ok(fs.existsSync(outputFile));
+
+    const data = getProbeData(outputFile);
+    assert.strictEqual(data.width, '1920');
+    assert.strictEqual(data.height, '1080');
+  });
+
   test('should render transparent-test.svg with transparent background and alpha channel', () => {
     const transparentOutputFile = path.join(outputDir, 'transparent-test.webm');
     const transparentInputFile = path.join(

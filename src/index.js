@@ -51,7 +51,7 @@ async function main() {
     .option(
       '--resolution <preset>',
       'resolution preset: 720p, 1080p, or original',
-      '1080p'
+      'original'
     )
     .option(
       '--scale <number>',
@@ -207,6 +207,26 @@ async function createFrames(
 
   if (resolution !== 'original') {
     await page.setViewport({ width, height });
+    const { width: svgW, height: svgH } = await page.evaluate(() => {
+      const svg = document.querySelector('svg');
+      if (!svg) return { width: 1920, height: 1080 };
+      return {
+        width: svg.width.baseVal.value,
+        height: svg.height.baseVal.value,
+      };
+    });
+    const scaleX = width / svgW;
+    const scaleY = height / svgH;
+    await page.addStyleTag({
+      content: `
+        svg {
+          transform: scale(${scaleX}, ${scaleY});
+          transform-origin: top left;
+          width: ${svgW}px;
+          height: ${svgH}px;
+        }
+      `,
+    });
   } else {
     // For original size, we need to inject the scale via CSS transform
     await page.setViewport({ width, height });
