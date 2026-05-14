@@ -109,6 +109,13 @@ async function run(svgPath, duration, fps, outDir, options) {
     process.exit(1);
   }
 
+  if (options.transparent && options.bgColor !== '#ffffff') {
+    console.error(
+      `❌ Error: --transparent and --bg-color cannot be used together.`
+    );
+    process.exit(1);
+  }
+
   console.log(
     `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'})`
   );
