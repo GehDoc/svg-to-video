@@ -4,7 +4,7 @@
  * This is the core logic shared between the CLI (Puppeteer) and the Web (Iframe) versions.
  * @param {number} timeInMilliseconds
  */
-function seekAnimations(timeInMilliseconds) {
+export function seekAnimations(timeInMilliseconds) {
   // 1. Seek CSS Animations (Web Animations API)
   const animations = document.getAnimations();
   animations.forEach((animation) => {
@@ -29,16 +29,3 @@ function seekAnimations(timeInMilliseconds) {
     }
   });
 }
-
-// Support ESM
-export { seekAnimations };
-
-/**
- * Support CommonJS for the CLI.
- * We use a self-executing check to avoid ESM transpilation warnings about 'module'.
- */
-(function () {
-  if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { seekAnimations };
-  }
-})();

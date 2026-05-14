@@ -1,6 +1,7 @@
 {
   "name": "svg-to-video",
-  "version": "0.9.1",
+  "version": "0.9.2",
+  "type": "module",
   "description": "Professional animated SVG to MP4/WebM converter featuring frame-accurate rendering, transparent background support, and a serverless Web Studio.",
   "author": "GehDoc",
   "repository": {

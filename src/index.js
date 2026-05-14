@@ -1,10 +1,14 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const child_process = require('child_process');
-const puppeteer = require('puppeteer');
-const { Command } = require('commander');
-const path = require('path');
-const { seekAnimations } = require('../shared/animation-engine');
+import fs from 'fs';
+import child_process from 'child_process';
+import puppeteer from 'puppeteer';
+import { Command } from 'commander';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { seekAnimations } from '../shared/animation-engine.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /** @type {'png'} */
 const frameFileExtension = 'png';

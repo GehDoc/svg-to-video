@@ -254,10 +254,25 @@ Use the `ConfigPanel.test.tsx` to verify this logic.
 
 To maintain consistent, high-quality release notes, all agents and contributors should follow this structure:
 
+## 🏷 Versioning Policy
+
+To maintain synchronization across the project, every release must increment the version number in the following locations:
+
+1. **Root `package.json`**: The `version` field.
+2. **Web `package.json`**: The `version` field.
+3. **`README.md`**: The version badge URL.
+
+Use the `npm version [patch|minor|major]` command or update manually in these three files, ensuring the version string is identical in all locations before committing.
+
+### 📝 Release Note Best Practices
+
+To maintain consistent, high-quality release notes, all agents and contributors should follow this structure:
+
 ### 1. Title Structure
 
 - **Format**: `Release [Version] - [Short Descriptive Title]`
-- **Version**: Use the raw version number (e.g., `0.9.1`) without a `v` prefix.
+- **Version**: Use the raw version number (e.g., `0.9.2`) without a `v` prefix.
+- **Prerequisite**: Ensure the version has been bumped in all project files according to our [Versioning Policy](#-versioning-policy) before finalizing release notes.
 
 ### 2. Content Structure
 
