@@ -211,7 +211,7 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
 ## 🐳 Docker & Hardening
 
 - **Security**: The application runs as the non-root `node` user.
-
+- **Renderer Isolation**: The `SvgRenderer` iframe runs in a unique, isolated origin (`null`) by using the `sandbox="allow-scripts"` attribute. This prevents script-based sandbox escapes. Communication is strictly enforced via `postMessage` with origin validation on both the parent and renderer sides.
 - **Exclusions**: Development-only files like `specs/`, `AGENTS.md`, and `DEVELOPER.md` are excluded from the image via `.dockerignore`.
 
 ## 🎥 Extending Output Formats and Transparency Support

@@ -247,7 +247,7 @@ const SvgRenderer = memo(
             <iframe
               ref={iframeRef}
               title="svg-renderer"
-              sandbox="allow-scripts allow-same-origin"
+              sandbox="allow-scripts"
               style={{
                 width: dimensions.width,
                 height: dimensions.height,
