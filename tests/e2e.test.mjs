@@ -2,12 +2,39 @@ import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert';
 import { spawnSync } from 'child_process';
 import fs from 'node:fs';
-import path from 'node:path';
+import path from 'path';
 import ffprobeStatic from 'ffprobe-static';
 import { FIXTURE_DIR_RELATIVE, OUTPUT_DIR_RELATIVE } from './utils.mjs';
 
 describe('End-to-End Rendering', () => {
   const outputDir = OUTPUT_DIR_RELATIVE;
+
+  const getProbeData = (filePath) => {
+    const probe = spawnSync(
+      ffprobeStatic.path,
+      [
+        '-v',
+        'error',
+        '-select_streams',
+        'v:0',
+        '-show_entries',
+        'stream=width,height:format=duration',
+        '-show_entries',
+        'stream_tags=alpha_mode',
+        '-of',
+        'default=noprint_wrappers=1',
+        filePath,
+      ],
+      { encoding: 'utf-8' }
+    );
+    const lines = probe.stdout.split('\n');
+    const data = {};
+    for (const line of lines) {
+      const [key, value] = line.split('=');
+      if (key && value) data[key] = value;
+    }
+    return data;
+  };
 
   before(() => {
     if (!fs.existsSync(outputDir)) {
@@ -39,26 +66,11 @@ describe('End-to-End Rendering', () => {
     );
     assert.ok(fs.existsSync(outputFile));
 
-    const probe = spawnSync(
-      ffprobeStatic.path,
-      [
-        '-v',
-        'error',
-        '-select_streams',
-        'v:0',
-        '-show_entries',
-        'stream_tags=alpha_mode',
-        '-of',
-        'default=noprint_wrappers=1',
-        outputFile,
-      ],
-      { encoding: 'utf-8' }
-    );
-
-    assert.ok(
-      !probe.stdout.includes('alpha_mode=1'),
-      `Expected no alpha_mode=1, got: ${probe.stdout}`
-    );
+    const data = getProbeData(outputFile);
+    assert.strictEqual(data.width, '500');
+    assert.strictEqual(data.height, '300');
+    assert.ok(parseFloat(data.duration) >= 1.0);
+    assert.ok(!data['TAG:alpha_mode'] || data['TAG:alpha_mode'] !== '1');
   });
 
   test('should render transparent-test.svg with transparent background and alpha channel', () => {
@@ -72,7 +84,7 @@ describe('End-to-End Rendering', () => {
       [
         'src/index.js',
         transparentInputFile,
-        '1',
+        '2',
         '30',
         outputDir,
         '--transparent',
@@ -88,25 +100,10 @@ describe('End-to-End Rendering', () => {
     );
     assert.ok(fs.existsSync(transparentOutputFile));
 
-    const probe = spawnSync(
-      ffprobeStatic.path,
-      [
-        '-v',
-        'error',
-        '-select_streams',
-        'v:0',
-        '-show_entries',
-        'stream_tags=alpha_mode',
-        '-of',
-        'default=noprint_wrappers=1',
-        transparentOutputFile,
-      ],
-      { encoding: 'utf-8' }
-    );
-
-    assert.ok(
-      probe.stdout.includes('alpha_mode=1'),
-      `Expected alpha_mode=1, got: ${probe.stdout}`
-    );
+    const data = getProbeData(transparentOutputFile);
+    assert.strictEqual(data.width, '500');
+    assert.strictEqual(data.height, '300');
+    assert.ok(parseFloat(data.duration) >= 2.0);
+    assert.strictEqual(data['TAG:alpha_mode'], '1');
   });
 });
