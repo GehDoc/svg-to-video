@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert';
-import { validateOptions } from '../../src/utils/validateOptions.js';
+import { validateOptions } from './validateOptions.js';
 
 describe('validateOptions', () => {
   test('should throw error when scale is set without resolution original', () => {
