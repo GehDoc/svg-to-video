@@ -22,11 +22,11 @@ export const Studio = () => {
   const [preset, setPreset] = useState<ResolutionPreset>('original');
   const [scale, setScale] = useState(1);
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
-  const [format, setFormat] = useState<'mp4' | 'webm'>('mp4');
+  const [format, setFormat] = useState<string>('mp4');
   const [isTransparent, setIsTransparent] = useState(false);
   const [captureMethod, setCaptureMethod] = useState<
     'optimal' | 'high-fidelity'
-  >('optimal');
+  >('high-fidelity');
   const [isDragging, setIsDragging] = useState(false);
   const [renderedUrl, setRenderedUrl] = useState<string | null>(null);
   const [fileSize, setFileSize] = useState<string | null>(null);

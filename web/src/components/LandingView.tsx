@@ -31,7 +31,7 @@ export const LandingView = () => {
         <p className="legal-disclaimer">
           Licensed under{' '}
           <a
-            href="https://opensource.org/licenses/MIT"
+            href="https://github.com/GehDoc/svg-to-video/blob/main/LICENSE"
             target="_blank"
             rel="noopener noreferrer"
           >

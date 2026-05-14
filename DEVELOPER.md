@@ -140,10 +140,23 @@ screenshotOptions: {
 
 ## 🧪 Testing Strategy
 
-Beyond end-to-end testing, we use a two-tiered strategy for component and accessibility validation:
+Beyond end-to-end testing, we use a multi-tiered strategy for component, accessibility, and visual validation:
 
-1.  **Component Unit Tests**: Validate logic using Vitest and JSDOM.
-2.  **Accessibility & Interaction Tests**: Validate visual/accessibility compliance (e.g., color contrast) using **Storybook Interaction Tests** running in a real browser environment (Chromium).
+1.  **Unit Tests (`*.test.[ts|tsx]`)**: Validate logic, utilities, and basic component interaction using Vitest and JSDOM. These are fast and do not require a browser.
+    - **Command**: `npm run test:unit`
+2.  **Visual Regression Tests (`*.spec.[ts|tsx]`)**: Validate component-level rendering and pixel-perfect consistency in a real browser (Chromium) using Vitest and Playwright.
+    - **Command**: `npm run test:visual`
+3.  **End-to-End (E2E) Tests (`tests/**/\*.spec.[ts|tsx]`)\*\*: Validate full user workflows (e.g., "User opens app, uploads SVG, exports video") using Playwright directly.
+    - **Command**: `npm run test`
+4.  **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
+    - **Command**: `npm run test:storybook`
+
+### 🗂 Test Organization
+
+- **Unit Tests**: Co-located with components/utilities in `web/src/`.
+- **Visual Regression Tests**: Co-located with components in `web/src/`.
+- **E2E Tests**: Located in `web/tests/`.
+- **Storybook Tests**: Located in `web/src/**/*.stories.tsx` (validated by `test-storybook`).
 
 ### Accessibility Audits
 
@@ -179,8 +192,6 @@ The Web Studio and Storybook Gallery are configured to deploy automatically to *
 - **Storybook Gallery**: [https://gehdoc.github.io/svg-to-video/storybook/](https://gehdoc.github.io/svg-to-video/storybook/)
 - **Asset Pathing**: The project uses an environment-aware `base` path (`/svg-to-video/`) in `web/vite.config.ts`. This ensures all assets load correctly when deployed as a GitHub Project Site.
 - **CI Pipeline**: Deployment is triggered automatically on pushes to the `main` branch via `.github/workflows/deploy.yml`.
-
-### 📊 Analytics (Umami)
 
 ### 📊 Analytics (Umami)
 
@@ -239,6 +250,34 @@ The `ConfigPanel` implements a two-way dependency:
 
 Use the `ConfigPanel.test.tsx` to verify this logic.
 
+## 📝 Release Note Best Practices
+
+To maintain consistent, high-quality release notes, all agents and contributors should follow this structure:
+
+### 1. Title Structure
+
+- **Format**: `Release [Version] - [Short Descriptive Title]`
+- **Version**: Use the raw version number (e.g., `0.9.1`) without a `v` prefix.
+
+### 2. Content Structure
+
+- **Punchline**: A 2-3 sentence summary explaining the most significant user-facing value or impact of the release.
+- **Structured Details**: Use the following headings for clarity:
+  - **🚀 New Features**: Significant additions or changes that impact user workflows.
+  - **🛠 Improvements**: Refactors, performance optimizations, or UI/UX tweaks.
+  - **🧪 Testing & Quality**: Summary of test coverage additions or improvements.
+  - **📝 Documentation**: Any changes to docs, metadata, or SEO.
+
+### Example
+
+> **Release 0.9.1 - Extended Format Support & Web Studio Enhancements**
+>
+> This release introduces dynamic video format discovery and significant improvements to the Web Studio's export capabilities, documentation, and overall user experience.
+>
+> ### 🚀 New Features
+>
+> - ...
+
 ## 🔍 Maintaining SEO & Metadata
 
 When adding new features or core capabilities, ensure all public-facing metadata is updated to maintain discoverability and clarity.
@@ -247,8 +286,8 @@ When adding new features or core capabilities, ensure all public-facing metadata
 
 1.  **`web/index.html`**:
     - Update `<meta name="description">` with new capabilities.
-    - Update Open Graph tags (`og:title`, `og:description`) for social sharing.
-    - Enrich the **JSON-LD** script (`application/ld+json`) by updating the `description` and extending the `featureList`.
+    - Update Open Graph tags (`og:title`, `og:description`, `og:seeAlso`) for social sharing and repository linking.
+    - Enrich the **JSON-LD** script (`application/ld+json`) by updating the `description`, extending the `featureList`, and ensuring `codeRepository` and `license` fields point to the current project.
 2.  **`package.json` (Root & Web)**:
     - Update the `description` field to reflect the expanded toolset.
     - Add relevant keywords to the `keywords` array in the root `package.json`.

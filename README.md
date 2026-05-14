@@ -2,11 +2,11 @@
 
 [![CI](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml/badge.svg)](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-0.9.0-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
+[![Version](https://img.shields.io/badge/version-0.9.1-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
 
 ![Social Preview](./docs/assets/social-preview.svg)
 
-A high-fidelity tool to render CSS-animated SVGs into high-quality MP4 or WebM videos.
+A high-fidelity tool to render CSS-animated SVGs into high-quality videos including MP4, WebM, MKV, MOV, and more.
 
 Unlike standard converters that struggle with complex CSS keyframes or transitions, this project provides a unified engine to scrub through the Web Animations API, ensuring every frame is captured exactly as the browser renders it.
 
@@ -32,7 +32,7 @@ Explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video
 1. Open the [Web Studio](https://gehdoc.github.io/svg-to-video/).
 2. Drag and drop your `.svg` file.
 3. Adjust resolution, duration, and FPS.
-4. Select your format (**MP4** or **WebM**) and toggle **Transparent Background** if needed.
+4. Select your format, toggle **Transparent Background** if needed, and ensure **High-Fidelity Capture** is enabled for best results.
 5. Click **Export**.
 
 ---
@@ -62,8 +62,8 @@ docker compose run --rm svg-to-video example.svg 5 60 output.mp4
 ## 🛠 Features
 
 - **Frame-Accurate Rendering**: Uses Puppeteer (CLI) or WebCodecs (Web) to scrub through the Web Animations API.
-- **Multiple Formats**: Export to high-quality MP4 or WebM.
-- **Transparency Support**: Capture the full alpha channel for transparent video overlays (WebM).
+- **Multiple Formats**: Export to high-quality MP4, WebM, MKV, MOV, and other browser-supported containers via dynamic discovery.
+- **Transparency Support**: Capture the full alpha channel for transparent video overlays (supported formats include WebM, MKV).
 - **High-Fidelity Capture**: Handles external fonts and images with robust pre-flight asset checks.
 - **Production-Ready**: A hardened Docker environment and automated CI/CD pipeline.
 

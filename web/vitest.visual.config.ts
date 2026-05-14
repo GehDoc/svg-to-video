@@ -27,7 +27,8 @@ export default defineConfig({
   },
   test: {
     testTimeout: 60000,
-    include: ['src/**/*.test.tsx'],
+    include: ['src/**/*.spec.{ts,tsx}'],
+    exclude: ['tests/**/*'],
     browser: {
       enabled: true,
       headless: true,
