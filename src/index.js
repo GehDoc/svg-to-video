@@ -59,11 +59,7 @@ async function main() {
       (v) => parseFloat(v),
       1
     )
-    .option(
-      '--transparent',
-      'render with a transparent background',
-      false
-    )
+    .option('--transparent', 'render with a transparent background', false)
     .option(
       '--bg-color <hex>',
       'background color for the video (e.g., #FFFFFF)',
@@ -71,149 +67,172 @@ async function main() {
     )
     .action(run);
 
-    program.parse(process.argv);
-    }
+  program.parse(process.argv);
+}
 
-    /**
-     * main function to run the conversion process
-     * @param {string} svgPath
-     * @param {number} duration
-     * @param {number} fps
-     * @param {string} outDir
-     * @param {{ keepFrames: boolean; hold: number; force: boolean; resolution: string; scale: number; transparent: boolean; bgColor: string }} options
-     */
-    async function run(svgPath, duration, fps, outDir, options) {
-      const inputBasename = path.basename(svgPath, path.extname(svgPath));
-      const outputFileName = `${inputBasename}.mp4`;
-      const outputFullPath = path.join(outDir, outputFileName);
+/**
+ * main function to run the conversion process
+ * @param {string} svgPath
+ * @param {number} duration
+ * @param {number} fps
+ * @param {string} outDir
+ * @param {{ keepFrames: boolean; hold: number; force: boolean; resolution: string; scale: number; transparent: boolean; bgColor: string }} options
+ */
+async function run(svgPath, duration, fps, outDir, options) {
+  const inputBasename = path.basename(svgPath, path.extname(svgPath));
+  const outputFileName = `${inputBasename}.mp4`;
+  const outputFullPath = path.join(outDir, outputFileName);
 
-      if (fs.existsSync(outputFullPath) && !options.force) {
-        console.error(`❌ Error: Output file "${outputFullPath}" already exists.`);
-        console.error(`   Use the --force (-f) flag to overwrite it.`);
-        process.exit(1);
-      }
+  if (fs.existsSync(outputFullPath) && !options.force) {
+    console.error(`❌ Error: Output file "${outputFullPath}" already exists.`);
+    console.error(`   Use the --force (-f) flag to overwrite it.`);
+    process.exit(1);
+  }
 
-      const puppeteerArgs = (process.env.PUPPETEER_ARGS || '')
-        .split(' ')
-        .filter((arg) => arg.trim().length > 0);
+  const puppeteerArgs = (process.env.PUPPETEER_ARGS || '')
+    .split(' ')
+    .filter((arg) => arg.trim().length > 0);
 
-      const svg = fs.readFileSync(svgPath, 'utf-8');
+  const svg = fs.readFileSync(svgPath, 'utf-8');
 
-      const totalFrames = Math.ceil(fps * duration);
-      const padWidth = Math.floor(Math.log10(totalFrames)) + 1;
+  const totalFrames = Math.ceil(fps * duration);
+  const padWidth = Math.floor(Math.log10(totalFrames)) + 1;
 
-      console.log('🚀 Starting conversion:');
-      console.log(`  Source:     ${svgPath}`);
-      console.log(`  Target:     ${path.join(outDir, outputFileName)}`);
-      console.log(
-        `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'})`
-      );
-      if (puppeteerArgs.length > 0) {
-        console.log(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
-      }
-      console.log(`  Frames:     ${totalFrames} total`);
-      console.log('---');
+  console.log('🚀 Starting conversion:');
+  console.log(`  Source:     ${svgPath}`);
+  console.log(`  Target:     ${path.join(outDir, outputFileName)}`);
+  console.log(
+    `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'})`
+  );
+  if (puppeteerArgs.length > 0) {
+    console.log(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
+  }
+  console.log(`  Frames:     ${totalFrames} total`);
+  console.log('---');
 
-      fs.mkdirSync(outDir, { recursive: true });
+  fs.mkdirSync(outDir, { recursive: true });
 
-      await createFrames(svg, fps, totalFrames, padWidth, outDir, puppeteerArgs, options.resolution, options.scale, options.transparent, options.bgColor);
-      convertToMP4(outputFileName, fps, padWidth, options.hold, outDir, options.transparent);
+  await createFrames(
+    svg,
+    fps,
+    totalFrames,
+    padWidth,
+    outDir,
+    puppeteerArgs,
+    options.resolution,
+    options.scale,
+    options.transparent,
+    options.bgColor
+  );
+  convertToMP4(
+    outputFileName,
+    fps,
+    padWidth,
+    options.hold,
+    outDir,
+    options.transparent
+  );
 
-      if (!options.keepFrames) {
-        cleanupFrames(totalFrames, padWidth, outDir);
-      }
+  if (!options.keepFrames) {
+    cleanupFrames(totalFrames, padWidth, outDir);
+  }
 
-      console.log(`\n✅ Done! Video saved to ${path.join(outDir, outputFileName)}`);
-    }
+  console.log(`\n✅ Done! Video saved to ${path.join(outDir, outputFileName)}`);
+}
 
-    /**
-     * create frame images by rendering the SVG in a headless browser and advancing the animation to the correct timestamp for each frame
-     * @param {string} svg
-     * @param {number} fps
-     * @param {number} totalFrames
-     * @param {number} padWidth
-     * @param {string} outDir
-     * @param {string[]} puppeteerArgs
-     * @param {string} resolution
-     * @param {number} scale
-     * @param {boolean} transparent
-     * @param {string} bgColor
-     */
-    async function createFrames(
-      svg,
-      fps,
-      totalFrames,
-      padWidth,
-      outDir,
-      puppeteerArgs,
-      resolution,
-      scale,
-      transparent,
-      bgColor
-    ) {
-      // advance every animation to the desired timestamp. we use the Web
-      // Animations API (`document.getAnimations()`) and set `currentTime` on
-      // each animation, which works for any SVG regardless of how its
-      // animations are defined.
-      const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', ...puppeteerArgs],
-      });
+/**
+ * create frame images by rendering the SVG in a headless browser and advancing the animation to the correct timestamp for each frame
+ * @param {string} svg
+ * @param {number} fps
+ * @param {number} totalFrames
+ * @param {number} padWidth
+ * @param {string} outDir
+ * @param {string[]} puppeteerArgs
+ * @param {string} resolution
+ * @param {number} scale
+ * @param {boolean} transparent
+ * @param {string} bgColor
+ */
+async function createFrames(
+  svg,
+  fps,
+  totalFrames,
+  padWidth,
+  outDir,
+  puppeteerArgs,
+  resolution,
+  scale,
+  transparent,
+  bgColor
+) {
+  // advance every animation to the desired timestamp. we use the Web
+  // Animations API (`document.getAnimations()`) and set `currentTime` on
+  // each animation, which works for any SVG regardless of how its
+  // animations are defined.
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', ...puppeteerArgs],
+  });
 
-      const page = await browser.newPage();
+  const page = await browser.newPage();
 
-      // Set resolution
-      let width = 1920;
-      let height = 1080;
-      if (resolution === '720p') {
-        width = 1280;
-        height = 720;
-      } else if (resolution === '1080p') {
-        width = 1920;
-        height = 1080;
-      } else if (resolution === 'original') {
-        // We need the original dimensions of the SVG.
-        // For now, let's just set the viewport to a safe default that fits everything
-        // and let the screenshotting handle the actual svg element size if possible.
-        // Or we should extract the viewbox/width/height attribute from the SVG string.
-        const dimensions = await page.evaluate(() => {
-          const svg = document.querySelector('svg');
-          return { width: svg.width.baseVal.value, height: svg.height.baseVal.value };
-        });
-        width = dimensions.width * scale;
-        height = dimensions.height * scale;
-      }
+  // Set resolution
+  let width = 1920;
+  let height = 1080;
+  if (resolution === '720p') {
+    width = 1280;
+    height = 720;
+  } else if (resolution === '1080p') {
+    width = 1920;
+    height = 1080;
+  } else if (resolution === 'original') {
+    // We need the original dimensions of the SVG.
+    // For now, let's just set the viewport to a safe default that fits everything
+    // and let the screenshotting handle the actual svg element size if possible.
+    // Or we should extract the viewbox/width/height attribute from the SVG string.
+    const dimensions = await page.evaluate(() => {
+      const svg = document.querySelector('svg');
+      if (!svg) return { width: 1920, height: 1080 };
+      return {
+        width: svg.width.baseVal.value,
+        height: svg.height.baseVal.value,
+      };
+    });
+    width = dimensions.width * scale;
+    height = dimensions.height * scale;
+  }
 
-      if (resolution !== 'original') {
-        await page.setViewport({ width, height });
-      } else {
-        // For original size, we need to inject the scale via CSS transform
-        await page.setViewport({ width, height });
-        await page.addStyleTag({
-          content: `
+  if (resolution !== 'original') {
+    await page.setViewport({ width, height });
+  } else {
+    // For original size, we need to inject the scale via CSS transform
+    await page.setViewport({ width, height });
+    await page.addStyleTag({
+      content: `
             svg {
               transform: scale(${scale});
               transform-origin: top left;
             }
           `,
-        });
-      }
+    });
+  }
 
-      if (bgColor && !transparent) {
-        await page.addStyleTag({
-          content: `
+  if (bgColor && !transparent) {
+    await page.addStyleTag({
+      content: `
             body {
               background-color: ${bgColor};
             }
           `,
-        });
-      }
+    });
+  }
 
-      const renderSettings = {
-        type: frameFileExtension,
-        omitBackground: transparent,
-        path: '',
-      };  console.log('🎨 Creating frames...');
+  const renderSettings = {
+    type: frameFileExtension,
+    omitBackground: transparent,
+    path: '',
+  };
+  console.log('🎨 Creating frames...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
     const animationTimeInSeconds = (frame - 1) / fps; // seconds from start
 
@@ -250,7 +269,14 @@ async function main() {
  * @param {string} outDir
  * @param {boolean} transparent
  */
-function convertToMP4(outputFileName, fps, padWidth, hold, outDir, transparent) {
+function convertToMP4(
+  outputFileName,
+  fps,
+  padWidth,
+  hold,
+  outDir,
+  transparent
+) {
   console.log('📦 Encoding video with FFmpeg...');
 
   const filters = [];
