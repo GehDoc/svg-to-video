@@ -20,10 +20,10 @@ Transition the project to pure ESM to resolve build warnings, improve compatibil
 
 - [x] **Infrastructure**
   - [x] Add `"type": "module"` to `package.json`.
-- [ ] **Core Logic**
-  - [ ] Refactor `src/index.js` to use pure ESM syntax.
-  - [ ] Refactor `shared/animation-engine.js` to use pure ESM syntax.
-  - [ ] Replace `__dirname`/\_\_filename usage in all relevant files.
+- [x] **Core Logic**
+  - [x] Refactor `src/index.js` to use pure ESM syntax.
+  - [x] Refactor `shared/animation-engine.js` to use pure ESM syntax.
+  - [x] Replace `__dirname`/\_\_filename usage in all relevant files.
 - [ ] **Verification**
   - [ ] Ensure build passes (`npm run build`).
   - [ ] Ensure linting/type-checking passes.
