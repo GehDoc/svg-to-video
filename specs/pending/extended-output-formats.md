@@ -38,3 +38,9 @@ Extend the web studio to support additional video output formats (MKV, MOV, etc.
 ## 📝 Change Log
 
 - 2026-05-13: Initial spec created by Gemini CLI.
+- 2026-05-13: Added test restructuring plan:
+  - Keep existing test commands.
+  - Consolidate all browser/E2E tests in `web/tests/`.
+  - Rename visual regression tests to `.spec.tsx`.
+  - Partition tests by extension: `*.test.tsx` for unit, `*.spec.tsx` for visual/E2E.
+  - Identify and split tests that mix concerns.
