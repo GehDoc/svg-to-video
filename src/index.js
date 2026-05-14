@@ -251,16 +251,6 @@ async function createFrames(
     });
   }
 
-  if (bgColor && !transparent) {
-    await page.addStyleTag({
-      content: `
-            body {
-              background-color: ${bgColor};
-            }
-          `,
-    });
-  }
-
   if (transparent) {
     await page.addStyleTag({
       content: `
