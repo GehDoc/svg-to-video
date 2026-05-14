@@ -6,6 +6,7 @@ import { Command } from 'commander';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { seekAnimations } from '../shared/animation-engine.js';
+import { validateOptions } from './utils/validateOptions.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -89,6 +90,15 @@ async function run(svgPath, duration, fps, outDir, options) {
     process.exit(1);
   }
 
+  try {
+    validateOptions(options);
+  } catch (error) {
+    console.error(
+      `❌ Error: ${error instanceof Error ? error.message : error}`
+    );
+    process.exit(1);
+  }
+
   const puppeteerArgs = (process.env.PUPPETEER_ARGS || '')
     .split(' ')
     .filter((arg) => arg.trim().length > 0);
@@ -101,20 +111,6 @@ async function run(svgPath, duration, fps, outDir, options) {
   console.log('🚀 Starting conversion:');
   console.log(`  Source:     ${svgPath}`);
   console.log(`  Target:     ${path.join(outDir, outputFileName)}`);
-
-  if (options.scale !== 1 && options.resolution !== 'original') {
-    console.error(
-      `❌ Error: --scale can only be used with --resolution original.`
-    );
-    process.exit(1);
-  }
-
-  if (options.transparent && options.bgColor !== '#ffffff') {
-    console.error(
-      `❌ Error: --transparent and --bg-color cannot be used together.`
-    );
-    process.exit(1);
-  }
 
   console.log(
     `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'})`
