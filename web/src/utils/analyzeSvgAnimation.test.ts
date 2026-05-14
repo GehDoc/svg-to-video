@@ -140,4 +140,51 @@ describe('analyzeSvgAnimation', () => {
     // Smallest multiple of 0.4 >= 12.5 is 12.8.
     expect(analyzeSvgAnimation(svg)).toBe(12.8);
   });
+
+  it('should handle SMIL begin delays', () => {
+    const svg = `
+      <svg>
+        <rect>
+          <animate attributeName="opacity" dur="2s" begin="3s" />
+        </rect>
+      </svg>
+    `;
+    expect(analyzeSvgAnimation(svg)).toBe(5);
+  });
+
+  it('should handle SMIL repeatDur', () => {
+    const svg = `
+      <svg>
+        <rect>
+          <animate attributeName="opacity" dur="2s" repeatDur="5s" />
+        </rect>
+      </svg>
+    `;
+    expect(analyzeSvgAnimation(svg)).toBe(5);
+  });
+
+  it('should detect CSS transitions', () => {
+    const svg = `
+      <svg>
+        <rect style="transition: opacity 1.5s 0.5s" />
+      </svg>
+    `;
+    expect(analyzeSvgAnimation(svg)).toBe(2.0);
+  });
+
+  it('should handle standalone CSS duration and delay properties', () => {
+    const svg = `
+      <svg>
+        <style>
+          rect { 
+            animation-name: fade;
+            animation-duration: 2s;
+            animation-delay: 1.5s;
+          }
+        </style>
+        <rect />
+      </svg>
+    `;
+    expect(analyzeSvgAnimation(svg)).toBe(3.5);
+  });
 });

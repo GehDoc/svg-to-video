@@ -88,9 +88,8 @@ export const analyzeSvgAnimation = (svgContent: string): number | null => {
     'animate, animateTransform, animateMotion, animateColor, set'
   );
   smilElements.forEach((el) => {
-    const dur = parseClockValue(el.getAttribute('dur'));
-    if (dur === null || dur === 0) return;
-
+    const dur = parseClockValue(el.getAttribute('dur')) || 0;
+    const begin = parseClockValue(el.getAttribute('begin')) || 0;
     const repeatCount = el.getAttribute('repeatCount');
     const repeatDur = parseClockValue(el.getAttribute('repeatDur'));
     const isLooping = repeatCount === 'indefinite' || repeatDur === Infinity;
@@ -102,12 +101,12 @@ export const analyzeSvgAnimation = (svgContent: string): number | null => {
         if (!isNaN(count)) totalDur *= count;
       }
       if (repeatDur !== null && repeatDur < Infinity) {
-        totalDur = Math.min(totalDur, repeatDur);
+        totalDur = Math.max(totalDur, repeatDur);
       }
     }
 
     animations.push({
-      duration: isLooping ? dur : totalDur,
+      duration: isLooping ? dur : begin + totalDur,
       isLooping,
     });
   });
@@ -116,61 +115,83 @@ export const analyzeSvgAnimation = (svgContent: string): number | null => {
   const styleTags = Array.from(doc.querySelectorAll('style'));
   const elementsWithStyle = Array.from(doc.querySelectorAll('[style]'));
 
-  const allCss =
-    styleTags.map((s) => s.textContent).join('\n') +
-    '\n' +
-    elementsWithStyle.map((el) => el.getAttribute('style')).join('\n');
+  // Extract all CSS rules (from style tags)
+  const styleRules =
+    styleTags
+      .map((s) => s.textContent)
+      .join('\n')
+      .match(/[^{}]+\{[^{}]+\}/g) || [];
 
-  // Look for animation property
-  const animationRegex = /animation\s*:\s*([^;}]+)/gi;
-  let match;
-  while ((match = animationRegex.exec(allCss)) !== null) {
-    const animationValue = match[1];
-    // Split multiple animations on the same element (separated by comma)
-    const subAnimations = animationValue.split(',');
+  // Extract all inline styles (pretend they are rules)
+  const inlineRules = elementsWithStyle.map(
+    (el) => `* { ${el.getAttribute('style')} }`
+  );
 
-    for (const sub of subAnimations) {
-      const isLooping = /infinite/i.test(sub);
-      const timeMatches = sub.matchAll(/\b([\d.]+)(s|ms)\b/gi);
-      const times: number[] = [];
-      for (const tMatch of timeMatches) {
-        const val = parseFloat(tMatch[1]);
-        const unit = tMatch[2].toLowerCase();
-        const seconds = unit === 'ms' ? val / 1000 : val;
-        times.push(seconds);
-      }
+  const allRules = [...styleRules, ...inlineRules];
 
-      if (times.length > 0) {
-        if (isLooping) {
-          // In CSS shorthand: [duration] [timing-function] [delay] ...
-          const loopDuration = times[0];
-          animations.push({ duration: loopDuration, isLooping: true });
+  const extractTimes = (str: string) => {
+    const matches = str.matchAll(/\b([\d.]+)(s|ms)\b/gi);
+    return Array.from(matches).map((m) => {
+      const val = parseFloat(m[1]);
+      const unit = m[2].toLowerCase();
+      return unit === 'ms' ? val / 1000 : val;
+    });
+  };
 
-          // Even for looping animations, there's an "effective" end time
-          // if it has a delay or if we consider one iteration.
-          const totalTime = times.reduce((a, b) => a + b, 0);
-          animations.push({ duration: totalTime, isLooping: false });
-        } else {
-          const totalTime = times.reduce((a, b) => a + b, 0);
-          animations.push({ duration: totalTime, isLooping: false });
+  for (const rule of allRules) {
+    const content = rule.substring(
+      rule.indexOf('{') + 1,
+      rule.lastIndexOf('}')
+    );
+    const props = content
+      .split(';')
+      .map((p) => p.trim())
+      .filter(Boolean);
+
+    // Track durations and delays per rule to handle separate properties
+    let maxRuleDur = 0;
+    let maxRuleDelay = 0;
+    const ruleHasInfinite = /infinite/i.test(content);
+
+    for (const prop of props) {
+      const [name, val] = prop.split(':').map((s) => s.trim().toLowerCase());
+      if (!name || !val) continue;
+
+      if (name === 'animation' || name === 'transition') {
+        const subs = val.split(',');
+        for (const sub of subs) {
+          const times = extractTimes(sub);
+          const isLooping = /infinite/i.test(sub);
+          if (times.length > 0) {
+            if (isLooping) {
+              animations.push({ duration: times[0], isLooping: true });
+              // Also track total effective time (dur + delay) for the first iteration
+              animations.push({
+                duration: times.reduce((a, b) => a + b, 0),
+                isLooping: false,
+              });
+            } else {
+              animations.push({
+                duration: times.reduce((a, b) => a + b, 0),
+                isLooping: false,
+              });
+            }
+          }
         }
+      } else if (name.includes('duration')) {
+        const times = extractTimes(val);
+        maxRuleDur = Math.max(maxRuleDur, ...times);
+      } else if (name.includes('delay')) {
+        const times = extractTimes(val);
+        maxRuleDelay = Math.max(maxRuleDelay, ...times);
       }
     }
-  }
 
-  // Look for standalone animation-duration / transition-duration
-  const durationRegex = /(?:animation|transition)-duration\s*:\s*([^;}]+)/gi;
-  while ((match = durationRegex.exec(allCss)) !== null) {
-    const valStr = match[1];
-    const vals = valStr.split(',');
-    for (const v of vals) {
-      const timeMatch = v.match(/\b([\d.]+)(s|ms)\b/i);
-      if (timeMatch) {
-        const val = parseFloat(timeMatch[1]);
-        const unit = timeMatch[2].toLowerCase();
-        const dur = unit === 'ms' ? val / 1000 : val;
-        animations.push({ duration: dur, isLooping: false });
-      }
+    if (maxRuleDur > 0 || maxRuleDelay > 0) {
+      animations.push({
+        duration: maxRuleDur + maxRuleDelay,
+        isLooping: ruleHasInfinite,
+      });
     }
   }
 

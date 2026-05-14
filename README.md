@@ -62,6 +62,7 @@ docker compose run --rm svg-to-video example.svg 5 60 output.mp4
 ## 🛠 Features
 
 - **Frame-Accurate Rendering**: Uses Puppeteer (CLI) or WebCodecs (Web) to scrub through the Web Animations API.
+- **Smart Duration Detection**: Automatically detects the original duration of SVG animations (SMIL and CSS) upon loading in the Web Studio.
 - **Multiple Formats**: Export to high-quality MP4, WebM, MKV, MOV, and other browser-supported containers via dynamic discovery.
 - **Transparency Support**: Capture the full alpha channel for transparent video overlays (supported formats include WebM, MKV).
 - **High-Fidelity Capture**: Handles external fonts and images with robust pre-flight asset checks.

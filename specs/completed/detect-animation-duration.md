@@ -17,9 +17,10 @@ Automatically detect the original duration of SVG animations (SMIL and CSS) when
 
 - [x] **Core Logic**
   - [x] Implement `parseClockValue` for SVG time formats.
-  - [x] Implement SMIL duration detection with repeat support.
-  - [x] Implement CSS animation heuristic detection.
+  - [x] Implement SMIL duration detection with repeat and `begin` delay support.
+  - [x] Implement CSS animation and `transition` heuristic detection.
   - [x] Implement LCM logic for synchronization of looping animations.
+  - [x] Support standalone CSS properties (`animation-duration`, `animation-delay`).
 - [x] **UI / Integration**
   - [x] Create `analyzeSvgAnimation` utility.
   - [x] Hook `analyzeSvgAnimation` into `Studio`'s `onSvgContentChange`.
@@ -28,8 +29,10 @@ Automatically detect the original duration of SVG animations (SMIL and CSS) when
 ## 🧪 Verification Plan
 
 - [x] **Unit Tests**: `npm run test:unit -w web -- src/utils/analyzeSvgAnimation.test.ts`
+  - [x] 18 test cases covering SMIL, CSS, Loops, Delays, and Transitions.
 - [x] **Visual Integration Test**: `npm run test:visual -w web -- src/components/Studio.spec.tsx`
 
 ## 📝 Change Log
 
 - 2026-05-15: Initial implementation and verification completed by Gemini CLI.
+- 2026-05-15: Expanded coverage for SMIL `begin`, `repeatDur`, CSS `transition`, and complex multi-animation edge cases.
