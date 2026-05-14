@@ -19,7 +19,6 @@ export const FormatSelector = ({
       <label htmlFor="format">Output Format</label>
       <select
         id="format"
-        role="combobox"
         value={value}
         onChange={(e: ChangeEvent<HTMLSelectElement>) =>
           onChange(e.target.value)
