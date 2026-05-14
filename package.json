@@ -48,7 +48,7 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "test:cli": "node --test tests/e2e.test.mjs",
-    "test:unit": "npm run test:unit -w web",
+    "test:unit": "node --test src/**/*.test.mjs && npm run test:unit -w web",
     "test:web": "npm run test -w web",
     "test:storybook": "npm run test:storybook -w web",
     "test:visual": "npm run test:visual -w web",
