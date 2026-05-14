@@ -113,4 +113,31 @@ describe('analyzeSvgAnimation', () => {
     `;
     expect(analyzeSvgAnimation(svg)).toBe(2.5);
   });
+
+  it('should correctly handle CSS animations with delays and multiple animations', () => {
+    const svg = `
+      <svg>
+        <style>
+          .box-lid { animation: closeLidPerspective 0.8s forwards 7.5s; }
+          .char-group { animation: walkAndSitFinal 4s linear 8.5s forwards; }
+          .char-legs { 
+            animation: 
+              legSwingWalk 0.4s infinite 8.5s, 
+              legsFinal 4s steps(1) 8.5s forwards; 
+          }
+        </style>
+        <rect class="box-lid" />
+        <rect class="char-group" />
+        <rect class="char-legs" />
+      </svg>
+    `;
+    // Expected:
+    // closeLidPerspective: 7.5 + 0.8 = 8.3
+    // walkAndSitFinal: 8.5 + 4 = 12.5
+    // legSwingWalk: loop 0.4, starts at 8.5
+    // legsFinal: 8.5 + 4 = 12.5
+    // LCM of loops is 0.4. Max non-loop is 12.5.
+    // Smallest multiple of 0.4 >= 12.5 is 12.8.
+    expect(analyzeSvgAnimation(svg)).toBe(12.8);
+  });
 });

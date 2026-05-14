@@ -61,7 +61,6 @@ function gcd(a: number, b: number): number {
 
 function lcm(a: number, b: number): number {
   if (a === 0 || b === 0) return 0;
-  // Use a safer LCM formula to avoid overflow
   return Math.abs(a * (b / gcd(a, b)));
 }
 
@@ -70,7 +69,6 @@ function calculateLCM(numbers: number[]): number {
   let result = numbers[0];
   for (let i = 1; i < numbers.length; i++) {
     result = lcm(result, numbers[i]);
-    // Cap at a reasonable value to avoid astronomical durations (1 hour cap)
     if (result > 3600000) return 3600000;
   }
   return result;
@@ -123,22 +121,56 @@ export const analyzeSvgAnimation = (svgContent: string): number | null => {
     '\n' +
     elementsWithStyle.map((el) => el.getAttribute('style')).join('\n');
 
-  // Look for animation-duration or transition-duration
-  const durationRegex =
-    /(?:animation|transition)(?:-duration)?\s*:[^;}]*?\b([\d.]+)(s|ms)\b/gi;
+  // Look for animation property
+  const animationRegex = /animation\s*:\s*([^;}]+)/gi;
   let match;
+  while ((match = animationRegex.exec(allCss)) !== null) {
+    const animationValue = match[1];
+    // Split multiple animations on the same element (separated by comma)
+    const subAnimations = animationValue.split(',');
+
+    for (const sub of subAnimations) {
+      const isLooping = /infinite/i.test(sub);
+      const timeMatches = sub.matchAll(/\b([\d.]+)(s|ms)\b/gi);
+      const times: number[] = [];
+      for (const tMatch of timeMatches) {
+        const val = parseFloat(tMatch[1]);
+        const unit = tMatch[2].toLowerCase();
+        const seconds = unit === 'ms' ? val / 1000 : val;
+        times.push(seconds);
+      }
+
+      if (times.length > 0) {
+        if (isLooping) {
+          // In CSS shorthand: [duration] [timing-function] [delay] ...
+          const loopDuration = times[0];
+          animations.push({ duration: loopDuration, isLooping: true });
+
+          // Even for looping animations, there's an "effective" end time
+          // if it has a delay or if we consider one iteration.
+          const totalTime = times.reduce((a, b) => a + b, 0);
+          animations.push({ duration: totalTime, isLooping: false });
+        } else {
+          const totalTime = times.reduce((a, b) => a + b, 0);
+          animations.push({ duration: totalTime, isLooping: false });
+        }
+      }
+    }
+  }
+
+  // Look for standalone animation-duration / transition-duration
+  const durationRegex = /(?:animation|transition)-duration\s*:\s*([^;}]+)/gi;
   while ((match = durationRegex.exec(allCss)) !== null) {
-    const val = parseFloat(match[1]);
-    const unit = match[2].toLowerCase();
-    const dur = unit === 'ms' ? val / 1000 : val;
-    if (dur > 0) {
-      // Look ahead for 'infinite' in the same block/attribute
-      const remaining = allCss.substring(
-        match.index,
-        Math.min(match.index + 100, allCss.length)
-      );
-      const isLooping = /infinite/i.test(remaining);
-      animations.push({ duration: dur, isLooping });
+    const valStr = match[1];
+    const vals = valStr.split(',');
+    for (const v of vals) {
+      const timeMatch = v.match(/\b([\d.]+)(s|ms)\b/i);
+      if (timeMatch) {
+        const val = parseFloat(timeMatch[1]);
+        const unit = timeMatch[2].toLowerCase();
+        const dur = unit === 'ms' ? val / 1000 : val;
+        animations.push({ duration: dur, isLooping: false });
+      }
     }
   }
 
@@ -150,12 +182,10 @@ export const analyzeSvgAnimation = (svgContent: string): number | null => {
     .map((a) => a.duration);
 
   if (looping.length > 0) {
-    // Convert to ms for LCM to avoid float issues
     const loopingMs = looping.map((d) => Math.round(d * 1000));
     const lcmMs = calculateLCM(loopingMs);
     const maxNonLoopingS = nonLooping.length > 0 ? Math.max(...nonLooping) : 0;
 
-    // Total duration should be a multiple of LCM and at least maxNonLooping
     let totalMs = lcmMs;
     if (maxNonLoopingS * 1000 > totalMs) {
       totalMs = Math.ceil((maxNonLoopingS * 1000) / lcmMs) * lcmMs;
