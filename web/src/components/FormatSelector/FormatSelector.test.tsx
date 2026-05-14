@@ -1,37 +1,41 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+// @vitest-environment jsdom
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { FormatSelector } from './FormatSelector';
 import type { VideoFormat } from '../../utils/discoverFormats';
 import * as Mediabunny from 'mediabunny';
 
-describe('FormatSelector', () => {
-  class MockOutputFormat extends Mediabunny.OutputFormat {
-    getSupportedCodecs() {
-      return [];
-    }
-    getSupportedTrackCounts() {
-      return {
-        total: { min: 0, max: 3 },
-        video: { min: 0, max: 1 },
-        audio: { min: 0, max: 1 },
-        subtitle: { min: 0, max: 1 },
-      };
-    }
-
-    get fileExtension() {
-      return '.mp4';
-    }
-    get mimeType() {
-      return 'video/mp4';
-    }
-    get supportsVideoRotationMetadata() {
-      return false;
-    }
-    get supportsTimestampedMediaData() {
-      return false;
-    }
+class MockOutputFormat extends Mediabunny.OutputFormat {
+  getSupportedCodecs() {
+    return [];
+  }
+  getSupportedTrackCounts() {
+    return {
+      total: { min: 0, max: 3 },
+      video: { min: 0, max: 1 },
+      audio: { min: 0, max: 1 },
+      subtitle: { min: 0, max: 1 },
+    };
   }
 
+  get fileExtension() {
+    return '.mp4';
+  }
+  get mimeType() {
+    return 'video/mp4';
+  }
+  get supportsVideoRotationMetadata() {
+    return false;
+  }
+  get supportsTimestampedMediaData() {
+    return false;
+  }
+}
+
+describe('FormatSelector', () => {
+  afterEach(() => {
+    cleanup();
+  });
   const mockFormats: VideoFormat[] = [
     {
       id: 'webm',
@@ -72,7 +76,8 @@ describe('FormatSelector', () => {
       />
     );
 
-    const select = screen.getByRole('combobox');
+    const select = screen.getByLabelText('Output Format') as HTMLSelectElement;
+
     fireEvent.change(select, { target: { value: 'webm' } });
 
     expect(handleChange).toHaveBeenCalledWith('webm');
