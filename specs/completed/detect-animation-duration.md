@@ -1,4 +1,4 @@
-# Spec: 99 - SVG Animation Duration Detection
+# Spec: SVG Animation Duration Detection
 
 **GitHub Issue**: [N/A]
 **Status**: 🟢 Completed
