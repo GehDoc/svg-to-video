@@ -24,9 +24,9 @@ Transition the project to pure ESM to resolve build warnings, improve compatibil
   - [x] Refactor `src/index.js` to use pure ESM syntax.
   - [x] Refactor `shared/animation-engine.js` to use pure ESM syntax.
   - [x] Replace `__dirname`/\_\_filename usage in all relevant files.
-- [ ] **Verification**
-  - [ ] Ensure build passes (`npm run build`).
-  - [ ] Ensure linting/type-checking passes.
+- [x] **Verification**
+  - [x] Ensure build passes (`npm run build`).
+  - [x] Ensure linting/type-checking passes.
 
 ## 🧪 Verification Plan
 
