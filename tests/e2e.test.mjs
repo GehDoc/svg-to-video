@@ -2,9 +2,8 @@ import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert';
 import { spawnSync } from 'child_process';
 import fs from 'node:fs';
-import path from 'path';
 import ffprobeStatic from 'ffprobe-static';
-import { FIXTURE_DIR_RELATIVE, OUTPUT_DIR_RELATIVE } from './utils.mjs';
+import { OUTPUT_DIR_RELATIVE, getTestPaths } from './utils.mjs';
 
 describe('End-to-End Rendering', () => {
   const outputDir = OUTPUT_DIR_RELATIVE;
@@ -49,10 +48,7 @@ describe('End-to-End Rendering', () => {
   });
 
   test('should render font-test.svg into a valid mp4 file', () => {
-    const TEST_SVG_NAME = 'font-test';
-    const inputFile = path.join(FIXTURE_DIR_RELATIVE, `${TEST_SVG_NAME}.svg`);
-    const outputFile = path.join(outputDir, `${TEST_SVG_NAME}.mp4`);
-
+    const { inputFile, outputFile } = getTestPaths('font-test');
     const result = spawnSync(
       'node',
       ['src/index.js', inputFile, '1', '30', outputDir, '--force'],
@@ -74,10 +70,7 @@ describe('End-to-End Rendering', () => {
   });
 
   test('should render font-test.svg with explicit 1080p resolution', () => {
-    const TEST_SVG_NAME = 'font-test';
-    const inputFile = path.join(FIXTURE_DIR_RELATIVE, `${TEST_SVG_NAME}.svg`);
-    const outputFile = path.join(outputDir, `${TEST_SVG_NAME}.mp4`);
-
+    const { inputFile, outputFile } = getTestPaths('font-test');
     const result = spawnSync(
       'node',
       [
@@ -105,17 +98,42 @@ describe('End-to-End Rendering', () => {
     assert.strictEqual(data.height, '1080');
   });
 
-  test('should render transparent-test.svg with transparent background and alpha channel', () => {
-    const transparentOutputFile = path.join(outputDir, 'transparent-test.webm');
-    const transparentInputFile = path.join(
-      FIXTURE_DIR_RELATIVE,
-      'transparent-test.svg'
-    );
+  test('should render transparent-test.svg with explicit background color (blue)', () => {
+    const { inputFile, outputFile } = getTestPaths('transparent-test');
     const result = spawnSync(
       'node',
       [
         'src/index.js',
-        transparentInputFile,
+        inputFile,
+        '1',
+        '30',
+        outputDir,
+        '--bg-color',
+        '#0000FF',
+        '--force',
+      ],
+      { encoding: 'utf-8' }
+    );
+
+    assert.strictEqual(
+      result.status,
+      0,
+      `Process failed with stderr: ${result.stderr}`
+    );
+    assert.ok(fs.existsSync(outputFile));
+
+    const data = getProbeData(outputFile);
+    assert.strictEqual(data.width, '500');
+    assert.strictEqual(data.height, '300');
+  });
+
+  test('should render transparent-test.svg with transparent background and alpha channel', () => {
+    const { inputFile, outputFile } = getTestPaths('transparent-test', '.webm');
+    const result = spawnSync(
+      'node',
+      [
+        'src/index.js',
+        inputFile,
         '2',
         '30',
         outputDir,
@@ -130,9 +148,9 @@ describe('End-to-End Rendering', () => {
       0,
       `Process failed with stderr: ${result.stderr}`
     );
-    assert.ok(fs.existsSync(transparentOutputFile));
+    assert.ok(fs.existsSync(outputFile));
 
-    const data = getProbeData(transparentOutputFile);
+    const data = getProbeData(outputFile);
     assert.strictEqual(data.width, '500');
     assert.strictEqual(data.height, '300');
     assert.ok(parseFloat(data.duration) >= 2.0);
