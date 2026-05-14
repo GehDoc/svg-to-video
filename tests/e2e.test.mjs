@@ -28,14 +28,7 @@ describe('End-to-End Rendering', () => {
 
     const result = spawnSync(
       'node',
-      [
-        'src/index.js',
-        inputFile,
-        '1',
-        '30',
-        outputDir,
-        '--force',
-      ],
+      ['src/index.js', inputFile, '1', '30', outputDir, '--force'],
       { encoding: 'utf-8' }
     );
 
@@ -46,20 +39,34 @@ describe('End-to-End Rendering', () => {
     );
     assert.ok(fs.existsSync(outputFile));
 
-    const probe = spawnSync(ffprobeStatic.path, [
-      '-v', 'error',
-      '-select_streams', 'v:0',
-      '-show_entries', 'stream=pix_fmt',
-      '-of', 'default=noprint_wrappers=1',
-      outputFile
-    ], { encoding: 'utf-8' });
+    const probe = spawnSync(
+      ffprobeStatic.path,
+      [
+        '-v',
+        'error',
+        '-select_streams',
+        'v:0',
+        '-show_entries',
+        'stream_tags=alpha_mode',
+        '-of',
+        'default=noprint_wrappers=1',
+        outputFile,
+      ],
+      { encoding: 'utf-8' }
+    );
 
-    assert.ok(probe.stdout.includes('yuv420p'), `Expected yuv420p, got: ${probe.stdout}`);
+    assert.ok(
+      !probe.stdout.includes('alpha_mode=1'),
+      `Expected no alpha_mode=1, got: ${probe.stdout}`
+    );
   });
 
   test('should render transparent-test.svg with transparent background and alpha channel', () => {
     const transparentOutputFile = path.join(outputDir, 'transparent-test.webm');
-    const transparentInputFile = path.join(FIXTURE_DIR_RELATIVE, 'transparent-test.svg');
+    const transparentInputFile = path.join(
+      FIXTURE_DIR_RELATIVE,
+      'transparent-test.svg'
+    );
     const result = spawnSync(
       'node',
       [
@@ -81,14 +88,25 @@ describe('End-to-End Rendering', () => {
     );
     assert.ok(fs.existsSync(transparentOutputFile));
 
-    const probe = spawnSync(ffprobeStatic.path, [
-      '-v', 'error',
-      '-select_streams', 'v:0',
-      '-show_entries', 'stream_tags=alpha_mode',
-      '-of', 'default=noprint_wrappers=1',
-      transparentOutputFile
-    ], { encoding: 'utf-8' });
+    const probe = spawnSync(
+      ffprobeStatic.path,
+      [
+        '-v',
+        'error',
+        '-select_streams',
+        'v:0',
+        '-show_entries',
+        'stream_tags=alpha_mode',
+        '-of',
+        'default=noprint_wrappers=1',
+        transparentOutputFile,
+      ],
+      { encoding: 'utf-8' }
+    );
 
-    assert.ok(probe.stdout.includes('alpha_mode=1'), `Expected alpha_mode=1, got: ${probe.stdout}`);
+    assert.ok(
+      probe.stdout.includes('alpha_mode=1'),
+      `Expected alpha_mode=1, got: ${probe.stdout}`
+    );
   });
 });

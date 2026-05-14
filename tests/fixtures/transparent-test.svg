@@ -1,0 +1,6 @@
+<svg width="500" height="300" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: sans-serif; font-size: 24px; fill: #333; }
+  </style>
+  <text x="20" y="150">Transparent Test</text>
+</svg>

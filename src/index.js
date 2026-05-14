@@ -80,7 +80,7 @@ async function main() {
  */
 async function run(svgPath, duration, fps, outDir, options) {
   const inputBasename = path.basename(svgPath, path.extname(svgPath));
-  const outputFileName = `${inputBasename}.mp4`;
+  const outputFileName = `${inputBasename}${options.transparent ? '.webm' : '.mp4'}`;
   const outputFullPath = path.join(outDir, outputFileName);
 
   if (fs.existsSync(outputFullPath) && !options.force) {
@@ -176,6 +176,9 @@ async function createFrames(
 
   const page = await browser.newPage();
 
+  await page.goto('about:blank');
+  await page.setContent(svg);
+
   // Set resolution
   let width = 1920;
   let height = 1080;
@@ -224,6 +227,24 @@ async function createFrames(
               background-color: ${bgColor};
             }
           `,
+    });
+  }
+
+  if (transparent) {
+    await page.addStyleTag({
+      content: `
+        svg {
+          background: transparent !important;
+        }
+      `,
+    });
+  } else if (bgColor) {
+    await page.addStyleTag({
+      content: `
+        svg {
+          background-color: ${bgColor} !important;
+        }
+      `,
     });
   }
 
@@ -303,19 +324,32 @@ function convertToMP4(
   if (filters.length) {
     args.push('-vf', filters.join(','));
   }
-  args.push(
-    '-c:v',
-    'libx264',
-    '-crf',
-    '20',
-    '-preset',
-    'slow',
-    '-pix_fmt',
-    transparent ? 'yuva420p' : 'yuv420p',
-    '-movflags',
-    '+faststart',
-    outputFullPath
-  );
+
+  if (transparent) {
+    args.push(
+      '-c:v',
+      'libvpx-vp9',
+      '-pix_fmt',
+      'yuva420p',
+      '-f',
+      'webm',
+      outputFullPath
+    );
+  } else {
+    args.push(
+      '-c:v',
+      'libx264',
+      '-crf',
+      '20',
+      '-preset',
+      'slow',
+      '-pix_fmt',
+      'yuv420p',
+      '-movflags',
+      '+faststart',
+      outputFullPath
+    );
+  }
 
   try {
     const output = child_process.execFileSync('ffmpeg', args, {
