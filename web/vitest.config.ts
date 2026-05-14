@@ -7,6 +7,6 @@ export default defineConfig({
     include: ['src/**/*.test.{ts,tsx}'],
     exclude: ['src/**/*.spec.{ts,tsx}', 'tests/**/*.spec.{ts,tsx}'],
     environment: 'jsdom',
-    setupFiles: ['./vitest.shims.d.ts'], // Adjust path if necessary
+    setupFiles: ['./vitest.shims.d.ts'],
   },
 });
