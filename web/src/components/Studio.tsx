@@ -26,7 +26,7 @@ export const Studio = () => {
   const [isTransparent, setIsTransparent] = useState(false);
   const [captureMethod, setCaptureMethod] = useState<
     'optimal' | 'high-fidelity'
-  >('optimal');
+  >('high-fidelity');
   const [isDragging, setIsDragging] = useState(false);
   const [renderedUrl, setRenderedUrl] = useState<string | null>(null);
   const [fileSize, setFileSize] = useState<string | null>(null);

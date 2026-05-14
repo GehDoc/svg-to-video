@@ -32,7 +32,7 @@ Explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video
 1. Open the [Web Studio](https://gehdoc.github.io/svg-to-video/).
 2. Drag and drop your `.svg` file.
 3. Adjust resolution, duration, and FPS.
-4. Select your format (**MP4** or **WebM**) and toggle **Transparent Background** if needed.
+4. Select your format, toggle **Transparent Background** if needed, and ensure **High-Fidelity Capture** is enabled for best results.
 5. Click **Export**.
 
 ---

@@ -23,7 +23,7 @@ export const Header = () => {
           <span className="header-version">v{pkg.version}</span>
         </a>
         <a
-          href="https://opensource.org/licenses/MIT"
+          href="https://github.com/GehDoc/svg-to-video/blob/main/LICENSE"
           target="_blank"
           rel="noopener noreferrer"
           className="header-link"
