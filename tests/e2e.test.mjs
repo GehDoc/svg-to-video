@@ -156,6 +156,37 @@ describe('End-to-End Rendering', () => {
     );
   });
 
+  test('should render font-test.svg with explicit scale factor', () => {
+    const { inputFile, outputFile } = getTestPaths('font-test');
+    const result = spawnSync(
+      'node',
+      [
+        'src/index.js',
+        inputFile,
+        '1',
+        '30',
+        outputDir,
+        '--scale',
+        '2.0',
+        '--resolution',
+        'original',
+        '--force',
+      ],
+      { encoding: 'utf-8' }
+    );
+
+    assert.strictEqual(
+      result.status,
+      0,
+      `Process failed with stderr: ${result.stderr}`
+    );
+    assert.ok(fs.existsSync(outputFile));
+
+    const data = getProbeData(outputFile);
+    assert.strictEqual(data.width, '1000');
+    assert.strictEqual(data.height, '600');
+  });
+
   test('should render transparent-test.svg with transparent background and alpha channel', () => {
     const { inputFile, outputFile } = getTestPaths('transparent-test', '.webm');
     const result = spawnSync(
