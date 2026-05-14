@@ -140,10 +140,23 @@ screenshotOptions: {
 
 ## 🧪 Testing Strategy
 
-Beyond end-to-end testing, we use a two-tiered strategy for component and accessibility validation:
+Beyond end-to-end testing, we use a multi-tiered strategy for component, accessibility, and visual validation:
 
-1.  **Component Unit Tests**: Validate logic using Vitest and JSDOM.
-2.  **Accessibility & Interaction Tests**: Validate visual/accessibility compliance (e.g., color contrast) using **Storybook Interaction Tests** running in a real browser environment (Chromium).
+1.  **Unit Tests (`*.test.[ts|tsx]`)**: Validate logic, utilities, and basic component interaction using Vitest and JSDOM. These are fast and do not require a browser.
+    - **Command**: `npm run test:unit`
+2.  **Visual Regression Tests (`*.spec.[ts|tsx]`)**: Validate component-level rendering and pixel-perfect consistency in a real browser (Chromium) using Vitest and Playwright.
+    - **Command**: `npm run test:visual`
+3.  **End-to-End (E2E) Tests (`tests/**/\*.spec.[ts|tsx]`)\*\*: Validate full user workflows (e.g., "User opens app, uploads SVG, exports video") using Playwright directly.
+    - **Command**: `npm run test`
+4.  **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
+    - **Command**: `npm run test:storybook`
+
+### 🗂 Test Organization
+
+- **Unit Tests**: Co-located with components/utilities in `web/src/`.
+- **Visual Regression Tests**: Co-located with components in `web/src/`.
+- **E2E Tests**: Located in `web/tests/`.
+- **Storybook Tests**: Located in `web/src/**/*.stories.tsx` (validated by `test-storybook`).
 
 ### Accessibility Audits
 
