@@ -195,8 +195,6 @@ The Web Studio and Storybook Gallery are configured to deploy automatically to *
 
 ### 📊 Analytics (Umami)
 
-### 📊 Analytics (Umami)
-
 The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tracking. Detailed information about tracked events can be found in [docs/ANALYTICS.md](./docs/ANALYTICS.md).
 
 > [!IMPORTANT]
@@ -260,8 +258,8 @@ When adding new features or core capabilities, ensure all public-facing metadata
 
 1.  **`web/index.html`**:
     - Update `<meta name="description">` with new capabilities.
-    - Update Open Graph tags (`og:title`, `og:description`) for social sharing.
-    - Enrich the **JSON-LD** script (`application/ld+json`) by updating the `description` and extending the `featureList`.
+    - Update Open Graph tags (`og:title`, `og:description`, `og:seeAlso`) for social sharing and repository linking.
+    - Enrich the **JSON-LD** script (`application/ld+json`) by updating the `description`, extending the `featureList`, and ensuring `codeRepository` and `license` fields point to the current project.
 2.  **`package.json` (Root & Web)**:
     - Update the `description` field to reflect the expanded toolset.
     - Add relevant keywords to the `keywords` array in the root `package.json`.
