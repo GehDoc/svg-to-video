@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml/badge.svg)](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-0.9.3-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
+[![Version](https://img.shields.io/badge/version-0.9.4-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
 
 ![Social Preview](./docs/assets/social-preview.svg)
 

@@ -59,9 +59,23 @@ export function getRendererScript(seekAnimations, parentOrigin) {
   let isReady = false;
 
   window.addEventListener('message', async (event) => {
-    const { type, payload } = event.data;
+    if (event.origin !== parentOrigin || event.source !== window.parent) {
+      return;
+    }
+
+    const { type, payload } = event.data || {};
 
     if (type === 'LOAD_SVG') {
+      if (
+        !payload ||
+        typeof payload.svgContent !== 'string' ||
+        typeof payload.width !== 'number' ||
+        typeof payload.height !== 'number' ||
+        typeof payload.timeMs !== 'number'
+      ) {
+        return;
+      }
+
       isReady = false;
       const { svgContent, width, height, timeMs } = payload;
       svgContainer.innerHTML = svgContent;
