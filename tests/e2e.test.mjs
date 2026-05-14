@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import { spawnSync } from 'child_process';
 import fs from 'node:fs';
 import ffprobeStatic from 'ffprobe-static';
+import { PNG } from 'pngjs';
 import { OUTPUT_DIR_RELATIVE, getTestPaths } from './utils.mjs';
 
 describe('End-to-End Rendering', () => {
@@ -29,10 +30,29 @@ describe('End-to-End Rendering', () => {
     const lines = probe.stdout.split('\n');
     const data = {};
     for (const line of lines) {
-      const [key, value] = line.split('=');
-      if (key && value) data[key] = value;
+      if (line.includes('=')) {
+        const [key, value] = line.split('=');
+        data[key] = value;
+      }
     }
     return data;
+  };
+
+  const extractFrame = (videoPath, framePath) => {
+    spawnSync('ffmpeg', ['-y', '-i', videoPath, '-vframes', '1', framePath], {
+      stdio: 'pipe',
+    });
+    return fs.existsSync(framePath);
+  };
+
+  const getPixelColor = (imagePath) => {
+    const data = fs.readFileSync(imagePath);
+    const png = PNG.sync.read(data);
+    const idx = 0;
+    const r = png.data[idx];
+    const g = png.data[idx + 1];
+    const b = png.data[idx + 2];
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
   };
 
   before(() => {
@@ -100,6 +120,8 @@ describe('End-to-End Rendering', () => {
 
   test('should render transparent-test.svg with explicit background color (blue)', () => {
     const { inputFile, outputFile } = getTestPaths('transparent-test');
+    const framePath = outputFile.replace('.mp4', '.png');
+
     const result = spawnSync(
       'node',
       [
@@ -122,9 +144,16 @@ describe('End-to-End Rendering', () => {
     );
     assert.ok(fs.existsSync(outputFile));
 
-    const data = getProbeData(outputFile);
-    assert.strictEqual(data.width, '500');
-    assert.strictEqual(data.height, '300');
+    assert.ok(extractFrame(outputFile, framePath), 'Frame should be extracted');
+    const actualColor = getPixelColor(framePath);
+    const expectedColor = '#0000FF';
+    const diff = Math.abs(
+      parseInt(actualColor.slice(5), 16) - parseInt(expectedColor.slice(5), 16)
+    );
+    assert.ok(
+      diff <= 5,
+      `Expected color close to ${expectedColor}, got ${actualColor}`
+    );
   });
 
   test('should render transparent-test.svg with transparent background and alpha channel', () => {
