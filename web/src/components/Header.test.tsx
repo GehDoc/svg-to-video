@@ -24,6 +24,6 @@ test('Header renders project links and version', () => {
   const licenseLink = screen.getByRole('link', { name: /mit license/i });
   expect(licenseLink).toHaveAttribute(
     'href',
-    'https://opensource.org/licenses/MIT'
+    'https://github.com/GehDoc/svg-to-video/blob/main/LICENSE'
   );
 });

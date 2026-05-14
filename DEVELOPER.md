@@ -250,6 +250,34 @@ The `ConfigPanel` implements a two-way dependency:
 
 Use the `ConfigPanel.test.tsx` to verify this logic.
 
+## 📝 Release Note Best Practices
+
+To maintain consistent, high-quality release notes, all agents and contributors should follow this structure:
+
+### 1. Title Structure
+
+- **Format**: `Release [Version] - [Short Descriptive Title]`
+- **Version**: Use the raw version number (e.g., `0.9.1`) without a `v` prefix.
+
+### 2. Content Structure
+
+- **Punchline**: A 2-3 sentence summary explaining the most significant user-facing value or impact of the release.
+- **Structured Details**: Use the following headings for clarity:
+  - **🚀 New Features**: Significant additions or changes that impact user workflows.
+  - **🛠 Improvements**: Refactors, performance optimizations, or UI/UX tweaks.
+  - **🧪 Testing & Quality**: Summary of test coverage additions or improvements.
+  - **📝 Documentation**: Any changes to docs, metadata, or SEO.
+
+### Example
+
+> **Release 0.9.1 - Extended Format Support & Web Studio Enhancements**
+>
+> This release introduces dynamic video format discovery and significant improvements to the Web Studio's export capabilities, documentation, and overall user experience.
+>
+> ### 🚀 New Features
+>
+> - ...
+
 ## 🔍 Maintaining SEO & Metadata
 
 When adding new features or core capabilities, ensure all public-facing metadata is updated to maintain discoverability and clarity.
