@@ -48,6 +48,11 @@ async function main() {
       'overwrite existing output files without asking',
       false
     )
+    .option(
+      '--resolution <preset>',
+      'resolution preset: 720p, 1080p, or original',
+      '1080p'
+    )
     .action(run);
 
   program.parse(process.argv);
@@ -59,7 +64,7 @@ async function main() {
  * @param {number} duration
  * @param {number} fps
  * @param {string} outDir
- * @param {{ keepFrames: boolean; hold: number; force: boolean }} options
+ * @param {{ keepFrames: boolean; hold: number; force: boolean; resolution: string }} options
  */
 async function run(svgPath, duration, fps, outDir, options) {
   const inputBasename = path.basename(svgPath, path.extname(svgPath));
@@ -85,7 +90,7 @@ async function run(svgPath, duration, fps, outDir, options) {
   console.log(`  Source:     ${svgPath}`);
   console.log(`  Target:     ${path.join(outDir, outputFileName)}`);
   console.log(
-    `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s)`
+    `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s, Resolution: ${options.resolution})`
   );
   if (puppeteerArgs.length > 0) {
     console.log(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
@@ -95,7 +100,15 @@ async function run(svgPath, duration, fps, outDir, options) {
 
   fs.mkdirSync(outDir, { recursive: true });
 
-  await createFrames(svg, fps, totalFrames, padWidth, outDir, puppeteerArgs);
+  await createFrames(
+    svg,
+    fps,
+    totalFrames,
+    padWidth,
+    outDir,
+    puppeteerArgs,
+    options.resolution
+  );
   convertToMP4(outputFileName, fps, padWidth, options.hold, outDir);
 
   if (!options.keepFrames) {
@@ -113,6 +126,7 @@ async function run(svgPath, duration, fps, outDir, options) {
  * @param {number} padWidth
  * @param {string} outDir
  * @param {string[]} puppeteerArgs
+ * @param {string} resolution
  */
 async function createFrames(
   svg,
@@ -120,7 +134,8 @@ async function createFrames(
   totalFrames,
   padWidth,
   outDir,
-  puppeteerArgs
+  puppeteerArgs,
+  resolution
 ) {
   // advance every animation to the desired timestamp. we use the Web
   // Animations API (`document.getAnimations()`) and set `currentTime` on
@@ -132,6 +147,22 @@ async function createFrames(
   });
 
   const page = await browser.newPage();
+
+  // Set resolution
+  let width = 1920;
+  let height = 1080;
+  if (resolution === '720p') {
+    width = 1280;
+    height = 720;
+  } else if (resolution === '1080p') {
+    width = 1920;
+    height = 1080;
+  }
+
+  if (resolution !== 'original') {
+    await page.setViewport({ width, height });
+  }
+
   await page.goto('about:blank');
   await page.setContent(svg);
 
