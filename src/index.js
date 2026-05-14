@@ -101,6 +101,14 @@ async function run(svgPath, duration, fps, outDir, options) {
   console.log('🚀 Starting conversion:');
   console.log(`  Source:     ${svgPath}`);
   console.log(`  Target:     ${path.join(outDir, outputFileName)}`);
+
+  if (options.scale !== 1 && options.resolution !== 'original') {
+    console.error(
+      `❌ Error: --scale can only be used with --resolution original.`
+    );
+    process.exit(1);
+  }
+
   console.log(
     `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'})`
   );
