@@ -81,3 +81,33 @@ test('Studio updates preview when backgroundColor changes', async () => {
     { timeout: 1500 }
   );
 });
+
+test('Studio automatically updates duration when animated SVG is uploaded', async () => {
+  render(<Studio />);
+
+  // Upload an animated SVG with 3s duration
+  const animatedSvg = `
+    <svg width="100" height="100">
+      <rect>
+        <animate attributeName="opacity" dur="3s" repeatCount="1" />
+      </rect>
+    </svg>
+  `;
+  const file = new File([animatedSvg], 'animated.svg', {
+    type: 'image/svg+xml',
+  });
+  const input = screen.getByLabelText(/Drop SVG here or click to upload/i);
+
+  fireEvent.change(input, { target: { files: [file] } });
+
+  // Verify that the duration input field is updated to 3
+  await waitFor(
+    () => {
+      const durationInput = screen.getByLabelText(
+        /Dur\. \(s\)/i
+      ) as HTMLInputElement;
+      expect(durationInput.value).toBe('3');
+    },
+    { timeout: 1500 }
+  );
+});
