@@ -111,7 +111,7 @@ The tool creates the video in the specified `<outDir>`. The filename will match 
 ## 🤝 Contributing
 
 Contributions are welcome! Please open an issue or pull request.
-For instructions on contributing, build commands, and the technical roadmap, please see [DEVELOPER.md](./DEVELOPER.md).
+For instructions on contributing, build commands, and the technical roadmap, please see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## 🛠 Technical Details
 
