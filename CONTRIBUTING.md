@@ -131,9 +131,8 @@ To maintain synchronization across the project, every release must increment the
 
 1. **Root `package.json`**: The `version` field.
 2. **Web `package.json`**: The `version` field.
-3. **`README.md`**: The version badge URL.
 
-Use the `npm version [patch|minor|major]` command or update manually in these three files, ensuring the version string is identical in all locations before committing.
+Use the `npm version [patch|minor|major]` command or update manually in these files, ensuring the version string is identical in both locations before committing. The repository README version badge updates automatically.
 
 ## 📝 Release Note Best Practices
 
