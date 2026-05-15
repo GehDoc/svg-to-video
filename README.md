@@ -118,12 +118,7 @@ For instructions on contributing, build commands, and the technical roadmap, ple
 
 For a deep dive into the rendering engine, algorithms, and infrastructure, see [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
 
-The tool works by:
-
-1. **Isolation**: Loading the SVG into a headless browser or isolated iframe.
-2. **Scrubbing**: Pausing the animation and manually incrementing `currentTime`.
-3. **Capture**: Taking a high-resolution snapshot for every frame, with optional alpha channel support.
-4. **Encoding**: Using WebCodecs (Web) or FFmpeg (CLI) to compile the frames into a high-quality video file.
+The tool works by isolating the SVG, scrubbing the Web Animations API, and capturing frames via WebCodecs or FFmpeg.
 
 ## 📜 License
 
