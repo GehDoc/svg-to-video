@@ -34,7 +34,7 @@ Convert all remaining JavaScript files in the project to TypeScript to achieve f
 - [ ] **Web Studio**
   - [ ] Convert `web/src/components/SvgRenderer/renderer.js` to `web/src/components/SvgRenderer/renderer.ts`.
   - [ ] Remove `web/src/components/SvgRenderer/renderer.d.ts` (now redundant).
-  - [ ] Convert `web/src/coi-serviceworker.js` to `web/src/coi-serviceworker.ts` (verify if it's authored or external).
+  - [x] ~~Convert `web/src/coi-serviceworker.js` to `web/src/coi-serviceworker.ts`~~ (3rd party file, keep as is).
 - [ ] **Tests**
   - [ ] Convert `src/utils/validateOptions.test.mjs` to `src/utils/validateOptions.test.ts`.
   - [ ] Ensure all tests pass with the new TS files.

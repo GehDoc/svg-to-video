@@ -4,12 +4,12 @@ import { spawnSync } from 'child_process';
 import fs from 'node:fs';
 import ffprobeStatic from 'ffprobe-static';
 import { PNG } from 'pngjs';
-import { OUTPUT_DIR_RELATIVE, getTestPaths } from './utils.mjs';
+import { OUTPUT_DIR_RELATIVE, getTestPaths } from './utils.js';
 
 describe('End-to-End Rendering', () => {
   const outputDir = OUTPUT_DIR_RELATIVE;
 
-  const getProbeData = (filePath) => {
+  const getProbeData = (filePath: string): Record<string, string> => {
     const probe = spawnSync(
       ffprobeStatic.path,
       [
@@ -28,7 +28,7 @@ describe('End-to-End Rendering', () => {
       { encoding: 'utf-8' }
     );
     const lines = probe.stdout.split('\n');
-    const data = {};
+    const data: Record<string, string> = {};
     for (const line of lines) {
       if (line.includes('=')) {
         const [key, value] = line.split('=');
@@ -38,14 +38,14 @@ describe('End-to-End Rendering', () => {
     return data;
   };
 
-  const extractFrame = (videoPath, framePath) => {
+  const extractFrame = (videoPath: string, framePath: string): boolean => {
     spawnSync('ffmpeg', ['-y', '-i', videoPath, '-vframes', '1', framePath], {
       stdio: 'pipe',
     });
     return fs.existsSync(framePath);
   };
 
-  const getPixelColor = (imagePath) => {
+  const getPixelColor = (imagePath: string): string => {
     const data = fs.readFileSync(imagePath);
     const png = PNG.sync.read(data);
     const idx = 0;
@@ -70,8 +70,8 @@ describe('End-to-End Rendering', () => {
   test('should render font-test.svg into a valid mp4 file', () => {
     const { inputFile, outputFile } = getTestPaths('font-test');
     const result = spawnSync(
-      'node',
-      ['src/index.js', inputFile, '1', '30', outputDir, '--force'],
+      'npx',
+      ['tsx', 'src/index.ts', inputFile, '1', '30', outputDir, '--force'],
       { encoding: 'utf-8' }
     );
 
@@ -92,9 +92,10 @@ describe('End-to-End Rendering', () => {
   test('should render font-test.svg with explicit 1080p resolution', () => {
     const { inputFile, outputFile } = getTestPaths('font-test');
     const result = spawnSync(
-      'node',
+      'npx',
       [
-        'src/index.js',
+        'tsx',
+        'src/index.ts',
         inputFile,
         '1',
         '30',
@@ -123,9 +124,10 @@ describe('End-to-End Rendering', () => {
     const framePath = outputFile.replace('.mp4', '.png');
 
     const result = spawnSync(
-      'node',
+      'npx',
       [
-        'src/index.js',
+        'tsx',
+        'src/index.ts',
         inputFile,
         '1',
         '30',
@@ -159,9 +161,10 @@ describe('End-to-End Rendering', () => {
   test('should render font-test.svg with explicit scale factor', () => {
     const { inputFile, outputFile } = getTestPaths('font-test');
     const result = spawnSync(
-      'node',
+      'npx',
       [
-        'src/index.js',
+        'tsx',
+        'src/index.ts',
         inputFile,
         '1',
         '30',
@@ -190,9 +193,10 @@ describe('End-to-End Rendering', () => {
   test('should render transparent-test.svg with transparent background and alpha channel', () => {
     const { inputFile, outputFile } = getTestPaths('transparent-test', '.webm');
     const result = spawnSync(
-      'node',
+      'npx',
       [
-        'src/index.js',
+        'tsx',
+        'src/index.ts',
         inputFile,
         '2',
         '30',

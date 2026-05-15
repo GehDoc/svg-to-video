@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'fs';
 import child_process from 'child_process';
-import puppeteer from 'puppeteer';
+import puppeteer, { Page, Browser, ScreenshotOptions } from 'puppeteer';
 import { Command } from 'commander';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -11,10 +11,20 @@ import { validateOptions } from './utils/validateOptions.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/** @type {'png'} */
-const frameFileExtension = 'png';
+type FrameFileExtension = 'png';
+const frameFileExtension: FrameFileExtension = 'png';
 
-async function main() {
+interface RunOptions {
+  keepFrames: boolean;
+  hold: number;
+  force: boolean;
+  resolution: string;
+  scale: number;
+  transparent: boolean;
+  bgColor: string;
+}
+
+async function main(): Promise<void> {
   const program = new Command();
   program
     .name('svg-to-video')
@@ -73,13 +83,14 @@ async function main() {
 
 /**
  * main function to run the conversion process
- * @param {string} svgPath
- * @param {number} duration
- * @param {number} fps
- * @param {string} outDir
- * @param {{ keepFrames: boolean; hold: number; force: boolean; resolution: string; scale: number; transparent: boolean; bgColor: string }} options
  */
-async function run(svgPath, duration, fps, outDir, options) {
+async function run(
+  svgPath: string,
+  duration: number,
+  fps: number,
+  outDir: string,
+  options: RunOptions
+): Promise<void> {
   const inputBasename = path.basename(svgPath, path.extname(svgPath));
   const outputFileName = `${inputBasename}${options.transparent ? '.webm' : '.mp4'}`;
   const outputFullPath = path.join(outDir, outputFileName);
@@ -153,39 +164,25 @@ async function run(svgPath, duration, fps, outDir, options) {
 
 /**
  * create frame images by rendering the SVG in a headless browser and advancing the animation to the correct timestamp for each frame
- * @param {string} svg
- * @param {number} fps
- * @param {number} totalFrames
- * @param {number} padWidth
- * @param {string} outDir
- * @param {string[]} puppeteerArgs
- * @param {string} resolution
- * @param {number} scale
- * @param {boolean} transparent
- * @param {string} bgColor
  */
 async function createFrames(
-  svg,
-  fps,
-  totalFrames,
-  padWidth,
-  outDir,
-  puppeteerArgs,
-  resolution,
-  scale,
-  transparent,
-  bgColor
-) {
-  // advance every animation to the desired timestamp. we use the Web
-  // Animations API (`document.getAnimations()`) and set `currentTime` on
-  // each animation, which works for any SVG regardless of how its
-  // animations are defined.
-  const browser = await puppeteer.launch({
+  svg: string,
+  fps: number,
+  totalFrames: number,
+  padWidth: number,
+  outDir: string,
+  puppeteerArgs: string[],
+  resolution: string,
+  scale: number,
+  transparent: boolean,
+  bgColor: string
+): Promise<void> {
+  const browser: Browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', ...puppeteerArgs],
   });
 
-  const page = await browser.newPage();
+  const page: Page = await browser.newPage();
 
   await page.goto('about:blank');
   await page.setContent(svg);
@@ -200,10 +197,6 @@ async function createFrames(
     width = 1920;
     height = 1080;
   } else if (resolution === 'original') {
-    // We need the original dimensions of the SVG.
-    // For now, let's just set the viewport to a safe default that fits everything
-    // and let the screenshotting handle the actual svg element size if possible.
-    // Or we should extract the viewbox/width/height attribute from the SVG string.
     const dimensions = await page.evaluate(() => {
       const svg = document.querySelector('svg');
       if (!svg) return { width: 1920, height: 1080 };
@@ -269,10 +262,9 @@ async function createFrames(
     });
   }
 
-  const renderSettings = {
+  const renderSettings: ScreenshotOptions = {
     type: frameFileExtension,
     omitBackground: transparent,
-    path: '',
   };
   console.log('🎨 Creating frames...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
@@ -291,8 +283,8 @@ async function createFrames(
       process.exit(1);
     }
 
-    renderSettings.path = path.join(outDir, getFrameFilename(frame, padWidth));
-    await svgElement.screenshot(renderSettings);
+    const framePath = path.join(outDir, getFrameFilename(frame, padWidth));
+    await svgElement.screenshot({ ...renderSettings, path: framePath });
 
     if (frame % fps === 0 || frame === totalFrames) {
       console.log(`  [Rendering] Frame ${frame} / ${totalFrames}`);
@@ -304,24 +296,18 @@ async function createFrames(
 
 /**
  * convert the generated frames to an MP4 video using ffmpeg
- * @param {string} outputFileName
- * @param {number} fps
- * @param {number} padWidth
- * @param {number} hold
- * @param {string} outDir
- * @param {boolean} transparent
  */
 function convertToMP4(
-  outputFileName,
-  fps,
-  padWidth,
-  hold,
-  outDir,
-  transparent
-) {
+  outputFileName: string,
+  fps: number,
+  padWidth: number,
+  hold: number,
+  outDir: string,
+  transparent: boolean
+): void {
   console.log('📦 Encoding video with FFmpeg...');
 
-  const filters = [];
+  const filters: string[] = [];
   if (hold && hold > 0) {
     filters.push(`tpad=stop_mode=clone:stop_duration=${hold}`);
   }
@@ -386,11 +372,12 @@ function convertToMP4(
 
 /**
  * delete the generated frames
- * @param {number} totalFrames
- * @param {number} padWidth
- * @param {string} outDir
  */
-function cleanupFrames(totalFrames, padWidth, outDir) {
+function cleanupFrames(
+  totalFrames: number,
+  padWidth: number,
+  outDir: string
+): void {
   console.log('🧹 Cleaning up temporary frames...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
     const filename = path.join(outDir, getFrameFilename(frame, padWidth));
@@ -405,11 +392,8 @@ function cleanupFrames(totalFrames, padWidth, outDir) {
 
 /**
  * Generates a padded filename for a given frame number.
- * @param {number} frame
- * @param {number} padWidth
- * @returns {string}
  */
-function getFrameFilename(frame, padWidth) {
+function getFrameFilename(frame: number, padWidth: number): string {
   const prefix = ('' + frame).padStart(padWidth, '0');
   return `${prefix}.${frameFileExtension}`;
 }

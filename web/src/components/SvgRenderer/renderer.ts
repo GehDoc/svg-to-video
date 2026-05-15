@@ -1,10 +1,13 @@
 /**
  * This is the isolated renderer script that will run inside the iframe.
  * It is injected by SvgRenderer via Blob.
- * @param {(timeMs: number) => void} seekAnimations - The animation seeking function from the shared engine.
- * @param {string} parentOrigin - The origin of the parent window for secure postMessage.
+ * @param seekAnimations - The animation seeking function from the shared engine.
+ * @param parentOrigin - The origin of the parent window for secure postMessage.
  */
-export function getRendererScript(seekAnimations, parentOrigin) {
+export function getRendererScript(
+  seekAnimations: (timeMs: number) => void,
+  parentOrigin: string
+): void {
   const OPTIMAL_PROPS = [
     'fill',
     'fill-opacity',
@@ -54,11 +57,13 @@ export function getRendererScript(seekAnimations, parentOrigin) {
     'isolation',
   ];
 
-  const svgContainer = document.getElementById('svg-container');
-  const captureCanvas = document.getElementById('capture-canvas');
+  const svgContainer = document.getElementById('svg-container') as HTMLElement;
+  const captureCanvas = document.getElementById(
+    'capture-canvas'
+  ) as HTMLCanvasElement;
   let isReady = false;
 
-  window.addEventListener('message', async (event) => {
+  window.addEventListener('message', async (event: MessageEvent) => {
     if (event.origin !== parentOrigin || event.source !== window.parent) {
       return;
     }
@@ -110,7 +115,7 @@ export function getRendererScript(seekAnimations, parentOrigin) {
       if (!svg || !ctx) return;
 
       // 1. CLONE THE SVG
-      const clone = svg.cloneNode(true);
+      const clone = svg.cloneNode(true) as SVGSVGElement;
 
       // 2. MAP ELEMENTS BETWEEN ORIGINAL AND CLONE
       // We use a flat list to avoid recursion and index mismatches
@@ -119,7 +124,7 @@ export function getRendererScript(seekAnimations, parentOrigin) {
 
       // 3. BAKE COMPUTED STYLES INTO CLONE
       svgElements.forEach((svgElement, svgElementIndex) => {
-        const cloneElement = cloneElements[svgElementIndex];
+        const cloneElement = cloneElements[svgElementIndex] as HTMLElement;
         if (!cloneElement || !cloneElement.style) return;
 
         // Skip animation, style, and script tags (they will be stripped anyway)

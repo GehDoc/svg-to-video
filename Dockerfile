@@ -50,4 +50,4 @@ RUN npm install --omit=dev --ignore-scripts
 COPY . .
 
 USER node
-ENTRYPOINT ["node", "src/index.js"]
+ENTRYPOINT ["npx", "tsx", "src/index.ts"]

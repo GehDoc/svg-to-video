@@ -26,7 +26,8 @@
   "license": "MIT",
   "dependencies": {
     "commander": "^14.0.3",
-    "puppeteer": "^24.38.0"
+    "puppeteer": "^24.38.0",
+    "tsx": "^4.22.0"
   },
   "devDependencies": {
     "@types/commander": "^2.12.0",
@@ -40,15 +41,16 @@
     "pngjs": "^7.0.0",
     "prettier": "^3.8.1",
     "prettier-plugin-sh": "^0.18.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.59.3"
   },
   "scripts": {
-    "lint": "eslint . && npm run lint -w web",
+    "lint": "eslint . --ext .js,.mjs,.ts,.tsx && npm run lint -w web",
     "lint:fix": "eslint . --fix && npm run lint:fix -w web",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "test:cli": "node --test tests/e2e.test.mjs",
-    "test:unit": "node --test src/**/*.test.mjs && npm run test:unit -w web",
+    "test:cli": "tsx --test tests/e2e.test.ts",
+    "test:unit": "tsx --test src/**/*.test.ts && npm run test:unit -w web",
     "test:web": "npm run test -w web",
     "test:storybook": "npm run test:storybook -w web",
     "test:visual": "npm run test:visual -w web",
@@ -67,9 +69,9 @@
     "shared/**/*.{js,ts}": "eslint --fix",
     "web/**/*.{ts,tsx,js}": "npm run lint --workspace=web --fix"
   },
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "bin": {
-    "svg-to-video": "src/index.js"
+    "svg-to-video": "src/index.ts"
   },
   "workspaces": [
     "web"
