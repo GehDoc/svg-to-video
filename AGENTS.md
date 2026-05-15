@@ -42,10 +42,7 @@ When asked to start a new feature:
 
 ## 📖 Reference Material
 
-- **[DEVELOPER.md](./DEVELOPER.md)**: Contains the project's definitive technical standards, including:
-  - Architecture and design patterns (e.g., "Bake & Clean" algorithm).
-  - Testing strategies and verification suites.
-  - Release and documentation practices.
-  - SEO and Metadata guidelines.
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)**: Contains workflow, commands, and SDD protocols.
+- **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)**: Contains technical deep-dives (e.g., "Bake & Clean" algorithm) and testing strategies.
 
-Always consult `DEVELOPER.md` for implementation details and architectural integrity.
+Always consult these documents for implementation details and architectural integrity.
