@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
+    "allowJs": false,
+    "checkJs": false,
     "noEmit": true,
     "target": "ES2022",
     "module": "Node16",
@@ -10,5 +10,5 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*.js", "src/**/*.ts", "shared/**/*.js", "shared/**/*.ts"]
+  "include": ["src/**/*.ts", "shared/**/*.ts", "tests/**/*.ts"]
 }
