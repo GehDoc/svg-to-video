@@ -6,9 +6,16 @@
 
 ![Social Preview](./docs/assets/social-preview.svg)
 
-A high-fidelity tool to render CSS-animated SVGs into high-quality videos including MP4, WebM, MKV, MOV, and more.
+A high-fidelity tool to render CSS-animated SVGs into high-quality videos (MP4, WebM, MKV, MOV).
 
-Unlike standard converters that struggle with complex CSS keyframes or transitions, this project provides a unified engine to scrub through the Web Animations API, ensuring every frame is captured exactly as the browser renders it.
+## 🚀 Getting Started
+
+Choose the entry point that matches your needs:
+
+- **[Web Studio](https://gehdoc.github.io/svg-to-video/)**: The easiest way to convert SVGs in your browser without any installation.
+- **[CLI / Docker Tool](#-cli--docker-tool)**: For batch processing, server-side automation, and CI/CD integration.
+
+---
 
 ## 🌟 Why SVG to Video?
 
