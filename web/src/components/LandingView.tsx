@@ -16,28 +16,34 @@ export const LandingView = () => {
           <polyline points="17 8 12 3 7 8" />
           <line x1="12" y1="3" x2="12" y2="15" />
         </svg>
-        <p>Upload an SVG to begin preview</p>
+        <h2>Upload an SVG to begin preview</h2>
       </div>
 
       <footer className="studio-footer">
         <p>Local processing only. Files never leave your browser.</p>
-        <p className="legal-disclaimer">
-          Anonymous usage tracked via{' '}
-          <a href="https://umami.is" target="_blank" rel="noopener noreferrer">
-            Umami
-          </a>{' '}
-          to improve the tool.
-        </p>
-        <p className="legal-disclaimer">
-          Licensed under{' '}
+        <p className="footer-links">
+          <a
+            href="https://github.com/GehDoc/svg-to-video/blob/main/CONTRIBUTING.md"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Documentation
+          </a>
+          {' • '}
           <a
             href="https://github.com/GehDoc/svg-to-video/blob/main/LICENSE"
             target="_blank"
             rel="noopener noreferrer"
           >
-            MIT
+            MIT License
           </a>
-          . Software provided "as is", without warranty of any kind.
+          {' • '}
+          <a href="https://umami.is" target="_blank" rel="noopener noreferrer">
+            Umami Analytics
+          </a>
+        </p>
+        <p className="legal-disclaimer">
+          Software provided "as is", without warranty of any kind.
         </p>
       </footer>
     </div>
