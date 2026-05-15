@@ -1,3 +1,10 @@
+import type {
+  LoadSvgPayload,
+  SeekPayload,
+  CapturePayload,
+  RendererMessage,
+} from '../../../../shared/types.js';
+
 /**
  * This is the isolated renderer script that will run inside the iframe.
  * It is injected by SvgRenderer via Blob.
@@ -68,21 +75,18 @@ export function getRendererScript(
       return;
     }
 
-    const { type, payload } = event.data || {};
+    const { type, payload } = (event.data || {}) as RendererMessage;
 
     if (type === 'LOAD_SVG') {
+      const { svgContent, width, height, timeMs } = payload as LoadSvgPayload;
       if (
-        !payload ||
-        typeof payload.svgContent !== 'string' ||
-        typeof payload.width !== 'number' ||
-        typeof payload.height !== 'number' ||
-        typeof payload.timeMs !== 'number'
+        typeof svgContent !== 'string' ||
+        typeof width !== 'number' ||
+        typeof height !== 'number' ||
+        typeof timeMs !== 'number'
       ) {
         return;
       }
-
-      isReady = false;
-      const { svgContent, width, height, timeMs } = payload;
       svgContainer.innerHTML = svgContent;
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';
@@ -103,13 +107,15 @@ export function getRendererScript(
 
     if (type === 'SEEK') {
       if (!isReady) return;
-      seekAnimations(payload.timeMs);
+      const { timeMs } = payload as SeekPayload;
+      seekAnimations(timeMs);
       await new Promise((r) => requestAnimationFrame(r));
       window.parent.postMessage({ type: 'SEEKED' }, parentOrigin);
     }
 
     if (type === 'CAPTURE') {
       if (!isReady) return;
+      const { method } = payload as CapturePayload;
       const svg = svgContainer.querySelector('svg');
       const ctx = captureCanvas.getContext('2d');
       if (!svg || !ctx) return;
@@ -144,7 +150,7 @@ export function getRendererScript(
 
         const style = window.getComputedStyle(svgElement);
 
-        if (payload.method === 'high-fidelity') {
+        if (method === 'high-fidelity') {
           for (const propertyName of style) {
             cloneElement.style.setProperty(
               propertyName,

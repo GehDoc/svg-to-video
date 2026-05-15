@@ -8,6 +8,12 @@ import {
   memo,
 } from 'react';
 import { seekAnimations } from '@shared/animation-engine';
+import type {
+  RendererMessage,
+  LoadSvgPayload,
+  SeekPayload,
+  CapturePayload,
+} from '@shared/types';
 import { getRendererScript } from './renderer';
 import rendererTemplate from './renderer.html?raw';
 import './SvgRenderer.scss';
@@ -74,7 +80,8 @@ const SvgRenderer = memo(
             return;
           }
 
-          if (event.data.type === 'SCRIPT_LOADED') {
+          const { type } = (event.data || {}) as RendererMessage;
+          if (type === 'SCRIPT_LOADED') {
             setScriptLoaded(true);
           }
         };
@@ -110,10 +117,11 @@ const SvgRenderer = memo(
             await new Promise<void>((resolve) => {
               const handler = (event: MessageEvent) => {
                 const parentOrigin = window.location.origin;
+                const { type } = (event.data || {}) as RendererMessage;
                 if (
                   (event.origin === 'null' || event.origin === parentOrigin) &&
                   event.source === iframe.contentWindow &&
-                  event.data.type === 'SCRIPT_LOADED'
+                  type === 'SCRIPT_LOADED'
                 ) {
                   window.removeEventListener('message', handler);
                   resolve();
@@ -126,10 +134,11 @@ const SvgRenderer = memo(
           return new Promise<void>((resolve) => {
             const handler = (event: MessageEvent) => {
               const parentOrigin = window.location.origin;
+              const { type } = (event.data || {}) as RendererMessage;
               if (
                 (event.origin === 'null' || event.origin === parentOrigin) &&
                 event.source === iframe.contentWindow &&
-                event.data.type === 'READY'
+                type === 'READY'
               ) {
                 window.removeEventListener('message', handler);
                 setReady(true);
@@ -137,15 +146,16 @@ const SvgRenderer = memo(
               }
             };
             window.addEventListener('message', handler);
+            const loadPayload: LoadSvgPayload = {
+              svgContent: targetSvgcontent,
+              width: targetWidth,
+              height: targetHeight,
+              timeMs: 0,
+            };
             iframe.contentWindow?.postMessage(
               {
                 type: 'LOAD_SVG',
-                payload: {
-                  svgContent: targetSvgcontent,
-                  width: targetWidth,
-                  height: targetHeight,
-                  timeMs: 0,
-                },
+                payload: loadPayload,
               },
               '*'
             );
@@ -186,18 +196,20 @@ const SvgRenderer = memo(
             const iframe = iframeRef.current;
             const handler = (event: MessageEvent) => {
               const parentOrigin = window.location.origin;
+              const { type } = (event.data || {}) as RendererMessage;
               if (
                 (event.origin === 'null' || event.origin === parentOrigin) &&
                 event.source === iframe?.contentWindow &&
-                event.data.type === 'SEEKED'
+                type === 'SEEKED'
               ) {
                 window.removeEventListener('message', handler);
                 resolve();
               }
             };
             window.addEventListener('message', handler);
+            const seekPayload: SeekPayload = { timeMs };
             iframe?.contentWindow?.postMessage(
-              { type: 'SEEK', payload: { timeMs } },
+              { type: 'SEEK', payload: seekPayload },
               '*'
             );
           });
@@ -211,18 +223,20 @@ const SvgRenderer = memo(
             const iframe = iframeRef.current;
             const handler = (event: MessageEvent) => {
               const parentOrigin = window.location.origin;
+              const { type, payload } = (event.data || {}) as RendererMessage;
               if (
                 (event.origin === 'null' || event.origin === parentOrigin) &&
                 event.source === iframe?.contentWindow &&
-                event.data.type === 'CAPTURE_RESULT'
+                type === 'CAPTURE_RESULT'
               ) {
                 window.removeEventListener('message', handler);
-                resolve(event.data.payload);
+                resolve(payload as ImageBitmap);
               }
             };
             window.addEventListener('message', handler);
+            const capturePayload: CapturePayload = { method, transparent };
             iframe?.contentWindow?.postMessage(
-              { type: 'CAPTURE', payload: { method, transparent } },
+              { type: 'CAPTURE', payload: capturePayload },
               '*'
             );
           });
