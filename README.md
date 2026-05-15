@@ -117,7 +117,9 @@ The tool creates the video in the specified `<outDir>`. The filename will match 
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please open an issue or pull request. This project follows a **Spec-Driven Development (SDD)** workflow to ensure clear requirements and high quality.
+Contributions are welcome! This project follows a **Spec-Driven Development (SDD)** workflow to ensure clear requirements and high quality. Please open an issue or pull request.
+
+Check out our [Active Roadmap](./specs/pending/) to see what we're working on next.
 
 For instructions on contributing, build commands, and the technical roadmap, please see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
