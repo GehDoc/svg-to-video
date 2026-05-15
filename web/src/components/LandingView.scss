@@ -36,6 +36,22 @@
   margin: 0;
 }
 
+.studio-footer .footer-links {
+  margin: 0.5rem 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+
+  a {
+    color: var(--text-muted);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 .studio-footer .legal-disclaimer {
   margin: 0.5rem 0;
   font-size: 0.75rem;

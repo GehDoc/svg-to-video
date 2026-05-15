@@ -16,6 +16,6 @@ test('LandingView renders upload prompt and footer correctly', () => {
     screen.getByText(/Upload an SVG to begin preview/i)
   ).toBeInTheDocument();
   expect(screen.getByText(/Local processing only/i)).toBeInTheDocument();
-  expect(screen.getByText(/Licensed under/i)).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /MIT/i })).toBeInTheDocument();
+  expect(screen.getByText(/MIT License/i)).toBeInTheDocument();
+  expect(screen.getByText(/Documentation/i)).toBeInTheDocument();
 });

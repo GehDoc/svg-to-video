@@ -4,12 +4,20 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
 
 ## 🤖 Your Core Directives
 
-1. **The Handshake**: When the user says "Work on GitHub Issue #XX", you must:
-   - Create a local git branch: `feat/XX-description`.
-   - Initialize the spec file (see "How to Create a New Spec").
-   - Commit the initial spec file to the branch immediately.
+1. **The Handshake**: Before starting any development, determine if the task is linked to a GitHub Issue:
+   - **If linked to Issue #XX**:
+     - Create branch: `feat/XX-description`.
+     - Initialize spec: `specs/pending/XX-description.md`.
+     - Commit initial spec immediately.
+   - **If not linked to an issue**:
+     - Create branch: `feat/description`.
+     - Initialize spec: `specs/pending/description.md` (no number prefix).
+     - Commit initial spec immediately.
+
+   NEVER use a random number to fill the gap if no issue number is available.
+
 2. **Spec-First Mentality**: Do not write functional code until a corresponding specification exists in `specs/pending/`.
-3. **Link to GitHub**: Every spec MUST link to a GitHub Issue URL at the top of the file.
+3. **Link to GitHub**: If the feature is linked to a GitHub Issue, the spec MUST link to the issue URL at the top of the file.
 4. **Checklist Discipline**: Update the task list checkboxes `[x]` in the spec file immediately after completing a task and verifying it.
 5. **State Persistence**: If the technical strategy changes during our conversation, your FIRST action is to update the `.md` file in `specs/pending/`.
 6. **Clean Up**: When a feature is complete and verified, move the spec file from `specs/pending/` to `specs/completed/` and update its status to `🟢 Completed`.
@@ -19,8 +27,10 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
 When asked to start a new feature:
 
 1. Copy `specs/template.md`.
-2. Create a new file: `specs/pending/[IssueID]-[feature-name].md`.
-3. Populate the **Objective** by scraping/reading the linked GitHub Issue.
+2. Create a new file in `specs/pending/`:
+   - **If linked to a GitHub Issue**: `[IssueID]-[feature-name].md`.
+   - **If not linked**: `[feature-name].md` (no number prefix).
+3. Populate the **Objective** by scraping/reading the linked GitHub Issue (if applicable).
 4. Draft the **Technical Strategy** and **Task List**.
 5. Stop and ask for human approval of the plan before coding.
 
@@ -30,8 +40,9 @@ When asked to start a new feature:
 - `specs/completed/`: Historical record of technical decisions.
 - `specs/template.md`: The blueprint for all new work.
 
-## ♿ Accessibility Testing Protocol
+## 📖 Reference Material
 
-1.  **Real Browser First**: When testing accessibility (e.g., color contrast, focus order), NEVER use JSDOM unit tests. Always use **Storybook Interaction Tests** (`npm run test:storybook`).
-2.  **Integration**: If you identify an A11y violation via the Storybook UI panel, it MUST be remediated, and a corresponding test case should be added to the component's story to prevent regression.
-3.  **Spec-First**: Follow the standard Spec-Driven Development process for any accessibility-related tickets.
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)**: Contains workflow, commands, and SDD protocols.
+- **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)**: Contains technical deep-dives (e.g., "Bake & Clean" algorithm) and testing strategies.
+
+Always consult these documents for implementation details and architectural integrity.

@@ -1,14 +1,21 @@
 # SVG to Video
 
 [![CI](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml/badge.svg)](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-0.9.5-blue.svg)](https://github.com/GehDoc/svg-to-video/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/GehDoc/svg-to-video?color=blue)](https://github.com/GehDoc/svg-to-video/releases)
+[![Last Commit](https://img.shields.io/github/last-commit/GehDoc/svg-to-video)](https://github.com/GehDoc/svg-to-video/commits/main)
 
-![Social Preview](./docs/assets/social-preview.svg)
+[![Social Preview](./docs/assets/social-preview.svg)](https://gehdoc.github.io/svg-to-video/)
 
-A high-fidelity tool to render CSS-animated SVGs into high-quality videos including MP4, WebM, MKV, MOV, and more.
+A high-fidelity tool to render CSS-animated SVGs into high-quality videos (MP4, WebM, MKV, MOV).
 
-Unlike standard converters that struggle with complex CSS keyframes or transitions, this project provides a unified engine to scrub through the Web Animations API, ensuring every frame is captured exactly as the browser renders it.
+## 🚀 Getting Started
+
+Choose the entry point that matches your needs:
+
+- **[Web Studio](https://gehdoc.github.io/svg-to-video/)**: The easiest way to convert SVGs in your browser without any installation.
+- **[CLI / Docker Tool](#-cli--docker-tool)**: For batch processing, server-side automation, and CI/CD integration.
+
+---
 
 ## 🌟 Why SVG to Video?
 
@@ -46,81 +53,30 @@ For automated or batch processing, use the CLI tool. It is built to run in a hea
 Ensure [Node.js](https://nodejs.org/) and [FFmpeg](https://ffmpeg.org/) are installed.
 
 ```bash
+# Node.js
 npm install
 node src/index.js example.svg 5 60 output.mp4
-```
 
-### Docker Usage
-
-If you prefer an isolated environment:
-
-```bash
+# Docker
 docker compose build
 docker compose run --rm svg-to-video example.svg 5 60 output.mp4
 ```
 
-## 🛠 Features
-
-- **Frame-Accurate Rendering**: Uses Puppeteer (CLI) or WebCodecs (Web) to scrub through the Web Animations API.
-- **Smart Duration Detection**: Automatically detects the original duration of SVG animations (SMIL and CSS) upon loading in the Web Studio.
-- **Multiple Formats**: Export to high-quality MP4, WebM, MKV, MOV, and other browser-supported containers via dynamic discovery.
-- **Transparency Support**: Capture the full alpha channel for transparent video overlays (supported formats include WebM, MKV).
-- **High-Fidelity Capture**: Handles external fonts and images with robust pre-flight asset checks.
-- **Production-Ready**: A hardened Docker environment and automated CI/CD pipeline.
-
-## 📖 CLI Usage
-
-```bash
-node src/index.js <svgPath> <duration> <fps> <outDir> [options]
-```
-
-### Arguments
-
-| Argument   | Description                         |
-| ---------- | ----------------------------------- |
-| `svgPath`  | Path to the input `.svg` file.      |
-| `duration` | Animation length in seconds.        |
-| `fps`      | Frames per second (e.g., 60).       |
-| `outDir`   | Directory to save frames and video. |
-
-### Options
-
-| Option                  | Description                                                                                          |
-| ----------------------- | ---------------------------------------------------------------------------------------------------- |
-| `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                   |
-| `-f, --force`           | Overwrite the output video if it already exists.                                                     |
-| `--resolution <preset>` | Resolution preset: `720p`, `1080p`, or `original`. (Default: `original`)                             |
-| `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`. |
-| `--transparent`         | Render with a transparent background. (Cannot be used with `--bg-color`)                             |
-| `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`) - (Cannot be used with `--transparent`)         |
-| `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                     |
-
-### Environment Variables
-
-| Variable         | Scope   | Description                                                                                                                                       |
-| ---------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PUPPETEER_ARGS` | Runtime | Additional arguments passed directly to the Puppeteer `launch` method. Useful for custom browser flags (e.g., `--proxy-server`, `--disable-gpu`). |
-
-### Output Handling
-
-The tool creates the video in the specified `<outDir>`. The filename will match your input file. By default, it will **fail** if the destination file already exists to prevent accidental overwrites. Use `-f` to bypass this.
-
-- **Input:** `my-animation.svg`
-- **Result:** `./out-dir/my-animation.mp4`
+See [docs/CLI.md](./docs/CLI.md) for full usage, arguments, and options.
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please open an issue or pull request.
-For instructions on contributing, build commands, and the technical roadmap, please see [DEVELOPER.md](./DEVELOPER.md).
+Contributions are welcome! This project follows a **Spec-Driven Development (SDD)** workflow to ensure clear requirements and high quality. Please open an issue or pull request.
+
+Check out our [Active Roadmap](./specs/pending/) to see what we're working on next.
+
+For instructions on contributing, build commands, and the technical roadmap, please see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## 🛠 Technical Details
 
-The tool works by:
+For a deep dive into the rendering engine, algorithms, and infrastructure, see [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
 
-1. **Isolation**: Loading the SVG into a headless browser or isolated iframe.
-2. **Scrubbing**: Pausing the animation and manually incrementing `currentTime`.
-3. **Capture**: Taking a high-resolution snapshot for every frame, with optional alpha channel support.
-4. **Encoding**: Using WebCodecs (Web) or FFmpeg (CLI) to compile the frames into a high-quality video file.
+The tool works by isolating the SVG, scrubbing the Web Animations API, and capturing frames via WebCodecs or FFmpeg.
 
 ## 📜 License
 
