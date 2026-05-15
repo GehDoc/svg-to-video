@@ -1,5 +1,53 @@
 import { describe, it, expect } from 'vitest';
-import { analyzeSvgAnimation, parseClockValue } from './analyzeSvgAnimation';
+import {
+  analyzeSvgAnimation,
+  parseClockValue,
+  gcd,
+  lcm,
+  calculateLCM,
+  extractTimes,
+} from './analyzeSvgAnimation';
+
+describe('extractTimes', () => {
+  it('should extract seconds and milliseconds from strings', () => {
+    expect(extractTimes('animation: fade 2s ease-in 100ms')).toEqual([2, 0.1]);
+    expect(extractTimes('transition: opacity 1.5s, transform 0.5s')).toEqual([
+      1.5, 0.5,
+    ]);
+    expect(extractTimes('no-times-here')).toEqual([]);
+  });
+});
+
+describe('gcd', () => {
+  it('should compute GCD correctly', () => {
+    expect(gcd(48, 18)).toBe(6);
+    expect(gcd(54, 24)).toBe(6);
+    expect(gcd(7, 3)).toBe(1);
+    expect(gcd(0, 5)).toBe(5);
+  });
+});
+
+describe('lcm', () => {
+  it('should compute LCM correctly', () => {
+    expect(lcm(4, 6)).toBe(12);
+    expect(lcm(5, 7)).toBe(35);
+    expect(lcm(0, 5)).toBe(0);
+  });
+});
+
+describe('calculateLCM', () => {
+  it('should compute LCM for an array of numbers', () => {
+    expect(calculateLCM([2, 3, 4])).toBe(12);
+    expect(calculateLCM([10, 15, 20])).toBe(60);
+    expect(calculateLCM([])).toBe(0);
+  });
+
+  it('should cap the result at 1 hour', () => {
+    // 1 hour is 3,600,000 ms
+    expect(calculateLCM([3600001])).toBe(3600000);
+    expect(calculateLCM([3000000, 4000000])).toBe(3600000);
+  });
+});
 
 describe('parseClockValue', () => {
   it('should parse simple seconds', () => {

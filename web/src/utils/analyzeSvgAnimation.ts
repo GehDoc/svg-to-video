@@ -49,7 +49,11 @@ export function parseClockValue(value: string | null): number | null {
   }
 }
 
-function gcd(a: number, b: number): number {
+/**
+ * Computes the Greatest Common Divisor of two numbers.
+ * Used for calculating the Least Common Multiple (LCM).
+ */
+export function gcd(a: number, b: number): number {
   a = Math.abs(Math.round(a));
   b = Math.abs(Math.round(b));
   while (b) {
@@ -59,19 +63,40 @@ function gcd(a: number, b: number): number {
   return a;
 }
 
-function lcm(a: number, b: number): number {
+/**
+ * Computes the Least Common Multiple of two numbers.
+ * Used to find the synchronization point of multiple looping animations.
+ */
+export function lcm(a: number, b: number): number {
   if (a === 0 || b === 0) return 0;
   return Math.abs(a * (b / gcd(a, b)));
 }
 
-function calculateLCM(numbers: number[]): number {
+/**
+ * Computes the Least Common Multiple of an array of numbers.
+ * Caps the result at 1 hour (3,600,000 ms) to avoid infinite loops or astronomical durations.
+ */
+export function calculateLCM(numbers: number[]): number {
   if (numbers.length === 0) return 0;
   let result = numbers[0];
+  if (result > 3600000) return 3600000;
   for (let i = 1; i < numbers.length; i++) {
     result = lcm(result, numbers[i]);
     if (result > 3600000) return 3600000;
   }
   return result;
+}
+
+/**
+ * Extracts all time values (seconds or milliseconds) from a CSS property value string.
+ */
+export function extractTimes(str: string): number[] {
+  const matches = str.matchAll(/\b([\d.]+)(s|ms)\b/gi);
+  return Array.from(matches).map((m) => {
+    const val = parseFloat(m[1]);
+    const unit = m[2].toLowerCase();
+    return unit === 'ms' ? val / 1000 : val;
+  });
 }
 
 /**
@@ -128,15 +153,6 @@ export const analyzeSvgAnimation = (svgContent: string): number | null => {
   );
 
   const allRules = [...styleRules, ...inlineRules];
-
-  const extractTimes = (str: string) => {
-    const matches = str.matchAll(/\b([\d.]+)(s|ms)\b/gi);
-    return Array.from(matches).map((m) => {
-      const val = parseFloat(m[1]);
-      const unit = m[2].toLowerCase();
-      return unit === 'ms' ? val / 1000 : val;
-    });
-  };
 
   for (const rule of allRules) {
     const content = rule.substring(
