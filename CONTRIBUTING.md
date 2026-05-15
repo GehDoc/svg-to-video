@@ -125,6 +125,30 @@ The project uses GitHub Actions for automated verification. Key pipeline steps i
 - **Renderer Isolation**: The `SvgRenderer` iframe runs in a unique, isolated origin (`null`) by using the `sandbox="allow-scripts"` attribute. This prevents script-based sandbox escapes. Communication is strictly enforced via `postMessage` with origin validation on both the parent and renderer sides.
 - **Exclusions**: Development-only files like `specs/`, `AGENTS.md`, and `CONTRIBUTING.md` are excluded from the image via `.dockerignore`.
 
+## 🌐 Web Studio Deployment
+
+The Web Studio and Storybook Gallery are configured to deploy automatically to **GitHub Pages** via GitHub Actions.
+
+- **Web Studio**: [https://gehdoc.github.io/svg-to-video/](https://gehdoc.github.io/svg-to-video/)
+- **Storybook Gallery**: [https://gehdoc.github.io/svg-to-video/storybook/](https://gehdoc.github.io/svg-to-video/storybook/)
+- **Asset Pathing**: The project uses an environment-aware `base` path (`/svg-to-video/`) in `web/vite.config.ts`. This ensures all assets load correctly when deployed as a GitHub Project Site.
+- **CI Pipeline**: Deployment is triggered automatically on pushes to the `main` branch via `.github/workflows/deploy.yml`.
+
+### 📊 Analytics (Umami)
+
+The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tracking. Detailed information about tracked events can be found in [docs/ANALYTICS.md](./docs/ANALYTICS.md).
+
+> [!IMPORTANT]
+> **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
+>
+> 1. The hostname is `localhost`, `127.0.0.1`, or a local network IP.
+> 2. `window.navigator.webdriver` is true (e.g., in Playwright, Puppeteer, or CI environments).
+> 3. The hostname does not match the `data-domains` attribute.
+
+- **Implementation**: The tracker is self-hosted at `web/public/assets/3rd-party/analytics.js` (to bypass ad-blockers and COEP issues) and injected via `web/index.html` with pre-flight checks.
+- **Configuration**: The `data-website-id` and `data-domains` are hardcoded in `web/index.html`. For local forks, update these values to point to your own Umami instance.
+- **Types**: We use `@types/umami` for full TypeScript support. Always use `typeof umami !== 'undefined'` to safely trigger events programmatically.
+
 ## 🏷 Versioning Policy
 
 To maintain synchronization across the project, every release must increment the version number in the following locations:
