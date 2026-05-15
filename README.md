@@ -115,6 +115,8 @@ For instructions on contributing, build commands, and the technical roadmap, ple
 
 ## 🛠 Technical Details
 
+For a deep dive into the rendering engine, algorithms, and infrastructure, see [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
+
 The tool works by:
 
 1. **Isolation**: Loading the SVG into a headless browser or isolated iframe.
