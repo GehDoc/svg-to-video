@@ -99,24 +99,3 @@ The `ConfigPanel` implements a two-way dependency:
 - **Transparency Toggle**: Checking "Transparent Background" filters the format dropdown to only show supported formats.
 
 Use the `ConfigPanel.test.tsx` to verify this logic.
-
-## 🔍 Maintaining SEO & Metadata
-
-When adding new features or core capabilities, ensure all public-facing metadata is updated to maintain discoverability and clarity.
-
-### SEO Checklist
-
-1.  **`web/index.html`**:
-    - Update `<meta name="description">` with new capabilities.
-    - Update Open Graph tags (`og:title`, `og:description`, `og:seeAlso`) for social sharing and repository linking.
-    - Enrich the **JSON-LD** script (`application/ld+json`) by updating the `description`, extending the `featureList`, and ensuring `codeRepository` and `license` fields point to the current project.
-2.  **`package.json` (Root & Web)**:
-    - Update the `description` field to reflect the expanded toolset.
-    - Add relevant keywords to the `keywords` array in the root `package.json`.
-3.  **`README.md`**:
-    - Update the introduction and **🌟 Why SVG to Video?** sections.
-    - Add new features to the **🛠 Features** list.
-    - Update the **Technical Details** or **Quick Start** if user workflows have changed.
-4.  **GitHub Repository**:
-    - Update the repository **Description** in the "About" section.
-    - Review and add new **Topics** (tags) to match the updated keywords.
