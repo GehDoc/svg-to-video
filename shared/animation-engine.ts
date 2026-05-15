@@ -20,12 +20,13 @@ export function seekAnimations(timeInMilliseconds: number): void {
   const svgs = document.querySelectorAll('svg');
   svgs.forEach((svg) => {
     try {
-      const svgElement = svg as SVGSVGElement;
-      if (typeof svgElement.pauseAnimations === 'function') {
-        svgElement.pauseAnimations();
-      }
-      if (typeof svgElement.setCurrentTime === 'function') {
-        svgElement.setCurrentTime(timeInMilliseconds / 1000);
+      if (svg instanceof SVGSVGElement) {
+        if (typeof svg.pauseAnimations === 'function') {
+          svg.pauseAnimations();
+        }
+        if (typeof svg.setCurrentTime === 'function') {
+          svg.setCurrentTime(timeInMilliseconds / 1000);
+        }
       }
     } catch {
       /* ignored */

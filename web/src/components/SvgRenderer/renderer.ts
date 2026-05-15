@@ -1,9 +1,4 @@
-import type {
-  LoadSvgPayload,
-  SeekPayload,
-  CapturePayload,
-  RendererMessage,
-} from '../../../../shared/types.js';
+import { isRendererMessage } from '../../../../shared/types.js';
 
 /**
  * This is the isolated renderer script that will run inside the iframe.
@@ -64,10 +59,17 @@ export function getRendererScript(
     'isolation',
   ];
 
-  const svgContainer = document.getElementById('svg-container') as HTMLElement;
-  const captureCanvas = document.getElementById(
-    'capture-canvas'
-  ) as HTMLCanvasElement;
+  const svgContainer = document.getElementById('svg-container');
+  const captureCanvas = document.getElementById('capture-canvas');
+
+  if (
+    !(svgContainer instanceof HTMLElement) ||
+    !(captureCanvas instanceof HTMLCanvasElement)
+  ) {
+    console.error('[Renderer] Required DOM elements not found.');
+    return;
+  }
+
   let isReady = false;
 
   window.addEventListener('message', async (event: MessageEvent) => {
@@ -75,18 +77,14 @@ export function getRendererScript(
       return;
     }
 
-    const { type, payload } = (event.data || {}) as RendererMessage;
+    const data = event.data;
+    if (!isRendererMessage(data)) {
+      return;
+    }
 
-    if (type === 'LOAD_SVG') {
-      const { svgContent, width, height, timeMs } = payload as LoadSvgPayload;
-      if (
-        typeof svgContent !== 'string' ||
-        typeof width !== 'number' ||
-        typeof height !== 'number' ||
-        typeof timeMs !== 'number'
-      ) {
-        return;
-      }
+    if (data.type === 'LOAD_SVG') {
+      const { svgContent, width, height, timeMs } = data.payload;
+      isReady = false;
       svgContainer.innerHTML = svgContent;
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';
@@ -105,23 +103,25 @@ export function getRendererScript(
       });
     }
 
-    if (type === 'SEEK') {
+    if (data.type === 'SEEK') {
       if (!isReady) return;
-      const { timeMs } = payload as SeekPayload;
+      const { timeMs } = data.payload;
       seekAnimations(timeMs);
       await new Promise((r) => requestAnimationFrame(r));
       window.parent.postMessage({ type: 'SEEKED' }, parentOrigin);
     }
 
-    if (type === 'CAPTURE') {
+    if (data.type === 'CAPTURE') {
       if (!isReady) return;
-      const { method } = payload as CapturePayload;
+      const { method } = data.payload;
       const svg = svgContainer.querySelector('svg');
       const ctx = captureCanvas.getContext('2d');
       if (!svg || !ctx) return;
 
       // 1. CLONE THE SVG
-      const clone = svg.cloneNode(true) as SVGSVGElement;
+      const cloneNode = svg.cloneNode(true);
+      if (!(cloneNode instanceof SVGSVGElement)) return;
+      const clone = cloneNode;
 
       // 2. MAP ELEMENTS BETWEEN ORIGINAL AND CLONE
       // We use a flat list to avoid recursion and index mismatches
@@ -130,8 +130,9 @@ export function getRendererScript(
 
       // 3. BAKE COMPUTED STYLES INTO CLONE
       svgElements.forEach((svgElement, svgElementIndex) => {
-        const cloneElement = cloneElements[svgElementIndex] as HTMLElement;
-        if (!cloneElement || !cloneElement.style) return;
+        const cloneElement = cloneElements[svgElementIndex];
+        if (!(cloneElement instanceof HTMLElement) || !cloneElement.style)
+          return;
 
         // Skip animation, style, and script tags (they will be stripped anyway)
         const tagName = svgElement.tagName.toLowerCase();

@@ -8,11 +8,11 @@ import {
   memo,
 } from 'react';
 import { seekAnimations } from '@shared/animation-engine';
-import type {
-  RendererMessage,
-  LoadSvgPayload,
-  SeekPayload,
-  CapturePayload,
+import {
+  isRendererMessage,
+  type LoadSvgPayload,
+  type SeekPayload,
+  type CapturePayload,
 } from '@shared/types';
 import { getRendererScript } from './renderer';
 import rendererTemplate from './renderer.html?raw';
@@ -80,8 +80,8 @@ const SvgRenderer = memo(
             return;
           }
 
-          const { type } = (event.data || {}) as RendererMessage;
-          if (type === 'SCRIPT_LOADED') {
+          const data = event.data;
+          if (isRendererMessage(data) && data.type === 'SCRIPT_LOADED') {
             setScriptLoaded(true);
           }
         };
@@ -117,11 +117,12 @@ const SvgRenderer = memo(
             await new Promise<void>((resolve) => {
               const handler = (event: MessageEvent) => {
                 const parentOrigin = window.location.origin;
-                const { type } = (event.data || {}) as RendererMessage;
+                const data = event.data;
                 if (
                   (event.origin === 'null' || event.origin === parentOrigin) &&
                   event.source === iframe.contentWindow &&
-                  type === 'SCRIPT_LOADED'
+                  isRendererMessage(data) &&
+                  data.type === 'SCRIPT_LOADED'
                 ) {
                   window.removeEventListener('message', handler);
                   resolve();
@@ -134,11 +135,12 @@ const SvgRenderer = memo(
           return new Promise<void>((resolve) => {
             const handler = (event: MessageEvent) => {
               const parentOrigin = window.location.origin;
-              const { type } = (event.data || {}) as RendererMessage;
+              const data = event.data;
               if (
                 (event.origin === 'null' || event.origin === parentOrigin) &&
                 event.source === iframe.contentWindow &&
-                type === 'READY'
+                isRendererMessage(data) &&
+                data.type === 'READY'
               ) {
                 window.removeEventListener('message', handler);
                 setReady(true);
@@ -196,11 +198,12 @@ const SvgRenderer = memo(
             const iframe = iframeRef.current;
             const handler = (event: MessageEvent) => {
               const parentOrigin = window.location.origin;
-              const { type } = (event.data || {}) as RendererMessage;
+              const data = event.data;
               if (
                 (event.origin === 'null' || event.origin === parentOrigin) &&
                 event.source === iframe?.contentWindow &&
-                type === 'SEEKED'
+                isRendererMessage(data) &&
+                data.type === 'SEEKED'
               ) {
                 window.removeEventListener('message', handler);
                 resolve();
@@ -223,14 +226,15 @@ const SvgRenderer = memo(
             const iframe = iframeRef.current;
             const handler = (event: MessageEvent) => {
               const parentOrigin = window.location.origin;
-              const { type, payload } = (event.data || {}) as RendererMessage;
+              const data = event.data;
               if (
                 (event.origin === 'null' || event.origin === parentOrigin) &&
                 event.source === iframe?.contentWindow &&
-                type === 'CAPTURE_RESULT'
+                isRendererMessage(data) &&
+                data.type === 'CAPTURE_RESULT'
               ) {
                 window.removeEventListener('message', handler);
-                resolve(payload as ImageBitmap);
+                resolve(data.payload);
               }
             };
             window.addEventListener('message', handler);
