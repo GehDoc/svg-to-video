@@ -129,6 +129,11 @@ export function getRendererScript(
       const svgElements = [svg, ...Array.from(svg.querySelectorAll('*'))];
       const cloneElements = [clone, ...Array.from(clone.querySelectorAll('*'))];
 
+      if (svgElements.length !== cloneElements.length) {
+        console.error('[Renderer] Clone structure mismatch');
+        return;
+      }
+
       // 3. BAKE COMPUTED STYLES INTO CLONE
       svgElements.forEach((svgElement, svgElementIndex) => {
         const cloneElement = cloneElements[svgElementIndex];
@@ -160,7 +165,8 @@ export function getRendererScript(
         const style = window.getComputedStyle(svgElement);
 
         if (method === 'high-fidelity') {
-          for (const propertyName of style) {
+          for (let i = 0; i < style.length; i++) {
+            const propertyName = style[i];
             cloneElement.style.setProperty(
               propertyName,
               style.getPropertyValue(propertyName),
