@@ -85,11 +85,11 @@ describe('analyzeSvgAnimation', () => {
     expect(analyzeSvgAnimation(svg)).toBeUndefined();
   });
 
-  it('should accept a DOM node as input', () => {
+  it('should accept an injected DOMParser', () => {
     const svgContent =
       '<svg><rect><animate attributeName="opacity" dur="3s" /></rect></svg>';
-    const dom = new DOMParser().parseFromString(svgContent, 'image/svg+xml');
-    expect(analyzeSvgAnimation(dom)).toBe(3);
+    const result = analyzeSvgAnimation(svgContent, dom.window.DOMParser);
+    expect(result).toBe(3);
   });
 
   it('should detect SMIL animation duration', () => {

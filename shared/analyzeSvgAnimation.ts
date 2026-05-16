@@ -100,19 +100,23 @@ export function extractTimes(str: string): number[] {
 }
 
 /**
- * Analyzes the provided DOM root and returns a recommended duration in seconds.
- * Returns undefined if no animation is detected.
+ * Analyzes the provided SVG content (string) and returns a recommended duration.
+ * Accepts an optional DOMParser to use if the environment doesn't have a global one.
  */
 export const analyzeSvgAnimation = (
-  rootOrString: ParentNode | string
+  svgContent: string,
+  parserOverride?: typeof DOMParser
 ): number | undefined => {
-  let root: ParentNode;
-  if (typeof rootOrString === 'string') {
-    const parser = new DOMParser();
-    root = parser.parseFromString(rootOrString, 'image/svg+xml');
-  } else {
-    root = rootOrString;
+  const Parser =
+    parserOverride ||
+    (typeof DOMParser !== 'undefined' ? DOMParser : undefined);
+  if (!Parser) {
+    throw new Error(
+      'DOMParser is not available. Provide it via parserOverride.'
+    );
   }
+  const parser = new Parser();
+  const root = parser.parseFromString(svgContent, 'image/svg+xml');
 
   const animations: AnimationInfo[] = [];
 

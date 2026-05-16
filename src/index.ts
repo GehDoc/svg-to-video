@@ -124,8 +124,8 @@ async function run(
   if (duration === undefined) {
     console.log('🔍 Duration not provided, attempting to auto-detect...');
 
-    const dom = new JSDOM(svg);
-    duration = analyzeSvgAnimation(dom.window.document);
+    const dom = new JSDOM('');
+    duration = analyzeSvgAnimation(svg, dom.window.DOMParser);
     if (duration === undefined) {
       console.error(
         '❌ Error: Could not detect duration. Please provide a duration using -d or --duration.'
