@@ -50,6 +50,26 @@ test.describe('SVG to Video Golden Path', () => {
     // Verify download filename
     expect(download.suggestedFilename()).toBe('font-test.mp4');
 
+    // Verify metadata of the downloaded file (defaults: no title, only attribution)
+    const downloadPath = path.resolve(
+      __dirname,
+      '../.vitest-attachments/test-default-metadata.mp4'
+    );
+    await download.saveAs(downloadPath);
+
+    const { execSync } = await import('node:child_process');
+    const ffprobePath = (await import('ffprobe-static')).default.path;
+
+    const probeOutput = execSync(
+      `${ffprobePath} -v error -show_entries format_tags -of default=noprint_wrappers=1:nokey=0 ${downloadPath}`,
+      { encoding: 'utf-8' }
+    );
+
+    expect(probeOutput).not.toContain('TAG:title=');
+    expect(probeOutput).toMatch(
+      /TAG:comment=Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)$/m
+    );
+
     // Verify video element is present and has a blob source
     const video = page.locator('video');
     await expect(video).toBeVisible();
