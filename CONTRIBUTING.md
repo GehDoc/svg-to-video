@@ -70,6 +70,8 @@ If working without an agent, follow these steps to keep the project state synchr
 | `npm run format` | Checks for formatting issues. |
 | `npm run format:fix` | Fixes formatting issues. |
 | `npm run test` | Runs all tests (CLI, Web Studio E2E, Unit, Storybook, and Visual). |
+| `npm run test:cli` | Runs CLI E2E tests. |
+| `npm run test:web` | Runs Web Studio E2E tests. |
 | `npm run test:unit` | Runs component-level unit tests using Vitest. |
 | `npm run test:storybook` | Runs Storybook interaction tests using Vitest. |
 | `npm run test:visual` | Runs native visual regression tests (pixel matching). |
@@ -96,7 +98,8 @@ Beyond end-to-end testing, we use a multi-tiered strategy for component, accessi
 
 - **Unit Tests**: Co-located with components/utilities in `web/src/`.
 - **Visual Regression Tests**: Co-located with components in `web/src/`.
-- **E2E Tests**: Located in `web/tests/`.
+- **CLI Integration Tests**: Located in `tests/cli.spec.ts`.
+- **Web Studio E2E Tests**: Located in `web/tests/*.spec.ts`.
 - **Storybook Tests**: Located in `web/src/**/*.stories.tsx` (validated by `test-storybook`).
 
 ### Accessibility Audits
