@@ -61,40 +61,47 @@ If working without an agent, follow these steps to keep the project state synchr
 
 ## 🛠 Development Commands
 
-| `npm run check` | Runs all checks (lint, format, type-check, e2e tests). |
-| `npm run check:fast` | Runs fast checks only (lint, format, type-check). |
-| `npm run fix` | Auto-fixes linting and formatting issues. |
-| `npm run lint` | Checks for linting issues in both CLI and Web Studio code. |
-| `npm run lint:fix` | Fixes linting issues in both CLI and Web Studio code. |
-| `npm run storybook` | Launches the Storybook UI for component development. |
-| `npm run format` | Checks for formatting issues. |
-| `npm run format:fix` | Fixes formatting issues. |
-| `npm run test` | Runs all tests (CLI, Web Studio E2E, Unit, Storybook, and Visual). |
-| `npm run test:unit` | Runs component-level unit tests using Vitest. |
-| `npm run test:storybook` | Runs Storybook interaction tests using Vitest. |
-| `npm run test:visual` | Runs native visual regression tests (pixel matching). |
-| `npm run test:visual:update` | Updates visual regression baseline screenshots. |
-| `npm run build-storybook` | Builds the Storybook static site for deployment. |
-| `npm run type-check` | Validates TypeScript types. |
+| Command                      | Description                                                        |
+| :--------------------------- | :----------------------------------------------------------------- |
+| `npm run check`              | Runs all checks (lint, format, type-check, e2e tests).             |
+| `npm run check:fast`         | Runs fast checks only (lint, format, type-check).                  |
+| `npm run fix`                | Auto-fixes linting and formatting issues.                          |
+| `npm run lint`               | Checks for linting issues in both CLI and Web Studio code.         |
+| `npm run lint:fix`           | Fixes linting issues in both CLI and Web Studio code.              |
+| `npm run storybook`          | Launches the Storybook UI for component development.               |
+| `npm run format`             | Checks for formatting issues.                                      |
+| `npm run format:fix`         | Fixes formatting issues.                                           |
+| `npm run test`               | Runs all tests (CLI, Web Studio E2E, Unit, Storybook, and Visual). |
+| `npm run test:cli`           | Runs CLI E2E tests.                                                |
+| `npm run test:web`           | Runs Web Studio E2E tests.                                         |
+| `npm run test:unit`          | Runs component-level unit tests using Vitest.                      |
+| `npm run test:storybook`     | Runs Storybook interaction tests using Vitest.                     |
+| `npm run test:visual`        | Runs native visual regression tests (pixel matching).              |
+| `npm run test:visual:update` | Updates visual regression baseline screenshots.                    |
+| `npm run build-storybook`    | Builds the Storybook static site for deployment.                   |
+| `npm run type-check`         | Validates TypeScript types.                                        |
 
 ## 🧪 Testing Strategy
 
 Beyond end-to-end testing, we use a multi-tiered strategy for component, accessibility, and visual validation:
 
-1.  **Unit Tests (`*.test.[ts|tsx]`)**: Validate logic, utilities, and basic component interaction using Vitest and JSDOM. These are fast and do not require a browser.
-    - **Command**: `npm run test:unit`
-2.  **Visual Regression Tests (`*.spec.[ts|tsx]`)**: Validate component-level rendering and pixel-perfect consistency in a real browser (Chromium) using Vitest and Playwright.
-    - **Command**: `npm run test:visual`
-3.  **End-to-End (E2E) Tests (`tests/**/\*.spec.[ts|tsx]`)\*\*: Validate full user workflows (e.g., "User opens app, uploads SVG, exports video") using Playwright directly.
-    - **Command**: `npm run test`
-4.  **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
-    - **Command**: `npm run test:storybook`
+1. **Unit Tests (`*.test.[ts|tsx]`)**: Validate logic, utilities, and basic component interaction using Vitest and JSDOM. These are fast and do not require a browser.
+   - **Command**: `npm run test:unit`
+2. **Visual Regression Tests (`*.spec.[ts|tsx]`)**: Validate component-level rendering and pixel-perfect consistency in a real browser (Chromium) using Vitest and Playwright.
+   - **Command**: `npm run test:visual`
+3. **CLI Integration Tests (`tests/cli.spec.ts`)**: Validate full user workflows for the CLI tool.
+   - **Command**: `npm run test:cli`
+4. **Web Studio E2E Tests (`web/tests/*.spec.ts`)**: Validate full user workflows for the Web Studio using Playwright.
+   - **Command**: `npm run test:web`
+5. **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
+   - **Command**: `npm run test:storybook`
 
 ### 🗂 Test Organization
 
 - **Unit Tests**: Co-located with components/utilities in `web/src/`.
 - **Visual Regression Tests**: Co-located with components in `web/src/`.
-- **E2E Tests**: Located in `web/tests/`.
+- **CLI Integration Tests**: Located in `tests/cli.spec.ts`.
+- **Web Studio E2E Tests**: Located in `web/tests/*.spec.ts`.
 - **Storybook Tests**: Located in `web/src/**/*.stories.tsx` (validated by `test-storybook`).
 
 ### Accessibility Audits

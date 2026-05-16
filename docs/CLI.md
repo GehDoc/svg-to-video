@@ -3,22 +3,22 @@
 The tool is built to run in a headless environment, making it perfect for CI/CD pipelines or server-side automation.
 
 ```bash
-npx tsx src/index.ts <svgPath> <duration> <fps> <outDir> [options]
+npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 ```
 
 ## Arguments
 
-| Argument   | Description                         |
-| ---------- | ----------------------------------- |
-| `svgPath`  | Path to the input `.svg` file.      |
-| `duration` | Animation length in seconds.        |
-| `fps`      | Frames per second (e.g., 60).       |
-| `outDir`   | Directory to save frames and video. |
+| Argument  | Description                         |
+| --------- | ----------------------------------- |
+| `svgPath` | Path to the input `.svg` file.      |
+| `fps`     | Frames per second (e.g., 60).       |
+| `outDir`  | Directory to save frames and video. |
 
 ## Options
 
 | Option                  | Description                                                                                          |
 | ----------------------- | ---------------------------------------------------------------------------------------------------- |
+| `-d, --duration <secs>` | Desired animation duration in seconds. If omitted, duration is auto-detected.                        |
 | `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                   |
 | `-f, --force`           | Overwrite the output video if it already exists.                                                     |
 | `--resolution <preset>` | Resolution preset: `720p`, `1080p`, or `original`. (Default: `original`)                             |

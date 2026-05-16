@@ -1,6 +1,6 @@
 {
   "name": "@svg-to-video/web",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) with transparent background support and frame-accurate rendering.",
   "author": "GehDoc",
   "private": true,
@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "type-check": "tsc -b",
-    "test": "playwright test --reporter=list",
+    "test:web": "playwright test --reporter=list",
     "test:unit": "vitest run",
     "test:storybook": "test-storybook",
     "test:visual": "vitest run -c vitest.visual.config.ts",

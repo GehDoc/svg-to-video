@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
 import {
   analyzeSvgAnimation,
@@ -6,7 +7,7 @@ import {
   lcm,
   calculateLCM,
   extractTimes,
-} from './analyzeSvgAnimation';
+} from './analyzeSvgAnimation.js';
 
 describe('extractTimes', () => {
   it('should extract seconds and milliseconds from strings', () => {
@@ -75,9 +76,16 @@ describe('parseClockValue', () => {
 });
 
 describe('analyzeSvgAnimation', () => {
-  it('should return null for non-animated SVG', () => {
+  it('should return undefined for non-animated SVG', () => {
     const svg = '<svg><rect width="100" height="100"/></svg>';
-    expect(analyzeSvgAnimation(svg)).toBeNull();
+    expect(analyzeSvgAnimation(svg)).toBeUndefined();
+  });
+
+  it('should accept an injected DOMParser', () => {
+    const svgContent =
+      '<svg><rect><animate attributeName="opacity" dur="3s" /></rect></svg>';
+    const result = analyzeSvgAnimation(svgContent, DOMParser);
+    expect(result).toBe(3);
   });
 
   it('should detect SMIL animation duration', () => {

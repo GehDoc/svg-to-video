@@ -53,13 +53,16 @@ For automated or batch processing, use the CLI tool. It is built to run in a hea
 Ensure [Node.js](https://nodejs.org/) and [FFmpeg](https://ffmpeg.org/) are installed.
 
 ```bash
-# Node.js
+# Node.js (auto-detected duration)
 npm install
-npx tsx src/index.ts example.svg 5 60 output.mp4
+npx tsx src/index.ts examples/example.svg 60 ./out-dir
+
+# Node.js (explicit duration)
+npx tsx src/index.ts examples/example.svg 60 ./out-dir -d 5
 
 # Docker
 docker compose build
-docker compose run --rm svg-to-video example.svg 5 60 output.mp4
+docker compose run --rm svg-to-video examples/example.svg 60 ./out-dir -d 5
 ```
 
 See [docs/CLI.md](./docs/CLI.md) for full usage, arguments, and options.

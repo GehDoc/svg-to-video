@@ -4,7 +4,7 @@
  * @param seekAnimations - The animation seeking function from the shared engine.
  * @param parentOrigin - The origin of the parent window for secure postMessage.
  */
-import type { RendererMessage } from '../../../../shared/types.js';
+import type { RendererMessage } from '../../../../shared/types';
 
 export function getRendererScript(
   seekAnimations: (timeMs: number) => void,

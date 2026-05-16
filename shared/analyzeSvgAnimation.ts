@@ -100,16 +100,28 @@ export function extractTimes(str: string): number[] {
 }
 
 /**
- * Analyzes the SVG content and returns a recommended duration in seconds.
- * Returns null if no animation is detected.
+ * Analyzes the provided SVG content (string) and returns a recommended duration.
+ * Accepts an optional DOMParser to use if the environment doesn't have a global one.
  */
-export const analyzeSvgAnimation = (svgContent: string): number | null => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(svgContent, 'image/svg+xml');
+export const analyzeSvgAnimation = (
+  svgContent: string,
+  parserOverride?: typeof DOMParser
+): number | undefined => {
+  const Parser =
+    parserOverride ||
+    (typeof DOMParser !== 'undefined' ? DOMParser : undefined);
+  if (!Parser) {
+    throw new Error(
+      'DOMParser is not available. Provide it via parserOverride.'
+    );
+  }
+  const parser = new Parser();
+  const root = parser.parseFromString(svgContent, 'image/svg+xml');
+
   const animations: AnimationInfo[] = [];
 
   // 1. Manual SMIL Parsing
-  const smilElements = doc.querySelectorAll(
+  const smilElements = root.querySelectorAll(
     'animate, animateTransform, animateMotion, animateColor, set'
   );
   smilElements.forEach((el) => {
@@ -137,8 +149,8 @@ export const analyzeSvgAnimation = (svgContent: string): number | null => {
   });
 
   // 2. CSS Animation Detection (Heuristic)
-  const styleTags = Array.from(doc.querySelectorAll('style'));
-  const elementsWithStyle = Array.from(doc.querySelectorAll('[style]'));
+  const styleTags = Array.from(root.querySelectorAll('style'));
+  const elementsWithStyle = Array.from(root.querySelectorAll('[style]'));
 
   // Extract all CSS rules (from style tags)
   const styleRules =
@@ -211,7 +223,7 @@ export const analyzeSvgAnimation = (svgContent: string): number | null => {
     }
   }
 
-  if (animations.length === 0) return null;
+  if (animations.length === 0) return undefined;
 
   const looping = animations.filter((a) => a.isLooping).map((a) => a.duration);
   const nonLooping = animations
@@ -232,5 +244,5 @@ export const analyzeSvgAnimation = (svgContent: string): number | null => {
     return Math.max(...nonLooping);
   }
 
-  return null;
+  return undefined;
 };

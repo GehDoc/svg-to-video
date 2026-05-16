@@ -7,6 +7,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { seekAnimations } from '../shared/animation-engine.js';
 import { validateOptions } from './utils/validateOptions.js';
+import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const pkg = require('../package.json');
+import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,6 +20,7 @@ type FrameFileExtension = 'png';
 const frameFileExtension: FrameFileExtension = 'png';
 
 interface RunOptions {
+  duration?: number;
   keepFrames: boolean;
   hold: number;
   force: boolean;
@@ -28,14 +34,17 @@ async function main(): Promise<void> {
   const program = new Command();
   program
     .name('svg-to-video')
+    .version(pkg.version)
     .description('Render a CSS-animated SVG to an MP4 video')
-    .usage('<svgPath> <duration> <fps> <outDir> [options]')
+    .usage('<svgPath> <fps> <outDir> [options]')
     .argument('<svgPath>', 'input animated SVG file')
-    .argument('<duration>', 'desired animation duration (seconds)', (v) =>
-      parseFloat(v)
-    )
     .argument('<fps>', 'frames per second', (v) => parseInt(v, 10))
     .argument('<outDir>', 'output directory')
+    .option(
+      '-d, --duration <seconds>',
+      'desired animation duration (seconds)',
+      (v) => parseFloat(v)
+    )
     .option(
       '-h, --hold <seconds>',
       'additional seconds to freeze last frame',
@@ -86,7 +95,6 @@ async function main(): Promise<void> {
  */
 async function run(
   svgPath: string,
-  duration: number,
   fps: number,
   outDir: string,
   options: RunOptions
@@ -110,13 +118,28 @@ async function run(
     process.exit(1);
   }
 
+  const svg = fs.readFileSync(svgPath, 'utf-8');
+
+  let duration = options.duration;
+  if (duration === undefined) {
+    console.log('🔍 Duration not provided, attempting to auto-detect...');
+
+    const dom = new JSDOM('');
+    duration = analyzeSvgAnimation(svg, dom.window.DOMParser);
+    if (duration === undefined) {
+      console.error(
+        '❌ Error: Could not detect duration. Please provide a duration using -d or --duration.'
+      );
+      process.exit(1);
+    }
+    console.log(`✅ Auto-detected duration: ${duration}s`);
+  }
+
   const puppeteerArgs = (process.env.PUPPETEER_ARGS || '')
     .split(' ')
     .filter((arg) => arg.trim().length > 0);
 
-  const svg = fs.readFileSync(svgPath, 'utf-8');
-
-  const totalFrames = Math.ceil(fps * duration);
+  const totalFrames = Math.ceil(fps * duration!);
   const padWidth = Math.floor(Math.log10(totalFrames)) + 1;
 
   console.log('🚀 Starting conversion:');
@@ -146,6 +169,7 @@ async function run(
     options.transparent,
     options.bgColor
   );
+
   convertToMP4(
     outputFileName,
     fps,

@@ -7,7 +7,7 @@ import {
   type ResolutionPreset,
   type RenderSettings,
 } from '../hooks/useRenderer';
-import { analyzeSvgAnimation } from '../utils/analyzeSvgAnimation';
+import { analyzeSvgAnimation } from '../../../shared/analyzeSvgAnimation.js';
 import { Header } from './Header';
 import { ConfigPanel } from './ConfigPanel';
 import { MonitorPanel } from './MonitorPanel';
@@ -126,7 +126,7 @@ export const Studio = () => {
             setSvgContent(content);
             setFileName(name);
             const detectedDuration = analyzeSvgAnimation(content);
-            if (detectedDuration !== null && detectedDuration > 0) {
+            if (detectedDuration !== undefined && detectedDuration > 0) {
               setDuration(detectedDuration);
             }
           }}
