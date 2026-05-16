@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getProbeMetadata } from '../../tests/helpers/e2e.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -50,24 +51,17 @@ test.describe('SVG to Video Golden Path', () => {
     // Verify download filename
     expect(download.suggestedFilename()).toBe('font-test.mp4');
 
-    // Verify metadata of the downloaded file (defaults: no title, only attribution)
+    // Verify metadata of the downloaded file
     const downloadPath = path.resolve(
       __dirname,
-      '../.vitest-attachments/test-default-metadata.mp4'
+      '../.vitest-attachments/test-metadata.mp4'
     );
     await download.saveAs(downloadPath);
 
-    const { execSync } = await import('node:child_process');
-    const ffprobePath = (await import('ffprobe-static')).default.path;
-
-    const probeOutput = execSync(
-      `${ffprobePath} -v error -show_entries format_tags -of default=noprint_wrappers=1:nokey=0 ${downloadPath}`,
-      { encoding: 'utf-8' }
-    );
-
-    expect(probeOutput).not.toContain('TAG:title=');
-    expect(probeOutput).toMatch(
-      /TAG:comment=Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)$/m
+    const data = getProbeMetadata(downloadPath);
+    expect(data['TAG:title']).toBeUndefined();
+    expect(data['TAG:comment']).toMatch(
+      /^Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)$/
     );
 
     // Verify video element is present and has a blob source
@@ -156,24 +150,17 @@ test.describe('SVG to Video Golden Path', () => {
 
     expect(download.suggestedFilename()).toBe('font-test.mp4');
 
-    // Verify metadata of the downloaded file
+    // Verify metadata of the downloaded file (defaults: no title, only attribution)
     const downloadPath = path.resolve(
       __dirname,
-      '../.vitest-attachments/test-metadata.mp4'
+      '../.vitest-attachments/test-default-metadata.mp4'
     );
     await download.saveAs(downloadPath);
 
-    const { execSync } = await import('node:child_process');
-    const ffprobePath = (await import('ffprobe-static')).default.path;
-
-    const probeOutput = execSync(
-      `${ffprobePath} -v error -show_entries format_tags -of default=noprint_wrappers=1:nokey=0 ${downloadPath}`,
-      { encoding: 'utf-8' }
-    );
-
-    expect(probeOutput).toContain('TAG:title=Web Title');
-    expect(probeOutput).toMatch(
-      /TAG:comment=Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\) \| Web Comment/
+    const data = getProbeMetadata(downloadPath);
+    expect(data['TAG:title']).toBe('Web Title');
+    expect(data['TAG:comment']).toMatch(
+      /^Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\) \| Web Comment$/
     );
   });
 });

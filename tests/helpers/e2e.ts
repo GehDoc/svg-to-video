@@ -1,5 +1,5 @@
 import path from 'path';
-import { spawnSync } from 'child_process';
+import { spawnSync, execFileSync } from 'child_process';
 import fs from 'node:fs';
 import { PNG } from 'pngjs';
 import ffprobeStatic from 'ffprobe-static';
@@ -14,8 +14,8 @@ export const getTestPaths = (fixtureName: string, extension = '.mp4') => {
   };
 };
 
-export const getProbeData = (filePath: string): Record<string, string> => {
-  const probe = spawnSync(
+export const getProbeMetadata = (filePath: string): Record<string, string> => {
+  const output = execFileSync(
     ffprobeStatic.path,
     [
       '-v',
@@ -23,25 +23,19 @@ export const getProbeData = (filePath: string): Record<string, string> => {
       '-select_streams',
       'v:0',
       '-show_entries',
-      'stream=width,height:format=duration',
-      '-show_entries',
-      'stream_tags=alpha_mode',
-      '-show_entries',
-      'format_tags',
+      'stream=width,height:format=duration:format_tags:stream_tags',
       '-of',
-      'default=noprint_wrappers=1',
+      'default=noprint_wrappers=1:nokey=0',
       filePath,
     ],
     { encoding: 'utf-8' }
   );
-  const lines = probe.stdout.split('\n');
+
   const data: Record<string, string> = {};
-  for (const line of lines) {
-    if (line.includes('=')) {
-      const [key, value] = line.split('=');
-      data[key] = value;
-    }
-  }
+  output.split('\n').forEach((line) => {
+    const [key, value] = line.split('=');
+    if (key && value !== undefined) data[key] = value;
+  });
   return data;
 };
 

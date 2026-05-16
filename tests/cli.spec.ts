@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import {
   OUTPUT_DIR_RELATIVE as outputDir,
   getTestPaths,
-  getProbeData,
+  getProbeMetadata,
   extractFrame,
   getPixelColor,
 } from './helpers/e2e.js';
@@ -76,7 +76,7 @@ describe('CLI Functionality', () => {
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
 
-      const data = getProbeData(outputFile);
+      const data = getProbeMetadata(outputFile);
       assert.strictEqual(data.width, '500');
       assert.strictEqual(data.height, '300');
       assert.ok(parseFloat(data.duration) >= 1.0);
@@ -107,7 +107,7 @@ describe('CLI Functionality', () => {
       );
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
-      const data = getProbeData(outputFile);
+      const data = getProbeMetadata(outputFile);
       assert.strictEqual(data.width, '1920');
       assert.strictEqual(data.height, '1080');
     });
@@ -178,7 +178,7 @@ describe('CLI Functionality', () => {
       );
       assert.ok(fs.existsSync(outputFile));
 
-      const data = getProbeData(outputFile);
+      const data = getProbeMetadata(outputFile);
       assert.strictEqual(data.width, '1000');
       assert.strictEqual(data.height, '600');
     });
@@ -211,7 +211,7 @@ describe('CLI Functionality', () => {
       );
       assert.ok(fs.existsSync(outputFile));
 
-      const data = getProbeData(outputFile);
+      const data = getProbeMetadata(outputFile);
       assert.strictEqual(data.width, '500');
       assert.strictEqual(data.height, '300');
       assert.ok(parseFloat(data.duration) >= 2.0);
@@ -240,7 +240,7 @@ describe('CLI Functionality', () => {
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
 
-      const data = getProbeData(outputFile);
+      const data = getProbeMetadata(outputFile);
       assert.strictEqual(data['TAG:title'], 'Custom Title');
       assert.match(
         data['TAG:comment'],
