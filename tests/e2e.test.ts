@@ -2,58 +2,16 @@ import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert';
 import { spawnSync } from 'child_process';
 import fs from 'node:fs';
-import ffprobeStatic from 'ffprobe-static';
-import { PNG } from 'pngjs';
-import { OUTPUT_DIR_RELATIVE, getTestPaths } from './utils.js';
+import {
+  OUTPUT_DIR_RELATIVE,
+  getTestPaths,
+  getProbeData,
+  extractFrame,
+  getPixelColor,
+} from './utils.js';
 
 describe('End-to-End Rendering', () => {
   const outputDir = OUTPUT_DIR_RELATIVE;
-
-  const getProbeData = (filePath: string): Record<string, string> => {
-    const probe = spawnSync(
-      ffprobeStatic.path,
-      [
-        '-v',
-        'error',
-        '-select_streams',
-        'v:0',
-        '-show_entries',
-        'stream=width,height:format=duration',
-        '-show_entries',
-        'stream_tags=alpha_mode',
-        '-of',
-        'default=noprint_wrappers=1',
-        filePath,
-      ],
-      { encoding: 'utf-8' }
-    );
-    const lines = probe.stdout.split('\n');
-    const data: Record<string, string> = {};
-    for (const line of lines) {
-      if (line.includes('=')) {
-        const [key, value] = line.split('=');
-        data[key] = value;
-      }
-    }
-    return data;
-  };
-
-  const extractFrame = (videoPath: string, framePath: string): boolean => {
-    spawnSync('ffmpeg', ['-y', '-i', videoPath, '-vframes', '1', framePath], {
-      stdio: 'pipe',
-    });
-    return fs.existsSync(framePath);
-  };
-
-  const getPixelColor = (imagePath: string): string => {
-    const data = fs.readFileSync(imagePath);
-    const png = PNG.sync.read(data);
-    const idx = 0;
-    const r = png.data[idx];
-    const g = png.data[idx + 1];
-    const b = png.data[idx + 2];
-    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
-  };
 
   before(() => {
     if (!fs.existsSync(outputDir)) {
@@ -71,7 +29,7 @@ describe('End-to-End Rendering', () => {
     const { inputFile, outputFile } = getTestPaths('font-test');
     const result = spawnSync(
       'npx',
-      ['tsx', 'src/index.ts', inputFile, '1', '30', outputDir, '--force'],
+      ['tsx', 'src/index.ts', inputFile, '30', outputDir, '-d', '1', '--force'],
       { encoding: 'utf-8' }
     );
 
@@ -97,9 +55,10 @@ describe('End-to-End Rendering', () => {
         'tsx',
         'src/index.ts',
         inputFile,
-        '1',
         '30',
         outputDir,
+        '-d',
+        '1',
         '--resolution',
         '1080p',
         '--force',
@@ -129,9 +88,10 @@ describe('End-to-End Rendering', () => {
         'tsx',
         'src/index.ts',
         inputFile,
-        '1',
         '30',
         outputDir,
+        '-d',
+        '1',
         '--bg-color',
         '#0000FF',
         '--force',
@@ -166,9 +126,10 @@ describe('End-to-End Rendering', () => {
         'tsx',
         'src/index.ts',
         inputFile,
-        '1',
         '30',
         outputDir,
+        '-d',
+        '1',
         '--scale',
         '2.0',
         '--resolution',
@@ -198,9 +159,10 @@ describe('End-to-End Rendering', () => {
         'tsx',
         'src/index.ts',
         inputFile,
-        '2',
         '30',
         outputDir,
+        '-d',
+        '2',
         '--transparent',
         '--force',
       ],
