@@ -84,7 +84,8 @@
 
   input[type='number'],
   select,
-  input[type='text'] {
+  input[type='text'],
+  .textarea-input {
     width: 100%;
     padding: 0.75rem;
     background: var(--bg);
@@ -93,6 +94,7 @@
     color: var(--text);
     font-size: 0.95rem;
     transition: all 0.2s ease;
+    box-sizing: border-box;
 
     &:focus:not(:disabled) {
       outline: none;
@@ -107,6 +109,11 @@
       border-color: var(--border);
       color: var(--text-muted);
     }
+  }
+
+  .textarea-input {
+    resize: vertical;
+    min-height: 80px;
   }
 
   input[type='range'] {

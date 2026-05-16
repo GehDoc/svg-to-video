@@ -334,6 +334,7 @@ export const ConfigPanel = ({
             }
             placeholder="Additional notes"
             rows={2}
+            className="textarea-input"
           />
         </div>
       </section>
