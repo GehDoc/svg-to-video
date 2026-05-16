@@ -1,5 +1,5 @@
+// @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
-import { JSDOM } from 'jsdom';
 import {
   analyzeSvgAnimation,
   parseClockValue,
@@ -8,10 +8,6 @@ import {
   calculateLCM,
   extractTimes,
 } from './analyzeSvgAnimation.js';
-
-const dom = new JSDOM();
-(global as any).DOMParser = dom.window.DOMParser;
-(global as any).ParentNode = dom.window.Node;
 
 describe('extractTimes', () => {
   it('should extract seconds and milliseconds from strings', () => {
@@ -88,7 +84,7 @@ describe('analyzeSvgAnimation', () => {
   it('should accept an injected DOMParser', () => {
     const svgContent =
       '<svg><rect><animate attributeName="opacity" dur="3s" /></rect></svg>';
-    const result = analyzeSvgAnimation(svgContent, dom.window.DOMParser);
+    const result = analyzeSvgAnimation(svgContent, DOMParser);
     expect(result).toBe(3);
   });
 
