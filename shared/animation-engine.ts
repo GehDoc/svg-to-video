@@ -2,15 +2,15 @@
  * Browser-side function to seek all animations to a specific time.
  * Supports both CSS Animations (Web Animations API) and SMIL.
  * This is the core logic shared between the CLI (Puppeteer) and the Web (Iframe) versions.
- * @param {number} timeInMilliseconds
+ * @param timeInMilliseconds
  */
-export function seekAnimations(timeInMilliseconds) {
+export function seekAnimations(timeInMilliseconds: number): void {
   // 1. Seek CSS Animations (Web Animations API)
   const animations = document.getAnimations();
   animations.forEach((animation) => {
     try {
       animation.pause();
-    } catch (_error) {
+    } catch {
       /* ignored */
     }
     animation.currentTime = timeInMilliseconds;
@@ -20,11 +20,15 @@ export function seekAnimations(timeInMilliseconds) {
   const svgs = document.querySelectorAll('svg');
   svgs.forEach((svg) => {
     try {
-      if (typeof svg.pauseAnimations === 'function') svg.pauseAnimations();
-      if (typeof svg.setCurrentTime === 'function') {
-        svg.setCurrentTime(timeInMilliseconds / 1000);
+      if (svg instanceof SVGSVGElement) {
+        if (typeof svg.pauseAnimations === 'function') {
+          svg.pauseAnimations();
+        }
+        if (typeof svg.setCurrentTime === 'function') {
+          svg.setCurrentTime(timeInMilliseconds / 1000);
+        }
       }
-    } catch (_error) {
+    } catch {
       /* ignored */
     }
   });

@@ -1,8 +1,14 @@
 /**
  * Validates CLI options
- * @param {{ scale: number; resolution: string; transparent: boolean; bgColor: string }} options
  */
-export function validateOptions(options) {
+export interface ValidateOptionsParams {
+  scale: number;
+  resolution: string;
+  transparent: boolean;
+  bgColor: string;
+}
+
+export function validateOptions(options: ValidateOptionsParams): void {
   if (options.scale !== 1 && options.resolution !== 'original') {
     throw new Error('--scale can only be used with --resolution original.');
   }

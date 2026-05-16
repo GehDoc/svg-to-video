@@ -1,10 +1,16 @@
 /**
  * This is the isolated renderer script that will run inside the iframe.
  * It is injected by SvgRenderer via Blob.
- * @param {(timeMs: number) => void} seekAnimations - The animation seeking function from the shared engine.
- * @param {string} parentOrigin - The origin of the parent window for secure postMessage.
+ * @param seekAnimations - The animation seeking function from the shared engine.
+ * @param parentOrigin - The origin of the parent window for secure postMessage.
  */
-export function getRendererScript(seekAnimations, parentOrigin) {
+import type { RendererMessage } from '../../../../shared/types.js';
+
+export function getRendererScript(
+  seekAnimations: (timeMs: number) => void,
+  isRendererMessage: (data: unknown) => data is RendererMessage,
+  parentOrigin: string
+): void {
   const OPTIMAL_PROPS = [
     'fill',
     'fill-opacity',
@@ -56,28 +62,30 @@ export function getRendererScript(seekAnimations, parentOrigin) {
 
   const svgContainer = document.getElementById('svg-container');
   const captureCanvas = document.getElementById('capture-canvas');
+
+  if (
+    !(svgContainer instanceof HTMLElement) ||
+    !(captureCanvas instanceof HTMLCanvasElement)
+  ) {
+    console.error('[Renderer] Required DOM elements not found.');
+    return;
+  }
+
   let isReady = false;
 
-  window.addEventListener('message', async (event) => {
+  window.addEventListener('message', async (event: MessageEvent) => {
     if (event.origin !== parentOrigin || event.source !== window.parent) {
       return;
     }
 
-    const { type, payload } = event.data || {};
+    const data = event.data;
+    if (!isRendererMessage(data)) {
+      return;
+    }
 
-    if (type === 'LOAD_SVG') {
-      if (
-        !payload ||
-        typeof payload.svgContent !== 'string' ||
-        typeof payload.width !== 'number' ||
-        typeof payload.height !== 'number' ||
-        typeof payload.timeMs !== 'number'
-      ) {
-        return;
-      }
-
+    if (data.type === 'LOAD_SVG') {
+      const { svgContent, width, height, timeMs } = data.payload;
       isReady = false;
-      const { svgContent, width, height, timeMs } = payload;
       svgContainer.innerHTML = svgContent;
       svgContainer.style.width = width + 'px';
       svgContainer.style.height = height + 'px';
@@ -96,31 +104,48 @@ export function getRendererScript(seekAnimations, parentOrigin) {
       });
     }
 
-    if (type === 'SEEK') {
+    if (data.type === 'SEEK') {
       if (!isReady) return;
-      seekAnimations(payload.timeMs);
+      const { timeMs } = data.payload;
+      seekAnimations(timeMs);
       await new Promise((r) => requestAnimationFrame(r));
       window.parent.postMessage({ type: 'SEEKED' }, parentOrigin);
     }
 
-    if (type === 'CAPTURE') {
+    if (data.type === 'CAPTURE') {
       if (!isReady) return;
+      const { method } = data.payload;
       const svg = svgContainer.querySelector('svg');
       const ctx = captureCanvas.getContext('2d');
       if (!svg || !ctx) return;
 
       // 1. CLONE THE SVG
-      const clone = svg.cloneNode(true);
+      const cloneNode = svg.cloneNode(true);
+      if (!(cloneNode instanceof Element)) return;
+      const clone = cloneNode as HTMLElement | SVGElement;
 
       // 2. MAP ELEMENTS BETWEEN ORIGINAL AND CLONE
       // We use a flat list to avoid recursion and index mismatches
       const svgElements = [svg, ...Array.from(svg.querySelectorAll('*'))];
       const cloneElements = [clone, ...Array.from(clone.querySelectorAll('*'))];
 
+      if (svgElements.length !== cloneElements.length) {
+        console.error('[Renderer] Clone structure mismatch');
+        return;
+      }
+
       // 3. BAKE COMPUTED STYLES INTO CLONE
       svgElements.forEach((svgElement, svgElementIndex) => {
         const cloneElement = cloneElements[svgElementIndex];
-        if (!cloneElement || !cloneElement.style) return;
+        // Ensure cloneElement is an element with a style property (covers both HTMLElement and SVGElement)
+        if (
+          !(
+            cloneElement instanceof HTMLElement ||
+            cloneElement instanceof SVGElement
+          )
+        ) {
+          return;
+        }
 
         // Skip animation, style, and script tags (they will be stripped anyway)
         const tagName = svgElement.tagName.toLowerCase();
@@ -139,8 +164,9 @@ export function getRendererScript(seekAnimations, parentOrigin) {
 
         const style = window.getComputedStyle(svgElement);
 
-        if (payload.method === 'high-fidelity') {
-          for (const propertyName of style) {
+        if (method === 'high-fidelity') {
+          for (let i = 0; i < style.length; i++) {
+            const propertyName = style[i];
             cloneElement.style.setProperty(
               propertyName,
               style.getPropertyValue(propertyName),
