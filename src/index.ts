@@ -108,21 +108,6 @@ async function run(
     process.exit(1);
   }
 
-  const svg = fs.readFileSync(svgPath, 'utf-8');
-  let duration = options.duration;
-
-  if (duration === undefined) {
-    console.log('🔍 Duration not provided, attempting to auto-detect...');
-    duration = analyzeSvgAnimation(svg) ?? undefined;
-    if (duration === undefined) {
-      console.error(
-        '❌ Error: Could not auto-detect duration. Please provide a duration using -d or --duration.'
-      );
-      process.exit(1);
-    }
-    console.log(`✅ Auto-detected duration: ${duration}s`);
-  }
-
   try {
     validateOptions(options);
   } catch (error) {
@@ -132,11 +117,25 @@ async function run(
     process.exit(1);
   }
 
+  const svg = fs.readFileSync(svgPath, 'utf-8');
+  let duration = options.duration;
+
+  if (duration === undefined) {
+    console.log('🔍 Duration not provided, attempting to auto-detect...');
+    duration = analyzeSvgAnimation(svg) ?? undefined;
+    if (duration === undefined) {
+      console.error(
+        '❌ Error: Could not detect duration. Please provide a duration using -d or --duration.'
+      );
+      process.exit(1);
+    }
+    console.log(`✅ Auto-detected duration: ${duration}s`);
+  }
+
   const puppeteerArgs = (process.env.PUPPETEER_ARGS || '')
     .split(' ')
     .filter((arg) => arg.trim().length > 0);
 
-  // Update totalFrames calculation to use the local duration variable
   const totalFrames = Math.ceil(fps * duration!);
   const padWidth = Math.floor(Math.log10(totalFrames)) + 1;
 
@@ -153,6 +152,8 @@ async function run(
   console.log(`  Frames:     ${totalFrames} total`);
   console.log('---');
 
+  fs.mkdirSync(outDir, { recursive: true });
+
   await createFrames(
     svg,
     fps,
@@ -165,6 +166,7 @@ async function run(
     options.transparent,
     options.bgColor
   );
+
   convertToMP4(
     outputFileName,
     fps,
@@ -180,6 +182,7 @@ async function run(
 
   console.log(`\n✅ Done! Video saved to ${path.join(outDir, outputFileName)}`);
 }
+//... (rest of code)
 
 /**
  * create frame images by rendering the SVG in a headless browser and advancing the animation to the correct timestamp for each frame
