@@ -121,8 +121,8 @@ export function getRendererScript(
 
       // 1. CLONE THE SVG
       const cloneNode = svg.cloneNode(true);
-      if (!(cloneNode instanceof SVGSVGElement)) return;
-      const clone = cloneNode;
+      if (!(cloneNode instanceof Element)) return;
+      const clone = cloneNode as HTMLElement | SVGElement;
 
       // 2. MAP ELEMENTS BETWEEN ORIGINAL AND CLONE
       // We use a flat list to avoid recursion and index mismatches
@@ -132,8 +132,15 @@ export function getRendererScript(
       // 3. BAKE COMPUTED STYLES INTO CLONE
       svgElements.forEach((svgElement, svgElementIndex) => {
         const cloneElement = cloneElements[svgElementIndex];
-        if (!(cloneElement instanceof HTMLElement) || !cloneElement.style)
+        // Ensure cloneElement is an element with a style property (covers both HTMLElement and SVGElement)
+        if (
+          !(
+            cloneElement instanceof HTMLElement ||
+            cloneElement instanceof SVGElement
+          )
+        ) {
           return;
+        }
 
         // Skip animation, style, and script tags (they will be stripped anyway)
         const tagName = svgElement.tagName.toLowerCase();
