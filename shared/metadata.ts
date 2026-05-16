@@ -13,5 +13,5 @@ export const mergeMetadataComments = (
   const toolName = 'svg-to-video';
   const versionStr = version ? ` v${version}` : '';
   const attribution = `Converted from SVG by ${toolName}${versionStr} (https://gehdoc.github.io/svg-to-video/)`;
-  return userComment ? `${attribution} | ${userComment}` : attribution;
+  return userComment ? `${userComment} | ${attribution}` : attribution;
 };

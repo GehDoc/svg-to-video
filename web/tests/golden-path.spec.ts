@@ -160,7 +160,7 @@ test.describe('SVG to Video Golden Path', () => {
     const data = getProbeMetadata(downloadPath);
     expect(data['TAG:title']).toBe('Web Title');
     expect(data['TAG:comment']).toMatch(
-      /^Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\) \| Web Comment$/
+      /^Web Comment \| Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)$/
     );
   });
 });
