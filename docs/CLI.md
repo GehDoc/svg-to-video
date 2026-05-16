@@ -3,7 +3,7 @@
 The tool is built to run in a headless environment, making it perfect for CI/CD pipelines or server-side automation.
 
 ```bash
-node src/index.js <svgPath> <duration> <fps> <outDir> [options]
+npx tsx src/index.ts <svgPath> <duration> <fps> <outDir> [options]
 ```
 
 ## Arguments
