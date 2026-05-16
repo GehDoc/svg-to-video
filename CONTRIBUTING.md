@@ -81,14 +81,16 @@ If working without an agent, follow these steps to keep the project state synchr
 
 Beyond end-to-end testing, we use a multi-tiered strategy for component, accessibility, and visual validation:
 
-1.  **Unit Tests (`*.test.[ts|tsx]`)**: Validate logic, utilities, and basic component interaction using Vitest and JSDOM. These are fast and do not require a browser.
-    - **Command**: `npm run test:unit`
-2.  **Visual Regression Tests (`*.spec.[ts|tsx]`)**: Validate component-level rendering and pixel-perfect consistency in a real browser (Chromium) using Vitest and Playwright.
-    - **Command**: `npm run test:visual`
-3.  **End-to-End (E2E) Tests (`tests/**/\*.spec.[ts|tsx]`)\*\*: Validate full user workflows (e.g., "User opens app, uploads SVG, exports video") using Playwright directly.
-    - **Command**: `npm run test`
-4.  **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
-    - **Command**: `npm run test:storybook`
+1. **Unit Tests (`*.test.[ts|tsx]`)**: Validate logic, utilities, and basic component interaction using Vitest and JSDOM. These are fast and do not require a browser.
+   - **Command**: `npm run test:unit`
+2. **Visual Regression Tests (`*.spec.[ts|tsx]`)**: Validate component-level rendering and pixel-perfect consistency in a real browser (Chromium) using Vitest and Playwright.
+   - **Command**: `npm run test:visual`
+3. **CLI Integration Tests (`tests/cli.spec.ts`)**: Validate full user workflows for the CLI tool.
+   - **Command**: `npm run test:cli`
+4. **Web Studio E2E Tests (`web/tests/*.spec.ts`)**: Validate full user workflows for the Web Studio using Playwright.
+   - **Command**: `npm run test:web`
+5. **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
+   - **Command**: `npm run test:storybook`
 
 ### 🗂 Test Organization
 

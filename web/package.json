@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "type-check": "tsc -b",
-    "test": "playwright test --reporter=list",
+    "test:web": "playwright test --reporter=list",
     "test:unit": "vitest run",
     "test:storybook": "test-storybook",
     "test:visual": "vitest run -c vitest.visual.config.ts",

@@ -8,7 +8,7 @@ import {
   getProbeData,
   extractFrame,
   getPixelColor,
-} from './utils.js';
+} from './helpers/e2e.js';
 
 describe('End-to-End Rendering', () => {
   const outputDir = OUTPUT_DIR_RELATIVE;
