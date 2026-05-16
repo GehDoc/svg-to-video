@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
+import type { VideoMetadata } from '../../../shared/metadata';
+import { mergeMetadataComments } from '../../../shared/metadata';
 import * as Mediabunny from 'mediabunny';
 
 import { getFormatById } from '../utils/discoverFormats';
@@ -17,6 +19,7 @@ export interface RenderSettings {
   isTransparent: boolean;
   captureMethod: CaptureMethod;
   hold: number;
+  metadata?: VideoMetadata;
 }
 
 export interface RenderState {
@@ -154,6 +157,16 @@ export const useRenderer = (
           format: outputFormat,
           target,
         });
+
+        const metadata: VideoMetadata = {};
+        if (settings.metadata?.title?.trim()) {
+          metadata.title = settings.metadata.title.trim();
+        }
+        metadata.comment = mergeMetadataComments(
+          settings.metadata?.comment?.trim()
+        );
+
+        output.setMetadataTags(metadata);
 
         const videoCodec = await getBestCodec(width, height, settings.format);
         if (!videoCodec) {

@@ -25,6 +25,7 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 | `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`. |
 | `--transparent`         | Render with a transparent background. (Cannot be used with `--bg-color`)                             |
 | `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`) - (Cannot be used with `--transparent`)         |
+| `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`).                                          |
 | `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                     |
 
 ## Environment Variables

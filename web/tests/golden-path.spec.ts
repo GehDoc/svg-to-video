@@ -102,4 +102,58 @@ test.describe('SVG to Video Golden Path', () => {
 
     expect(download.suggestedFilename()).toBe('font-test.webm');
   });
+
+  test('should successfully render an SVG with custom metadata', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/font-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    // Enter metadata
+    await page.fill('#meta-title', 'Web Title');
+    await page.fill('#meta-comment', 'Web Comment');
+
+    await page.fill('#duration', '1');
+    await page.fill('#fps', '10');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export MP4/i,
+    });
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: 30000 });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('font-test.mp4');
+
+    // Verify metadata of the downloaded file
+    const downloadPath = path.resolve(
+      __dirname,
+      '../.vitest-attachments/test-metadata.mp4'
+    );
+    await download.saveAs(downloadPath);
+
+    const { execSync } = await import('node:child_process');
+    const ffprobePath = (await import('ffprobe-static')).default.path;
+
+    const probeOutput = execSync(
+      `${ffprobePath} -v error -show_entries format_tags -of default=noprint_wrappers=1:nokey=0 ${downloadPath}`,
+      { encoding: 'utf-8' }
+    );
+
+    expect(probeOutput).toContain('TAG:title=Web Title');
+    expect(probeOutput).toContain(
+      'TAG:comment=Converted from SVG with https://gehdoc.github.io/svg-to-video/ | Web Comment'
+    );
+  });
 });

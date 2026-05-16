@@ -2,6 +2,7 @@ import path from 'path';
 import { spawnSync } from 'child_process';
 import fs from 'node:fs';
 import { PNG } from 'pngjs';
+import ffprobeStatic from 'ffprobe-static';
 
 export const FIXTURE_DIR_RELATIVE = './tests/fixtures';
 export const OUTPUT_DIR_RELATIVE = './out-dir-test';
@@ -15,7 +16,7 @@ export const getTestPaths = (fixtureName: string, extension = '.mp4') => {
 
 export const getProbeData = (filePath: string): Record<string, string> => {
   const probe = spawnSync(
-    'ffprobe',
+    ffprobeStatic.path,
     [
       '-v',
       'error',
@@ -25,6 +26,8 @@ export const getProbeData = (filePath: string): Record<string, string> => {
       'stream=width,height:format=duration',
       '-show_entries',
       'stream_tags=alpha_mode',
+      '-show_entries',
+      'format_tags',
       '-of',
       'default=noprint_wrappers=1',
       filePath,

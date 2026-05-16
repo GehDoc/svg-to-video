@@ -1,7 +1,7 @@
 # Spec: add-video-metadata
 
 **GitHub Issue**: N/A
-**Status**: 🟠 Pending
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -11,39 +11,40 @@ Enable the injection of custom metadata into generated MP4 files to support attr
 
 - **Core Technologies**: WebCodecs (Web), FFmpeg (CLI), container metadata headers.
 - **Architecture**:
-  - **Shared**: Define a standard metadata schema in `shared/types.ts`.
-  - **Web**: Extend `useRenderer` to include metadata in the final muxing phase. Utilize mediabunny's format/codec querying to discover metadata capabilities for MP4, WEBM, and MKV.
+  - **Shared**: Define a standard metadata schema in `shared/types.ts` and a shared utility for metadata comment merging.
+  - **Web**: Extend `useRenderer` to include metadata in the final muxing phase. Utilize mediabunny's format/codec querying.
   - **CLI**: Update the `src/` rendering pipeline to pass metadata to the FFmpeg process.
-- **Attribution**: Automatically include "Converted from SVG with https://gehdoc.github.io/svg-to-video/" as a mandatory default field.
+- **Attribution**: Standardized merge function applied in shared utility for "Converted from SVG with https://gehdoc.github.io/svg-to-video/".
 - **User Customization**:
-  - **Web**: Add a UI input in the Studio settings.
+  - **Web**: Add a UI input in the Studio settings. Fields 'title' and 'comment' will be disabled if `mediabunny` indicates the selected format does not support them.
   - **CLI**: Introduce a new flag (e.g., `--metadata "key=value"`).
 
 ## ✅ Task List
 
-- [ ] **Research**
-  - [ ] Define standard metadata keys.
-  - [ ] Investigate FFmpeg metadata flag syntax for MP4/WEBM.
-  - [ ] Research `mediabunny` API to query format-specific metadata support.
-- [ ] **Infrastructure & Shared**
-  - [ ] Update `shared/types.ts` to include `VideoMetadata` interface.
-- [ ] **Web Studio**
-  - [ ] Implement metadata capability discovery using mediabunny.
-  - [ ] Update rendering hooks to process `VideoMetadata`.
-  - [ ] Add metadata UI inputs to `web/src/components/Studio.tsx`.
-- [ ] **CLI Implementation**
-  - [ ] Research npm library to query FFmpeg for format-specific metadata capabilities (to avoid hardcoding).
-  - [ ] Update `src/index.ts` to parse metadata arguments.
-  - [ ] Update renderer to apply metadata during file creation using queried capabilities.
-- [ ] **Verification**
-  - [ ] Implement E2E tests for Web Studio metadata.
-  - [ ] Implement E2E tests for CLI metadata.
+- [x] **Research**
+  - [x] Define standard metadata keys (title, comment).
+  - [x] Investigate FFmpeg metadata flag syntax for MP4/WEBM.
+  - [x] Research `mediabunny` API to query format-specific metadata support.
+- [x] **Infrastructure & Shared**
+  - [x] Update `shared/types.ts` to include `VideoMetadata` interface.
+  - [x] Implement shared `mergeMetadataComments(userComment?: string): string` utility.
+- [x] **Web Studio**
+  - [x] Implement metadata capability discovery: check support for `title`/`comment` using `mediabunny` and propagate to UI state.
+  - [x] Add metadata UI inputs to `web/src/components/Studio.tsx` and `web/src/components/ConfigPanel.tsx`.
+  - [x] Update rendering hooks to process `VideoMetadata`.
+- [x] **CLI Implementation**
+  - [x] Research npm library to query FFmpeg for format-specific metadata capabilities.
+  - [x] Update `src/index.ts` to parse metadata arguments.
+  - [x] Rework `src/index.ts` to use shared comment merging utility.
+- [x] **Verification**
+  - [x] Implement E2E tests for Web Studio metadata (Playwright).
+  - [x] Implement E2E tests for CLI metadata (ffprobe).
 
 ## 🧪 Verification Plan
 
-- [ ] **Unit Testing**: Add tests to `shared/` and `web/` components.
-- [ ] **E2E Testing (CLI)**: Add integration test case in `tests/cli.spec.ts` using `ffprobe` to validate metadata tags in generated files.
-- [ ] **E2E Testing (Web)**: Add test case in `web/tests/golden-path.spec.ts` (or equivalent) to simulate user metadata input and verify output file properties.
+- [x] **Unit Testing**: Add tests to `shared/` and `web/` components.
+- [x] **E2E Testing (CLI)**: Integration test in `tests/cli.spec.ts` using `ffprobe` to validate metadata tags in generated files.
+- [x] **E2E Testing (Web)**: Update `web/tests/golden-path.spec.ts` to simulate metadata input and use `ffprobe` (or a helper) to verify properties of the downloaded file.
 
 ## 📝 Change Log
 

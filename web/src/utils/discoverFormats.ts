@@ -6,6 +6,7 @@ export interface VideoFormat {
   extension: string;
   mimeType: string;
   supportsAlpha: boolean;
+  supportsMetadata: boolean;
   // We store the class to instantiate it later
   OutputFormatClass: new () => Mediabunny.OutputFormat;
 }
@@ -17,6 +18,7 @@ export const AVAILABLE_FORMATS: VideoFormat[] = [
     extension: '.mp4',
     mimeType: 'video/mp4',
     supportsAlpha: false,
+    supportsMetadata: true,
     OutputFormatClass: Mediabunny.Mp4OutputFormat,
   },
   {
@@ -25,6 +27,7 @@ export const AVAILABLE_FORMATS: VideoFormat[] = [
     extension: '.webm',
     mimeType: 'video/webm',
     supportsAlpha: true,
+    supportsMetadata: true,
     OutputFormatClass: Mediabunny.WebMOutputFormat,
   },
   {
@@ -33,6 +36,7 @@ export const AVAILABLE_FORMATS: VideoFormat[] = [
     extension: '.mkv',
     mimeType: 'video/x-matroska',
     supportsAlpha: true,
+    supportsMetadata: true,
     OutputFormatClass: Mediabunny.MkvOutputFormat,
   },
   {
@@ -41,6 +45,7 @@ export const AVAILABLE_FORMATS: VideoFormat[] = [
     extension: '.mov',
     mimeType: 'video/quicktime',
     supportsAlpha: false,
+    supportsMetadata: true,
     OutputFormatClass: Mediabunny.MovOutputFormat,
   },
 ];

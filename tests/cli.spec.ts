@@ -212,5 +212,35 @@ describe('CLI Functionality', () => {
       assert.ok(parseFloat(data.duration) >= 2.0);
       assert.strictEqual(data['TAG:alpha_mode'], '1');
     });
+
+    test('should render font-test.svg with custom metadata', () => {
+      const { inputFile, outputFile } = getTestPaths('font-test');
+      const result = spawnSync(
+        'npx',
+        [
+          'tsx',
+          'src/index.ts',
+          inputFile,
+          '30',
+          outputDir,
+          '-d',
+          '1',
+          '--metadata',
+          'title=Custom Title',
+          'comment=Test Comment',
+          '--force',
+        ],
+        { encoding: 'utf-8' }
+      );
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+
+      const data = getProbeData(outputFile);
+      assert.strictEqual(data['TAG:title'], 'Custom Title');
+      assert.strictEqual(
+        data['TAG:comment'],
+        'Converted from SVG with https://gehdoc.github.io/svg-to-video/ | Test Comment'
+      );
+    });
   });
 });
