@@ -100,16 +100,24 @@ export function extractTimes(str: string): number[] {
 }
 
 /**
- * Analyzes the SVG content and returns a recommended duration in seconds.
- * Returns null if no animation is detected.
+ * Analyzes the provided DOM root and returns a recommended duration in seconds.
+ * Returns undefined if no animation is detected.
  */
-export const analyzeSvgAnimation = (svgContent: string): number | null => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(svgContent, 'image/svg+xml');
+export const analyzeSvgAnimation = (
+  rootOrString: ParentNode | string
+): number | undefined => {
+  let root: ParentNode;
+  if (typeof rootOrString === 'string') {
+    const parser = new DOMParser();
+    root = parser.parseFromString(rootOrString, 'image/svg+xml');
+  } else {
+    root = rootOrString;
+  }
+
   const animations: AnimationInfo[] = [];
 
   // 1. Manual SMIL Parsing
-  const smilElements = doc.querySelectorAll(
+  const smilElements = root.querySelectorAll(
     'animate, animateTransform, animateMotion, animateColor, set'
   );
   smilElements.forEach((el) => {
@@ -137,8 +145,8 @@ export const analyzeSvgAnimation = (svgContent: string): number | null => {
   });
 
   // 2. CSS Animation Detection (Heuristic)
-  const styleTags = Array.from(doc.querySelectorAll('style'));
-  const elementsWithStyle = Array.from(doc.querySelectorAll('[style]'));
+  const styleTags = Array.from(root.querySelectorAll('style'));
+  const elementsWithStyle = Array.from(root.querySelectorAll('[style]'));
 
   // Extract all CSS rules (from style tags)
   const styleRules =
@@ -211,7 +219,7 @@ export const analyzeSvgAnimation = (svgContent: string): number | null => {
     }
   }
 
-  if (animations.length === 0) return null;
+  if (animations.length === 0) return undefined;
 
   const looping = animations.filter((a) => a.isLooping).map((a) => a.duration);
   const nonLooping = animations
@@ -232,5 +240,5 @@ export const analyzeSvgAnimation = (svgContent: string): number | null => {
     return Math.max(...nonLooping);
   }
 
-  return null;
+  return undefined;
 };

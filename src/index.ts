@@ -11,6 +11,7 @@ import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
+import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -118,11 +119,13 @@ async function run(
   }
 
   const svg = fs.readFileSync(svgPath, 'utf-8');
-  let duration = options.duration;
 
+  let duration = options.duration;
   if (duration === undefined) {
     console.log('🔍 Duration not provided, attempting to auto-detect...');
-    duration = analyzeSvgAnimation(svg) ?? undefined;
+
+    const dom = new JSDOM(svg);
+    duration = analyzeSvgAnimation(dom.window.document);
     if (duration === undefined) {
       console.error(
         '❌ Error: Could not detect duration. Please provide a duration using -d or --duration.'
@@ -182,7 +185,6 @@ async function run(
 
   console.log(`\n✅ Done! Video saved to ${path.join(outDir, outputFileName)}`);
 }
-//... (rest of code)
 
 /**
  * create frame images by rendering the SVG in a headless browser and advancing the animation to the correct timestamp for each frame

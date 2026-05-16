@@ -126,7 +126,7 @@ export const Studio = () => {
             setSvgContent(content);
             setFileName(name);
             const detectedDuration = analyzeSvgAnimation(content);
-            if (detectedDuration !== null && detectedDuration > 0) {
+            if (detectedDuration !== undefined && detectedDuration > 0) {
               setDuration(detectedDuration);
             }
           }}

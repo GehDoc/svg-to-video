@@ -26,12 +26,14 @@
   "license": "MIT",
   "dependencies": {
     "commander": "^14.0.3",
+    "jsdom": "^29.1.1",
     "puppeteer": "^24.38.0",
     "tsx": "^4.22.0"
   },
   "devDependencies": {
     "@types/commander": "^2.12.0",
     "@types/ffprobe-static": "^2.0.3",
+    "@types/jsdom": "^28.0.3",
     "@types/node": "^25.4.0",
     "@types/pngjs": "^6.0.5",
     "@types/puppeteer": "^5.4.7",
@@ -52,7 +54,7 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "test:cli": "tsx --test tests/cli.spec.ts",
-    "test:unit": "tsx --test src/**/*.test.ts && npm run test:unit -w web",
+    "test:unit": "tsx --test src/**/*.test.ts && vitest run shared/*.test.ts && npm run test:unit -w web",
     "test:web": "npm run test:web -w web",
     "test:storybook": "npm run test:storybook -w web",
     "test:visual": "npm run test:visual -w web",
