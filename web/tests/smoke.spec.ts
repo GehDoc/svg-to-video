@@ -4,7 +4,7 @@ test.describe('SVG to Video Web Smoke Test', () => {
   test('should load the page and show the correct title', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle(/SVG to Video/);
-    await expect(page.locator('h1')).toContainText('SVG to Video');
+    await expect(page.locator('.header-title')).toContainText('SVG to Video');
   });
 
   test('should have a disabled render button by default', async ({ page }) => {
