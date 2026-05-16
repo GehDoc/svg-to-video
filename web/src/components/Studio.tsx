@@ -7,7 +7,7 @@ import {
   type ResolutionPreset,
   type RenderSettings,
 } from '../hooks/useRenderer';
-import { analyzeSvgAnimation } from '../utils/analyzeSvgAnimation';
+import { analyzeSvgAnimation } from '../../../shared/analyzeSvgAnimation.js';
 import { Header } from './Header';
 import { ConfigPanel } from './ConfigPanel';
 import { MonitorPanel } from './MonitorPanel';

@@ -6,7 +6,7 @@ import {
   lcm,
   calculateLCM,
   extractTimes,
-} from './analyzeSvgAnimation';
+} from './analyzeSvgAnimation.js';
 
 describe('extractTimes', () => {
   it('should extract seconds and milliseconds from strings', () => {
