@@ -372,7 +372,10 @@ function convertToMP4(
     });
   }
 
-  args.push('-metadata', `comment=${mergeMetadataComments(userComment)}`);
+  args.push(
+    '-metadata',
+    `comment=${mergeMetadataComments(userComment, pkg.version)}`
+  );
 
   if (filters.length) {
     args.push('-vf', filters.join(','));

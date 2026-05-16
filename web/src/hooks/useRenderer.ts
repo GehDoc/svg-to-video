@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
 import type { VideoMetadata } from '../../../shared/metadata';
 import { mergeMetadataComments } from '../../../shared/metadata';
+import pkg from '../../../package.json';
 import * as Mediabunny from 'mediabunny';
 
 import { getFormatById } from '../utils/discoverFormats';
@@ -163,7 +164,8 @@ export const useRenderer = (
           metadata.title = settings.metadata.title.trim();
         }
         metadata.comment = mergeMetadataComments(
-          settings.metadata?.comment?.trim()
+          settings.metadata?.comment?.trim(),
+          pkg.version
         );
 
         output.setMetadataTags(metadata);

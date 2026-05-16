@@ -152,8 +152,8 @@ test.describe('SVG to Video Golden Path', () => {
     );
 
     expect(probeOutput).toContain('TAG:title=Web Title');
-    expect(probeOutput).toContain(
-      'TAG:comment=Converted from SVG with https://gehdoc.github.io/svg-to-video/ | Web Comment'
+    expect(probeOutput).toMatch(
+      /TAG:comment=Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\) \| Web Comment/
     );
   });
 });

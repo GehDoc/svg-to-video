@@ -237,9 +237,9 @@ describe('CLI Functionality', () => {
 
       const data = getProbeData(outputFile);
       assert.strictEqual(data['TAG:title'], 'Custom Title');
-      assert.strictEqual(
+      assert.match(
         data['TAG:comment'],
-        'Converted from SVG with https://gehdoc.github.io/svg-to-video/ | Test Comment'
+        /Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\) \| Test Comment/
       );
     });
   });

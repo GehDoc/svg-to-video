@@ -6,8 +6,12 @@ export interface VideoMetadata {
   [key: string]: string | undefined;
 }
 
-export const mergeMetadataComments = (userComment?: string): string => {
-  const attribution =
-    'Converted from SVG with https://gehdoc.github.io/svg-to-video/';
+export const mergeMetadataComments = (
+  userComment?: string,
+  version?: string
+): string => {
+  const toolName = 'svg-to-video';
+  const versionStr = version ? ` v${version}` : '';
+  const attribution = `Converted from SVG by ${toolName}${versionStr} (https://gehdoc.github.io/svg-to-video/)`;
   return userComment ? `${attribution} | ${userComment}` : attribution;
 };
