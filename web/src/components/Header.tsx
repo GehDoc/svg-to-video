@@ -6,10 +6,13 @@ import pkg from '../../../package.json';
 export const Header = () => {
   return (
     <header className="header">
-      <h1 className="header-title">
+      <a
+        className="header-title header-title-link"
+        onClick={() => window.location.reload()}
+      >
         <Logo className="header-logo" width="24" height="24" />
         SVG to Video <small className="header-badge">STUDIO</small>
-      </h1>
+      </a>
 
       <nav className="header-nav">
         <a

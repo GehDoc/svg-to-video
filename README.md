@@ -55,7 +55,7 @@ Ensure [Node.js](https://nodejs.org/) and [FFmpeg](https://ffmpeg.org/) are inst
 ```bash
 # Node.js
 npm install
-node src/index.js example.svg 5 60 output.mp4
+npx tsx src/index.ts example.svg 5 60 output.mp4
 
 # Docker
 docker compose build
