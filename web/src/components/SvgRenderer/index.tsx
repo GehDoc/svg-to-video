@@ -61,7 +61,7 @@ const SvgRenderer = memo(
       // Initialize iframe with blob to ensure COOP/COEP header inheritance
       useEffect(() => {
         const parentOrigin = window.location.origin;
-        const rendererScript = `(${getRendererScript.toString()})(window.seekAnimations, "${parentOrigin}");`;
+        const rendererScript = `(${getRendererScript.toString()})(window.seekAnimations, ${isRendererMessage.toString()}, "${parentOrigin}");`;
         const html = rendererTemplate.replace(
           '// RENDERER_SCRIPT_PLACEHOLDER',
           `

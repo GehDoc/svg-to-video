@@ -1,13 +1,14 @@
-import { isRendererMessage } from '../../../../shared/types.js';
-
 /**
  * This is the isolated renderer script that will run inside the iframe.
  * It is injected by SvgRenderer via Blob.
  * @param seekAnimations - The animation seeking function from the shared engine.
  * @param parentOrigin - The origin of the parent window for secure postMessage.
  */
+import type { RendererMessage } from '../../../../shared/types.js';
+
 export function getRendererScript(
   seekAnimations: (timeMs: number) => void,
+  isRendererMessage: (data: unknown) => data is RendererMessage,
   parentOrigin: string
 ): void {
   const OPTIMAL_PROPS = [
