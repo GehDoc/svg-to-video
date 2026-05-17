@@ -16,17 +16,17 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 
 ## Options
 
-| Option                  | Description                                                                                                                             |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `-d, --duration <secs>` | Desired animation duration in seconds. If omitted, duration is auto-detected.                                                           |
-| `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                                                      |
-| `-f, --force`           | Overwrite the output video if it already exists.                                                                                        |
-| `--resolution <preset>` | Resolution preset: `720p`, `1080p`, or `original`. (Default: `original`)                                                                |
-| `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`.                                    |
-| `--transparent`         | Render with a transparent background. (Cannot be used with `--bg-color`)                                                                |
-| `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`) - (Cannot be used with `--transparent`)                                            |
-| `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Note: mandatory attribution is automatically appended to the 'comment' tag. |
-| `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                        |
+| Option                  | Description                                                                                                                                                                                                    |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-d, --duration <secs>` | Desired animation duration in seconds. If omitted, duration is auto-detected.                                                                                                                                  |
+| `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                                                                                                                             |
+| `-f, --force`           | Overwrite the output video if it already exists.                                                                                                                                                               |
+| `--resolution <preset>` | Resolution preset: `720p`, `1080p`, or `original`. (Default: `original`)                                                                                                                                       |
+| `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`.                                                                                                           |
+| `--transparent`         | Render with a transparent background. (Cannot be used with `--bg-color`)                                                                                                                                       |
+| `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`) - (Cannot be used with `--transparent`)                                                                                                                   |
+| `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Note: Mandatory attribution is automatically appended to the 'comment' tag, as FFmpeg/MP4 container support for other custom tags is inconsistent. |
+| `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                                                                                               |
 
 ## Environment Variables
 
