@@ -8,6 +8,7 @@ import {
   type RenderSettings,
 } from '../hooks/useRenderer';
 import { analyzeSvgAnimation } from '../../../shared/analyzeSvgAnimation.js';
+import type { VideoMetadata } from '../../../shared/metadata';
 import { Header } from './Header';
 import { ConfigPanel } from './ConfigPanel';
 import { MonitorPanel } from './MonitorPanel';
@@ -31,6 +32,10 @@ export const Studio = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [renderedUrl, setRenderedUrl] = useState<string | null>(null);
   const [fileSize, setFileSize] = useState<string | null>(null);
+  const [metadata, setMetadata] = useState<VideoMetadata>({
+    title: '',
+    comment: '',
+  });
 
   const { render, cancel, clearError, state } = useRenderer(rendererRef);
 
@@ -71,6 +76,7 @@ export const Studio = () => {
       isTransparent,
       captureMethod,
       hold,
+      metadata,
     };
     try {
       const url = await render(svgContent, settings);
@@ -95,6 +101,7 @@ export const Studio = () => {
     captureMethod,
     hold,
     render,
+    metadata,
   ]);
 
   const handleDownload = useCallback(() => {
@@ -156,6 +163,8 @@ export const Studio = () => {
           onStartRender={handleStartRender}
           originalDim={originalDim}
           renderedUrl={renderedUrl}
+          metadata={metadata}
+          onMetadataChange={setMetadata}
         />
         <MonitorPanel
           svgContent={svgContent}

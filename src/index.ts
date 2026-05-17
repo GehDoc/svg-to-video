@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import { seekAnimations } from '../shared/animation-engine.js';
 import { validateOptions } from './utils/validateOptions.js';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
+import { mergeMetadataComments } from '../shared/metadata.js';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -28,6 +29,7 @@ interface RunOptions {
   scale: number;
   transparent: boolean;
   bgColor: string;
+  metadata?: string[];
 }
 
 async function main(): Promise<void> {
@@ -84,6 +86,10 @@ async function main(): Promise<void> {
       '--bg-color <hex>',
       'background color for the video (e.g., #FFFFFF)',
       '#ffffff'
+    )
+    .option(
+      '--metadata <items...>',
+      'metadata tags (e.g., --metadata title="My Video" author="Me")'
     )
     .action(run);
 
@@ -176,7 +182,8 @@ async function run(
     padWidth,
     options.hold,
     outDir,
-    options.transparent
+    options.transparent,
+    options.metadata
   );
 
   if (!options.keepFrames) {
@@ -327,7 +334,8 @@ function convertToMP4(
   padWidth: number,
   hold: number,
   outDir: string,
-  transparent: boolean
+  transparent: boolean,
+  metadata?: string[]
 ): void {
   console.log('📦 Encoding video with FFmpeg...');
 
@@ -352,6 +360,23 @@ function convertToMP4(
     '-i',
     inputPattern,
   ];
+
+  let userComment: string | undefined;
+  if (metadata) {
+    metadata.forEach((m) => {
+      if (m.startsWith('comment=')) {
+        userComment = m.split('=')[1];
+      } else {
+        args.push('-metadata', m);
+      }
+    });
+  }
+
+  args.push(
+    '-metadata',
+    `comment=${mergeMetadataComments(userComment, pkg.version)}`
+  );
+
   if (filters.length) {
     args.push('-vf', filters.join(','));
   }

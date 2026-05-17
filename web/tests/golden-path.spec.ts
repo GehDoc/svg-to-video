@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getProbeMetadata } from '../../tests/helpers/e2e.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -49,6 +50,19 @@ test.describe('SVG to Video Golden Path', () => {
 
     // Verify download filename
     expect(download.suggestedFilename()).toBe('font-test.mp4');
+
+    // Verify metadata of the downloaded file
+    const downloadPath = path.resolve(
+      __dirname,
+      '../.vitest-attachments/test-metadata.mp4'
+    );
+    await download.saveAs(downloadPath);
+
+    const data = getProbeMetadata(downloadPath);
+    expect(data['TAG:title']).toBeUndefined();
+    expect(data['TAG:comment']).toMatch(
+      /^Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)$/
+    );
 
     // Verify video element is present and has a blob source
     const video = page.locator('video');
@@ -101,5 +115,52 @@ test.describe('SVG to Video Golden Path', () => {
     const download = await downloadPromise;
 
     expect(download.suggestedFilename()).toBe('font-test.webm');
+  });
+
+  test('should successfully render an SVG with custom metadata', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/font-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    // Enter metadata
+    await page.fill('#meta-title', 'Web Title');
+    await page.fill('#meta-comment', 'Web Comment');
+
+    await page.fill('#duration', '1');
+    await page.fill('#fps', '10');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export MP4/i,
+    });
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: 30000 });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('font-test.mp4');
+
+    // Verify metadata of the downloaded file (defaults: no title, only attribution)
+    const downloadPath = path.resolve(
+      __dirname,
+      '../.vitest-attachments/test-default-metadata.mp4'
+    );
+    await download.saveAs(downloadPath);
+
+    const data = getProbeMetadata(downloadPath);
+    expect(data['TAG:title']).toBe('Web Title');
+    expect(data['TAG:comment']).toMatch(
+      /^Web Comment \| Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)$/
+    );
   });
 });

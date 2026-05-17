@@ -35,6 +35,8 @@ const defaultProps = {
   onStartRender: vi.fn(),
   originalDim: { width: 0, height: 0, isDimensionsDetected: false },
   renderedUrl: null,
+  metadata: { title: '', comment: '' },
+  onMetadataChange: vi.fn(),
 };
 
 test('ConfigPanel dependency: MP4 disables transparency toggle', () => {

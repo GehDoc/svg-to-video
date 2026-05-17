@@ -34,6 +34,8 @@ const meta: Meta<typeof ConfigPanel> = {
     onStartRender: () => console.log('Start render'),
     originalDim: { isDimensionsDetected: false },
     renderedUrl: null,
+    metadata: { title: '', comment: '' },
+    onMetadataChange: (m) => console.log('Metadata change', m),
   },
   decorators: [
     (Story) => (

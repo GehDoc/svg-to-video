@@ -22,6 +22,7 @@ Choose the entry point that matches your needs:
 - **Privacy-First**: The Web Studio runs entirely in your browser using **WebCodecs**—your SVG files never leave your computer.
 - **Frame-Accurate**: Our engine scrubs the **Web Animations API**, ensuring every frame is captured exactly as rendered.
 - **Transparent Backgrounds**: Export your animations with a full alpha channel using WebM, perfect for overlays in video editing tools like Premiere or DaVinci Resolve.
+- **Metadata Injection**: Support for custom video titles and comments. Mandatory attribution is automatically appended to the end of the video's comment metadata.
 - **Versatile**: Whether you need an accessible [Web Studio](#web-studio) for quick conversions or a powerful [CLI tool](#cli--docker-tool) for batch automation and CI/CD pipelines, this project has you covered.
 
 ## 🌐 Web Studio

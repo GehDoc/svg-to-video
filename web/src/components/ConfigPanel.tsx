@@ -7,6 +7,7 @@ import {
   getFormatById,
 } from '../utils/discoverFormats';
 import { Dropzone } from './Dropzone';
+import type { VideoMetadata } from '../../../shared/metadata';
 import { Button } from './Button/Button';
 import { FormatSelector } from './FormatSelector/FormatSelector';
 import './ConfigPanel.scss';
@@ -40,6 +41,8 @@ interface ConfigPanelProps {
   onStartRender: () => void;
   originalDim: { isDimensionsDetected: boolean };
   renderedUrl: string | null;
+  metadata: VideoMetadata;
+  onMetadataChange: (m: VideoMetadata) => void;
 }
 
 export const ConfigPanel = ({
@@ -71,6 +74,8 @@ export const ConfigPanel = ({
   onStartRender,
   originalDim,
   renderedUrl,
+  metadata,
+  onMetadataChange,
 }: ConfigPanelProps) => {
   const [formats, setFormats] = useState<VideoFormat[]>([]);
 
@@ -293,6 +298,44 @@ export const ConfigPanel = ({
             <option value="optimal">Optimal (Fast)</option>
             <option value="high-fidelity">High Fidelity (Slow)</option>
           </select>
+        </div>
+      </section>
+
+      <section
+        className={`config-section ${isOptionsDisabled ? 'is-locked' : ''}`}
+        aria-disabled={isOptionsDisabled}
+      >
+        <h2 aria-disabled={isOptionsDisabled}>4. Metadata</h2>
+        <div className="input-group">
+          <label htmlFor="meta-title">Title</label>
+          <input
+            type="text"
+            id="meta-title"
+            value={metadata.title || ''}
+            onChange={(e) =>
+              onMetadataChange({ ...metadata, title: e.target.value })
+            }
+            disabled={
+              isOptionsDisabled || !getFormatById(format)?.supportsMetadata
+            }
+            placeholder="Video title"
+          />
+        </div>
+        <div className="input-group">
+          <label htmlFor="meta-comment">Comment</label>
+          <textarea
+            id="meta-comment"
+            value={metadata.comment || ''}
+            onChange={(e) =>
+              onMetadataChange({ ...metadata, comment: e.target.value })
+            }
+            disabled={
+              isOptionsDisabled || !getFormatById(format)?.supportsMetadata
+            }
+            placeholder="Additional notes"
+            rows={2}
+            className="textarea-input"
+          />
         </div>
       </section>
 

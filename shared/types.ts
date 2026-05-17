@@ -1,3 +1,4 @@
+export * from './metadata.js';
 export type RendererMessageType =
   | 'LOAD_SVG'
   | 'SEEK'
