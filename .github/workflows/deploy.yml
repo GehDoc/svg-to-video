@@ -5,31 +5,22 @@ on:
     branches:
       - main
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    # Ensure this job only runs if CI successfully builds the artifacts
+    needs: [build-web]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
         with:
-          node-version: 24
-
-      - name: Install
-        run: npm ci
-
-      - name: Build Web Studio
-        run: npm run build -w web
-
-      - name: Build Storybook
-        run: npm run build-storybook -w web
+          name: web-builds
+          path: web/dist
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
