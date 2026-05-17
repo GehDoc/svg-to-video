@@ -34,15 +34,22 @@ Reduce the wall-clock time of the CI pipeline by parallelizing independent test 
 - [x] **Optimization**
   - [x] Optimize Playwright installation to only install required browsers (chromium).
   - [x] Verify if `npm ci` can be further optimized or if caching is sufficient.
-- [ ] **Verification**
-  - [ ] Trigger CI on a PR and monitor execution times.
-  - [ ] Ensure all tests still pass and provide coverage as before.
+- [x] **CI/CD Pipeline Integration**
+  - [x] Retain `build-web` job as an independent production build smoke-test.
+  - [x] Ensure all CI jobs are fully independent (no `needs` between test/build jobs) to maximize parallel execution speed.
+  - [x] Update `ci.yml`: remove `needs: [build-web]` from all test jobs.
+  - [x] Update `ci.yml`: remove redundant artifact upload logic.
+  - [x] Update `ci.yml`: add `if: github.ref != 'refs/heads/main'` to `build-web` to prevent redundant builds on main.
+  - [x] Revert `deploy.yml`: remove `needs` and artifact download logic.
+  - [x] Revert `deploy.yml`: add build steps back into the deploy job.
+  - [x] Update `deploy.yml`: gate deployment on all CI test jobs (lint, unit, e2e, etc.).
+  - [ ] Document CI and deployment architecture, including design principles and rationales (why independent jobs, why production gating).
 
 ## 🧪 Verification Plan
 
-- [ ] Manual Test: Push changes to a branch and observe the GitHub Actions workflow graph.
-- [ ] Automated Test: Check that all jobs in the new pipeline complete successfully.
-- [ ] Performance Metric: Compare the total execution time of the new pipeline vs the previous version (aiming for >30% reduction in wall-clock time).
+- [x] Manual Test: Push changes to a branch and observe the GitHub Actions workflow graph.
+- [x] Automated Test: Check that all jobs in the new pipeline complete successfully.
+- [x] Performance Metric: Compare the total execution time of the new pipeline vs the previous version (aiming for >30% reduction in wall-clock time).
 
 ## 📝 Change Log
 

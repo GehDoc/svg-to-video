@@ -10,17 +10,36 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    # Ensure this job only runs if CI successfully builds the artifacts
-    needs: [build-web]
+    # Wait for all CI test jobs to complete successfully
+    needs:
+      - lint-and-type-check
+      - cli-tests
+      - web-unit-tests
+      - web-e2e-tests
+      - storybook-tests
+      - visual-tests
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
+      - name: Setup Node
+        uses: actions/setup-node@v6
         with:
-          name: web-builds
-          path: web/dist
+          node-version: 24
+
+      - name: Install
+        run: npm ci
+
+      - name: Build Web Studio
+        run: npm run build -w web
+
+      - name: Build Storybook
+        run: npm run build-storybook -w web
+
+      - name: Prepare Deployment
+        run: |
+          mkdir -p web/dist/storybook
+          cp -r web/dist/* web/dist/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
