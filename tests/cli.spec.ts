@@ -37,7 +37,7 @@ describe('CLI Functionality', () => {
       const { inputFile, outputFile } = getTestPaths('loop-test');
       const result = spawnSync(
         'npx',
-        ['tsx', 'src/index.ts', inputFile, '30', outputDir, '--force'],
+        ['tsx', 'src/index.ts', inputFile, '24', outputDir, '--force'],
         { encoding: 'utf-8' }
       );
       assert.strictEqual(result.status, 0, result.stderr);
@@ -48,7 +48,7 @@ describe('CLI Functionality', () => {
       const { inputFile } = getTestPaths('font-test');
       const result = spawnSync(
         'npx',
-        ['tsx', 'src/index.ts', inputFile, '30', outputDir, '--force'],
+        ['tsx', 'src/index.ts', inputFile, '24', outputDir, '--force'],
         { encoding: 'utf-8' }
       );
       assert.strictEqual(result.status, 1);
@@ -65,7 +65,7 @@ describe('CLI Functionality', () => {
           'tsx',
           'src/index.ts',
           inputFile,
-          '30',
+          '24',
           outputDir,
           '-d',
           '1',
@@ -95,7 +95,7 @@ describe('CLI Functionality', () => {
           'tsx',
           'src/index.ts',
           inputFile,
-          '30',
+          '24',
           outputDir,
           '-d',
           '1',
@@ -122,7 +122,7 @@ describe('CLI Functionality', () => {
           'tsx',
           'src/index.ts',
           inputFile,
-          '30',
+          '24',
           outputDir,
           '-d',
           '1',
@@ -158,7 +158,7 @@ describe('CLI Functionality', () => {
           'tsx',
           'src/index.ts',
           inputFile,
-          '30',
+          '24',
           outputDir,
           '-d',
           '1',
@@ -194,7 +194,7 @@ describe('CLI Functionality', () => {
           'tsx',
           'src/index.ts',
           inputFile,
-          '30',
+          '24',
           outputDir,
           '-d',
           '2',
@@ -226,7 +226,7 @@ describe('CLI Functionality', () => {
           'tsx',
           'src/index.ts',
           inputFile,
-          '30',
+          '24',
           outputDir,
           '-d',
           '1',

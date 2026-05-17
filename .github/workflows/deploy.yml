@@ -5,20 +5,25 @@ on:
     branches:
       - main
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    # Wait for all CI test jobs to complete successfully
+    needs:
+      - lint-and-type-check
+      - cli-tests
+      - web-unit-tests
+      - web-e2e-tests
+      - storybook-tests
+      - visual-tests
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
 

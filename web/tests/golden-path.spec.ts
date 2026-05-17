@@ -19,8 +19,8 @@ test.describe('SVG to Video Golden Path', () => {
     );
     await page.setInputFiles('input[type="file"]', svgPath);
 
-    // 3. Configure (use defaults: 3s, 24fps)
-    await page.fill('#duration', '3');
+    // 3. Configure (use defaults: 1s, 24fps)
+    await page.fill('#duration', '1');
     await page.fill('#fps', '24');
 
     // Assert that the source dimensions are correctly detected

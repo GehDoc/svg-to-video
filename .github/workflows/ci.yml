@@ -13,47 +13,50 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  tests:
-    name: 'Testing (Lint, Format, Type-Check, E2E)'
+  lint-and-type-check:
+    name: 'Lint and Type-Check'
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run fast checks
+        run: npm run check:fast
 
+  cli-tests:
+    name: 'CLI E2E Tests (Docker)'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
       - name: Build and load Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           load: true
           tags: svg-to-video:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24' # Upgraded from 20
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run fast checks (lint, format, type-check)
-        run: npm run check:fast
-
-      # --- E2E Tests (run in Docker) ---
-
       - name: Set up User IDs for Docker
         run: |
           echo "UID=$(id -u)" >> $GITHUB_ENV
           echo "GID=$(id -g)" >> $GITHUB_ENV
-
       - name: Run E2E tests in Docker
-        # Override the service's entrypoint to run npm, then execute the test script
         run: >
           docker compose run
           --rm
@@ -62,44 +65,115 @@ jobs:
           --entrypoint "npm"
           svg-to-video run test:cli
 
-  build-web:
-    name: 'Build Web Studio'
+  web-unit-tests:
+    name: 'Web Studio Unit Tests'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Use Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: '24'
+          cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Run Build
-        run: npm run build -w web
+      - name: Run Web Unit tests
+        run: npm run test:unit -w web
 
-  web-tests:
-    name: 'Web Studio Tests (E2E)'
+  web-e2e-tests:
+    name: 'Web Studio E2E Tests'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Use Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: '24'
+          cache: 'npm'
       - name: Install dependencies
         run: npm ci
       - name: Cache Playwright Browsers
         id: playwright-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
       - name: Install Playwright Browsers
         run: npx playwright install chromium --with-deps
       - name: Run Web E2E tests
-        run: npm run test:web
-      - name: Run Web Unit tests
-        run: npm run test:unit
-      - name: Run Storybook A11Y and Interaction tests
+        run: npm run test:web -w web
+
+  storybook-tests:
+    name: 'Storybook Tests (${{ matrix.theme }})'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        theme: [light, dark]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Cache Playwright Browsers
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium --with-deps
+      - name: Run Storybook Tests
         run: |
-          npx start-server-and-test "npm run storybook -w web" http://localhost:6006 \
-          "STORYBOOK_THEME=light npm run test:storybook -w web && STORYBOOK_THEME=dark npm run test:storybook -w web"
+          npm run storybook -w web &
+          npx wait-on http://localhost:6006
+          STORYBOOK_THEME=${{ matrix.theme }} npm run test:storybook -w web
+
+  visual-tests:
+    name: 'Visual Regression Tests'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Cache Playwright Browsers
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium --with-deps
       - name: Run Visual Regression tests
-        run: npm run test:visual
+        run: npm run test:visual -w web
+
+  build-web:
+    name: 'Build Web Studio'
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Build
+        run: npm run build -w web
+      - name: Build Storybook
+        run: npm run build-storybook -w web
