@@ -22,18 +22,18 @@ Reduce the wall-clock time of the CI pipeline by parallelizing independent test 
   - [x] Analyze current `ci.yml` and `package.json` scripts.
   - [x] Research current test parameters (FPS, duration) in `tests/cli.spec.ts` and `web/tests/`.
   - [x] Identify default FPS settings in Web Studio (`Studio.tsx`) and CLI (`index.ts`).
-- [ ] **Infrastructure (CI Refactor)**
-  - [ ] Split `tests` job into `lint-and-typecheck` and `cli-tests`.
-  - [ ] Split `web-tests` job into `web-unit-tests`, `web-e2e-tests`, `storybook-tests`, and `visual-tests`.
-  - [ ] Implement matrix strategy for `storybook-tests` (Light/Dark themes).
-  - [ ] Ensure `build-web` runs in parallel with tests.
-- [ ] **Product Optimization (FPS & Duration)**
-  - [ ] Change default FPS from 60 to 24 in `web/src/components/Studio.tsx`.
-  - [ ] Update `tests/cli.spec.ts` to use 24 FPS and minimize durations.
-  - [ ] Update `web/tests/golden-path.spec.ts` to minimize durations (target <= 2s) and use 24 FPS.
-- [ ] **Optimization**
-  - [ ] Optimize Playwright installation to only install required browsers (chromium).
-  - [ ] Verify if `npm ci` can be further optimized or if caching is sufficient.
+- [x] **Infrastructure (CI Refactor)**
+  - [x] Split `tests` job into `lint-and-typecheck` and `cli-tests`.
+  - [x] Split `web-tests` job into `web-unit-tests`, `web-e2e-tests`, `storybook-tests`, and `visual-tests`.
+  - [x] Implement matrix strategy for `storybook-tests` (Light/Dark themes).
+  - [x] Ensure `build-web` runs in parallel with tests.
+- [x] **Product Optimization (FPS & Duration)**
+  - [x] Change default FPS from 60 to 24 in `web/src/components/Studio.tsx`.
+  - [x] Update `tests/cli.spec.ts` to use 24 FPS and minimize durations.
+  - [x] Update `web/tests/golden-path.spec.ts` to minimize durations (target <= 2s) and use 24 FPS.
+- [x] **Optimization**
+  - [x] Optimize Playwright installation to only install required browsers (chromium).
+  - [x] Verify if `npm ci` can be further optimized or if caching is sufficient.
 - [ ] **Verification**
   - [ ] Trigger CI on a PR and monitor execution times.
   - [ ] Ensure all tests still pass and provide coverage as before.

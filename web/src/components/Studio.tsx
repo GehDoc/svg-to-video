@@ -20,7 +20,7 @@ export const Studio = () => {
   const [fileName, setFileName] = useState<string>('animation.mp4');
   const [duration, setDuration] = useState(5);
   const [hold, setHold] = useState(0);
-  const [fps, setFps] = useState(60);
+  const [fps, setFps] = useState(24);
   const [preset, setPreset] = useState<ResolutionPreset>('original');
   const [scale, setScale] = useState(1);
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
