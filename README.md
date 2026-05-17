@@ -76,6 +76,14 @@ Check out our [Active Roadmap](./specs/pending/) to see what we're working on ne
 
 For instructions on contributing, build commands, and the technical roadmap, please see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
+## 💖 Support the Project
+
+If you find this tool helpful, please consider supporting its development:
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/GehDoc)
+
+Your support helps cover maintenance and further development of the tool. Thank you!
+
 ## 🛠 Technical Details
 
 For a deep dive into the rendering engine, algorithms, and infrastructure, see [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
