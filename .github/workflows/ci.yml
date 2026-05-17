@@ -131,8 +131,9 @@ jobs:
         run: npx playwright install chromium --with-deps
       - name: Run Storybook Tests
         run: |
-          npx start-server-and-test "npm run storybook -w web" http://localhost:6006 \
-          "STORYBOOK_THEME=${{ matrix.theme }} npm run test:storybook -w web"
+          npm run storybook -w web &
+          npx wait-on http://localhost:6006
+          STORYBOOK_THEME=${{ matrix.theme }} npm run test:storybook -w web
 
   visual-tests:
     name: 'Visual Regression Tests'
