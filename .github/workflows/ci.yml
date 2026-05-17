@@ -32,13 +32,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Build and load Docker image
         uses: docker/build-push-action@v7
         with:
           context: .
-          target: tester
           load: true
           tags: svg-to-video:latest
           cache-from: type=gha
@@ -47,20 +53,12 @@ jobs:
         run: |
           echo "UID=$(id -u)" >> $GITHUB_ENV
           echo "GID=$(id -g)" >> $GITHUB_ENV
-      - name: Inspect container contents
+      - name: Run E2E tests in Docker
         run: >
           docker compose run
           --rm
           -e CI=true 
-          -w /app/data
-          --entrypoint "ls"
-          svg-to-video -R /app
-
-      - name: Run E2E tests in Docker (actual)
-        run: >
-          docker compose run
-          --rm
-          -e CI=true 
+          -v ${{ github.workspace }}/node_modules:/app/node_modules
           -w /app/data
           --entrypoint "npm"
           svg-to-video run test:cli
