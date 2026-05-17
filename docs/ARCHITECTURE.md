@@ -99,3 +99,19 @@ The `ConfigPanel` implements a two-way dependency:
 - **Transparency Toggle**: Checking "Transparent Background" filters the format dropdown to only show supported formats.
 
 Use the `ConfigPanel.test.tsx` to verify this logic.
+
+## 🚀 CI/CD Pipeline Design
+
+The `svg-to-video` CI/CD pipeline is designed for high-performance and reliable releases.
+
+### Design Principles
+
+1. **Independent Parallelization**: All CI jobs run concurrently. Test suites are decoupled, ensuring that a slow test suite doesn't throttle the entire pipeline.
+2. **Production-Gated Deployment**: Deployment to GitHub Pages is gated by the success of all critical test jobs. This ensures only fully validated code reaches the production environment.
+3. **Redundancy Reduction**: We avoid passing build artifacts between jobs. Each test suite manages its own build requirements, which keeps the workflow simple, reliable, and decoupled from the host environment.
+4. **Environment Consistency**: By using `docker compose` to run CLI tests, we ensure the rendering engine is tested in a consistent, containerized environment that matches production.
+
+### Workflow Orchestration
+
+- **`ci.yml`**: Defines the parallel test matrix. The `build-web` job acts as a production-build smoke-test (skipped on `main` to avoid redundant builds during deployment).
+- **`deploy.yml`**: Triggers only on `main` merges. It builds the project from source and deploys the assets only after all CI test jobs have successfully passed.

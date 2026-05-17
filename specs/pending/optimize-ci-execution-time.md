@@ -43,7 +43,7 @@ Reduce the wall-clock time of the CI pipeline by parallelizing independent test 
   - [x] Revert `deploy.yml`: remove `needs` and artifact download logic.
   - [x] Revert `deploy.yml`: add build steps back into the deploy job.
   - [x] Update `deploy.yml`: gate deployment on all CI test jobs (lint, unit, e2e, etc.).
-  - [ ] Document CI and deployment architecture, including design principles and rationales (why independent jobs, why production gating).
+  - [x] Document CI and deployment architecture, including design principles and rationales (why independent jobs, why production gating).
 
 ## 🧪 Verification Plan
 

@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -35,11 +35,6 @@ jobs:
 
       - name: Build Storybook
         run: npm run build-storybook -w web
-
-      - name: Prepare Deployment
-        run: |
-          mkdir -p web/dist/storybook
-          cp -r web/dist/* web/dist/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
