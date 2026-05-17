@@ -34,7 +34,7 @@ Reduce the wall-clock time of the CI pipeline by parallelizing independent test 
 - [x] **Optimization**
   - [x] Optimize Playwright installation to only install required browsers (chromium).
   - [x] Verify if `npm ci` can be further optimized or if caching is sufficient.
-- [x] **CI/CD Pipeline Integration**
+- [ ] **CI/CD Pipeline Integration**
   - [x] Retain `build-web` job as an independent production build smoke-test.
   - [x] Ensure all CI jobs are fully independent (no `needs` between test/build jobs) to maximize parallel execution speed.
   - [x] Update `ci.yml`: remove `needs: [build-web]` from all test jobs.
@@ -43,7 +43,8 @@ Reduce the wall-clock time of the CI pipeline by parallelizing independent test 
   - [x] Revert `deploy.yml`: remove `needs` and artifact download logic.
   - [x] Revert `deploy.yml`: add build steps back into the deploy job.
   - [x] Update `deploy.yml`: gate deployment on all CI test jobs (lint, unit, e2e, etc.).
-  - [x] Document CI and deployment architecture, including design principles and rationales (why independent jobs, why production gating).
+  - [ ] Implement central `setup` job to install dependencies once and share `node_modules` via artifacts.
+  - [ ] Update documentation to reflect the new 'Setup-and-Share' architectural pattern.
 
 ## 🧪 Verification Plan
 

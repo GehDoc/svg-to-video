@@ -9,9 +9,12 @@ on:
 permissions:
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
-  lint-and-type-check:
-    name: 'Lint and Type-Check'
+  setup:
+    name: 'Setup Dependencies'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -23,22 +26,39 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+      - name: Upload node_modules
+        uses: actions/upload-artifact@v4
+        with:
+          name: node_modules
+          path: |
+            node_modules
+            web/node_modules
+
+  lint-and-type-check:
+    name: 'Lint and Type-Check'
+    needs: [setup]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules
       - name: Run fast checks
         run: npm run check:fast
 
   cli-tests:
     name: 'CLI E2E Tests (Docker)'
+    needs: [setup]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+          name: node_modules
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Build and load Docker image
@@ -65,33 +85,29 @@ jobs:
 
   web-unit-tests:
     name: 'Web Studio Unit Tests'
+    needs: [setup]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+          name: node_modules
       - name: Run Web Unit tests
         run: npm run test:unit -w web
 
   web-e2e-tests:
     name: 'Web Studio E2E Tests'
+    needs: [setup]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+          name: node_modules
       - name: Cache Playwright Browsers
         id: playwright-cache
         uses: actions/cache@v4
@@ -105,6 +121,7 @@ jobs:
 
   storybook-tests:
     name: 'Storybook Tests (${{ matrix.theme }})'
+    needs: [setup]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -112,13 +129,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+          name: node_modules
       - name: Cache Playwright Browsers
         id: playwright-cache
         uses: actions/cache@v4
@@ -134,17 +148,15 @@ jobs:
 
   visual-tests:
     name: 'Visual Regression Tests'
+    needs: [setup]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+          name: node_modules
       - name: Cache Playwright Browsers
         id: playwright-cache
         uses: actions/cache@v4
@@ -158,18 +170,16 @@ jobs:
 
   build-web:
     name: 'Build Web Studio'
+    needs: [setup]
     if: github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+          name: node_modules
       - name: Run Build
         run: npm run build -w web
       - name: Build Storybook

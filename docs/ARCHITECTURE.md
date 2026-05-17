@@ -115,3 +115,7 @@ The `svg-to-video` CI/CD pipeline is designed for high-performance and reliable 
 
 - **`ci.yml`**: Defines the parallel test matrix. The `build-web` job acts as a production-build smoke-test (skipped on `main` to avoid redundant builds during deployment).
 - **`deploy.yml`**: Triggers only on `main` merges. It builds the project from source and deploys the assets only after all CI test jobs have successfully passed.
+
+### Setup-and-Share Pattern
+
+To optimize CI performance, we use a central `setup` job that runs `npm ci` exactly once. The resulting `node_modules` are uploaded as a shared artifact and downloaded by all subsequent parallel test and build jobs. This design eliminates redundant installation overhead, ensures environment consistency across all test suites, and maximizes parallel execution speed.
