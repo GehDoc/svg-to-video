@@ -53,6 +53,15 @@ jobs:
           --rm
           -e CI=true 
           -w /app/data
+          --entrypoint "ls"
+          svg-to-video -R /app/node_modules/pngjs
+
+      - name: Run E2E tests in Docker (actual)
+        run: >
+          docker compose run
+          --rm
+          -e CI=true 
+          -w /app/data
           --entrypoint "npm"
           svg-to-video run test:cli
 
