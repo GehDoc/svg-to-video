@@ -1,13 +1,9 @@
 services:
   svg-to-video:
-    build:
-      context: .
-      target: tester
+    build: .
     image: svg-to-video:latest
     volumes:
       - .:/app/data:Z
-    environment:
-      - NODE_PATH=/app/node_modules
     # This maps the internal 'node' user to your current local user
     user: '${UID:-1000}:${GID:-1000}'
     working_dir: /app/data

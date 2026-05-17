@@ -1,38 +1,53 @@
-# Base image with system dependencies
-FROM node:24-slim AS base
+FROM node:20-slim
+
+# 1. Setup Environment
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable \
     NODE_ENV=production \
     HOME=/tmp/chrome-home
 
+# 2. Heavy Layer: Chrome & Core Dependencies (Rarely changes)
 RUN apt-get update && apt-get install -y \
-    wget gnupg ca-certificates ffmpeg libxss1 fontconfig \
-    fonts-freefont-ttf fonts-liberation fonts-noto-color-emoji \
-    fonts-noto-cjk fonts-noto-cjk-extra fonts-ipafont-gothic fonts-wqy-zenhei \
+    wget \
+    gnupg \
+    ca-certificates \
+    ffmpeg \
+    libxss1 \
     --no-install-recommends \
     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
     && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
     && apt-get update \
     && apt-get install -y google-chrome-stable --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/* \
-    && fc-cache -f -v
+    && rm -rf /var/lib/apt/lists/*
+
+# 3. Font Layer: Split this out so you can edit it quickly
+# This layer is cached separately. Adding a font here won't trigger step 2!
+RUN apt-get update && apt-get install -y \
+    fontconfig \
+    fonts-freefont-ttf \
+    fonts-liberation \
+    fonts-noto-color-emoji \
+    fonts-noto-cjk \
+    fonts-noto-cjk-extra \
+    fonts-ipafont-gothic \
+    fonts-wqy-zenhei \
+    --no-install-recommends \
+    && fc-cache -f -v \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+
+# 4. Create a directory for Chrome's user data and set permissions for allowing non-root users to write to it.
+# 5. Create a directory for output data and set permissions for allowing non-root users to write to it.
 RUN mkdir -p /tmp/chrome-home && chmod 777 /tmp/chrome-home \
     && mkdir -p /app/data && chmod 777 /app/data
 
-# Stage: Tester (includes devDependencies)
-FROM base AS tester
-COPY package*.json ./
-RUN npm install --ignore-scripts
-COPY . .
-USER node
-ENTRYPOINT ["npx", "tsx", "src/index.ts"]
-
-# Stage: Production (lean, omits devDependencies)
-FROM base AS prod
+# 6. App Dependencies (Only rebuilds if package.json changes)
 COPY package*.json ./
 RUN npm install --omit=dev --ignore-scripts
+
+# 7. Application Code (Changes most often)
 COPY . .
+
 USER node
 ENTRYPOINT ["npx", "tsx", "src/index.ts"]
