@@ -47,14 +47,14 @@ jobs:
         run: |
           echo "UID=$(id -u)" >> $GITHUB_ENV
           echo "GID=$(id -g)" >> $GITHUB_ENV
-      - name: Run E2E tests in Docker
+      - name: Inspect container contents
         run: >
           docker compose run
           --rm
           -e CI=true 
           -w /app/data
           --entrypoint "ls"
-          svg-to-video -R /app/node_modules/pngjs
+          svg-to-video -R /app
 
       - name: Run E2E tests in Docker (actual)
         run: >
