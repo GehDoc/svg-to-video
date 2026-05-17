@@ -1,6 +1,8 @@
 services:
   svg-to-video:
-    build: .
+    build:
+      context: .
+      target: tester
     image: svg-to-video:latest
     volumes:
       - .:/app/data:Z
