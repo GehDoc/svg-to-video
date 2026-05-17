@@ -38,6 +38,7 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: .
+          target: tester
           load: true
           tags: svg-to-video:latest
           cache-from: type=gha
