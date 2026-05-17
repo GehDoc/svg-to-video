@@ -12,17 +12,22 @@ Reduce the wall-clock time of the CI pipeline by parallelizing independent test 
 - **Parallelization**: Decompose the monolithic `web-tests` and `tests` jobs into smaller, independent jobs that can run concurrently on GitHub Actions.
 - **Matrix Strategy**: Use GitHub Actions matrix to run Storybook tests for different themes (light/dark) in parallel.
 - **Dependency Optimization**: Leverage `actions/setup-node` caching effectively across all jobs.
+- **Test Parameter Optimization**: Reduce FPS to 24 (down from 30 in CLI) and ensure video durations are minimized (e.g., 1s where possible) across all E2E and CLI tests to reduce rendering time.
 - **Docker Optimization**: Keep the Docker-based CLI tests but ensure they don't block faster checks.
 
 ## ✅ Task List
 
 - [ ] **Research & Analysis**
   - [x] Analyze current `ci.yml` and `package.json` scripts.
+  - [x] Research current test parameters (FPS, duration) in `tests/cli.spec.ts` and `web/tests/`.
 - [ ] **Infrastructure (CI Refactor)**
   - [ ] Split `tests` job into `lint-and-typecheck` and `cli-tests`.
   - [ ] Split `web-tests` job into `web-unit-tests`, `web-e2e-tests`, `storybook-tests`, and `visual-tests`.
   - [ ] Implement matrix strategy for `storybook-tests` (Light/Dark themes).
   - [ ] Ensure `build-web` runs in parallel with tests.
+- [ ] **Test Optimization**
+  - [ ] Update `tests/cli.spec.ts` to use 24 FPS and minimize durations.
+  - [ ] Update `web/tests/golden-path.spec.ts` to minimize durations (target <= 2s).
 - [ ] **Optimization**
   - [ ] Optimize Playwright installation to only install required browsers (chromium).
   - [ ] Verify if `npm ci` can be further optimized or if caching is sufficient.
