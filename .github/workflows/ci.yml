@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -177,3 +177,38 @@ jobs:
         run: npm run build -w web
       - name: Build Storybook
         run: npm run build-storybook -w web
+
+  build-and-deploy:
+    name: 'Build and Deploy'
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs:
+      - lint-and-type-check
+      - cli-tests
+      - web-unit-tests
+      - web-e2e-tests
+      - storybook-tests
+      - visual-tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install
+        run: npm ci
+
+      - name: Build Web Studio
+        run: npm run build -w web
+
+      - name: Build Storybook
+        run: npm run build-storybook -w web
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: web/dist
+          branch: gh-pages
