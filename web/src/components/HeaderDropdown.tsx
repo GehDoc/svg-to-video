@@ -9,12 +9,16 @@ import pkg from '../../package.json';
 import './HeaderDropdown.scss';
 
 export const HeaderDropdown = () => {
+  const repoUrl = pkg.repository.url
+    .replace(/^git\+/, '')
+    .replace(/\.git$/, '');
+
   return (
     <div className="header-dropdown-card">
       <div className="header-menu-section">
         <span className="header-menu-label">Help & Feedback</span>
         <a
-          href="https://github.com/GehDoc/svg-to-video/issues"
+          href={pkg.bugs.url}
           target="_blank"
           rel="noopener noreferrer"
           className="header-menu-link"
@@ -28,7 +32,7 @@ export const HeaderDropdown = () => {
       <div className="header-menu-section">
         <span className="header-menu-label">Project</span>
         <a
-          href="https://github.com/GehDoc/svg-to-video"
+          href={repoUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="header-menu-link"
