@@ -98,13 +98,13 @@
   }
 
   .icon-heart {
-    color: #ca263f;
+    color: var(--sponsor);
     font-size: 0.85rem;
   }
 }
 
 .success-support a {
-  color: #ca263f;
+  color: var(--sponsor);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
@@ -117,11 +117,11 @@
 @media (prefers-color-scheme: dark) {
   .success-support {
     .icon-heart {
-      color: #ff4d6d;
+      color: var(--sponsor);
     }
   }
 
   .success-support a {
-    color: #ff4d6d;
+    color: var(--sponsor);
   }
 }

@@ -14,18 +14,18 @@
   font-size: 0.875rem;
   font-weight: 500;
   text-decoration: none;
-  background-color: #fff0f3;
-  color: #ca263f;
+  background-color: var(--sponsor-bg);
+  color: var(--sponsor);
   transition:
     background-color 0.2s ease,
     transform 0.1s ease;
 
   .icon-heart {
-    color: #ca263f;
+    color: var(--sponsor);
   }
 
   &:hover {
-    background-color: #ffe0e6;
+    background-color: var(--sponsor-hover);
   }
 
   &:active {
@@ -55,15 +55,8 @@
 
 @media (prefers-color-scheme: dark) {
   .header-sponsor-btn {
-    background-color: rgba(218, 55, 81, 0.1);
-    color: #ff4d6d;
-
     .icon-heart {
-      color: #ff4d6d;
-    }
-
-    &:hover {
-      background-color: rgba(218, 55, 81, 0.2);
+      color: var(--sponsor);
     }
   }
 }
