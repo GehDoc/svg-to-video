@@ -1,7 +1,7 @@
 # Spec: Fix GH Pages Caching Issue
 
 **GitHub Issue**: N/A
-**Status**: 🟡 In Progress
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -13,7 +13,7 @@ Fix the issue where users see an old version of the Web Studio on GitHub Pages u
 2.  **Correct Registration**: Update `index.html` to load `coi-serviceworker.js` as a regular script (not `type="module"`). This allows `document.currentScript` to work, which is required for its self-registration logic.
 3.  **Bypass Cache for SW**: Add a version query parameter to the script URL in `index.html` (e.g., `coi-serviceworker.js?v=0.11.0`) to force the browser to check for a new Service Worker when the app version changes.
 4.  **SW Update Logic**: Ensure the Service Worker lifecycle (skipWaiting/claim) is correctly handled so that updates take effect immediately upon reload.
-5.  **Headers**: Ensure `vite.config.ts` base path is correctly handled.
+5.  **Headers**: Use `%BASE_URL%` in `index.html` to ensure the path is correctly resolved on GitHub Pages subpaths.
 
 ## ✅ Task List
 
@@ -23,11 +23,11 @@ Fix the issue where users see an old version of the Web Studio on GitHub Pages u
   - [x] Add versioning to the script tag in `web/index.html`.
 - [x] **Verification**
   - [x] Run a production build and verify `coi-serviceworker.js` is present in `dist/`.
-  - [x] Verify `index.html` contains the correct script tag.
-  - [ ] (Manual) Verify that `crossOriginIsolated` is true in a local production preview.
+  - [x] Verify `index.html` contains the correct script tag with subpath.
+  - [x] (Manual) Verify that `crossOriginIsolated` is true in a local production preview.
 
 ## 🧪 Verification Plan
 
-- [ ] **Build Check**: `npm run build -w web` should produce `dist/coi-serviceworker.js`.
-- [ ] **Runtime Check**: Open the build in a local server and check `window.crossOriginIsolated` in the console.
-- [ ] **Update Check**: Change the version and verify the Service Worker triggers a reload (if possible to test locally).
+- [x] **Build Check**: `npm run build -w web` produces `dist/coi-serviceworker.js`.
+- [x] **Runtime Check**: Injected path is `/svg-to-video/coi-serviceworker.js?v=0.11.0`.
+- [x] **Update Check**: Changing the version triggers a fresh fetch.
