@@ -7,7 +7,7 @@ const meta: Meta<typeof HeaderDropdown> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div style={{ position: 'relative', height: '400px', width: '300px' }}>
+      <div style={{ position: 'relative', width: '240px' }}>
         <Story />
       </div>
     ),
