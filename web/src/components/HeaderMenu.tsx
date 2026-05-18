@@ -75,7 +75,7 @@ export const HeaderMenu = () => {
               href={FUNDING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="header-meta-link"
+              className="header-menu-link"
             >
               <div className="meta-left">
                 <FaCoffee /> Buy me a Coffee
@@ -106,7 +106,7 @@ export const HeaderMenu = () => {
               <div className="meta-left">
                 <FaBalanceScale /> License
               </div>
-              <span className="header-link-arrow">MIT ↗</span>
+              <span className="header-version-tag">MIT ↗</span>
             </a>
           </div>
         </div>
