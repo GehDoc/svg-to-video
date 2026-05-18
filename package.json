@@ -14,7 +14,7 @@
   "homepage": "https://github.com/GehDoc/svg-to-video#readme",
   "funding": {
     "type": "paypal",
-    "url": "https://www.paypal.me/GehDoc"
+    "url": "https://paypal.me/GehDoc"
   },
   "engines": {
     "node": ">=22.0.0"
