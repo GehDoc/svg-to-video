@@ -75,9 +75,12 @@ export const HeaderMenu = () => {
               href={FUNDING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="header-menu-link"
+              className="header-meta-link"
             >
-              <FaCoffee /> Buy me a Coffee
+              <div className="meta-left">
+                <FaCoffee /> Buy me a Coffee
+              </div>
+              <span className="header-link-arrow">↗</span>
             </a>
           </div>
 
@@ -92,7 +95,7 @@ export const HeaderMenu = () => {
               <div className="meta-left">
                 <FaTag /> Version
               </div>
-              <span className="header-version-tag">v{pkg.version}</span>
+              <span className="header-version-tag">v{pkg.version} ↗</span>
             </a>
             <a
               href="https://github.com/GehDoc/svg-to-video/blob/main/LICENSE"
