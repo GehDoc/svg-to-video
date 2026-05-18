@@ -57,7 +57,9 @@ export const HeaderMenu = () => {
               rel="noopener noreferrer"
               className="header-menu-link"
             >
-              <FaBug /> Report an Issue
+              <div className="meta-left">
+                <FaBug /> Report an Issue
+              </div>
             </a>
           </div>
 
@@ -69,7 +71,9 @@ export const HeaderMenu = () => {
               rel="noopener noreferrer"
               className="header-menu-link"
             >
-              <FaGithub /> View Source Code
+              <div className="meta-left">
+                <FaGithub /> View Source Code
+              </div>
             </a>
             <a
               href={FUNDING_URL}
