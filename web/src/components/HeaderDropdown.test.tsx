@@ -5,8 +5,7 @@ import { render, screen } from '@testing-library/react';
 import { HeaderDropdown } from './HeaderDropdown';
 import { expect, test } from 'vitest';
 import '@testing-library/jest-dom/vitest';
-import pkg from '../../../package.json';
-import { FUNDING_URL } from '../../../shared/funding';
+import pkg from '../../package.json';
 
 test('HeaderDropdown renders all sections and links', () => {
   render(<HeaderDropdown />);
@@ -28,7 +27,7 @@ test('HeaderDropdown renders all sections and links', () => {
   );
 
   const coffeeLink = screen.getByRole('link', { name: /buy me a coffee/i });
-  expect(coffeeLink).toHaveAttribute('href', FUNDING_URL);
+  expect(coffeeLink).toHaveAttribute('href', pkg.funding.url);
 
   // Check about section
   expect(screen.getByText(/about/i)).toBeInTheDocument();

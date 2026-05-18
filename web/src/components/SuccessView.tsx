@@ -1,6 +1,6 @@
 import { Button } from './Button/Button';
 import { FaHeart } from 'react-icons/fa';
-import { FUNDING_URL } from '../../../shared/funding';
+import pkg from '../../package.json';
 import './SuccessView.scss';
 
 interface SuccessViewProps {
@@ -40,7 +40,7 @@ export const SuccessView = ({
         <span>
           <FaHeart className="icon-heart" /> Love this tool?{' '}
         </span>
-        <a href={FUNDING_URL} target="_blank" rel="noopener noreferrer">
+        <a href={pkg.funding.url} target="_blank" rel="noopener noreferrer">
           Support its development via PayPal ↗
         </a>
       </div>

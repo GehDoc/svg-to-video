@@ -5,14 +5,14 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { HeaderMenu } from './HeaderMenu';
 import { expect, test } from 'vitest';
 import '@testing-library/jest-dom/vitest';
-import { FUNDING_URL } from '../../../shared/funding';
+import pkg from '../../package.json';
 
 test('HeaderMenu renders Sponsor button and toggles dropdown', () => {
   render(<HeaderMenu />);
 
   // Check Sponsor button
   const sponsorLink = screen.getByRole('link', { name: /sponsor/i });
-  expect(sponsorLink).toHaveAttribute('href', FUNDING_URL);
+  expect(sponsorLink).toHaveAttribute('href', pkg.funding.url);
 
   // Check Burger trigger
   const burgerButton = screen.getByRole('button', { name: /open menu/i });

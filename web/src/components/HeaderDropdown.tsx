@@ -5,8 +5,7 @@ import {
   FaTag,
   FaBalanceScale,
 } from 'react-icons/fa';
-import { FUNDING_URL } from '../../../shared/funding';
-import pkg from '../../../package.json';
+import pkg from '../../package.json';
 import './HeaderDropdown.scss';
 
 export const HeaderDropdown = () => {
@@ -39,7 +38,7 @@ export const HeaderDropdown = () => {
           </div>
         </a>
         <a
-          href={FUNDING_URL}
+          href={pkg.funding.url}
           target="_blank"
           rel="noopener noreferrer"
           className="header-menu-link"

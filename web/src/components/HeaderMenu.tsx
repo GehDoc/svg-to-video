@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { FaBars, FaHeart } from 'react-icons/fa';
-import { FUNDING_URL } from '../../../shared/funding';
+import pkg from '../../package.json';
 import { HeaderDropdown } from './HeaderDropdown';
 import './HeaderMenu.scss';
 
@@ -21,7 +21,7 @@ export const HeaderMenu = () => {
   return (
     <div className="header-menu-container" ref={menuRef}>
       <a
-        href={FUNDING_URL}
+        href={pkg.funding.url}
         target="_blank"
         rel="noopener noreferrer"
         className="header-sponsor-btn"

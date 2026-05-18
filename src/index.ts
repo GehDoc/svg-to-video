@@ -38,15 +38,15 @@ async function main(): Promise<void> {
     .name('svg-to-video')
     .version(pkg.version)
     .description(
-      'Render a CSS-animated SVG to a high-quality video (MP4, WebM, MKV, MOV)'
+      `svg-to-video v${pkg.version} - Render a CSS-animated SVG to a high-quality video (MP4, WebM, MKV, MOV)`
     )
     .usage('<svgPath> <fps> <outDir> [options]')
     .addHelpText(
       'after',
       `
 Resources:
-  GitHub:  https://github.com/GehDoc/svg-to-video
-  Support: https://www.paypal.me/gehdoc (Buy me a coffee! \u2615)`
+  GitHub:  ${pkg.homepage}
+  Support: ${pkg.funding.url} (Buy me a coffee! \u2615)`
     )
     .argument('<svgPath>', 'input animated SVG file')
     .argument('<fps>', 'frames per second', (v) => parseInt(v, 10))
@@ -202,7 +202,7 @@ async function run(
   console.log(`\n✅ Done! Video saved to ${path.join(outDir, outputFileName)}`);
   console.log(
     '\x1b[2m%s\x1b[0m',
-    'Love this tool? Star it on GitHub: https://github.com/GehDoc/svg-to-video'
+    `Love this tool? Star it on GitHub: ${pkg.homepage}`
   );
 }
 
