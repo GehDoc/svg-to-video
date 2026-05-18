@@ -1,4 +1,5 @@
 import { Button } from './Button/Button';
+import { FUNDING_URL } from '../../../shared/funding';
 import './SuccessView.scss';
 
 interface SuccessViewProps {
@@ -33,6 +34,14 @@ export const SuccessView = ({
         <Button variant="secondary" onClick={onBack}>
           Back to Studio
         </Button>
+      </div>
+      <div className="success-support">
+        <p>
+          Love this tool?{' '}
+          <a href={FUNDING_URL} target="_blank" rel="noopener noreferrer">
+            Support its development
+          </a>
+        </p>
       </div>
     </div>
   );
