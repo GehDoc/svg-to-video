@@ -136,7 +136,11 @@
 
   &:hover {
     background-color: var(--panel);
-    color: var(--text);
+    color: var(--primary);
+
+    .header-version-tag {
+      background-color: var(--border);
+    }
   }
 
   .meta-left {
