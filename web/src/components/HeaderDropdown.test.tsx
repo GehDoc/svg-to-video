@@ -32,8 +32,16 @@ test('HeaderDropdown renders all sections and links', () => {
   // Check about section
   expect(screen.getByText(/about/i)).toBeInTheDocument();
   const versionLink = screen.getByRole('link', { name: /version/i });
+  expect(versionLink).toHaveAttribute(
+    'href',
+    'https://github.com/GehDoc/svg-to-video/releases'
+  );
   expect(versionLink).toHaveTextContent(`v${pkg.version}`);
 
   const licenseLink = screen.getByRole('link', { name: /license/i });
+  expect(licenseLink).toHaveAttribute(
+    'href',
+    'https://github.com/GehDoc/svg-to-video/blob/main/LICENSE'
+  );
   expect(licenseLink).toHaveTextContent(/mit/i);
 });

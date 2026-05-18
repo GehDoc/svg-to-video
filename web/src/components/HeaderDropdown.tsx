@@ -57,7 +57,7 @@ export const HeaderDropdown = () => {
       <div className="header-menu-section">
         <span className="header-menu-label">About</span>
         <a
-          href="https://github.com/GehDoc/svg-to-video/releases"
+          href={`${repoUrl}/releases`}
           target="_blank"
           rel="noopener noreferrer"
           className="header-meta-link"
@@ -68,7 +68,7 @@ export const HeaderDropdown = () => {
           <span className="header-version-tag">v{pkg.version} ↗</span>
         </a>
         <a
-          href="https://github.com/GehDoc/svg-to-video/blob/main/LICENSE"
+          href={`${repoUrl}/blob/main/LICENSE`}
           target="_blank"
           rel="noopener noreferrer"
           className="header-meta-link"
