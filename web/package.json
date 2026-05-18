@@ -3,6 +3,19 @@
   "version": "0.11.3",
   "description": "High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) with transparent background support and frame-accurate rendering.",
   "author": "GehDoc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GehDoc/svg-to-video.git",
+    "directory": "web"
+  },
+  "bugs": {
+    "url": "https://github.com/GehDoc/svg-to-video/issues"
+  },
+  "homepage": "https://github.com/GehDoc/svg-to-video#readme",
+  "funding": {
+    "type": "paypal",
+    "url": "https://www.paypal.me/GehDoc"
+  },
   "private": true,
   "type": "module",
   "scripts": {

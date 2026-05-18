@@ -8,6 +8,14 @@
     "type": "git",
     "url": "git+https://github.com/GehDoc/svg-to-video.git"
   },
+  "bugs": {
+    "url": "https://github.com/GehDoc/svg-to-video/issues"
+  },
+  "homepage": "https://github.com/GehDoc/svg-to-video#readme",
+  "funding": {
+    "type": "paypal",
+    "url": "https://www.paypal.me/GehDoc"
+  },
   "engines": {
     "node": ">=22.0.0"
   },
