@@ -17,13 +17,13 @@ Fix the issue where users see an old version of the Web Studio on GitHub Pages u
 
 ## ✅ Task List
 
-- [ ] **Infrastructure**
-  - [ ] Move `web/src/coi-serviceworker.js` to `web/public/coi-serviceworker.js`.
-  - [ ] Update `web/index.html` to reference `/coi-serviceworker.js` as a regular script.
-  - [ ] Add versioning to the script tag in `web/index.html`.
-- [ ] **Verification**
-  - [ ] Run a production build and verify `coi-serviceworker.js` is present in `dist/`.
-  - [ ] Verify `index.html` contains the correct script tag.
+- [x] **Infrastructure**
+  - [x] Move `web/src/coi-serviceworker.js` to `web/public/coi-serviceworker.js`.
+  - [x] Update `web/index.html` to reference `/coi-serviceworker.js` as a regular script.
+  - [x] Add versioning to the script tag in `web/index.html`.
+- [x] **Verification**
+  - [x] Run a production build and verify `coi-serviceworker.js` is present in `dist/`.
+  - [x] Verify `index.html` contains the correct script tag.
   - [ ] (Manual) Verify that `crossOriginIsolated` is true in a local production preview.
 
 ## 🧪 Verification Plan
