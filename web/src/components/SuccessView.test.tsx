@@ -39,3 +39,21 @@ test('SuccessView renders WebM success state correctly', () => {
   expect(screen.getByText(/2.5 MB/i)).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /Download/i })).toBeInTheDocument();
 });
+
+test('SuccessView renders donation support link', () => {
+  render(
+    <SuccessView
+      fileName="test.mp4"
+      fileSize="1.2 MB"
+      renderedUrl="blob:test"
+      onDownload={vi.fn()}
+      onBack={vi.fn()}
+    />
+  );
+
+  expect(screen.getByText(/Love this tool?/i)).toBeInTheDocument();
+  const sponsorLink = screen.getByRole('link', {
+    name: /Support its development via PayPal/i,
+  });
+  expect(sponsorLink).toHaveAttribute('href', 'https://paypal.me/GehDoc');
+});
