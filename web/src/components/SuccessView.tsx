@@ -1,4 +1,5 @@
 import { Button } from './Button/Button';
+import { FaHeart } from 'react-icons/fa';
 import { FUNDING_URL } from '../../../shared/funding';
 import './SuccessView.scss';
 
@@ -36,12 +37,12 @@ export const SuccessView = ({
         </Button>
       </div>
       <div className="success-support">
-        <p>
-          Love this tool?{' '}
-          <a href={FUNDING_URL} target="_blank" rel="noopener noreferrer">
-            Support its development
-          </a>
-        </p>
+        <span>
+          <FaHeart className="icon-heart" /> Love this tool?{' '}
+        </span>
+        <a href={FUNDING_URL} target="_blank" rel="noopener noreferrer">
+          Support its development via PayPal ↗
+        </a>
       </div>
     </div>
   );

@@ -82,17 +82,46 @@
 }
 
 .success-support {
-  margin-top: 1rem;
-  font-size: 0.9rem;
+  margin-top: 2.5rem;
+  font-size: 0.8125rem;
   color: var(--text-muted);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .icon-heart {
+    color: #ca263f;
+    font-size: 0.85rem;
+  }
 }
 
 .success-support a {
-  color: var(--primary);
+  color: #ca263f;
   text-decoration: none;
   font-weight: 500;
+  transition: color 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
-.success-support a:hover {
-  text-decoration: underline;
+@media (prefers-color-scheme: dark) {
+  .success-support {
+    .icon-heart {
+      color: #ff4d6d;
+    }
+  }
+
+  .success-support a {
+    color: #ff4d6d;
+  }
 }
