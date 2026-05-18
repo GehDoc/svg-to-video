@@ -27,7 +27,7 @@ test('HeaderDropdown renders all sections and links', () => {
   );
 
   const coffeeLink = screen.getByRole('link', { name: /buy me a coffee/i });
-  expect(coffeeLink).toHaveAttribute('href', pkg.funding.url);
+  expect(coffeeLink).toHaveAttribute('href', 'https://www.paypal.me/GehDoc');
 
   // Check about section
   expect(screen.getByText(/about/i)).toBeInTheDocument();
