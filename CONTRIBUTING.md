@@ -150,15 +150,24 @@ The Web Studio and Storybook Gallery are configured to deploy automatically to *
 The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tracking. Detailed information about tracked events can be found in [docs/ANALYTICS.md](./docs/ANALYTICS.md).
 
 > [!IMPORTANT]
-> **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
->
-> 1. The hostname is `localhost`, `127.0.0.1`, or a local network IP.
-> 2. `window.navigator.webdriver` is true (e.g., in Playwright, Puppeteer, or CI environments).
-> 3. The hostname does not match the `data-domains` attribute.
+> **Tracking Mandate**: When adding new primary Call-to-Action (CTA) buttons or important navigation links, you **must** implement Umami event tracking. This helps us understand which features are most used and where users might be struggling.
 
 - **Implementation**: The tracker is self-hosted at `web/public/assets/3rd-party/analytics.js` (to bypass ad-blockers and COEP issues) and injected via `web/index.html` with pre-flight checks.
+- **Programmatic Tracking**: Always use `typeof umami !== 'undefined'` to safely trigger events.
+
+  ```typescript
+  if (typeof umami !== 'undefined') {
+    umami.track('my-event-name', { property: 'value' });
+  }
+  ```
+
+- **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
+  1. The hostname is `localhost`, `127.0.0.1`, or a local network IP.
+  2. `window.navigator.webdriver` is true (e.g., in Playwright, Puppeteer, or CI environments).
+  3. The hostname does not match the `data-domains` attribute.
+
 - **Configuration**: The `data-website-id` and `data-domains` are hardcoded in `web/index.html`. For local forks, update these values to point to your own Umami instance.
-- **Types**: We use `@types/umami` for full TypeScript support. Always use `typeof umami !== 'undefined'` to safely trigger events programmatically.
+- **Types**: We use `@types/umami` for full TypeScript support.
 
 ## 🏷 Versioning Policy
 

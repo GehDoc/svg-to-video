@@ -1,10 +1,20 @@
 // @vitest-environment jsdom
-import { render, screen, cleanup } from '@testing-library/react';
+import {
+  render,
+  screen,
+  cleanup,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
 import { test, expect, afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { SuccessView } from './SuccessView';
+import * as clipboard from '../utils/clipboard';
 
 afterEach(cleanup);
+
+// Mock umami
+vi.stubGlobal('umami', { track: vi.fn() });
 
 test('SuccessView renders MP4 success state correctly', () => {
   render(
@@ -21,23 +31,30 @@ test('SuccessView renders MP4 success state correctly', () => {
   expect(screen.getByText(/test.mp4/i)).toBeInTheDocument();
   expect(screen.getByText(/1.2 MB/i)).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /Download/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /Copy/i })).toBeInTheDocument();
 });
 
-test('SuccessView renders WebM success state correctly', () => {
+test('SuccessView handles copy action', async () => {
+  const spy = vi.spyOn(clipboard, 'copyVideoToClipboard').mockResolvedValue({
+    type: 'data-url',
+    success: true,
+  });
+
   render(
     <SuccessView
-      fileName="test.webm"
-      fileSize="2.5 MB"
+      fileName="test.mp4"
+      fileSize="1.2 MB"
       renderedUrl="blob:test"
       onDownload={vi.fn()}
       onBack={vi.fn()}
     />
   );
 
-  expect(screen.getByText(/Render Complete/i)).toBeInTheDocument();
-  expect(screen.getByText(/test.webm/i)).toBeInTheDocument();
-  expect(screen.getByText(/2.5 MB/i)).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /Download/i })).toBeInTheDocument();
+  const copyBtn = screen.getByRole('button', { name: /Copy/i });
+  fireEvent.click(copyBtn);
+
+  expect(spy).toHaveBeenCalled();
+  await waitFor(() => expect(screen.getByText(/Copied!/i)).toBeInTheDocument());
 });
 
 test('SuccessView renders donation support link', () => {
