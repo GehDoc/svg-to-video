@@ -9,6 +9,10 @@ Welcome! This repository uses **Spec-Driven Development (SDD)** to maintain a cl
 - **Architecture**: See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
 - **Active Roadmap**: Check [specs/pending/](./specs/pending/).
 
+## 💻 Coding Standards
+
+- **No Inline Styles**: To ensure maintainability and style consistency, inline styles (`style={{ ... }}`) are prohibited in production components. Use CSS modules or SASS files instead. Inline styles are only permissible in Storybook decorators for layout previewing.
+
 ## 🔄 Workflow & Automation
 
 ### 🚦 Type Safety & Commit Hooks

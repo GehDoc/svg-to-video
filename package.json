@@ -1,12 +1,19 @@
 {
   "name": "svg-to-video",
-  "version": "0.11.2",
+  "version": "0.11.3",
   "type": "module",
   "description": "Professional animated SVG to MP4/WebM/MKV/MOV converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
   "author": "GehDoc",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/GehDoc/svg-to-video.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GehDoc/svg-to-video/issues"
+  },
+  "homepage": "https://github.com/GehDoc/svg-to-video#readme",
+  "funding": {
+    "url": "https://github.com/GehDoc/svg-to-video/?sponsor=1"
   },
   "engines": {
     "node": ">=22.0.0"

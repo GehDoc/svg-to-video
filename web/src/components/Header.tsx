@@ -1,7 +1,6 @@
 import './Header.scss';
 import Logo from '../assets/logo.svg?react';
-import { FaGithub } from 'react-icons/fa';
-import pkg from '../../../package.json';
+import { HeaderMenu } from './HeaderMenu';
 
 export const Header = () => {
   return (
@@ -16,26 +15,7 @@ export const Header = () => {
         </a>
       </h1>
 
-      <nav className="header-nav">
-        <a
-          href="https://github.com/GehDoc/svg-to-video"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="header-link"
-          aria-label="GitHub Repository"
-        >
-          <FaGithub size={18} />
-          <span className="header-version">v{pkg.version}</span>
-        </a>
-        <a
-          href="https://github.com/GehDoc/svg-to-video/blob/main/LICENSE"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="header-link"
-        >
-          MIT License
-        </a>
-      </nav>
+      <HeaderMenu />
     </header>
   );
 };

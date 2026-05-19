@@ -1,3 +1,4 @@
+import { FaLock } from 'react-icons/fa';
 import './LandingView.scss';
 
 export const LandingView = () => {
@@ -20,30 +21,9 @@ export const LandingView = () => {
       </div>
 
       <footer className="studio-footer">
-        <p>Local processing only. Files never leave your browser.</p>
-        <p className="footer-links">
-          <a
-            href="https://github.com/GehDoc/svg-to-video/blob/main/CONTRIBUTING.md"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-          {' • '}
-          <a
-            href="https://github.com/GehDoc/svg-to-video/blob/main/LICENSE"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            MIT License
-          </a>
-          {' • '}
-          <a href="https://umami.is" target="_blank" rel="noopener noreferrer">
-            Umami Analytics
-          </a>
-        </p>
-        <p className="legal-disclaimer">
-          Software provided "as is", without warranty of any kind.
+        <p>
+          <FaLock size={12} className="footer-icon" /> Local processing only —
+          files never leave your browser. Released under the MIT License.
         </p>
       </footer>
     </div>
