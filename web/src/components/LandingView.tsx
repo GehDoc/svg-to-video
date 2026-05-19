@@ -22,8 +22,8 @@ export const LandingView = () => {
 
       <footer className="studio-footer">
         <p>
-          <FaLock size={12} style={{ marginRight: '4px' }} /> Local processing
-          only — files never leave your browser. Released under the MIT License.
+          <FaLock size={12} className="footer-icon" /> Local processing only —
+          files never leave your browser. Released under the MIT License.
         </p>
       </footer>
     </div>
