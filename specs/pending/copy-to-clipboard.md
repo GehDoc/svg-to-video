@@ -1,7 +1,7 @@
 # Spec: Copy to Clipboard Support
 
 **GitHub Issue**: N/A
-**Status**: 🟠 Pending
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -28,23 +28,24 @@ Allow users to copy the exported video to their clipboard from the `SuccessView`
 
 ## ✅ Task List
 
-- [ ] **Core Logic**
-  - [ ] Implement `blobToDataUrl` utility.
-  - [ ] Implement clipboard fallback logic (try binary, then text).
-- [ ] **UI / Integration**
-  - [ ] Add "Copy" button (or dropdown) to `SuccessView`.
-  - [ ] Add "Copied!" feedback state.
-  - [ ] Ensure accessible labeling for screen readers.
-  - [ ] Implement Umami tracking for clicks.
-- [ ] **Documentation & Policy**
-  - [ ] Update `docs/ANALYTICS.md` with the new event.
-  - [ ] Update `CONTRIBUTING.md` to mandate Umami tracking for important CTA buttons/links.
+- [x] **Core Logic**
+  - [x] Implement `blobToDataUrl` utility.
+  - [x] Implement clipboard fallback logic (try binary, then text).
+- [x] **UI / Integration**
+  - [x] Add "Copy" button (or dropdown) to `SuccessView`.
+  - [x] Add "Copied!" feedback state.
+  - [x] Ensure accessible labeling for screen readers.
+  - [x] Implement Umami tracking for clicks.
+- [x] **Documentation & Policy**
+  - [x] Update `docs/ANALYTICS.md` with the new event.
+  - [x] Update `CONTRIBUTING.md` to mandate Umami tracking for important CTA buttons/links.
 
 ## 🧪 Verification Plan
 
-- [ ] **Manual Test**: Export a small SVG, click "Copy Data URL", paste into a text editor, verify it's a valid Data URL.
-- [ ] **Automated Test**: Update `SuccessView.test.tsx` to mock `navigator.clipboard` and verify it's called with the expected content. Verify that `umami.track` is called with the correct event name and properties.
+- [x] **Manual Test**: Export a small SVG, click "Copy Data URL", paste into a text editor, verify it's a valid Data URL.
+- [x] **Automated Test**: Update `SuccessView.test.tsx` to mock `navigator.clipboard` and verify it's called with the expected content. Verify that `umami.track` is called with the correct event name and properties.
 
 ## 📝 Change Log
 
 - 2026-05-19: Initial spec created by Gemini CLI.
+- 2026-05-19: Implementation complete and verified.
