@@ -53,7 +53,10 @@ test('SuccessView renders donation support link', () => {
 
   expect(screen.getByText(/Love this tool?/i)).toBeInTheDocument();
   const sponsorLink = screen.getByRole('link', {
-    name: /Support its development via PayPal/i,
+    name: /Support its development on GitHub/i,
   });
-  expect(sponsorLink).toHaveAttribute('href', 'https://paypal.me/GehDoc');
+  expect(sponsorLink).toHaveAttribute(
+    'href',
+    'https://github.com/GehDoc/svg-to-video/?sponsor=1'
+  );
 });

@@ -13,8 +13,7 @@
   },
   "homepage": "https://github.com/GehDoc/svg-to-video#readme",
   "funding": {
-    "type": "paypal",
-    "url": "https://paypal.me/GehDoc"
+    "url": "https://github.com/GehDoc/svg-to-video/?sponsor=1"
   },
   "private": true,
   "type": "module",

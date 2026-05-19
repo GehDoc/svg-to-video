@@ -27,7 +27,10 @@ test('HeaderDropdown renders all sections and links', () => {
   );
 
   const coffeeLink = screen.getByRole('link', { name: /buy me a coffee/i });
-  expect(coffeeLink).toHaveAttribute('href', 'https://paypal.me/GehDoc');
+  expect(coffeeLink).toHaveAttribute(
+    'href',
+    'https://github.com/GehDoc/svg-to-video/?sponsor=1'
+  );
 
   // Check about section
   expect(screen.getByText(/about/i)).toBeInTheDocument();

@@ -41,7 +41,7 @@ export const SuccessView = ({
           <FaHeart className="icon-heart" /> Love this tool?{' '}
         </span>
         <a href={pkg.funding.url} target="_blank" rel="noopener noreferrer">
-          Support its development via PayPal ↗
+          Support its development on GitHub ↗
         </a>
       </div>
     </div>

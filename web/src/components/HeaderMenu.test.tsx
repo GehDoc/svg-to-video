@@ -5,14 +5,16 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { HeaderMenu } from './HeaderMenu';
 import { expect, test } from 'vitest';
 import '@testing-library/jest-dom/vitest';
-import pkg from '../../package.json';
 
 test('HeaderMenu renders Sponsor button and toggles dropdown', () => {
   render(<HeaderMenu />);
 
   // Check Sponsor button
   const sponsorLink = screen.getByRole('link', { name: /sponsor/i });
-  expect(sponsorLink).toHaveAttribute('href', pkg.funding.url);
+  expect(sponsorLink).toHaveAttribute(
+    'href',
+    'https://github.com/GehDoc/svg-to-video/?sponsor=1'
+  );
 
   // Check Burger trigger
   const burgerButton = screen.getByRole('button', { name: /open menu/i });
