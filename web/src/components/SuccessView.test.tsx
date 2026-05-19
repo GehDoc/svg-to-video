@@ -35,10 +35,7 @@ test('SuccessView renders MP4 success state correctly', () => {
 });
 
 test('SuccessView handles copy action', async () => {
-  const spy = vi.spyOn(clipboard, 'copyVideoToClipboard').mockResolvedValue({
-    type: 'data-url',
-    success: true,
-  });
+  const spy = vi.spyOn(clipboard, 'copyDataUrl').mockResolvedValue(true);
 
   render(
     <SuccessView
@@ -52,6 +49,9 @@ test('SuccessView handles copy action', async () => {
 
   const copyBtn = screen.getByRole('button', { name: /Copy/i });
   fireEvent.click(copyBtn);
+
+  const dataUrlOption = screen.getByText(/Copy as Data URL/i);
+  fireEvent.click(dataUrlOption);
 
   expect(spy).toHaveBeenCalled();
   await waitFor(() => expect(screen.getByText(/Copied!/i)).toBeInTheDocument());

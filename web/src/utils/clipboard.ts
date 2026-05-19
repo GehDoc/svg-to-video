@@ -13,37 +13,41 @@ export const blobToDataUrl = async (url: string): Promise<string> => {
 };
 
 /**
- * Attempts to copy a video blob to the clipboard.
- * Fallback to copying as a Data URL if binary copy is not supported.
+ * Copies the video as a Data URL (Base64) to the clipboard.
  */
-export const copyVideoToClipboard = async (
+export const copyDataUrl = async (url: string): Promise<boolean> => {
+  try {
+    const dataUrl = await blobToDataUrl(url);
+    await navigator.clipboard.writeText(dataUrl);
+    return true;
+  } catch (error) {
+    console.error('Clipboard copy data-url failed:', error);
+    return false;
+  }
+};
+
+/**
+ * Attempts to copy the video as a binary file to the clipboard.
+ */
+export const copyBinaryFile = async (
   url: string,
   mimeType: string
-): Promise<{ type: 'data-url' | 'binary'; success: boolean }> => {
+): Promise<boolean> => {
   try {
     const response = await fetch(url);
     const blob = await response.blob();
 
-    // 1. Try binary copy if supported
     if (
       typeof ClipboardItem !== 'undefined' &&
       (ClipboardItem.supports ? ClipboardItem.supports(mimeType) : true)
     ) {
-      try {
-        const item = new ClipboardItem({ [mimeType]: blob });
-        await navigator.clipboard.write([item]);
-        return { type: 'binary', success: true };
-      } catch (e) {
-        console.warn('Binary clipboard write failed, falling back to text:', e);
-      }
+      const item = new ClipboardItem({ [mimeType]: blob });
+      await navigator.clipboard.write([item]);
+      return true;
     }
-
-    // 2. Fallback to Data URL
-    const dataUrl = await blobToDataUrl(url);
-    await navigator.clipboard.writeText(dataUrl);
-    return { type: 'data-url', success: true };
+    return false;
   } catch (error) {
-    console.error('Clipboard copy failed:', error);
-    return { type: 'data-url', success: false };
+    console.error('Clipboard copy binary failed:', error);
+    return false;
   }
 };

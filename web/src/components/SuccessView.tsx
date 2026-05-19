@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from './Button/Button';
-import { FaHeart } from 'react-icons/fa';
+import { FaHeart, FaChevronDown } from 'react-icons/fa';
 import pkg from '../../package.json';
-import { copyVideoToClipboard } from '../utils/clipboard';
+import { copyDataUrl, copyBinaryFile } from '../utils/clipboard';
 import './SuccessView.scss';
 
 interface SuccessViewProps {
@@ -20,34 +20,47 @@ export const SuccessView = ({
   onDownload,
   onBack,
 }: SuccessViewProps) => {
-  const [isCopying, setIsCopying] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>(
     'idle'
   );
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleCopy = async () => {
-    setIsCopying(true);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleCopy = async (type: 'data-url' | 'file') => {
+    setIsDropdownOpen(false);
     setCopyStatus('idle');
 
-    try {
-      const { type, success } = await copyVideoToClipboard(
-        renderedUrl,
-        'video/mp4'
-      );
+    let success = false;
+    if (type === 'data-url') {
+      success = await copyDataUrl(renderedUrl);
+    } else {
+      success = await copyBinaryFile(renderedUrl, 'video/mp4');
+    }
 
-      if (typeof umami !== 'undefined') {
-        umami.track('copy-to-clipboard', { type, success });
-      }
+    if (typeof umami !== 'undefined') {
+      umami.track(type === 'data-url' ? 'copy-data-url' : 'copy-file', {
+        success,
+      });
+    }
 
-      if (success) {
-        setCopyStatus('success');
-      } else {
-        setCopyStatus('error');
-      }
-    } catch {
+    if (success) {
+      setCopyStatus('success');
+      setTimeout(() => setCopyStatus('idle'), 2000);
+    } else {
       setCopyStatus('error');
-    } finally {
-      setIsCopying(false);
       setTimeout(() => setCopyStatus('idle'), 2000);
     }
   };
@@ -66,18 +79,30 @@ export const SuccessView = ({
         <Button variant="primary" onClick={onDownload}>
           Download
         </Button>
-        <Button
-          variant="secondary"
-          onClick={handleCopy}
-          disabled={isCopying}
-          aria-label="Copy video to clipboard"
-        >
-          {copyStatus === 'success'
-            ? 'Copied!'
-            : copyStatus === 'error'
-              ? 'Error'
-              : 'Copy'}
-        </Button>
+        <div className="copy-dropdown-wrapper">
+          <Button
+            variant="secondary"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="copy-toggle"
+          >
+            {copyStatus === 'success'
+              ? 'Copied!'
+              : copyStatus === 'error'
+                ? 'Error'
+                : 'Copy'}
+            <FaChevronDown className="chevron" />
+          </Button>
+          {isDropdownOpen && (
+            <div className="dropdown-menu">
+              <button onClick={() => handleCopy('data-url')}>
+                Copy as Data URL
+              </button>
+              <button onClick={() => handleCopy('file')}>
+                Copy as Video File
+              </button>
+            </div>
+          )}
+        </div>
         <Button variant="secondary" onClick={onBack}>
           Back to Studio
         </Button>
