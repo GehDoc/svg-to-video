@@ -53,13 +53,18 @@ export const SuccessView = ({
 
   return (
     <div className="success-card">
-      <div className="success-icon">✓</div>
+      <div className="success-icon" aria-hidden="true">
+        <FaCheck />
+      </div>
       <h3>Render Complete</h3>
       <p className="success-meta">
         {fileName} • {fileSize}
       </p>
       <div className="success-preview">
-        <video src={renderedUrl} controls autoPlay loop />
+        <video src={renderedUrl} controls autoPlay loop>
+          <track kind="captions" srcLang="en" label="English" default />
+          Your browser does not support the video tag.
+        </video>
       </div>
       <div className="success-actions">
         <Button variant="primary" onClick={onDownload}>
