@@ -33,13 +33,11 @@ export const Dropdown = ({ sections, onClose }: DropdownProps) => {
           {section.items.map((item, iIdx) => {
             const content = (
               <>
-                <div className="dropdown-left">
+                <div className="meta-left">
                   {item.icon}
                   {item.label}
                 </div>
-                {item.rightElement && (
-                  <span className="dropdown-right">{item.rightElement}</span>
-                )}
+                {item.rightElement}
               </>
             );
 

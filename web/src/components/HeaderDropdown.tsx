@@ -60,10 +60,9 @@ export const HeaderDropdown = () => {
           icon: <FaTag />,
           isMeta: true,
           rightElement: (
-            <>
-              <span className="dropdown-version-tag">v{pkg.version}</span>
-              <span className="dropdown-arrow">↗</span>
-            </>
+            <span className="dropdown-version-tag">
+              v{pkg.version} <span className="dropdown-arrow">↗</span>
+            </span>
           ),
           onClick: () => {},
         },
@@ -75,10 +74,9 @@ export const HeaderDropdown = () => {
           icon: <FaBalanceScale />,
           isMeta: true,
           rightElement: (
-            <>
-              <span className="dropdown-version-tag">MIT</span>
-              <span className="dropdown-arrow">↗</span>
-            </>
+            <span className="dropdown-version-tag">
+              MIT <span className="dropdown-arrow">↗</span>
+            </span>
           ),
           onClick: () => {},
         },
