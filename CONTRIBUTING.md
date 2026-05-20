@@ -215,6 +215,7 @@ When adding new features or core capabilities, ensure all public-facing metadata
 
 1.  **`web/index.html`**:
     - Update `<meta name="description">` with new capabilities.
+    - Update the **visible UI description** inside the `<div id="root">` to reflect core features.
     - Update Open Graph tags (`og:title`, `og:description`, `og:seeAlso`) for social sharing and repository linking.
     - Enrich the **JSON-LD** script (`application/ld+json`) by updating the `description`, extending the `featureList`, and ensuring `codeRepository` and `license` fields point to the current project.
 2.  **`package.json` (Root & Web)**:
