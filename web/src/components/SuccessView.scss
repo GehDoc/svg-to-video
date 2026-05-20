@@ -81,21 +81,12 @@
   flex: 1;
 }
 
-.copy-dropdown-wrapper {
-  position: relative;
-  display: flex;
-  flex: 1;
-
-  .btn {
-    width: 100%;
-  }
-}
-
-.copy-toggle {
+.copy-button {
   display: flex !important;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  flex: 1;
 }
 
 .success-support {

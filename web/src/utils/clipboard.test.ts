@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { blobToDataUrl, copyDataUrl, copyBinaryFile } from './clipboard';
+import { blobToDataUrl, copyDataUrl } from './clipboard';
 
 describe('clipboard utils', () => {
   const mockBlob = new Blob(['test'], { type: 'video/mp4' });
@@ -44,25 +44,6 @@ describe('clipboard utils', () => {
       const success = await copyDataUrl('blob:test');
       expect(success).toBe(true);
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith(mockDataUrl);
-    });
-  });
-
-  describe('copyBinaryFile', () => {
-    it('writes binary file to clipboard when supported', async () => {
-      const mockClipboardItem = vi.fn();
-      vi.stubGlobal('ClipboardItem', mockClipboardItem);
-      ClipboardItem.supports = vi.fn().mockReturnValue(true);
-
-      const success = await copyBinaryFile('blob:test', 'video/mp4');
-      expect(success).toBe(true);
-      expect(navigator.clipboard.write).toHaveBeenCalled();
-      expect(mockClipboardItem).toHaveBeenCalledWith({ 'video/mp4': mockBlob });
-    });
-
-    it('returns false when not supported', async () => {
-      vi.stubGlobal('ClipboardItem', undefined);
-      const success = await copyBinaryFile('blob:test', 'video/mp4');
-      expect(success).toBe(false);
     });
   });
 });

@@ -31,7 +31,9 @@ test('SuccessView renders MP4 success state correctly', () => {
   expect(screen.getByText(/test.mp4/i)).toBeInTheDocument();
   expect(screen.getByText(/1.2 MB/i)).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /Download/i })).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /Copy/i })).toBeInTheDocument();
+  expect(
+    screen.getByRole('button', { name: /Copy Data URL/i })
+  ).toBeInTheDocument();
 });
 
 test('SuccessView handles copy action', async () => {
@@ -47,11 +49,8 @@ test('SuccessView handles copy action', async () => {
     />
   );
 
-  const copyBtn = screen.getByRole('button', { name: /Copy/i });
+  const copyBtn = screen.getByRole('button', { name: /Copy Data URL/i });
   fireEvent.click(copyBtn);
-
-  const dataUrlOption = screen.getByText(/Copy as Data URL/i);
-  fireEvent.click(dataUrlOption);
 
   expect(spy).toHaveBeenCalled();
   await waitFor(() => expect(screen.getByText(/Copied!/i)).toBeInTheDocument());

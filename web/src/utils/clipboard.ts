@@ -25,29 +25,3 @@ export const copyDataUrl = async (url: string): Promise<boolean> => {
     return false;
   }
 };
-
-/**
- * Attempts to copy the video as a binary file to the clipboard.
- */
-export const copyBinaryFile = async (
-  url: string,
-  mimeType: string
-): Promise<boolean> => {
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-
-    if (
-      typeof ClipboardItem !== 'undefined' &&
-      (ClipboardItem.supports ? ClipboardItem.supports(mimeType) : true)
-    ) {
-      const item = new ClipboardItem({ [mimeType]: blob });
-      await navigator.clipboard.write([item]);
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.error('Clipboard copy binary failed:', error);
-    return false;
-  }
-};

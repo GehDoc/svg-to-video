@@ -1,9 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from './Button/Button';
-import { FaHeart, FaChevronDown, FaCopy, FaFile } from 'react-icons/fa';
+import { FaHeart, FaCopy } from 'react-icons/fa';
 import pkg from '../../package.json';
-import { copyDataUrl, copyBinaryFile } from '../utils/clipboard';
-import { Dropdown } from './Dropdown/Dropdown';
+import { copyDataUrl } from '../utils/clipboard';
 import './SuccessView.scss';
 
 interface SuccessViewProps {
@@ -21,40 +20,17 @@ export const SuccessView = ({
   onDownload,
   onBack,
 }: SuccessViewProps) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>(
     'idle'
   );
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleCopy = async (type: 'data-url' | 'file') => {
-    setIsDropdownOpen(false);
+  const handleCopy = async () => {
     setCopyStatus('idle');
 
-    let success = false;
-    if (type === 'data-url') {
-      success = await copyDataUrl(renderedUrl);
-    } else {
-      success = await copyBinaryFile(renderedUrl, 'video/mp4');
-    }
+    const success = await copyDataUrl(renderedUrl);
 
     if (typeof umami !== 'undefined') {
-      umami.track(type === 'data-url' ? 'copy-data-url' : 'copy-file', {
-        success,
-      });
+      umami.track('copy-data-url', { success });
     }
 
     if (success) {
@@ -80,42 +56,18 @@ export const SuccessView = ({
         <Button variant="primary" onClick={onDownload}>
           Download
         </Button>
-        <div className="copy-dropdown-wrapper" ref={dropdownRef}>
-          <Button
-            variant="secondary"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="copy-toggle"
-          >
-            {copyStatus === 'success'
-              ? 'Copied!'
-              : copyStatus === 'error'
-                ? 'Error'
-                : 'Copy'}
-            <FaChevronDown className="chevron" />
-          </Button>
-          {isDropdownOpen && (
-            <Dropdown
-              align="left"
-              onClose={() => setIsDropdownOpen(false)}
-              sections={[
-                {
-                  items: [
-                    {
-                      label: 'Copy as Data URL',
-                      onClick: () => handleCopy('data-url'),
-                      icon: <FaCopy />,
-                    },
-                    {
-                      label: 'Copy as Video File',
-                      onClick: () => handleCopy('file'),
-                      icon: <FaFile />,
-                    },
-                  ],
-                },
-              ]}
-            />
-          )}
-        </div>
+        <Button
+          variant="secondary"
+          onClick={handleCopy}
+          className="copy-button"
+        >
+          <FaCopy />
+          {copyStatus === 'success'
+            ? 'Copied!'
+            : copyStatus === 'error'
+              ? 'Error'
+              : 'Copy Data URL'}
+        </Button>
         <Button variant="secondary" onClick={onBack}>
           Back to Studio
         </Button>
