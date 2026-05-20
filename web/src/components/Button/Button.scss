@@ -40,6 +40,17 @@
   }
 }
 
+.btn--outline {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+
+  &:hover:not(:disabled) {
+    background: var(--primary);
+    color: white;
+  }
+}
+
 .btn--error {
   background: var(--error);
   color: white;

@@ -56,11 +56,7 @@ export const SuccessView = ({
         <Button variant="primary" onClick={onDownload}>
           Download
         </Button>
-        <Button
-          variant="secondary"
-          onClick={handleCopy}
-          className="copy-button"
-        >
+        <Button variant="outline" onClick={handleCopy} className="copy-button">
           <FaCopy />
           {copyStatus === 'success'
             ? 'Copied!'

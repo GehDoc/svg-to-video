@@ -2,7 +2,7 @@ import { type ReactNode, type ButtonHTMLAttributes } from 'react';
 import './Button.scss';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'error';
+  variant?: 'primary' | 'secondary' | 'outline' | 'error';
   children: ReactNode;
 }
 
