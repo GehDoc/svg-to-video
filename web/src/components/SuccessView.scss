@@ -94,14 +94,12 @@
 
   &--success {
     .icon-success {
-      color: #22c55e;
       animation: popScale 0.3s ease-out;
     }
   }
 
   &--error {
     .icon-error {
-      color: var(--error);
       animation: shake 0.4s ease-in-out;
     }
   }
