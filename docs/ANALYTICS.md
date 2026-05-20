@@ -11,7 +11,7 @@ This document outlines the event tracking strategy for the Web Studio using [Uma
 | `conversion-success` | Render process completes     | `format`, `isTransparent`          |
 | `conversion-failed`  | Render process errors out    | `error`, `format`, `isTransparent` |
 | `conversion-cancel`  | User cancels the render      | `format`, `isTransparent`          |
-| `copy-to-clipboard`  | User clicks "Copy"           | `type`, `success`                  |
+| `copy-data-url`      | User clicks "Copy Data URL"  | `success` (boolean)                |
 | `download-result`    | User clicks "Download"       | `format`, `isTransparent`          |
 | `back-to-studio`     | User clicks "Back to Studio" | `format`, `isTransparent`          |
 
