@@ -41,36 +41,25 @@ export const Dropdown = ({ sections, onClose }: DropdownProps) => {
               </>
             );
 
-            const handleClick = () => {
+            const handleClick = (e: React.MouseEvent) => {
+              if (!item.href) {
+                e.preventDefault();
+              }
               if (item.onClick) item.onClick();
               if (onClose) onClose();
             };
 
-            if (item.href) {
-              return (
-                <a
-                  key={iIdx}
-                  href={item.href}
-                  target={item.target}
-                  rel={item.rel}
-                  className={
-                    item.isMeta ? 'dropdown-meta-link' : 'dropdown-item'
-                  }
-                  onClick={onClose}
-                >
-                  {content}
-                </a>
-              );
-            }
-
             return (
-              <button
+              <a
                 key={iIdx}
-                className="dropdown-item"
+                href={item.href || '#'}
+                target={item.target}
+                rel={item.rel}
+                className={item.isMeta ? 'dropdown-meta-link' : 'dropdown-item'}
                 onClick={handleClick}
               >
                 {content}
-              </button>
+              </a>
             );
           })}
         </div>
