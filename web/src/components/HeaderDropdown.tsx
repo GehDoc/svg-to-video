@@ -44,7 +44,6 @@ export const HeaderDropdown = () => {
           target: '_blank',
           rel: 'noopener noreferrer',
           icon: <FaCoffee />,
-          isMeta: true,
           rightElement: <span className="dropdown-arrow">↗</span>,
           onClick: () => {},
         },

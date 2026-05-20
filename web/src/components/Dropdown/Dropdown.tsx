@@ -34,7 +34,7 @@ export const Dropdown = ({ sections, onClose }: DropdownProps) => {
             const content = (
               <>
                 <div className="dropdown-left">
-                  {item.icon && <span className="item-icon">{item.icon}</span>}
+                  {item.icon}
                   {item.label}
                 </div>
                 {item.rightElement && (
@@ -56,7 +56,7 @@ export const Dropdown = ({ sections, onClose }: DropdownProps) => {
                   target={item.target}
                   rel={item.rel}
                   className={
-                    item.isMeta ? 'dropdown-meta-link' : 'dropdown-link'
+                    item.isMeta ? 'dropdown-meta-link' : 'dropdown-item'
                   }
                   onClick={onClose}
                 >
