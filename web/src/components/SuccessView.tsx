@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from './Button/Button';
-import { FaHeart, FaCopy } from 'react-icons/fa';
+import { FaHeart, FaCopy, FaCheck, FaTimes } from 'react-icons/fa';
 import pkg from '../../package.json';
 import { copyDataUrl } from '../utils/clipboard';
 import './SuccessView.scss';
@@ -11,6 +11,7 @@ interface SuccessViewProps {
   renderedUrl: string;
   onDownload: () => void;
   onBack: () => void;
+  onCopyOverride?: (url: string) => Promise<boolean>;
 }
 
 export const SuccessView = ({
@@ -19,6 +20,7 @@ export const SuccessView = ({
   renderedUrl,
   onDownload,
   onBack,
+  onCopyOverride,
 }: SuccessViewProps) => {
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>(
     'idle'
@@ -27,7 +29,8 @@ export const SuccessView = ({
   const handleCopy = async () => {
     setCopyStatus('idle');
 
-    const success = await copyDataUrl(renderedUrl);
+    const copyFn = onCopyOverride || copyDataUrl;
+    const success = await copyFn(renderedUrl);
 
     if (typeof umami !== 'undefined') {
       umami.track('copy-data-url', { success });
@@ -40,6 +43,12 @@ export const SuccessView = ({
       setCopyStatus('error');
       setTimeout(() => setCopyStatus('idle'), 2000);
     }
+  };
+
+  const getCopyIcon = () => {
+    if (copyStatus === 'success') return <FaCheck className="icon-success" />;
+    if (copyStatus === 'error') return <FaTimes className="icon-error" />;
+    return <FaCopy />;
   };
 
   return (
@@ -56,13 +65,13 @@ export const SuccessView = ({
         <Button variant="primary" onClick={onDownload}>
           Download
         </Button>
-        <Button variant="outline" onClick={handleCopy} className="copy-button">
-          <FaCopy />
-          {copyStatus === 'success'
-            ? 'Copied!'
-            : copyStatus === 'error'
-              ? 'Error'
-              : 'Copy Data URL'}
+        <Button
+          variant="outline"
+          onClick={handleCopy}
+          className={`copy-button copy-button--${copyStatus}`}
+        >
+          {getCopyIcon()}
+          Copy Data URL
         </Button>
         <Button variant="secondary" onClick={onBack}>
           Back to Studio

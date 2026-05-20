@@ -58,7 +58,7 @@
   justify-content: center;
   align-items: center;
   flex: 1;
-  min-height: 200px;
+  min-height: 30vh;
 }
 
 .success-preview video {
@@ -87,6 +87,54 @@
   justify-content: center;
   gap: 0.5rem;
   flex: 1;
+
+  svg {
+    transition: all 0.2s ease;
+  }
+
+  &--success {
+    .icon-success {
+      color: #22c55e;
+      animation: popScale 0.3s ease-out;
+    }
+  }
+
+  &--error {
+    .icon-error {
+      color: var(--error);
+      animation: shake 0.4s ease-in-out;
+    }
+  }
+}
+
+@keyframes popScale {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-4px);
+  }
 }
 
 .success-support {

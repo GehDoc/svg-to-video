@@ -9,7 +9,6 @@ import {
 import { test, expect, afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { SuccessView } from './SuccessView';
-import * as clipboard from '../utils/clipboard';
 
 afterEach(cleanup);
 
@@ -37,7 +36,7 @@ test('SuccessView renders MP4 success state correctly', () => {
 });
 
 test('SuccessView handles copy action', async () => {
-  const spy = vi.spyOn(clipboard, 'copyDataUrl').mockResolvedValue(true);
+  const onCopyOverride = vi.fn().mockResolvedValue(true);
 
   render(
     <SuccessView
@@ -46,14 +45,19 @@ test('SuccessView handles copy action', async () => {
       renderedUrl="blob:test"
       onDownload={vi.fn()}
       onBack={vi.fn()}
+      onCopyOverride={onCopyOverride}
     />
   );
 
   const copyBtn = screen.getByRole('button', { name: /Copy Data URL/i });
   fireEvent.click(copyBtn);
 
-  expect(spy).toHaveBeenCalled();
-  await waitFor(() => expect(screen.getByText(/Copied!/i)).toBeInTheDocument());
+  expect(onCopyOverride).toHaveBeenCalled();
+
+  // Verify success class is applied
+  await waitFor(() => expect(copyBtn).toHaveClass('copy-button--success'));
+  // Verify success icon is present
+  expect(copyBtn.querySelector('.icon-success')).toBeInTheDocument();
 });
 
 test('SuccessView renders donation support link', () => {
