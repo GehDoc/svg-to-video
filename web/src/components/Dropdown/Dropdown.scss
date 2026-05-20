@@ -1,6 +1,5 @@
-.header-dropdown-card {
+.dropdown-card {
   position: absolute;
-  right: 0;
   top: 100%;
   margin-top: 0.5rem;
   width: 240px;
@@ -8,18 +7,32 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   box-shadow: var(--shadow);
-  padding: 0.5rem 0;
+  padding: 0.75rem;
   z-index: 100;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+
+  &--right {
+    right: 0;
+  }
+
+  &--left {
+    left: 0;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
 }
 
-.header-menu-section {
-  padding: 0 0.5rem 0.5rem 0.5rem;
+.dropdown-section {
+  padding: 0;
 
   &:not(:last-child) {
     border-bottom: 1px solid var(--border);
     margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
   }
 
   &:not(:first-child) {
@@ -27,7 +40,7 @@
   }
 }
 
-.header-menu-label {
+.dropdown-label {
   display: block;
   padding: 0.25rem 0.75rem;
   text-transform: uppercase;
@@ -37,7 +50,7 @@
   letter-spacing: 0.05em;
 }
 
-.header-menu-link {
+.dropdown-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -49,9 +62,10 @@
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
+  cursor: pointer;
 
   &:hover {
-    background-color: var(--panel);
+    background-color: var(--border);
     color: var(--primary);
   }
 
@@ -66,7 +80,7 @@
   }
 }
 
-.header-meta-link {
+.dropdown-meta-link {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -78,13 +92,14 @@
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
+  cursor: pointer;
 
   &:hover {
-    background-color: var(--panel);
+    background-color: var(--border);
     color: var(--primary);
 
-    .header-version-tag {
-      background-color: var(--border);
+    .dropdown-version-tag {
+      background-color: var(--panel);
     }
   }
 
@@ -96,7 +111,7 @@
   }
 }
 
-.header-version-tag {
+.dropdown-version-tag {
   font-family: var(--mono);
   background-color: var(--code-bg);
   color: var(--text);
@@ -105,7 +120,7 @@
   font-size: 0.7rem;
 }
 
-.header-link-arrow {
+.dropdown-arrow {
   color: var(--text-muted);
   font-size: 0.7rem;
 }

@@ -117,7 +117,18 @@ We use `addon-a11y` within Storybook. To ensure consistent results:
 
 ```bash
 # Run real-browser accessibility and interaction tests
-npm run test:storybook
+npm run test:storybook -w web
+```
+
+**Testing specific themes locally**:
+To validate accessibility across both Light and Dark modes (like the CI does), set the `STORYBOOK_THEME` environment variable:
+
+```bash
+# 1. Start Storybook first
+npm run storybook -w web
+
+# 2. In another terminal, run tests for a specific theme
+STORYBOOK_THEME=dark npm run test:storybook -w web
 ```
 
 _Note: Avoid using `jest-axe` in JSDOM unit tests, as it cannot calculate computed styles and will miss contrast violations._
@@ -150,15 +161,24 @@ The Web Studio and Storybook Gallery are configured to deploy automatically to *
 The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tracking. Detailed information about tracked events can be found in [docs/ANALYTICS.md](./docs/ANALYTICS.md).
 
 > [!IMPORTANT]
-> **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
->
-> 1. The hostname is `localhost`, `127.0.0.1`, or a local network IP.
-> 2. `window.navigator.webdriver` is true (e.g., in Playwright, Puppeteer, or CI environments).
-> 3. The hostname does not match the `data-domains` attribute.
+> **Tracking Mandate**: When adding new primary Call-to-Action (CTA) buttons or important navigation links, you **must** implement Umami event tracking. This helps us understand which features are most used and where users might be struggling.
 
 - **Implementation**: The tracker is self-hosted at `web/public/assets/3rd-party/analytics.js` (to bypass ad-blockers and COEP issues) and injected via `web/index.html` with pre-flight checks.
+- **Programmatic Tracking**: Always use `typeof umami !== 'undefined'` to safely trigger events.
+
+  ```typescript
+  if (typeof umami !== 'undefined') {
+    umami.track('my-event-name', { property: 'value' });
+  }
+  ```
+
+- **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
+  1. The hostname is `localhost`, `127.0.0.1`, or a local network IP.
+  2. `window.navigator.webdriver` is true (e.g., in Playwright, Puppeteer, or CI environments).
+  3. The hostname does not match the `data-domains` attribute.
+
 - **Configuration**: The `data-website-id` and `data-domains` are hardcoded in `web/index.html`. For local forks, update these values to point to your own Umami instance.
-- **Types**: We use `@types/umami` for full TypeScript support. Always use `typeof umami !== 'undefined'` to safely trigger events programmatically.
+- **Types**: We use `@types/umami` for full TypeScript support.
 
 ## 🏷 Versioning Policy
 
@@ -206,6 +226,7 @@ When adding new features or core capabilities, ensure all public-facing metadata
 
 1.  **`web/index.html`**:
     - Update `<meta name="description">` with new capabilities.
+    - Update the **visible UI description** inside the `<div id="root">` to reflect core features.
     - Update Open Graph tags (`og:title`, `og:description`, `og:seeAlso`) for social sharing and repository linking.
     - Enrich the **JSON-LD** script (`application/ld+json`) by updating the `description`, extending the `featureList`, and ensuring `codeRepository` and `license` fields point to the current project.
 2.  **`package.json` (Root & Web)**:
