@@ -117,7 +117,18 @@ We use `addon-a11y` within Storybook. To ensure consistent results:
 
 ```bash
 # Run real-browser accessibility and interaction tests
-npm run test:storybook
+npm run test:storybook -w web
+```
+
+**Testing specific themes locally**:
+To validate accessibility across both Light and Dark modes (like the CI does), set the `STORYBOOK_THEME` environment variable:
+
+```bash
+# 1. Start Storybook first
+npm run storybook -w web
+
+# 2. In another terminal, run tests for a specific theme
+STORYBOOK_THEME=dark npm run test:storybook -w web
 ```
 
 _Note: Avoid using `jest-axe` in JSDOM unit tests, as it cannot calculate computed styles and will miss contrast violations._
