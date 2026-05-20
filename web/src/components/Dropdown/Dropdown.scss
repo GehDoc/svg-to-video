@@ -1,6 +1,5 @@
 .dropdown-card {
   position: absolute;
-  right: 0;
   top: 100%;
   margin-top: 0.5rem;
   width: 240px;
@@ -13,6 +12,14 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+
+  &--right {
+    right: 0;
+  }
+
+  &--left {
+    left: 0;
+  }
 
   * {
     box-sizing: border-box;

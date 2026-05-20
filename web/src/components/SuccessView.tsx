@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from './Button/Button';
-import { FaHeart, FaChevronDown } from 'react-icons/fa';
+import { FaHeart, FaChevronDown, FaCopy, FaFile } from 'react-icons/fa';
 import pkg from '../../package.json';
 import { copyDataUrl, copyBinaryFile } from '../utils/clipboard';
+import { Dropdown } from './Dropdown/Dropdown';
 import './SuccessView.scss';
 
 interface SuccessViewProps {
@@ -79,7 +80,7 @@ export const SuccessView = ({
         <Button variant="primary" onClick={onDownload}>
           Download
         </Button>
-        <div className="copy-dropdown-wrapper">
+        <div className="copy-dropdown-wrapper" ref={dropdownRef}>
           <Button
             variant="secondary"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -93,14 +94,26 @@ export const SuccessView = ({
             <FaChevronDown className="chevron" />
           </Button>
           {isDropdownOpen && (
-            <div className="dropdown-menu">
-              <button onClick={() => handleCopy('data-url')}>
-                Copy as Data URL
-              </button>
-              <button onClick={() => handleCopy('file')}>
-                Copy as Video File
-              </button>
-            </div>
+            <Dropdown
+              align="left"
+              onClose={() => setIsDropdownOpen(false)}
+              sections={[
+                {
+                  items: [
+                    {
+                      label: 'Copy as Data URL',
+                      onClick: () => handleCopy('data-url'),
+                      icon: <FaCopy />,
+                    },
+                    {
+                      label: 'Copy as Video File',
+                      onClick: () => handleCopy('file'),
+                      icon: <FaFile />,
+                    },
+                  ],
+                },
+              ]}
+            />
           )}
         </div>
         <Button variant="secondary" onClick={onBack}>

@@ -20,11 +20,16 @@ export interface DropdownItem {
 interface DropdownProps {
   sections: DropdownSection[];
   onClose?: () => void;
+  align?: 'left' | 'right';
 }
 
-export const Dropdown = ({ sections, onClose }: DropdownProps) => {
+export const Dropdown = ({
+  sections,
+  onClose,
+  align = 'right',
+}: DropdownProps) => {
   return (
-    <div className="dropdown-card">
+    <div className={`dropdown-card dropdown-card--${align}`}>
       {sections.map((section, sIdx) => (
         <div key={sIdx} className="dropdown-section">
           {section.label && (
