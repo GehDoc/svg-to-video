@@ -57,7 +57,7 @@
   cursor: pointer;
 
   &:hover {
-    background-color: var(--panel);
+    background-color: var(--border);
     color: var(--primary);
   }
 
@@ -87,11 +87,11 @@
   cursor: pointer;
 
   &:hover {
-    background-color: var(--panel);
+    background-color: var(--border);
     color: var(--primary);
 
     .dropdown-version-tag {
-      background-color: var(--border);
+      background-color: var(--panel);
     }
   }
 
