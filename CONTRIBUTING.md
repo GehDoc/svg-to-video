@@ -241,11 +241,10 @@ When adding new features or core capabilities, ensure all public-facing metadata
 
 ### SEO Checklist
 
-1.  **`web/index.html`**:
-    - Update `<meta name="description">` with new capabilities.
-    - Update the **visible UI description** inside the `<div id="root">` to reflect core features.
-    - Update Open Graph tags (`og:title`, `og:description`, `og:seeAlso`) for social sharing and repository linking.
-    - Enrich the **JSON-LD** script (`application/ld+json`) by updating the `description`, extending the `featureList`, and ensuring `codeRepository` and `license` fields point to the current project.
+1.  **`web/src/app/layout.tsx`**:
+    - Update the `metadata` object (title, description, Open Graph/Twitter tags).
+    - Enrich the **JSON-LD** data (you can add a script tag in the `RootLayout` head for `application/ld+json`).
+    - Ensure `sitemap.ts` and `robots.ts` are updated to reflect the site structure.
 2.  **`package.json` (Root & Web)**:
     - Update the `description` field to reflect the expanded toolset.
     - Add relevant keywords to the `keywords` array in the root `package.json`.

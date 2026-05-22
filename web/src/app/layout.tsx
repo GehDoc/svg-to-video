@@ -3,13 +3,43 @@ import Script from 'next/script';
 import '../index.css';
 import pkg from '../../package.json';
 
+const siteName = 'SVG to Video';
+const description =
+  'High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) with transparent background support, frame-accurate rendering.';
+const url = 'https://gehdoc.github.io/svg-to-video/';
+const imageUrl =
+  'https://gehdoc.github.io/svg-to-video/assets/social-preview.svg';
+
 export const metadata: Metadata = {
   title: 'SVG to Video - Professional Animated SVG Converter',
-  description:
-    'High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) with transparent background support, frame-accurate rendering.',
-  other: {
-    version: pkg.version,
+  description,
+  openGraph: {
+    title: siteName,
+    description,
+    url,
+    siteName,
+    images: [{ url: imageUrl, width: 1200, height: 630 }],
+    locale: 'en_US',
+    type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteName,
+    description,
+    images: [imageUrl],
+  },
+  other: { version: pkg.version },
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: siteName,
+  description,
+  url,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 };
 
 export default function RootLayout({
@@ -20,6 +50,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <script
           src={`${process.env.NODE_ENV === 'production' ? '/svg-to-video' : ''}/coi-serviceworker.js`}
           async
