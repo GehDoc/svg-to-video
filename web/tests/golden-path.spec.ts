@@ -5,6 +5,8 @@ import { getProbeMetadata } from '../../tests/helpers/e2e.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const SUCCESS_TIMEOUT = 30000; // 30 seconds, to allow for rendering time in CI
+
 test.describe('SVG to Video Golden Path', () => {
   test('should successfully render an SVG into an MP4', async ({ page }) => {
     // 1. Load the page
@@ -37,7 +39,7 @@ test.describe('SVG to Video Golden Path', () => {
 
     // 5. Wait for completion (Success Card appears)
     const successCard = page.locator('.success-card');
-    await expect(successCard).toBeVisible({ timeout: 30000 }); // Increase timeout for rendering
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
 
     // 6. Verify Result (Download button exists)
     const downloadButton = page.locator('text=Download');
@@ -107,7 +109,7 @@ test.describe('SVG to Video Golden Path', () => {
     await exportButton.click();
 
     const successCard = page.locator('.success-card');
-    await expect(successCard).toBeVisible({ timeout: 30000 });
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
 
     const downloadButton = page.locator('text=Download');
     const downloadPromise = page.waitForEvent('download');
@@ -142,7 +144,7 @@ test.describe('SVG to Video Golden Path', () => {
     await exportButton.click();
 
     const successCard = page.locator('.success-card');
-    await expect(successCard).toBeVisible();
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
 
     const downloadButton = page.locator('text=Download');
     const downloadPromise = page.waitForEvent('download');
