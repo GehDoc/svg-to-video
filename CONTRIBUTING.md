@@ -241,9 +241,10 @@ When adding new features or core capabilities, ensure all public-facing metadata
 
 ### SEO Checklist
 
-1.  **`web/src/app/layout.tsx`**:
-    - Update the `metadata` object (title, description, Open Graph/Twitter tags).
-    - Enrich the **JSON-LD** data (you can add a script tag in the `RootLayout` head for `application/ld+json`).
+1.  **`web/src/app/layout.tsx`** and **`web/src/app/page.tsx`**:
+    - Update `layout.tsx` metadata object (title, description, Open Graph/Twitter tags).
+    - Enrich the **JSON-LD** data in `layout.tsx`.
+    - Update the fallback content in `page.tsx` (the "Loading" state) to reflect core features and keywords for SEO.
     - Ensure `sitemap.ts` and `robots.ts` are updated to reflect the site structure.
 2.  **`package.json` (Root & Web)**:
     - Update the `description` field to reflect the expanded toolset.

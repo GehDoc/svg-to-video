@@ -23,12 +23,22 @@ export default function Page() {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          flexDirection: 'column',
           height: '100vh',
           fontFamily: 'var(--sans)',
           color: 'var(--text-muted)',
+          padding: '2rem',
+          textAlign: 'center',
         }}
       >
-        Loading Studio...
+        <h1>SVG to Video Studio</h1>
+        <p>
+          Convert SVG animations to MP4, WebM, MKV, MOV, and other video formats
+          with transparency directly in your browser. A private, serverless,
+          frame-accurate converter with instant "Copy to Clipboard" support for
+          developers.
+        </p>
+        <p>Loading Studio...</p>
       </div>
     );
   }
