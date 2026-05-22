@@ -19,7 +19,7 @@ Welcome! This repository uses **Spec-Driven Development (SDD)** to maintain a cl
 
 To prevent the introduction of breaking changes, the project uses **Husky** to enforce type safety:
 
-- **Pre-commit**: The `.husky/pre-commit` hook automatically runs `npm run type-check` alongside linting and formatting. Commits will fail if `tsc` detects any errors.
+- **Pre-commit**: The `.husky/pre-commit` hook automatically runs `npm run type-check` (which orchestrates root and web workspace checks) alongside linting and formatting. Commits will fail if `tsc` detects any errors.
 - **Manual Check**: You can always run `npm run check:fast` to validate types, linting, and formatting locally.
 
 ### 📦 Dependency Management (Vitest & Storybook)
@@ -113,9 +113,11 @@ Beyond end-to-end testing, we use a multi-tiered strategy for component, accessi
 3. **CLI Integration Tests (`tests/cli.spec.ts`)**: Validate full user workflows for the CLI tool.
    - **Command**: `npm run test:cli`
 4. **Web Studio E2E Tests (`web/tests/*.spec.ts`)**: Validate full user workflows for the Web Studio using Playwright.
-   - **Command**: `npm run test:web`
+   - **Command**: Run `npm run test:web -w web` from the root, or `npm run test:web` from within the `web/` directory.
 5. **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
-   - **Command**: `npm run test:storybook`
+   - **Command**: Run `npm run test:storybook -w web` from the root, or `npm run test:storybook` from within the `web/` directory.
+6. **Storybook Build**:
+   - **Command**: Run `npm run build-storybook -w web` from the root, or `npm run build-storybook` from within the `web/` directory.
 
 ### 🗂 Test Organization
 
