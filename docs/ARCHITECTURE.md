@@ -2,6 +2,35 @@
 
 This document covers the project's technical design, rendering engine, and infrastructure deep-dives.
 
+## 🌐 Web Studio Architecture (Next.js App Router)
+
+The Web Studio is built using **Next.js (App Router)** to provide a hybrid rendering model that optimizes for both SEO and heavy client-side computation.
+
+### Hybrid Rendering Strategy
+
+- **Server-Side Rendering (SSR)**: The landing page structure, meta tags, and critical CSS are pre-rendered on the server. This ensures that search engines can crawl the application's version and feature set.
+- **Client-Side Rendering (CSR)**: The core conversion engine (Studio) is isolated as a client-side component. This is necessary because the Studio relies heavily on browser-only APIs such as `WebCodecs`, `Canvas`, and `SharedArrayBuffer`.
+
+### Handling Browser-Only APIs
+
+To prevent hydration mismatches and server-side crashes, browser-only logic is handled in three ways:
+
+1.  **Dynamic Imports**: The `Studio` component is imported using `next/dynamic` with `ssr: false`.
+2.  **SSR Guards**: Critical utilities (like transparency support checks) use a "guard" pattern:
+    ```typescript
+    if (typeof window === 'undefined') return false;
+    ```
+3.  **Client Directives**: Components that use hooks or browser events are marked with the `"use client"` directive at the top of the file.
+
+### Security Headers (COOP/COEP)
+
+The Studio requires `SharedArrayBuffer` for high-performance video encoding. For this to work in modern browsers, the site must be "Cross-Origin Isolated". This is achieved by serving the following headers:
+
+- `Cross-Origin-Opener-Policy: same-origin`
+- `Cross-Origin-Embedder-Policy: require-corp`
+
+In development, these are configured in `next.config.js`. In production (GitHub Pages), we utilize the `coi-serviceworker.js` to intercept requests and apply these headers on the client side.
+
 ## 🎨 High-Fidelity SVG Rendering (Bake & Clean)
 
 The `SvgRenderer` uses a specialized "Bake & Clean" algorithm to capture frame-accurate snapshots of SVGs, particularly those with complex CSS or SMIL animations.

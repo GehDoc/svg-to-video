@@ -68,7 +68,22 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.studio-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
 }
 
 body {

@@ -29,3 +29,12 @@ storybook-static
 # Vitest
 .vitest-attachments
 __screenshots__
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Test Results
+test-results/

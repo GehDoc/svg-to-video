@@ -19,7 +19,7 @@ Welcome! This repository uses **Spec-Driven Development (SDD)** to maintain a cl
 
 To prevent the introduction of breaking changes, the project uses **Husky** to enforce type safety:
 
-- **Pre-commit**: The `.husky/pre-commit` hook automatically runs `npm run type-check` alongside linting and formatting. Commits will fail if `tsc` detects any errors.
+- **Pre-commit**: The `.husky/pre-commit` hook automatically runs `npm run type-check` (which orchestrates root and web workspace checks) alongside linting and formatting. Commits will fail if `tsc` detects any errors.
 - **Manual Check**: You can always run `npm run check:fast` to validate types, linting, and formatting locally.
 
 ### 📦 Dependency Management (Vitest & Storybook)
@@ -65,25 +65,42 @@ If working without an agent, follow these steps to keep the project state synchr
 
 ## 🛠 Development Commands
 
-| Command                      | Description                                                        |
-| :--------------------------- | :----------------------------------------------------------------- |
-| `npm run check`              | Runs all checks (lint, format, type-check, e2e tests).             |
-| `npm run check:fast`         | Runs fast checks only (lint, format, type-check).                  |
-| `npm run fix`                | Auto-fixes linting and formatting issues.                          |
-| `npm run lint`               | Checks for linting issues in both CLI and Web Studio code.         |
-| `npm run lint:fix`           | Fixes linting issues in both CLI and Web Studio code.              |
-| `npm run storybook`          | Launches the Storybook UI for component development.               |
-| `npm run format`             | Checks for formatting issues.                                      |
-| `npm run format:fix`         | Fixes formatting issues.                                           |
-| `npm run test`               | Runs all tests (CLI, Web Studio E2E, Unit, Storybook, and Visual). |
-| `npm run test:cli`           | Runs CLI E2E tests.                                                |
-| `npm run test:web`           | Runs Web Studio E2E tests.                                         |
-| `npm run test:unit`          | Runs component-level unit tests using Vitest.                      |
-| `npm run test:storybook`     | Runs Storybook interaction tests using Vitest.                     |
-| `npm run test:visual`        | Runs native visual regression tests (pixel matching).              |
-| `npm run test:visual:update` | Updates visual regression baseline screenshots.                    |
-| `npm run build-storybook`    | Builds the Storybook static site for deployment.                   |
-| `npm run type-check`         | Validates TypeScript types.                                        |
+### Project-wide Orchestration (Run from Root)
+
+| Command              | Description                                                        |
+| :------------------- | :----------------------------------------------------------------- |
+| `npm run check`      | Runs all checks (lint, format, type-check, e2e tests).             |
+| `npm run check:fast` | Runs fast checks only (lint, format, type-check).                  |
+| `npm run fix`        | Auto-fixes linting and formatting issues.                          |
+| `npm run lint`       | Checks for linting issues in both CLI and Web Studio code.         |
+| `npm run lint:fix`   | Fixes linting issues in both CLI and Web Studio code.              |
+| `npm run format`     | Checks for formatting issues.                                      |
+| `npm run format:fix` | Fixes formatting issues.                                           |
+| `npm run test`       | Runs all tests (CLI, Web Studio E2E, Unit, Storybook, and Visual). |
+| `npm run type-check` | Validates TypeScript types (includes web workspace).               |
+
+### Web Studio Development (Run inside `web/` directory)
+
+To work on the Web Studio, navigate to the `web/` directory: `cd web`.
+
+| Command                      | Description                                           |
+| :--------------------------- | :---------------------------------------------------- |
+| `npm run dev`                | Launches the Web Studio development server.           |
+| `npm run build`              | Builds the Web Studio for production.                 |
+| `npm run start`              | Previews the production build of the Web Studio.      |
+| `npm run test:web`           | Runs Web Studio E2E tests.                            |
+| `npm run test:storybook`     | Runs Storybook interaction tests using Vitest.        |
+| `npm run test:visual`        | Runs native visual regression tests (pixel matching). |
+| `npm run test:visual:update` | Updates visual regression baseline screenshots.       |
+| `npm run build-storybook`    | Builds the Storybook static site.                     |
+| `npm run test:cli`           | Runs CLI E2E tests.                                   |
+| `npm run test:web`           | Runs Web Studio E2E tests.                            |
+| `npm run test:unit`          | Runs component-level unit tests using Vitest.         |
+| `npm run test:storybook`     | Runs Storybook interaction tests using Vitest.        |
+| `npm run test:visual`        | Runs native visual regression tests (pixel matching). |
+| `npm run test:visual:update` | Updates visual regression baseline screenshots.       |
+| `npm run build-storybook`    | Builds the Storybook static site for deployment.      |
+| `npm run type-check`         | Validates TypeScript types.                           |
 
 ## 🧪 Testing Strategy
 
@@ -96,9 +113,11 @@ Beyond end-to-end testing, we use a multi-tiered strategy for component, accessi
 3. **CLI Integration Tests (`tests/cli.spec.ts`)**: Validate full user workflows for the CLI tool.
    - **Command**: `npm run test:cli`
 4. **Web Studio E2E Tests (`web/tests/*.spec.ts`)**: Validate full user workflows for the Web Studio using Playwright.
-   - **Command**: `npm run test:web`
+   - **Command**: Run `npm run test:web -w web` from the root, or `npm run test:web` from within the `web/` directory.
 5. **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
-   - **Command**: `npm run test:storybook`
+   - **Command**: Run `npm run test:storybook -w web` from the root, or `npm run test:storybook` from within the `web/` directory.
+6. **Storybook Build**:
+   - **Command**: Run `npm run build-storybook -w web` from the root, or `npm run build-storybook` from within the `web/` directory.
 
 ### 🗂 Test Organization
 
@@ -153,8 +172,8 @@ The Web Studio and Storybook Gallery are configured to deploy automatically to *
 
 - **Web Studio**: [https://gehdoc.github.io/svg-to-video/](https://gehdoc.github.io/svg-to-video/)
 - **Storybook Gallery**: [https://gehdoc.github.io/svg-to-video/storybook/](https://gehdoc.github.io/svg-to-video/storybook/)
-- **Asset Pathing**: The project uses an environment-aware `base` path (`/svg-to-video/`) in `web/vite.config.ts`. This ensures all assets load correctly when deployed as a GitHub Project Site.
-- **CI Pipeline**: Deployment is triggered automatically on pushes to the `main` branch via `.github/workflows/deploy.yml`.
+- **Asset Pathing**: The project uses an environment-aware `base` path (`/svg-to-video/`) in `web/next.config.js`. This ensures all assets load correctly when deployed as a GitHub Project Site.
+- **CI Pipeline**: Deployment is triggered automatically on pushes to the `main` branch via `.github/workflows/ci.yml`.
 
 ### 📊 Analytics (Umami)
 
@@ -163,13 +182,11 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
 > [!IMPORTANT]
 > **Tracking Mandate**: When adding new primary Call-to-Action (CTA) buttons or important navigation links, you **must** implement Umami event tracking. This helps us understand which features are most used and where users might be struggling.
 
-- **Implementation**: The tracker is self-hosted at `web/public/assets/3rd-party/analytics.js` (to bypass ad-blockers and COEP issues) and injected via `web/index.html` with pre-flight checks.
-- **Programmatic Tracking**: Always use `typeof umami !== 'undefined'` to safely trigger events.
+- **Implementation**: The tracker is self-hosted at `web/public/assets/3rd-party/analytics.js` and injected via `next/script` in `web/src/app/layout.tsx`.
+- **Programmatic Tracking**: Use the global `window.umami.track` function to trigger events.
 
   ```typescript
-  if (typeof umami !== 'undefined') {
-    umami.track('my-event-name', { property: 'value' });
-  }
+  window.umami.track('my-event-name', { property: 'value' });
   ```
 
 - **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
@@ -177,7 +194,7 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
   2. `window.navigator.webdriver` is true (e.g., in Playwright, Puppeteer, or CI environments).
   3. The hostname does not match the `data-domains` attribute.
 
-- **Configuration**: The `data-website-id` and `data-domains` are hardcoded in `web/index.html`. For local forks, update these values to point to your own Umami instance.
+- **Configuration**: The `data-website-id` and `data-domains` are hardcoded in `web/src/app/layout.tsx`. For local forks, update these values to point to your own Umami instance.
 - **Types**: We use `@types/umami` for full TypeScript support.
 
 ## 🏷 Versioning Policy
@@ -224,11 +241,11 @@ When adding new features or core capabilities, ensure all public-facing metadata
 
 ### SEO Checklist
 
-1.  **`web/index.html`**:
-    - Update `<meta name="description">` with new capabilities.
-    - Update the **visible UI description** inside the `<div id="root">` to reflect core features.
-    - Update Open Graph tags (`og:title`, `og:description`, `og:seeAlso`) for social sharing and repository linking.
-    - Enrich the **JSON-LD** script (`application/ld+json`) by updating the `description`, extending the `featureList`, and ensuring `codeRepository` and `license` fields point to the current project.
+1.  **`web/src/app/layout.tsx`** and **`web/src/app/page.tsx`**:
+    - Update `layout.tsx` metadata object (title, description, Open Graph/Twitter tags).
+    - Enrich the **JSON-LD** data in `layout.tsx`.
+    - Update the fallback content in `page.tsx` (the "Loading" state) to reflect core features and keywords for SEO.
+    - Ensure `sitemap.ts` and `robots.ts` are updated to reflect the site structure.
 2.  **`package.json` (Root & Web)**:
     - Update the `description` field to reflect the expanded toolset.
     - Add relevant keywords to the `keywords` array in the root `package.json`.

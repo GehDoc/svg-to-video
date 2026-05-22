@@ -1,6 +1,6 @@
 {
   "name": "svg-to-video",
-  "version": "0.11.4",
+  "version": "0.12.0",
   "type": "module",
   "description": "Professional animated SVG to MP4/WebM/MKV/MOV converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
   "author": "GehDoc",
@@ -56,18 +56,13 @@
     "typescript-eslint": "^8.59.3"
   },
   "scripts": {
-    "lint": "eslint . --ext .js,.mjs,.ts,.tsx && npm run lint -w web",
+    "lint": "eslint . && npm run lint -w web",
     "lint:fix": "eslint . --fix && npm run lint:fix -w web",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "test:cli": "tsx --test tests/cli.spec.ts",
     "test:unit": "tsx --test src/**/*.test.ts && vitest run shared/*.test.ts && npm run test:unit -w web",
-    "test:web": "npm run test:web -w web",
-    "test:storybook": "npm run test:storybook -w web",
-    "test:visual": "npm run test:visual -w web",
-    "test:visual:update": "npm run test:visual:update -w web",
-    "test": "npm run test:cli && npm run test:web && npm run test:unit && npm run test:storybook && npm run test:visual",
-    "storybook": "npm run storybook -w web",
+    "test": "npm run test:cli && npm run test:unit && npm run test:web -w web && npm run test:storybook -w web && npm run test:visual -w web",
     "type-check": "tsc -p tsconfig.json --noEmit && npm run type-check -w web",
     "check": "npm run lint && npm run format && npm run type-check && npm run test",
     "check:fast": "npm run lint && npm run format && npm run type-check",
@@ -75,11 +70,8 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "**/*.{js,mjs,ts,tsx,json,md,yml,html,Dockerfile,dockerfile,css,scss}": "prettier --write",
-    "src/**/*.ts": "eslint --fix",
-    "shared/**/*.ts": "eslint --fix",
-    "tests/**/*.ts": "eslint --fix",
-    "web/**/*.{ts,tsx,js}": "npm run lint --workspace=web --fix"
+    "**/*.{js,mjs,ts,tsx,md,yml,html,Dockerfile,dockerfile,css,scss,json}": "prettier --write",
+    "**/*.{js,mjs,ts,tsx}": "eslint --fix"
   },
   "main": "src/index.ts",
   "bin": {
