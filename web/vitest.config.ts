@@ -1,12 +1,30 @@
 import { defineConfig } from 'vitest/config';
-import viteConfig from './vite.config';
+import react from '@vitejs/plugin-react';
+import svgr from 'vite-plugin-svgr';
+import path from 'path';
 
 export default defineConfig({
-  ...viteConfig,
+  plugins: [
+    react(),
+    svgr({
+      include: '**/*.svg?react',
+    }),
+  ],
+  resolve: {
+    alias: {
+      '@shared': path.resolve(__dirname, '../shared'),
+    },
+  },
   test: {
-    include: ['src/**/*.test.{ts,tsx}'],
-    exclude: ['src/**/*.spec.{ts,tsx}', 'tests/**/*.spec.{ts,tsx}'],
     environment: 'jsdom',
-    setupFiles: ['./vitest.shims.d.ts'],
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/tests/**',
+      '**/*.visual.test.ts',
+      '**/*.spec.tsx',
+    ],
   },
 });

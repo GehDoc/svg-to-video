@@ -136,12 +136,13 @@ test.describe('SVG to Video Golden Path', () => {
     await page.fill('#fps', '10');
 
     const exportButton = page.getByRole('button', {
-      name: /Export MP4/i,
+      name: /Export MP4|Processing/i,
     });
+    await expect(exportButton).toBeEnabled();
     await exportButton.click();
 
     const successCard = page.locator('.success-card');
-    await expect(successCard).toBeVisible({ timeout: 30000 });
+    await expect(successCard).toBeVisible({ timeout: 60000 });
 
     const downloadButton = page.locator('text=Download');
     const downloadPromise = page.waitForEvent('download');

@@ -19,29 +19,29 @@ Transform the current React Single-Page Application (SPA) into a Next.js (App Ro
 
 ## ✅ Task List
 
-- [ ] **Phase 0: Baseline Verification**
-  - [ ] Run current test suite (`npm run check`) to ensure a clean starting point.
-  - [ ] Document current bundle size and SEO status (empty root div) for comparison.
-- [ ] **Phase 1: Architecture Discovery & Audit**
-  - [ ] Analyze `web/vite.config.ts` (Sitemap plugin, SVGR, environment variables).
-  - [ ] Identify all browser-only API calls (WebCodecs, `window`, `SharedArrayBuffer`).
-  - [ ] Audit SCSS modules and global styles for Next.js compatibility.
-- [ ] **Phase 2: Infrastructure Setup**
-  - [ ] Install `next` in the `web` workspace.
-  - [ ] Create `web/next.config.js` with COOP/COEP headers and SVGR support.
-  - [ ] Configure `web/tsconfig.json` for Next.js (Path aliases, `next` plugin).
-  - [ ] Set up `web/src/app/layout.tsx` (Global styles, Font optimization).
-- [ ] **Phase 3: Core Migration**
-  - [ ] Create `web/src/app/page.tsx` as the entry point.
-  - [ ] Migrate `web/src/App.tsx` logic into a client-wrapped Studio component.
-  - [ ] Implement `generateMetadata` for dynamic SEO (replaces Vite version injection).
-  - [ ] Safeguard all `SharedArrayBuffer` and `WebCodecs` initializations for SSR.
-- [ ] **Phase 4: Ecosystem & Parity**
-  - [ ] Port `vite-plugin-sitemap` functionality to `web/src/app/sitemap.ts`.
-  - [ ] Update `web/package.json` scripts (`dev`, `build`, `start`).
-  - [ ] Reconfigure Vitest to work with Next.js environment.
-  - [ ] Update Playwright config for the new dev server URL/port.
-  - [ ] Verify Storybook `@storybook/nextjs` integration.
+- [x] **Phase 0: Baseline Verification**
+  - [x] Run current test suite (`npm run check`) to ensure a clean starting point.
+  - [x] Document current bundle size and SEO status (empty root div) for comparison.
+- [x] **Phase 1: Architecture Discovery & Audit**
+  - [x] Analyze `web/vite.config.ts` (Sitemap plugin, SVGR, environment variables).
+  - [x] Identify all browser-only API calls (WebCodecs, `window`, `SharedArrayBuffer`).
+  - [x] Audit SCSS modules and global styles for Next.js compatibility.
+- [x] **Phase 2: Infrastructure Setup**
+  - [x] Install `next` in the `web` workspace.
+  - [x] Create `web/next.config.js` with COOP/COEP headers and SVGR support.
+  - [x] Configure `web/tsconfig.json` for Next.js (Path aliases, `next` plugin).
+  - [x] Set up `web/src/app/layout.tsx` (Global styles, Font optimization).
+- [x] **Phase 3: Core Migration**
+  - [x] Create `web/src/app/page.tsx` as the entry point.
+  - [x] Migrate `web/src/App.tsx` logic into a client-wrapped Studio component.
+  - [x] Implement `generateMetadata` for dynamic SEO (replaces Vite version injection).
+  - [x] Safeguard all `SharedArrayBuffer` and `WebCodecs` initializations for SSR.
+- [x] **Phase 4: Ecosystem & Parity**
+  - [x] Port `vite-plugin-sitemap` functionality to `web/src/app/sitemap.ts`.
+  - [x] Update `web/package.json` scripts (`dev`, `build`, `start`).
+  - [x] Reconfigure Vitest to work with Next.js environment.
+  - [x] Update Playwright config for the new dev server URL/port.
+  - [x] Verify Storybook `@storybook/nextjs` integration.
 - [ ] **Phase 5: Documentation & QA**
   - [ ] Update `docs/ARCHITECTURE.md` with Next.js architecture details.
   - [ ] Add "Browser-Only APIs" guide for future contributors.
