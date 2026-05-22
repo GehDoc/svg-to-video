@@ -54,10 +54,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <script
-          src={`${process.env.NODE_ENV === 'production' ? '/svg-to-video' : ''}/coi-serviceworker.js`}
-          async
-        />
+        <script src="./coi-serviceworker.js" async />
         {process.env.NODE_ENV === 'production' && (
           <Script
             src="./assets/3rd-party/analytics.js"
