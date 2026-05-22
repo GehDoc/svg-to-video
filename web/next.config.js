@@ -8,8 +8,14 @@ const nextConfig = {
   images: {
     unoptimized: true, // Required for 'output: export'
   },
+  transpilePackages: ['../../shared'],
   turbopack: {}, // Use webpack config
   webpack(config) {
+    config.resolve.extensionAlias = {
+      '.js': ['.js', '.ts'],
+      '.jsx': ['.jsx', '.tsx'],
+    };
+
     // SVGR support
     // Find the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule) =>

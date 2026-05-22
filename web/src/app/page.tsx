@@ -1,15 +1,24 @@
 'use client';
+import { useState, useEffect } from 'react';
+import { Studio } from '../components/Studio';
 
-import dynamic from 'next/dynamic';
+export default function Page() {
+  const [isClient, setIsClient] = useState(false);
 
-// Use dynamic import with { ssr: false } to ensure browser-only APIs
-// like WebCodecs, Canvas, and DOMParser are only executed on the client.
-const Studio = dynamic(
-  () => import('../components/Studio').then((mod) => mod.Studio),
-  {
-    ssr: false,
-    loading: () => (
+  useEffect(() => {
+    // We use a mounting effect here to ensure that the heavy client-side
+    // 'Studio' component is only rendered after the initial hydration.
+    // This prevents SSR bailouts and maintains strict consistency between
+    // server and client markup during the hydration phase.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return (
       <div
+        // Inline styles used to ensure loading state appears
+        // immediately without waiting for CSS file loading.
         style={{
           display: 'flex',
           justifyContent: 'center',
@@ -21,10 +30,8 @@ const Studio = dynamic(
       >
         Loading Studio...
       </div>
-    ),
+    );
   }
-);
 
-export default function Page() {
   return <Studio />;
 }

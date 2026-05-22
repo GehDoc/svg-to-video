@@ -34,3 +34,7 @@ __screenshots__
 .next/
 out/
 next-env.d.ts
+*.tsbuildinfo
+
+# Test Results
+test-results/
