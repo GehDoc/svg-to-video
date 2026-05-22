@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Studio } from '../components/Studio';
 
 export default function Page() {
-  const [isClient, setIsClient] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     // We use a mounting effect here to ensure that the heavy client-side
@@ -11,10 +11,10 @@ export default function Page() {
     // This prevents SSR bailouts and maintains strict consistency between
     // server and client markup during the hydration phase.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsClient(true);
+    setMounted(true);
   }, []);
 
-  if (!isClient) {
+  if (!mounted) {
     return (
       <div
         // Inline styles used to ensure loading state appears
@@ -24,7 +24,7 @@ export default function Page() {
           justifyContent: 'center',
           alignItems: 'center',
           flexDirection: 'column',
-          height: '100vh',
+          minHeight: '100vh',
           fontFamily: 'var(--sans)',
           color: 'var(--text-muted)',
           padding: '2rem',
@@ -38,7 +38,26 @@ export default function Page() {
           frame-accurate converter with instant "Copy to Clipboard" support for
           developers.
         </p>
-        <p>Loading Studio...</p>
+
+        <p>
+          <a
+            href="https://github.com/GehDoc/svg-to-video"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View on GitHub
+          </a>
+          {' | '}
+          <a
+            href="https://github.com/GehDoc/svg-to-video/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            MIT License
+          </a>
+        </p>
+
+        <p>Loading the studio...</p>
       </div>
     );
   }
