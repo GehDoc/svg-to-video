@@ -172,8 +172,8 @@ The Web Studio and Storybook Gallery are configured to deploy automatically to *
 
 - **Web Studio**: [https://gehdoc.github.io/svg-to-video/](https://gehdoc.github.io/svg-to-video/)
 - **Storybook Gallery**: [https://gehdoc.github.io/svg-to-video/storybook/](https://gehdoc.github.io/svg-to-video/storybook/)
-- **Asset Pathing**: The project uses an environment-aware `base` path (`/svg-to-video/`) in `web/vite.config.ts`. This ensures all assets load correctly when deployed as a GitHub Project Site.
-- **CI Pipeline**: Deployment is triggered automatically on pushes to the `main` branch via `.github/workflows/deploy.yml`.
+- **Asset Pathing**: The project uses an environment-aware `base` path (`/svg-to-video/`) in `web/next.config.js`. This ensures all assets load correctly when deployed as a GitHub Project Site.
+- **CI Pipeline**: Deployment is triggered automatically on pushes to the `main` branch via `.github/workflows/ci.yml`.
 
 ### 📊 Analytics (Umami)
 
@@ -182,13 +182,11 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
 > [!IMPORTANT]
 > **Tracking Mandate**: When adding new primary Call-to-Action (CTA) buttons or important navigation links, you **must** implement Umami event tracking. This helps us understand which features are most used and where users might be struggling.
 
-- **Implementation**: The tracker is self-hosted at `web/public/assets/3rd-party/analytics.js` (to bypass ad-blockers and COEP issues) and injected via `web/index.html` with pre-flight checks.
-- **Programmatic Tracking**: Always use `typeof umami !== 'undefined'` to safely trigger events.
+- **Implementation**: The tracker is self-hosted at `web/public/assets/3rd-party/analytics.js` and injected via `next/script` in `web/src/app/layout.tsx`.
+- **Programmatic Tracking**: Use the global `window.umami.track` function to trigger events.
 
   ```typescript
-  if (typeof umami !== 'undefined') {
-    umami.track('my-event-name', { property: 'value' });
-  }
+  window.umami.track('my-event-name', { property: 'value' });
   ```
 
 - **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
@@ -196,7 +194,7 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
   2. `window.navigator.webdriver` is true (e.g., in Playwright, Puppeteer, or CI environments).
   3. The hostname does not match the `data-domains` attribute.
 
-- **Configuration**: The `data-website-id` and `data-domains` are hardcoded in `web/index.html`. For local forks, update these values to point to your own Umami instance.
+- **Configuration**: The `data-website-id` and `data-domains` are hardcoded in `web/src/app/layout.tsx`. For local forks, update these values to point to your own Umami instance.
 - **Types**: We use `@types/umami` for full TypeScript support.
 
 ## 🏷 Versioning Policy
