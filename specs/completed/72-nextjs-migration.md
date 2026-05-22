@@ -42,26 +42,26 @@ Transform the current React Single-Page Application (SPA) into a Next.js (App Ro
   - [x] Reconfigure Vitest to work with Next.js environment.
   - [x] Update Playwright config for the new dev server URL/port.
   - [x] Verify Storybook `@storybook/nextjs` integration.
-- [ ] **Phase 5: Documentation & QA**
-  - [ ] Update `docs/ARCHITECTURE.md` with Next.js architecture details.
-  - [ ] Add "Browser-Only APIs" guide for future contributors.
-  - [ ] Update `README.md` with new developer workflow.
-  - [ ] Perform "Hydration Audit" to ensure zero console errors.
+- [x] **Phase 5: Documentation & QA**
+  - [x] Update `docs/ARCHITECTURE.md` with Next.js architecture details.
+  - [x] Add "Browser-Only APIs" guide for future contributors.
+  - [x] Update `README.md` with new developer workflow.
+  - [x] Perform "Hydration Audit" to ensure zero console errors.
 
 ## 🧪 Verification Plan
 
 ### Manual Verification
 
-- [ ] **SEO Content**: View raw page source (`Ctrl+U`) and verify titles/descriptions are in the HTML.
-- [ ] **Security Headers**: Check Network tab for `Cross-Origin-Opener-Policy: same-origin`.
-- [ ] **Studio Functionality**: Perform a full SVG-to-Video export in the dev environment.
+- [x] **SEO Content**: View raw page source (`Ctrl+U`) and verify titles/descriptions are in the HTML.
+- [x] **Security Headers**: Check Network tab for `Cross-Origin-Opener-Policy: same-origin`.
+- [x] **Studio Functionality**: Perform a full SVG-to-Video export in the dev environment.
 
 ### Automated Verification
 
-- [ ] **Build Test**: `npm run build` in `web` must succeed without errors.
-- [ ] **Test Suite**: `npm run test` (Unit, E2E, Storybook) must pass 100%.
-- [ ] **Hydration Test**: Playwright test to check for hydration mismatch warnings in console logs.
-- [ ] **SSR Smoke Test**: New test script to `fetch` the landing page and assert meta tags presence.
+- [x] **Build Test**: `npm run build` in `web` must succeed without errors.
+- [x] **Test Suite**: `npm run test` (Unit, E2E, Storybook) must pass 100%.
+- [x] **Hydration Test**: Playwright test to check for hydration mismatch warnings in console logs.
+- [x] **SSR Smoke Test**: New test script to `fetch` the landing page and assert meta tags presence.
 
 ## 📝 Change Log
 
