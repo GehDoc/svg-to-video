@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Required for GitHub Pages project site deployment
-  basePath: process.env.NODE_ENV === 'production' ? '/svg-to-video' : '',
+  basePath: '/svg-to-video',
+  assetPrefix: '/svg-to-video/',
   // Ensure output is standalone for static export or serverless deployment
   output: 'export',
   distDir: 'dist', // Match existing Vite output directory

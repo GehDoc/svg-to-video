@@ -60,7 +60,7 @@ export default function RootLayout({
         />
         {process.env.NODE_ENV === 'production' && (
           <Script
-            src="/assets/3rd-party/analytics.js"
+            src="./assets/3rd-party/analytics.js"
             data-website-id="4489aba4-cf29-439e-9491-e36f2a531a63"
             data-domains="gehdoc.github.io"
             data-host-url="https://cloud.umami.is"
