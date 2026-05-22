@@ -65,25 +65,42 @@ If working without an agent, follow these steps to keep the project state synchr
 
 ## 🛠 Development Commands
 
-| Command                      | Description                                                        |
-| :--------------------------- | :----------------------------------------------------------------- |
-| `npm run check`              | Runs all checks (lint, format, type-check, e2e tests).             |
-| `npm run check:fast`         | Runs fast checks only (lint, format, type-check).                  |
-| `npm run fix`                | Auto-fixes linting and formatting issues.                          |
-| `npm run lint`               | Checks for linting issues in both CLI and Web Studio code.         |
-| `npm run lint:fix`           | Fixes linting issues in both CLI and Web Studio code.              |
-| `npm run storybook`          | Launches the Storybook UI for component development.               |
-| `npm run format`             | Checks for formatting issues.                                      |
-| `npm run format:fix`         | Fixes formatting issues.                                           |
-| `npm run test`               | Runs all tests (CLI, Web Studio E2E, Unit, Storybook, and Visual). |
-| `npm run test:cli`           | Runs CLI E2E tests.                                                |
-| `npm run test:web`           | Runs Web Studio E2E tests.                                         |
-| `npm run test:unit`          | Runs component-level unit tests using Vitest.                      |
-| `npm run test:storybook`     | Runs Storybook interaction tests using Vitest.                     |
-| `npm run test:visual`        | Runs native visual regression tests (pixel matching).              |
-| `npm run test:visual:update` | Updates visual regression baseline screenshots.                    |
-| `npm run build-storybook`    | Builds the Storybook static site for deployment.                   |
-| `npm run type-check`         | Validates TypeScript types.                                        |
+### Project-wide Orchestration (Run from Root)
+
+| Command              | Description                                                        |
+| :------------------- | :----------------------------------------------------------------- |
+| `npm run check`      | Runs all checks (lint, format, type-check, e2e tests).             |
+| `npm run check:fast` | Runs fast checks only (lint, format, type-check).                  |
+| `npm run fix`        | Auto-fixes linting and formatting issues.                          |
+| `npm run lint`       | Checks for linting issues in both CLI and Web Studio code.         |
+| `npm run lint:fix`   | Fixes linting issues in both CLI and Web Studio code.              |
+| `npm run format`     | Checks for formatting issues.                                      |
+| `npm run format:fix` | Fixes formatting issues.                                           |
+| `npm run test`       | Runs all tests (CLI, Web Studio E2E, Unit, Storybook, and Visual). |
+| `npm run type-check` | Validates TypeScript types (includes web workspace).               |
+
+### Web Studio Development (Run inside `web/` directory)
+
+To work on the Web Studio, navigate to the `web/` directory: `cd web`.
+
+| Command                      | Description                                           |
+| :--------------------------- | :---------------------------------------------------- |
+| `npm run dev`                | Launches the Web Studio development server.           |
+| `npm run build`              | Builds the Web Studio for production.                 |
+| `npm run start`              | Previews the production build of the Web Studio.      |
+| `npm run test:web`           | Runs Web Studio E2E tests.                            |
+| `npm run test:storybook`     | Runs Storybook interaction tests using Vitest.        |
+| `npm run test:visual`        | Runs native visual regression tests (pixel matching). |
+| `npm run test:visual:update` | Updates visual regression baseline screenshots.       |
+| `npm run build-storybook`    | Builds the Storybook static site.                     |
+| `npm run test:cli`           | Runs CLI E2E tests.                                   |
+| `npm run test:web`           | Runs Web Studio E2E tests.                            |
+| `npm run test:unit`          | Runs component-level unit tests using Vitest.         |
+| `npm run test:storybook`     | Runs Storybook interaction tests using Vitest.        |
+| `npm run test:visual`        | Runs native visual regression tests (pixel matching). |
+| `npm run test:visual:update` | Updates visual regression baseline screenshots.       |
+| `npm run build-storybook`    | Builds the Storybook static site for deployment.      |
+| `npm run type-check`         | Validates TypeScript types.                           |
 
 ## 🧪 Testing Strategy
 
