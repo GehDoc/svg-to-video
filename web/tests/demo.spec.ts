@@ -87,7 +87,10 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     'Import SVG',
     'Start by dropping your animated SVG file here.'
   );
-  const svgPath = path.resolve(__dirname, '../../tests/fixtures/loop-test.svg');
+  const svgPath = path.resolve(
+    __dirname,
+    '../../tests/fixtures/transparent-test.svg'
+  );
   await page.setInputFiles('input[type="file"]', svgPath);
   await clearSpotlight();
   await page.waitForTimeout(1000);
@@ -108,7 +111,6 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     'Resolution & Size',
     'The tool automatically detects your SVG dimensions.'
   );
-  await page.waitForTimeout(2000);
   await clearSpotlight();
 
   // Step 4: Duration & FPS
@@ -125,6 +127,16 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     'Set your desired frames per second.'
   );
   await page.locator('#fps').fill('30');
+  await page.waitForTimeout(1000);
+  await clearSpotlight();
+
+  // Step 4b: Enable Transparency
+  await spotlight(
+    'label[for="transparent"]',
+    'Transparency',
+    'Enable transparent background for your overlays and animations.'
+  );
+  await page.check('#transparent');
   await page.waitForTimeout(1000);
   await clearSpotlight();
 
@@ -153,21 +165,24 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
 
   // Step 7: Success & Download
   const successCard = page.locator('.success-card, [class*="success"]').first();
-  await expect(successCard).toBeVisible({ timeout: 60000 });
+  // Ensure we focus on it as soon as it appears
+  await successCard.waitFor({ state: 'visible', timeout: 60000 });
 
   await spotlight(
     '.success-card, [class*="success"]',
     'Success!',
     'Your video is ready! It was rendered entirely locally for maximum privacy.'
   );
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(1000);
   await clearSpotlight();
 
   await spotlight(
     'text=Download',
     'Download',
-    'Save your high-quality video to your device.'
+    'Save your high-quality video to your device.',
+    'top'
   );
+  await page.waitForTimeout(2000); // Stay longer on the focus
 
   const downloadPromise = page.waitForEvent('download');
   await page.locator('text=Download').first().click();
@@ -179,6 +194,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await download.saveAs(downloadPath);
 
+  await page.waitForTimeout(2000); // Stay longer after click
   await clearSpotlight();
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(1500); // Final outro
 });
