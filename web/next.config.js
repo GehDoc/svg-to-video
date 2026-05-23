@@ -2,6 +2,8 @@ const isProd = process.env.NODE_ENV === 'production';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Disable Next.js UI in development to avoid conflicts
+  devIndicators: false,
   // Required for GitHub Pages project site deployment
   basePath: isProd ? '/svg-to-video' : '',
   assetPrefix: isProd ? '/svg-to-video/' : '',
