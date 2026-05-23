@@ -14,3 +14,12 @@ declare module '*.svg?react' {
   const SVG: React.FC<React.SVGProps<SVGSVGElement>>;
   export default SVG;
 }
+
+interface Window {
+  driver: {
+    js: {
+      driver: (config: any) => any;
+    };
+  };
+  driverObj: any;
+}
