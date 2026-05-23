@@ -69,7 +69,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
       { t: title, d: description, s: side }
     );
 
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
   };
 
   const clearSpotlight = async () => {
