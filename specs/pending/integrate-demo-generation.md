@@ -25,10 +25,12 @@ Automate the generation and deployment of a fresh demo video for the Web Studio,
   - [x] Unpublish `web/playwright-report` folder (removed from git tracking and ignored).
 - [x] **Demo Script Improvements**
   - [x] Translate script and UI interactions to English.
-  - [x] Switch to `loop-test.svg` (animated fixture).
+  - [x] Create and switch to `demo-fixture.svg` (animated fixture with transparency, 3s max).
   - [x] Reorganize form-filling steps: descending, then left to right.
+
   - [x] Update scenario to select WebM export format.
   - [x] Correct inconsistency: clarify that framerate is manual while size is detected.
+
 - [x] **CI/CD Integration**
   - [x] Update `.github/workflows/ci.yml` to:
     - [x] Ensure `web-e2e-tests` job runs `demo.spec.ts` without video.

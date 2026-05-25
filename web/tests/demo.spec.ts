@@ -91,7 +91,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   const svgPath = path.resolve(
     __dirname,
-    '../../tests/fixtures/transparent-test.svg'
+    '../../tests/fixtures/demo-fixture.svg'
   );
   await page.setInputFiles('input[type="file"]', svgPath);
   await clearSpotlight();
