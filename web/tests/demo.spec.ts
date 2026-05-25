@@ -119,13 +119,16 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   await spotlight(
     '#duration',
     'Timing Controls',
-    'Duration is auto-detected. Framerate can be adjusted manually for optimal quality.'
+    'Duration is auto-detected.',
+    'top',
+    'start'
   );
   await page.waitForTimeout(500);
   await spotlight(
     '#fps',
     'Timing Controls',
-    'Set your desired frames per second.'
+    'Framerate can be adjusted manually for optimal quality.',
+    'top'
   );
   await page.locator('#fps').fill('30');
   await page.waitForTimeout(1000);
@@ -147,7 +150,8 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   await spotlight(
     '.config-section:nth-of-type(4)',
     'Metadata',
-    'Add professional touches like titles and comments to your video.'
+    'Add professional touches like titles and comments to your video.',
+    'top'
   );
   await page.locator('#meta-title').fill('Demo Animation');
   await page
@@ -161,7 +165,8 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   await spotlight(
     '.render-actions button',
     'Export Video',
-    'Click export to render your video frame-by-frame in your browser.'
+    'Click export to render your video frame-by-frame in your browser.',
+    'top'
   );
   await exportButton.click();
   await page.waitForTimeout(1000);
