@@ -70,8 +70,11 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "**/*.{js,mjs,ts,tsx,md,yml,html,Dockerfile,dockerfile,css,scss,json}": "prettier --write",
-    "**/*.{js,mjs,ts,tsx}": "eslint --fix"
+    "**/*.{js,mjs,ts,tsx,json,md,yml,html,Dockerfile,dockerfile,css,scss}": "prettier --write",
+    "src/**/*.ts": "eslint --fix",
+    "shared/**/*.ts": "eslint --fix",
+    "tests/**/*.ts": "eslint --fix",
+    "web/**/*.{ts,tsx,js}": "npm run lint --workspace=web -- --fix"
   },
   "main": "src/index.ts",
   "bin": {
