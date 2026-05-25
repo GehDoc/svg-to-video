@@ -14,6 +14,7 @@ test.setTimeout(120000);
 
 test('Generate Demo Video - Web Studio', async ({ page }) => {
   await page.goto('/');
+
   // Wait for the app to be ready
   await page.waitForSelector('input[type="file"]');
   await page.waitForTimeout(1000);
@@ -47,7 +48,8 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     selector: string,
     title = '',
     description = '',
-    side: 'top' | 'bottom' | 'left' | 'right' = 'bottom'
+    side: 'top' | 'bottom' | 'left' | 'right' = 'bottom',
+    align: 'start' | 'center' | 'end' = 'start'
   ) => {
     const locator = page.locator(selector).first();
     await locator.waitFor({ state: 'visible' });
@@ -61,12 +63,12 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
                 title: config.t,
                 description: config.d,
                 side: config.s,
-                align: 'start',
+                align: config.a,
               }
             : undefined,
         });
       },
-      { t: title, d: description, s: side }
+      { t: title, d: description, s: side, a: align }
     );
 
     await page.waitForTimeout(2000);
@@ -119,7 +121,6 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     'Timing Controls',
     'Duration is auto-detected. Framerate can be adjusted manually for optimal quality.'
   );
-  await page.locator('#duration').fill('2');
   await page.waitForTimeout(500);
   await spotlight(
     '#fps',
@@ -131,10 +132,12 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   await clearSpotlight();
 
   // Step 4b: Enable Transparency
+  await page.locator('.checkbox-wrapper').scrollIntoViewIfNeeded();
   await spotlight(
-    'label[for="transparent"]',
+    '.checkbox-wrapper',
     'Transparency',
-    'Enable transparent background for your overlays and animations.'
+    'Enable transparent background for your overlays and animations.',
+    'top'
   );
   await page.check('#transparent');
   await page.waitForTimeout(1000);
@@ -142,7 +145,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
 
   // Step 5: Metadata
   await spotlight(
-    '#meta-title',
+    '.config-section:nth-of-type(4)',
     'Metadata',
     'Add professional touches like titles and comments to your video.'
   );
@@ -161,6 +164,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     'Click export to render your video frame-by-frame in your browser.'
   );
   await exportButton.click();
+  await page.waitForTimeout(1000);
   await clearSpotlight();
 
   // Step 7: Success & Download
@@ -168,6 +172,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   // Ensure we focus on it as soon as it appears
   await successCard.waitFor({ state: 'visible', timeout: 60000 });
 
+  await page.waitForTimeout(500);
   await spotlight(
     '.success-card, [class*="success"]',
     'Success!',
@@ -182,8 +187,6 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     'Save your high-quality video to your device.',
     'top'
   );
-  await page.waitForTimeout(2000); // Stay longer on the focus
-
   const downloadPromise = page.waitForEvent('download');
   await page.locator('text=Download').first().click();
   const download = await downloadPromise;
@@ -194,7 +197,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await download.saveAs(downloadPath);
 
-  await page.waitForTimeout(2000); // Stay longer after click
+  await page.waitForTimeout(1000);
   await clearSpotlight();
-  await page.waitForTimeout(1500); // Final outro
+  await page.waitForTimeout(1000); // Final outro
 });
