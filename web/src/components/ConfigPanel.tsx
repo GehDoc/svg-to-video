@@ -243,7 +243,7 @@ export const ConfigPanel = ({
       >
         <h2 aria-disabled={isOptionsDisabled}>3. Canvas</h2>
         <div className="input-group">
-          <label htmlFor="transparent">
+          <div className="checkbox-wrapper">
             <input
               type="checkbox"
               id="transparent"
@@ -251,8 +251,8 @@ export const ConfigPanel = ({
               onChange={(e) => onIsTransparentChange(e.target.checked)}
               disabled={isOptionsDisabled || !isTransparencySupported(format)}
             />
-            Transparent Background
-          </label>
+            <label htmlFor="transparent">Transparent Background</label>
+          </div>
           {!isTransparencySupported(format) && (
             <p
               className="hint-text hint-text--info"

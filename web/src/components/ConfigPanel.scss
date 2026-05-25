@@ -56,28 +56,36 @@
     text-transform: uppercase;
     letter-spacing: 0.02em;
     color: var(--text-muted);
+  }
 
-    &:has(input[type='checkbox']) {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+  .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+
+    input[type='checkbox'] {
+      margin: 0;
+      width: auto;
+      cursor: pointer;
+    }
+
+    label {
+      margin-bottom: 0;
       text-transform: none;
       font-size: 0.85rem;
       cursor: pointer;
-      margin-bottom: 0;
+      color: var(--text);
+    }
 
-      &:has(input:disabled) {
-        cursor: not-allowed;
-      }
+    &:has(input:disabled) {
+      cursor: not-allowed;
 
+      label,
       input {
-        margin: 0;
-        width: auto;
-        cursor: pointer;
-
-        &:disabled {
-          cursor: not-allowed;
-        }
+        cursor: not-allowed;
+        opacity: 0.5;
+        color: var(--text-muted);
       }
     }
   }
