@@ -128,8 +128,12 @@ export const ConfigPanel = ({
   );
 
   return (
-    <aside className="config-panel" tabIndex={0}>
-      <div className="config-content">
+    <aside className="config-panel">
+      <div
+        className="config-content"
+        tabIndex={0}
+        aria-label="Configuration sections"
+      >
         <section
           className={`config-section ${isRenderingOrSuccess ? 'is-locked' : ''}`}
           aria-disabled={isRenderingOrSuccess}
