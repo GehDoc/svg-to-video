@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import path from 'path';
 import { fileURLToPath } from 'node:url';
 
@@ -56,7 +56,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
 
     await locator.evaluate(
       (el, config) => {
-        window.driverObj.highlight({
+        window.driverObj!.highlight({
           element: el,
           popover: config.t
             ? {
@@ -75,7 +75,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   };
 
   const clearSpotlight = async () => {
-    await page.evaluate(() => window.driverObj.destroy());
+    await page.evaluate(() => window.driverObj!.destroy());
     await page.waitForTimeout(500);
   };
 
