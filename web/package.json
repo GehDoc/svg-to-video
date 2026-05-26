@@ -1,6 +1,6 @@
 {
   "name": "@svg-to-video/web",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) with transparent background support, frame-accurate rendering, and instant copy to clipboard (Data URL).",
   "author": "GehDoc",
   "repository": {
@@ -24,6 +24,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "type-check": "tsc -b",
+    "test:demo": "GENERATE_DEMO=true playwright test tests/demo.spec.ts",
     "test:web": "playwright test --reporter=list",
     "test:unit": "vitest run",
     "test:storybook": "test-storybook",
@@ -60,6 +61,7 @@
     "@vitest/browser-playwright": "^4.1.1",
     "@vitest/coverage-v8": "^4.1.1",
     "axe-playwright": "^2.2.2",
+    "driver.js": "^1.4.0",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
