@@ -178,6 +178,27 @@ jobs:
       - name: Build Storybook
         run: npm run build-storybook -w web
 
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Generate Demo Video
+        run: |
+          mkdir -p web/dist/assets
+          GENERATE_DEMO=true npm run test:web -w web -- tests/demo.spec.ts
+          VIDEO_PATH=$(find web/test-results -name "*.webm" | head -n 1)
+          if [ -n "$VIDEO_PATH" ]; then
+            cp "$VIDEO_PATH" web/dist/assets/demo.webm
+          else
+            echo "Warning: Demo video not found"
+          fi
+
+      - name: Upload Demo Video Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-video
+          path: web/dist/assets/demo.webm
+          if-no-files-found: warn
+
   build-and-deploy:
     name: 'Build and Deploy'
     if: github.ref == 'refs/heads/main'
