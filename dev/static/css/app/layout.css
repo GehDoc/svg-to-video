@@ -1,0 +1,130 @@
+/*!*************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[10].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[10].use[3]!./src/index.css ***!
+  \*************************************************************************************************************************************************************************************************************************************************************/
+:root {
+  /* Base Colors & Theme */
+  --bg: #ffffff;
+  --panel: #f8fafc;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --text-muted: #64748b; /* Slate 500 - Better distinction from Slate 800 */
+  --text-h: #0f172a;
+  --primary: #5e61e6;
+  --primary-hover: #4338ca;
+  --accent: #aa3bff;
+  --error: #dc2626;
+  --card: #ffffff;
+
+  --sponsor: #ca263f;
+  --sponsor-bg: #fff0f3;
+  --sponsor-hover: #ffe0e6;
+
+  --code-bg: #f1f5f9;
+  --shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  /* Typography */
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 16px/1.5 var(--sans);
+  letter-spacing: -0.01em;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 15px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --border: #334155;
+    --text: #e2e8f0; /* Slate 200 - High contrast */
+    --text-muted: #94a3b8; /* Slate 400 - Clear distinction from --text */
+    --text-h: #f8fafc; /* Slate 50 */
+    --primary: #5e61e6;
+    --primary-hover: #4338ca;
+    --accent: #c084fc;
+    --card: #334155;
+
+    --sponsor: #ff6685;
+    --sponsor-bg: rgba(218, 55, 81, 0.1);
+    --sponsor-hover: rgba(218, 55, 81, 0.2);
+
+    --code-bg: #1e293b;
+    --shadow:
+      0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  }
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.studio-layout {
+  display: flex;
+  flex: 1 1;
+  overflow: hidden;
+}
+
+h1,
+h2 {
+  font-family: var(--heading);
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+}
+
+h1 {
+  font-size: 3.5rem;
+  letter-spacing: -0.04em;
+  @media (max-width: 1024px) {
+    font-size: 2.25rem;
+  }
+}
+
+h2 {
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+p {
+  margin: 0;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  padding: 0.2rem 0.4rem;
+  background: var(--code-bg);
+  border-radius: 4px;
+  color: var(--text-h);
+}
+

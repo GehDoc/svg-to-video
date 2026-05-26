@@ -1,0 +1,947 @@
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/Header.scss ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+header {
+  padding: 1rem 2rem;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header .header-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+header .header-title .header-title-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+header .header-logo {
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+header .header-badge {
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--primary);
+  color: var(--bg);
+  border-radius: 3px;
+  font-weight: 700;
+}
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/Dropdown/Dropdown.scss ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.dropdown-card {
+  position: absolute;
+  top: 100%;
+  margin-top: 0.5rem;
+  width: 240px;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 0.75rem;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+.dropdown-card--right {
+  right: 0;
+}
+.dropdown-card--left {
+  left: 0;
+}
+.dropdown-card * {
+  box-sizing: border-box;
+}
+
+.dropdown-section {
+  padding: 0;
+}
+.dropdown-section:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.dropdown-section:not(:first-child) {
+  padding-top: 0.5rem;
+}
+
+.dropdown-label {
+  display: block;
+  padding: 0.25rem 0.75rem;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
+.dropdown-item:hover {
+  background-color: var(--border);
+  color: var(--primary);
+}
+.dropdown-item .meta-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.dropdown-item svg {
+  font-size: 1rem;
+}
+
+.dropdown-meta-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
+.dropdown-meta-link:hover {
+  background-color: var(--border);
+  color: var(--primary);
+}
+.dropdown-meta-link:hover .dropdown-version-tag {
+  background-color: var(--panel);
+}
+.dropdown-meta-link .meta-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.dropdown-version-tag {
+  font-family: var(--mono);
+  background-color: var(--code-bg);
+  color: var(--text);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+}
+
+.dropdown-arrow {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/HeaderMenu.scss ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.header-menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-sponsor-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  background-color: var(--sponsor-bg);
+  color: var(--sponsor);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.header-sponsor-btn .icon-heart {
+  color: var(--sponsor);
+}
+.header-sponsor-btn:hover {
+  background-color: var(--sponsor-hover);
+}
+.header-sponsor-btn:active {
+  transform: scale(0.98);
+}
+
+.header-burger-trigger {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.header-burger-trigger:hover {
+  background-color: var(--border);
+  color: var(--text);
+}
+
+@media (prefers-color-scheme: dark) {
+  .header-sponsor-btn .icon-heart {
+    color: var(--sponsor);
+  }
+}
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/Dropzone.scss ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.dropzone {
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-muted);
+}
+.dropzone:hover:not(.disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary);
+  color: var(--text);
+}
+.dropzone.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-style: solid;
+  background: var(--panel);
+}
+.dropzone.disabled label,
+.dropzone.disabled input {
+  cursor: not-allowed;
+}
+.dropzone.dragging:not(.disabled) {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--primary);
+  transform: scale(1.02);
+}
+.dropzone.has-content:not(.disabled) {
+  border-style: solid;
+  border-color: var(--primary);
+  background: var(--panel);
+}
+.dropzone label {
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.dropzone input[type=file] {
+  margin-top: 0.5rem;
+  width: 100%;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/Button/Button.scss ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.btn {
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0.6rem;
+  border: none;
+}
+.btn:disabled, .btn:disabled:hover {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+.btn--primary {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.85rem;
+  font-size: 1rem;
+}
+.btn--primary:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.btn--secondary:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btn--outline {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+.btn--outline:hover:not(:disabled) {
+  background: var(--primary);
+  color: white;
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn--outline {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .btn--outline:hover:not(:disabled) {
+    background: var(--accent);
+    color: var(--bg);
+  }
+}
+.btn--error {
+  background: var(--error);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+}
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/ConfigPanel.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.config-panel {
+  width: 350px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.config-content {
+  flex: 1 1;
+  overflow-y: auto;
+}
+
+.config-section {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.config-section:last-of-type {
+  border-bottom: none;
+}
+.config-section h2 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-h);
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+.config-section.is-locked h2 {
+  color: var(--text-h);
+  opacity: 0.4;
+}
+.config-section.is-locked .hint-text {
+  opacity: 0.4;
+}
+
+.input-group {
+  margin-bottom: 1.25rem;
+}
+.input-group:has(:disabled) label {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.input-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+.input-group .checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+.input-group .checkbox-wrapper input[type=checkbox] {
+  margin: 0;
+  width: auto;
+  cursor: pointer;
+}
+.input-group .checkbox-wrapper label {
+  margin-bottom: 0;
+  text-transform: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--text);
+}
+.input-group .checkbox-wrapper:has(input:disabled) {
+  cursor: not-allowed;
+}
+.input-group .checkbox-wrapper:has(input:disabled) label,
+.input-group .checkbox-wrapper:has(input:disabled) input {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: var(--text-muted);
+}
+.input-group input[type=number],
+.input-group select,
+.input-group input[type=text],
+.input-group .textarea-input {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+.input-group input[type=number]:focus:not(:disabled),
+.input-group select:focus:not(:disabled),
+.input-group input[type=text]:focus:not(:disabled),
+.input-group .textarea-input:focus:not(:disabled) {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(94, 97, 230, 0.2);
+}
+.input-group input[type=number]:disabled,
+.input-group select:disabled,
+.input-group input[type=text]:disabled,
+.input-group .textarea-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--panel);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+.input-group .textarea-input {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+.input-group input[type=range] {
+  width: 100%;
+  margin: 0.5rem 0;
+  cursor: pointer;
+}
+.input-group input[type=range]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+  width: 100%;
+}
+.grid-3 .input-group {
+  margin-bottom: 0;
+}
+.grid-3 .input-group input[type=number] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem;
+}
+.grid-3 .input-group label {
+  text-align: center;
+  font-size: 0.65rem;
+  margin-bottom: 0.25rem;
+}
+
+.color-picker-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+.color-picker-wrapper input[type=color] {
+  width: 40px;
+  height: 38px;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.color-picker-wrapper input[type=color]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hint-text {
+  font-size: 0.7rem;
+  color: var(--error);
+  margin-top: 0.4rem;
+}
+.hint-text[aria-disabled=true] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.hint-text--info {
+  color: var(--text-muted);
+}
+
+.render-actions {
+  padding: 1.5rem 1.5rem;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/SuccessView.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.success-card {
+  padding: 2rem;
+  text-align: center;
+  max-width: 800px;
+  width: 90%;
+  margin: auto;
+  animation: slideUp 0.4s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.success-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto;
+  box-shadow: 0 0 15px var(--primary-hover);
+  flex-shrink: 0;
+}
+
+.success-card h3 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.success-meta {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.success-preview {
+  background: var(--panel);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1 1;
+  min-height: 30vh;
+}
+
+.success-preview video {
+  max-width: 100%;
+  max-height: 50vh;
+  display: block;
+}
+
+.success-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  max-width: 500px;
+  margin: 1rem auto 0;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.success-actions > * {
+  flex: 1 1;
+}
+
+.copy-button {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex: 1 1;
+}
+.copy-button svg {
+  transition: all 0.2s ease;
+}
+.copy-button--success .icon-success {
+  animation: popScale 0.3s ease-out;
+}
+.copy-button--error .icon-error {
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes popScale {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-4px);
+  }
+}
+.success-support {
+  margin-top: 2.5rem;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+.success-support span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.success-support .icon-heart {
+  color: var(--sponsor);
+  font-size: 0.85rem;
+}
+
+.success-support a {
+  color: var(--sponsor);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+.success-support a:hover {
+  text-decoration: underline;
+}
+
+@media (prefers-color-scheme: dark) {
+  .success-support .icon-heart {
+    color: var(--sponsor);
+  }
+  .success-support a {
+    color: var(--sponsor);
+  }
+}
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/SvgRenderer/SvgRenderer.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.renderer-monitor {
+  background: var(--bg);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--border);
+}
+
+.monitor-viewport {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+
+.monitor-label {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  background: var(--panel);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  color: var(--primary);
+  z-index: 5;
+  border: 1px solid var(--border);
+  text-transform: uppercase;
+}
+@media (prefers-color-scheme: dark) {
+  .monitor-label {
+    color: var(--accent);
+  }
+}
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/ProgressOverlay.scss ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.progress-overlay {
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.progress-header {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.progress-percentage {
+  width: 3ch;
+  text-align: right;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.1s linear;
+}
+
+.progress-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.progress-actions .invisible {
+  visibility: hidden;
+  pointer-events: none;
+}
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/MetaDisplay.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.meta-item strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.85rem;
+}
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/ErrorView.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.error-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.8);
+  -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
+  z-index: 100;
+  padding: 1rem;
+}
+
+.error-card {
+  background: var(--panel);
+  padding: 2.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--error);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+.error-card h3 {
+  margin: 0 0 0.5rem;
+  color: var(--error);
+  font-size: 1.5rem;
+}
+.error-card .error-message {
+  margin: 0 0 1.5rem;
+  color: var(--text);
+}
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/RenderingView.scss ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.rendering-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  padding: 1.5rem 2rem;
+  box-sizing: border-box;
+  gap: 1.5rem;
+  align-items: center;
+}
+.rendering-view .monitor-wrapper {
+  flex: 1 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 800px; /* Align with ProgressOverlay max-width */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.meta-item strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.85rem;
+}
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/LandingView.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.monitor-content {
+  flex: 1 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  text-align: center;
+  width: 100%;
+  flex: 1 1;
+}
+
+.upload-placeholder svg {
+  margin-bottom: 1rem;
+}
+
+.studio-footer {
+  width: 100%;
+  padding: 1rem 2rem;
+  box-sizing: border-box;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  flex-shrink: 0;
+}
+.studio-footer p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+.studio-footer .footer-icon {
+  margin-right: 4px;
+}
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/MonitorPanel.scss ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.monitor-panel {
+  flex: 1 1;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/SeoFallback.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.seo-fallback {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  text-align: center;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
