@@ -153,8 +153,8 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     '../../tests/fixtures/demo-fixture.svg'
   );
   await page.setInputFiles('input[type="file"]', svgPath);
+  await page.waitForTimeout(500);
   await clearSpotlight();
-  await page.waitForTimeout(1000);
 
   // Step 2: Select Format
   await spotlight(
@@ -218,12 +218,13 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     'top'
   );
   await exportButton.click();
+  await page.waitForTimeout(500);
   await clearSpotlight();
 
   // Step 8: Success
   const successCard = page.locator('.success-card, [class*="success"]').first();
   await successCard.waitFor({ state: 'visible', timeout: 60000 });
-  await page.waitForTimeout(1000); // necessary for the animation to complete and the card to be fully visible
+  await page.waitForTimeout(500); // necessary for the animation to complete and the card to be fully visible
   await spotlight(
     '.success-card, [class*="success"]',
     '100% Private & Local',
@@ -248,5 +249,5 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   await download.saveAs(downloadPath);
 
   await clearSpotlight();
-  await page.waitForTimeout(1500); // Final outro
+  await page.waitForTimeout(1000); // Final outro
 });
