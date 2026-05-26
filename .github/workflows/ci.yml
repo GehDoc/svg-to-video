@@ -184,7 +184,7 @@ jobs:
       - name: Generate Demo Video
         run: |
           mkdir -p web/dist/assets
-          GENERATE_DEMO=true npm run test:web -w web -- tests/demo.spec.ts
+          npm run test:demo -w web
           VIDEO_PATH=$(find web/test-results -name "*.webm" | head -n 1)
           if [ -n "$VIDEO_PATH" ]; then
             cp "$VIDEO_PATH" web/dist/assets/demo.webm
@@ -236,7 +236,7 @@ jobs:
       - name: Generate Demo Video
         run: |
           mkdir -p web/dist/assets
-          GENERATE_DEMO=true npm run test:web -w web -- tests/demo.spec.ts
+          npm run test:demo -w web
           # Move the recorded video to the dist assets
           # Playwright saves video in test-results/demo-Generate-Demo-Video-Web-Studio-chromium/video.webm
           # We need to find the exact path or use a predictable one if possible

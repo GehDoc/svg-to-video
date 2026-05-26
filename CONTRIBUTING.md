@@ -30,7 +30,7 @@ The project features an automated demo generation tool that records a video of t
 - **CI/CD Integration**: The demo is automatically regenerated and redeployed to GitHub Pages whenever a push is made to the `main` branch. This process is orchestrated by the `build-and-deploy` job in `.github/workflows/ci.yml`.
 - **Local Testing**:
   - **Standard Run**: `npm run test:web -w web -- tests/demo.spec.ts` runs the script without video recording to ensure no regressions.
-  - **Record Demo**: `npm run test:demo` records the `video.webm` file in `web/test-results/`.
+  - **Record Demo**: `npm run test:demo -w web` records the `video.webm` file in `web/test-results/`.
 
 ### 📦 Dependency Management (Vitest & Storybook)
 
