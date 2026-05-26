@@ -31,6 +31,11 @@ The project features an automated demo generation tool that records a video of t
 - **Local Testing**:
   - **Standard Run**: `npm run test:web -w web -- tests/demo.spec.ts` runs the script without video recording to ensure no regressions.
   - **Record Demo**: `npm run test:demo -w web` records the `video.webm` file in `web/test-results/`.
+- **Verify CI Demo**: When you push to a PR or `main`, the CI pipeline generates the demo video. You can download it as a build artifact:
+  1. Go to the **Actions** tab on GitHub.
+  2. Select the specific workflow run.
+  3. Scroll down to the **Artifacts** section at the bottom of the summary page.
+  4. Click `demo-video` (from PRs) or `demo-video-deploy` (from `main`) to download the `.webm` file.
 
 ### 📦 Dependency Management (Vitest & Storybook)
 
