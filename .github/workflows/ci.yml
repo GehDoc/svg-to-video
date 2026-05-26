@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -17,15 +17,8 @@ jobs:
     name: 'Lint and Type-Check'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Run fast checks
         run: npm run check:fast
 
@@ -33,15 +26,8 @@ jobs:
     name: 'CLI E2E Tests (Docker)'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Build and load Docker image
@@ -69,15 +55,8 @@ jobs:
     name: 'Web Studio Unit Tests'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Run Web Unit tests
         run: npm run test:unit -w web
 
@@ -85,23 +64,10 @@ jobs:
     name: 'Web Studio E2E Tests'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Cache Playwright Browsers
-        id: playwright-cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps
+          install-playwright: 'true'
       - name: Run Web E2E tests
         run: npm run test:web -w web
 
@@ -112,23 +78,10 @@ jobs:
       matrix:
         theme: [light, dark]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Cache Playwright Browsers
-        id: playwright-cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps
+          install-playwright: 'true'
       - name: Run Storybook Tests
         run: |
           npm run storybook -w web &
@@ -139,47 +92,36 @@ jobs:
     name: 'Visual Regression Tests'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Cache Playwright Browsers
-        id: playwright-cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps
+          install-playwright: 'true'
       - name: Run Visual Regression tests
         run: npm run test:visual -w web
 
-  build-web:
-    name: 'Build Web Studio'
-    if: github.ref != 'refs/heads/main'
+  build-and-deploy:
+    name: 'Build and Deploy'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs:
+      - lint-and-type-check
+      - cli-tests
+      - web-unit-tests
+      - web-e2e-tests
+      - storybook-tests
+      - visual-tests
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Run Build
+          install-playwright: 'true'
+
+      - name: Build Web Studio
         run: npm run build -w web
+
       - name: Build Storybook
         run: npm run build-storybook -w web
-
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps
 
       - name: Generate Demo Video
         run: |
@@ -199,62 +141,8 @@ jobs:
           path: web/dist/assets/demo.webm
           if-no-files-found: warn
 
-  build-and-deploy:
-    name: 'Build and Deploy'
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    needs:
-      - lint-and-type-check
-      - cli-tests
-      - web-unit-tests
-      - web-e2e-tests
-      - storybook-tests
-      - visual-tests
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-
-      - name: Install
-        run: npm ci
-
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps
-
-      - name: Build Web Studio
-        run: npm run build -w web
-
-      - name: Build Storybook
-        run: npm run build-storybook -w web
-
-      - name: Generate Demo Video
-        run: |
-          mkdir -p web/dist/assets
-          npm run test:demo -w web
-          # Move the recorded video to the dist assets
-          # Playwright saves video in test-results/demo-Generate-Demo-Video-Web-Studio-chromium/video.webm
-          # We need to find the exact path or use a predictable one if possible
-          VIDEO_PATH=$(find web/test-results -name "*.webm" | head -n 1)
-          if [ -n "$VIDEO_PATH" ]; then
-            cp "$VIDEO_PATH" web/dist/assets/demo.webm
-          else
-            echo "Warning: Demo video not found"
-          fi
-
-      - name: Upload Demo Video Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: demo-video-deploy
-          path: web/dist/assets/demo.webm
-          if-no-files-found: warn
-
       - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: web/dist
