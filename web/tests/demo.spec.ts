@@ -1,8 +1,16 @@
-import { test } from '@playwright/test';
+import { test, type Locator } from '@playwright/test';
 import path from 'path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const DRIVER_JS_PATH = path.resolve(
+  __dirname,
+  '../../node_modules/driver.js/dist/driver.js.iife.js'
+);
+const DRIVER_CSS_PATH = path.resolve(
+  __dirname,
+  '../../node_modules/driver.js/dist/driver.css'
+);
 
 // Conditional video recording
 test.use({
@@ -17,22 +25,13 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
 
   // Wait for the app to be ready
   await page.waitForSelector('input[type="file"]');
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(500);
 
   // =========================================================================
   // 1. INJECTION OF DRIVER.JS (Local dependencies)
   // =========================================================================
-  const driverJsPath = path.resolve(
-    __dirname,
-    '../../node_modules/driver.js/dist/driver.js.iife.js'
-  );
-  const driverCssPath = path.resolve(
-    __dirname,
-    '../../node_modules/driver.js/dist/driver.css'
-  );
-
-  await page.addStyleTag({ path: driverCssPath });
-  await page.addScriptTag({ path: driverJsPath });
+  await page.addStyleTag({ path: DRIVER_CSS_PATH });
+  await page.addScriptTag({ path: DRIVER_JS_PATH });
 
   await page.evaluate(() => {
     window.driverObj = window.driver.js.driver({
@@ -45,13 +44,14 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   });
 
   const spotlight = async (
-    selector: string,
+    target: string | Locator,
     title = '',
     description = '',
     side: 'top' | 'bottom' | 'left' | 'right' = 'bottom',
     align: 'start' | 'center' | 'end' = 'start'
   ) => {
-    const locator = page.locator(selector).first();
+    const locator =
+      typeof target === 'string' ? page.locator(target).first() : target;
     await locator.waitFor({ state: 'visible' });
 
     await locator.evaluate(
@@ -153,13 +153,14 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   await clearSpotlight();
 
   // Step 7: Export
+  const exportButton = page.getByRole('button', { name: /Export/i });
   await spotlight(
-    '.render-actions button',
+    exportButton,
     'Browser-side rendering',
     'Click export to render frame-by-frame locally.',
     'top'
   );
-  await page.getByRole('button', { name: /Export/i }).click();
+  await exportButton.click();
   await clearSpotlight();
 
   // Step 8: Success
