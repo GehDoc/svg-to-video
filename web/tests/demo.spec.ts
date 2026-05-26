@@ -86,8 +86,8 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   // Step 1: Import SVG
   await spotlight(
     'input[type="file"]',
-    'Import SVG',
-    'Start by dropping your animated SVG file here.'
+    'Drop your animated SVG',
+    'Start by dropping your file here.'
   );
   const svgPath = path.resolve(
     __dirname,
@@ -100,95 +100,82 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   // Step 2: Select Format
   await spotlight(
     '#format',
-    'Choose Format',
-    'Select your preferred video format. WebM supports transparency!'
+    'WebM for transparency',
+    'Choose WebM to preserve alpha channel support.'
   );
   await page.selectOption('#format', 'webm');
   await page.waitForTimeout(1000);
   await clearSpotlight();
 
-  // Step 3: Resolution & Size Detection
-  await spotlight(
-    '#resolution',
-    'Resolution & Size',
-    'The tool automatically detects your SVG dimensions.'
-  );
-  await clearSpotlight();
-
-  // Step 4: Duration & FPS
+  // Step 3: Timing - Duration
   await spotlight(
     '#duration',
-    'Timing Controls',
-    'Duration is auto-detected.',
-    'top',
-    'start'
-  );
-  await page.waitForTimeout(500);
-  await spotlight(
-    '#fps',
-    'Timing Controls',
-    'Framerate can be adjusted manually for optimal quality.',
+    'Smart auto-detection',
+    'Duration is automatically extracted from your SVG.',
     'top'
   );
-  await page.locator('#fps').fill('30');
+  await page.locator('#duration').fill('2');
+  await page.waitForTimeout(1000);
+  // await clearSpotlight();
+
+  // Step 4: Timing - FPS
+  await spotlight(
+    '#fps',
+    'Adjust quality',
+    'Set your desired frames per second.',
+    'top'
+  );
+  await page.locator('#fps').fill('12');
   await page.waitForTimeout(1000);
   await clearSpotlight();
 
-  // Step 4b: Enable Transparency
+  // Step 5: Transparency
   await page.locator('.checkbox-wrapper').scrollIntoViewIfNeeded();
   await spotlight(
     '.checkbox-wrapper',
-    'Transparency',
-    'Enable transparent background for your overlays and animations.',
+    'Enable transparency',
+    'Enable transparent backgrounds for overlays.',
     'top'
   );
   await page.check('#transparent');
   await page.waitForTimeout(1000);
   await clearSpotlight();
 
-  // Step 5: Metadata
+  // Step 6: Metadata
   await spotlight(
     '.config-section:nth-of-type(4)',
-    'Metadata',
-    'Add professional touches like titles and comments to your video.',
+    'Add metadata',
+    'Personalize your video with a title.',
     'top'
   );
-  await page.locator('#meta-title').fill('Demo Animation');
-  await page
-    .locator('#meta-comment')
-    .fill('Generated automatically using svg-to-video Web Studio.');
+  await page.locator('#meta-title').fill('My Animation');
   await page.waitForTimeout(1000);
   await clearSpotlight();
 
-  // Step 6: Export
-  const exportButton = page.getByRole('button', { name: /Export/i });
+  // Step 7: Export
   await spotlight(
     '.render-actions button',
-    'Export Video',
-    'Click export to render your video frame-by-frame in your browser.',
+    'Browser-side rendering',
+    'Click export to render frame-by-frame locally.',
     'top'
   );
-  await exportButton.click();
-  await page.waitForTimeout(1000);
+  await page.getByRole('button', { name: /Export/i }).click();
   await clearSpotlight();
 
-  // Step 7: Success & Download
+  // Step 8: Success
   const successCard = page.locator('.success-card, [class*="success"]').first();
-  // Ensure we focus on it as soon as it appears
   await successCard.waitFor({ state: 'visible', timeout: 60000 });
-
   await page.waitForTimeout(500);
   await spotlight(
     '.success-card, [class*="success"]',
-    'Success!',
-    'Your video is ready! It was rendered entirely locally for maximum privacy.'
+    '100% Private & Local',
+    'Your video was rendered entirely in your browser.'
   );
-  await page.waitForTimeout(1000);
-  await clearSpotlight();
 
+  // Step 9: Download
   await spotlight(
     'text=Download',
-    'Download',
+    'Get your video',
     'Save your high-quality video to your device.',
     'top'
   );
@@ -202,7 +189,6 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await download.saveAs(downloadPath);
 
-  await page.waitForTimeout(1000);
   await clearSpotlight();
-  await page.waitForTimeout(1000); // Final outro
+  await page.waitForTimeout(1500); // Final outro
 });
