@@ -153,8 +153,9 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     '../../tests/fixtures/demo-fixture.svg'
   );
   await page.setInputFiles('input[type="file"]', svgPath);
-  await page.waitForTimeout(500);
+  // Not timeout before the file is fully processed, as the dropzone will change apparence causing highlighting issues.
   await clearSpotlight();
+  await page.waitForTimeout(500);
 
   // Step 2: Select Format
   await spotlight(
