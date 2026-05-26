@@ -29,8 +29,8 @@ The project features an automated demo generation tool that records a video of t
 - **How it works**: A dedicated Playwright script (`web/tests/demo.spec.ts`) uses **Driver.js** to guide a "spotlight" through the interface, performing a realistic user scenario (importing an SVG, configuring settings, and exporting).
 - **CI/CD Integration**: The demo is automatically regenerated and redeployed to GitHub Pages whenever a push is made to the `main` branch. This process is orchestrated by the `build-and-deploy` job in `.github/workflows/ci.yml`.
 - **Local Testing**:
-  - **Standard Run**: `npm run test:web -w web -- tests/demo.spec.ts` runs the script without video recording (used for regression testing).
-  - **Record Demo**: `GENERATE_DEMO=true npm run test:web -w web -- tests/demo.spec.ts` runs the script and records the `video.webm` file in `web/test-results/`.
+  - **Standard Run**: `npm run test:web -w web -- tests/demo.spec.ts` runs the script without video recording to ensure no regressions.
+  - **Record Demo**: `npm run test:demo` records the `video.webm` file in `web/test-results/`.
 
 ### 📦 Dependency Management (Vitest & Storybook)
 
@@ -98,6 +98,7 @@ To work on the Web Studio, navigate to the `web/` directory: `cd web`.
 | `npm run dev`                | Launches the Web Studio development server.           |
 | `npm run build`              | Builds the Web Studio for production.                 |
 | `npm run start`              | Previews the production build of the Web Studio.      |
+| `npm run test:demo`          | Records the automated demo video.                     |
 | `npm run test:web`           | Runs Web Studio E2E tests.                            |
 | `npm run test:storybook`     | Runs Storybook interaction tests using Vitest.        |
 | `npm run test:visual`        | Runs native visual regression tests (pixel matching). |
