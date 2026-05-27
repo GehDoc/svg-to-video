@@ -30,16 +30,16 @@ export const MetaDisplay = ({ meta, dimensions }: MetaDisplayProps) => {
   return (
     <div className="meta-grid">
       <div className="meta-item">
-        <strong>Source</strong> {source}
+        <strong>Source:</strong> {source}
       </div>
       <div className="meta-item">
-        <strong>Export</strong> {export_}
+        <strong>Export:</strong> {export_}
       </div>
       <div className="meta-item">
-        <strong>Codec</strong> {codec}
+        <strong>Codec:</strong> {codec}
       </div>
       <div className="meta-item">
-        <strong>ETA</strong> {eta}
+        <strong>ETA:</strong> {eta}
       </div>
     </div>
   );

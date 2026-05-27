@@ -12,8 +12,4 @@
   color: var(--text);
   font-size: 0.75rem;
   margin-right: 0.25rem;
-
-  &::after {
-    content: ':';
-  }
 }
