@@ -25,18 +25,18 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
 
   // Wait for the app to be ready
   await page.waitForSelector('input[type="file"]');
-  await page.waitForTimeout(500);
+  await page.waitForLoadState('networkidle');
 
   // =========================================================================
   // 1. INJECTION OF DRIVER.JS (Local dependencies)
   // =========================================================================
   await page.addStyleTag({ path: DRIVER_CSS_PATH });
   await page.addScriptTag({ path: DRIVER_JS_PATH });
-
   await page.evaluate(() => {
     window.driverObj = window.driver.js.driver({
       showProgress: false,
       animate: true,
+      smoothScroll: true,
       overlayColor: '#000',
       overlayOpacity: 0.5,
       stagePadding: 4,
@@ -50,33 +50,104 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     side: 'top' | 'bottom' | 'left' | 'right' = 'bottom',
     align: 'start' | 'center' | 'end' = 'start'
   ) => {
+    // 0. Close existing popover if any, to avoid conflicts with the scroll to the next highlight
+    await page.evaluate(() => {
+      const popover = document.querySelector('.driver-popover') as HTMLElement;
+      if (popover) {
+        // This turns the popover completely invisible instantly
+        // without destroying Driver.js's state or removing the node
+        popover.style.visibility = 'hidden';
+      }
+    });
+
     const locator =
       typeof target === 'string' ? page.locator(target).first() : target;
-    await locator.waitFor({ state: 'visible' });
 
+    // 1. Ensure the element is attached to the DOM
+    await locator.waitFor({ state: 'attached' });
+
+    // 2. Force a native browser SMOOTH scroll to the element first
+    await locator.evaluate((element) => {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center', // Centers the element in the viewport for a better looking demo
+      });
+    });
+
+    // 3. Dynamically locate the scrollable parent container and track its frames
+    await locator.evaluate(async (element) => {
+      // Helper function to find the nearest scrollable parent element
+      const getScrollParent = (
+        node: HTMLElement | null
+      ): HTMLElement | null => {
+        if (node == null) {
+          return null;
+        }
+        if (node.scrollHeight > node.clientHeight) {
+          const overflowY = window.getComputedStyle(node).overflowY;
+          if (overflowY === 'auto' || overflowY === 'scroll') {
+            return node;
+          }
+        }
+        return getScrollParent(node.parentElement);
+      };
+
+      const scrollContainer = getScrollParent(element as HTMLElement);
+
+      // Monitor the container's internal scroll position until it settles
+      if (scrollContainer) {
+        await new Promise((resolve) => {
+          let lastPos = scrollContainer.scrollTop;
+          let identicalFrameCount = 0;
+
+          function verifyMovement() {
+            const currentPos = scrollContainer!.scrollTop;
+
+            if (currentPos === lastPos) {
+              identicalFrameCount++;
+            } else {
+              identicalFrameCount = 0; // Container is still smoothly scrolling
+            }
+            lastPos = currentPos;
+
+            // Settle frame allowance
+            if (identicalFrameCount > 8) {
+              resolve(true);
+            } else {
+              requestAnimationFrame(verifyMovement);
+            }
+          }
+          requestAnimationFrame(verifyMovement);
+        });
+      }
+    });
+
+    // 4. Now that we are smoothly positioned near the element, trigger Driver.js
     await locator.evaluate(
-      (el, config) => {
+      (element, config) => {
+        const { title, description, side, align } = config;
+
         window.driverObj!.highlight({
-          element: el,
-          popover: config.t
+          element,
+          popover: title
             ? {
-                title: config.t,
-                description: config.d,
-                side: config.s,
-                align: config.a,
+                title,
+                description,
+                side,
+                align,
               }
             : undefined,
         });
       },
-      { t: title, d: description, s: side, a: align }
+      { title, description, side, align }
     );
 
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1500);
   };
 
   const clearSpotlight = async () => {
     await page.evaluate(() => window.driverObj!.destroy());
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(400);
   };
 
   // =========================================================================
@@ -94,8 +165,8 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     '../../tests/fixtures/demo-fixture.svg'
   );
   await page.setInputFiles('input[type="file"]', svgPath);
-  await clearSpotlight();
-  await page.waitForTimeout(1000);
+  // Not timeout before the file is fully processed, as the dropzone will change apparence causing highlighting issues.
+  await page.waitForTimeout(500);
 
   // Step 2: Select Format
   await spotlight(
@@ -105,7 +176,6 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await page.selectOption('#format', 'webm');
   await page.waitForTimeout(1000);
-  await clearSpotlight();
 
   // Step 3: Timing - Duration
   await spotlight(
@@ -116,7 +186,6 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await page.locator('#duration').fill('2');
   await page.waitForTimeout(1000);
-  // await clearSpotlight();
 
   // Step 4: Timing - FPS
   await spotlight(
@@ -127,10 +196,8 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await page.locator('#fps').fill('12');
   await page.waitForTimeout(1000);
-  await clearSpotlight();
 
   // Step 5: Transparency
-  await page.locator('.checkbox-wrapper').scrollIntoViewIfNeeded();
   await spotlight(
     '.checkbox-wrapper',
     'Enable transparency',
@@ -139,7 +206,6 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await page.check('#transparent');
   await page.waitForTimeout(1000);
-  await clearSpotlight();
 
   // Step 6: Metadata
   await spotlight(
@@ -150,7 +216,6 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await page.locator('#meta-title').fill('My Animation');
   await page.waitForTimeout(1000);
-  await clearSpotlight();
 
   // Step 7: Export
   const exportButton = page.getByRole('button', { name: /Export/i });
@@ -161,14 +226,15 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     'top'
   );
   await exportButton.click();
+  await page.waitForTimeout(500);
   await clearSpotlight();
 
   // Step 8: Success
-  const successCard = page.locator('.success-card, [class*="success"]').first();
+  const successCard = page.locator('.success-card').first();
   await successCard.waitFor({ state: 'visible', timeout: 60000 });
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(500); // necessary for the animation to complete and the card to be fully visible
   await spotlight(
-    '.success-card, [class*="success"]',
+    '.success-card',
     '100% Private & Local',
     'Your video was rendered entirely in your browser.'
   );
@@ -189,7 +255,4 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     '../.vitest-attachments/demo.webm'
   );
   await download.saveAs(downloadPath);
-
-  await clearSpotlight();
-  await page.waitForTimeout(1500); // Final outro
 });

@@ -1,14 +1,15 @@
 .meta-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-  font-size: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
 }
 
 .meta-item strong {
-  display: block;
+  display: inline;
   color: var(--text);
-  font-size: 0.85rem;
+  font-size: 0.75rem;
+  margin-right: 0.25rem;
 }

@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -19,13 +19,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Run fast checks
         run: npm run check:fast
 
@@ -35,13 +30,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Build and load Docker image
@@ -71,13 +61,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Run Web Unit tests
         run: npm run test:unit -w web
 
@@ -87,21 +72,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Cache Playwright Browsers
-        id: playwright-cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps
+          install-playwright: 'true'
       - name: Run Web E2E tests
         run: npm run test:web -w web
 
@@ -114,21 +88,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Cache Playwright Browsers
-        id: playwright-cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps
+          install-playwright: 'true'
       - name: Run Storybook Tests
         run: |
           npm run storybook -w web &
@@ -141,46 +104,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Cache Playwright Browsers
-        id: playwright-cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps
+          install-playwright: 'true'
       - name: Run Visual Regression tests
         run: npm run test:visual -w web
 
-  build-web:
-    name: 'Build Web Studio'
-    if: github.ref != 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Run Build
-        run: npm run build -w web
-      - name: Build Storybook
-        run: npm run build-storybook -w web
-
   build-and-deploy:
     name: 'Build and Deploy'
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -192,19 +124,13 @@ jobs:
       - storybook-tests
       - visual-tests
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v6
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: 24
-
-      - name: Install
-        run: npm ci
-
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps
+          install-playwright: 'true'
+          install-ffmpeg: 'true'
 
       - name: Build Web Studio
         run: npm run build -w web
@@ -215,18 +141,28 @@ jobs:
       - name: Generate Demo Video
         run: |
           mkdir -p web/dist/assets
-          GENERATE_DEMO=true npm run test:web -w web -- tests/demo.spec.ts
-          # Move the recorded video to the dist assets
-          # Playwright saves video in test-results/demo-Generate-Demo-Video-Web-Studio-chromium/video.webm
-          # We need to find the exact path or use a predictable one if possible
+          npm run test:demo -w web
           VIDEO_PATH=$(find web/test-results -name "*.webm" | head -n 1)
           if [ -n "$VIDEO_PATH" ]; then
+            # Convert to high-quality GIF for README compatibility
+            ffmpeg -i "$VIDEO_PATH" -vf "fps=12,scale=800:-1:flags=neighbor,split[s0][s1];[s0]palettegen=max_colors=64:stats_mode=diff[p];[s1][p]paletteuse=dither=none" -loop 0 -y web/dist/assets/demo.gif
+            # Also keep the webm for artifacts
             cp "$VIDEO_PATH" web/dist/assets/demo.webm
           else
             echo "Warning: Demo video not found"
           fi
 
+      - name: Upload Demo Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-assets
+          path: |
+            web/dist/assets/demo.gif
+            web/dist/assets/demo.webm
+          if-no-files-found: warn
+
       - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: web/dist

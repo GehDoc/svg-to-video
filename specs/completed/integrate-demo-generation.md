@@ -53,3 +53,5 @@ Automate the generation and deployment of a fresh demo video for the Web Studio,
 - 2026-05-23: Initial spec created by Gemini CLI.
 - 2026-05-23: Added task to unpublish playwright-report folder and detailed CI/CD steps.
 - 2026-05-23: Refined strategy to run demo.spec.ts in CI without video by default.
+- 2026-05-23: Final refinements: Viewport 800px, transparency reordering, success/download timing adjustments.
+- 2026-05-23: UI Optimization: Refactored ConfigPanel and SuccessView to Flexbox to ensure fit within 720p without scrolling.

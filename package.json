@@ -1,6 +1,6 @@
 {
   "name": "svg-to-video",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "type": "module",
   "description": "Professional animated SVG to MP4/WebM/MKV/MOV converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
   "author": "GehDoc",
@@ -61,7 +61,6 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "test:cli": "tsx --test tests/cli.spec.ts",
-    "test:demo": "npm run test:demo -w web",
     "test:unit": "tsx --test src/**/*.test.ts && vitest run shared/*.test.ts && npm run test:unit -w web",
     "test": "npm run test:cli && npm run test:unit && npm run test:web -w web && npm run test:storybook -w web && npm run test:visual -w web",
     "type-check": "tsc -p tsconfig.json --noEmit && npm run type-check -w web",
