@@ -130,6 +130,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           install-playwright: 'true'
+          install-ffmpeg: 'true'
 
       - name: Build Web Studio
         run: npm run build -w web
