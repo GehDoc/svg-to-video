@@ -53,13 +53,15 @@ export const SuccessView = ({
 
   return (
     <div className="success-card">
-      <div className="success-icon" aria-hidden="true">
-        <FaCheck />
+      <div className="success-header">
+        <div className="success-icon" aria-hidden="true">
+          <FaCheck />
+        </div>
+        <h3>Render Complete</h3>
+        <p className="success-meta">
+          {fileName} • {fileSize}
+        </p>
       </div>
-      <h3>Render Complete</h3>
-      <p className="success-meta">
-        {fileName} • {fileSize}
-      </p>
       <div className="success-preview">
         <video src={renderedUrl} controls autoPlay loop>
           <track kind="captions" srcLang="en" label="English" default />
