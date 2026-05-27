@@ -67,15 +67,15 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     await locator.waitFor({ state: 'attached' });
 
     // 2. Force a native browser SMOOTH scroll to the element first
-    await locator.evaluate((el) => {
-      el.scrollIntoView({
+    await locator.evaluate((element) => {
+      element.scrollIntoView({
         behavior: 'smooth',
         block: 'center', // Centers the element in the viewport for a better looking demo
       });
     });
 
     // 3. Dynamically locate the scrollable parent container and track its frames
-    await locator.evaluate(async (el) => {
+    await locator.evaluate(async (element) => {
       // Helper function to find the nearest scrollable parent element
       const getScrollParent = (
         node: HTMLElement | null
@@ -92,7 +92,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
         return getScrollParent(node.parentElement);
       };
 
-      const scrollContainer = getScrollParent(el as HTMLElement);
+      const scrollContainer = getScrollParent(element as HTMLElement);
 
       // Monitor the container's internal scroll position until it settles
       if (scrollContainer) {
@@ -124,20 +124,22 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
 
     // 4. Now that we are smoothly positioned near the element, trigger Driver.js
     await locator.evaluate(
-      (el, config) => {
+      (element, config) => {
+        const { title, description, side, align } = config;
+
         window.driverObj!.highlight({
-          element: el,
-          popover: config.t
+          element,
+          popover: title
             ? {
-                title: config.t,
-                description: config.d,
-                side: config.s,
-                align: config.a,
+                title,
+                description,
+                side,
+                align,
               }
             : undefined,
         });
       },
-      { t: title, d: description, s: side, a: align }
+      { title, description, side, align }
     );
 
     await page.waitForTimeout(1500);
