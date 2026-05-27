@@ -33,7 +33,7 @@ Choose the entry point that matches your needs:
 
 **[🚀 Try the Web Studio](https://gehdoc.github.io/svg-to-video/)**
 
-Our **Web Studio** is a serverless, client-side rendering tool. It runs entirely in your browser using **WebCodecs**—your SVG files never leave your computer, ensuring absolute privacy.
+Our **Web Studio** is a serverless, client-side rendering tool. It runs entirely in your browser using **WebCodecs**—your SVG files never leave your computer, ensuring absolute privacy. The interface is optimized for high-productivity on screens starting from **720p resolution**.
 
 > **Automated Demo**: The demo video at the top of this README is automatically generated and updated by our CI/CD pipeline using Playwright and Driver.js, ensuring it always reflects the latest UI changes.
 
