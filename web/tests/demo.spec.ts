@@ -50,6 +50,16 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     side: 'top' | 'bottom' | 'left' | 'right' = 'bottom',
     align: 'start' | 'center' | 'end' = 'start'
   ) => {
+    // 0. Close existing popover if any, to avoid conflicts with the scroll to the next highlight
+    await page.evaluate(() => {
+      const popover = document.querySelector('.driver-popover') as HTMLElement;
+      if (popover) {
+        // This turns the popover completely invisible instantly
+        // without destroying Driver.js's state or removing the node
+        popover.style.visibility = 'hidden';
+      }
+    });
+
     const locator =
       typeof target === 'string' ? page.locator(target).first() : target;
 
@@ -154,7 +164,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await page.setInputFiles('input[type="file"]', svgPath);
   // Not timeout before the file is fully processed, as the dropzone will change apparence causing highlighting issues.
-  await clearSpotlight();
+  // await clearSpotlight();
   await page.waitForTimeout(500);
 
   // Step 2: Select Format
@@ -165,7 +175,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await page.selectOption('#format', 'webm');
   await page.waitForTimeout(1000);
-  await clearSpotlight();
+  // await clearSpotlight();
 
   // Step 3: Timing - Duration
   await spotlight(
@@ -186,7 +196,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await page.locator('#fps').fill('12');
   await page.waitForTimeout(1000);
-  await clearSpotlight();
+  // await clearSpotlight();
 
   // Step 5: Transparency
   await spotlight(
@@ -197,7 +207,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await page.check('#transparent');
   await page.waitForTimeout(1000);
-  await clearSpotlight();
+  // await clearSpotlight();
 
   // Step 6: Metadata
   await spotlight(
@@ -208,7 +218,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await page.locator('#meta-title').fill('My Animation');
   await page.waitForTimeout(1000);
-  await clearSpotlight();
+  // await clearSpotlight();
 
   // Step 7: Export
   const exportButton = page.getByRole('button', { name: /Export/i });
@@ -249,6 +259,6 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await download.saveAs(downloadPath);
 
-  await clearSpotlight();
-  await page.waitForTimeout(1000); // Final outro
+  // await clearSpotlight();
+  // await page.waitForTimeout(1000); // Final outro
 });
