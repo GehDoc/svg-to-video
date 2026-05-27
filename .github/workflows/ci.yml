@@ -143,16 +143,21 @@ jobs:
           npm run test:demo -w web
           VIDEO_PATH=$(find web/test-results -name "*.webm" | head -n 1)
           if [ -n "$VIDEO_PATH" ]; then
+            # Convert to high-quality GIF for README compatibility
+            ffmpeg -i "$VIDEO_PATH" -vf "fps=12,scale=800:-1:flags=neighbor,split[s0][s1];[s0]palettegen=max_colors=64:stats_mode=diff[p];[s1][p]paletteuse=dither=none" -loop 0 -y web/dist/assets/demo.gif
+            # Also keep the webm for artifacts
             cp "$VIDEO_PATH" web/dist/assets/demo.webm
           else
             echo "Warning: Demo video not found"
           fi
 
-      - name: Upload Demo Video Artifact
+      - name: Upload Demo Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: demo-video
-          path: web/dist/assets/demo.webm
+          name: demo-assets
+          path: |
+            web/dist/assets/demo.gif
+            web/dist/assets/demo.webm
           if-no-files-found: warn
 
       - name: Deploy to GitHub Pages

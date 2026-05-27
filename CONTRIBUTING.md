@@ -35,7 +35,7 @@ The project features an automated demo generation tool that records a video of t
   1. Go to the **Actions** tab on GitHub.
   2. Select the specific workflow run.
   3. Scroll down to the **Artifacts** section at the bottom of the summary page.
-  4. Click `demo-video` (from PRs) or `demo-video-deploy` (from `main`) to download the `.webm` file.
+  4. Click `demo-assets` to download the `.gif` and `.webm` files.
 
 ### 📦 Dependency Management (Vitest & Storybook)
 
