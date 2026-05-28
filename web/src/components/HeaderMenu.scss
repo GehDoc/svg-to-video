@@ -52,11 +52,3 @@
     color: var(--text);
   }
 }
-
-@media (prefers-color-scheme: dark) {
-  .header-sponsor-btn {
-    .icon-heart {
-      color: var(--sponsor);
-    }
-  }
-}

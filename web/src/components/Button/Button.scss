@@ -41,24 +41,12 @@
 
 .btn--outline {
   background: transparent;
-  color: var(--primary);
-  border: 1px solid var(--primary);
+  color: var(--primary-text);
+  border: 1px solid var(--primary-text);
 
   &:hover:not(:disabled) {
-    background: var(--primary);
-    color: white;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .btn--outline {
-    color: var(--accent);
-    border-color: var(--accent);
-
-    &:hover:not(:disabled) {
-      background: var(--accent);
-      color: var(--bg);
-    }
+    background: var(--primary-text);
+    color: var(--bg);
   }
 }
 

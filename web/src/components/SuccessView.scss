@@ -176,15 +176,3 @@
     text-decoration: underline;
   }
 }
-
-@media (prefers-color-scheme: dark) {
-  .success-support {
-    .icon-heart {
-      color: var(--sponsor);
-    }
-  }
-
-  .success-support a {
-    color: var(--sponsor);
-  }
-}
