@@ -40,6 +40,12 @@ const jsonLd = {
   applicationCategory: 'MultimediaApplication',
   operatingSystem: 'Any',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  featureList: [
+    'High-fidelity SVG to video conversion',
+    'Transparent background support (WebM)',
+    'Frame-accurate Web Animations API scrubbing',
+    'Serverless browser-based rendering',
+  ],
 };
 
 export default function RootLayout({
