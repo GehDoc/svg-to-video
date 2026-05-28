@@ -1,34 +1,49 @@
+import Logo from '../assets/logo.svg?react';
 import './SeoFallback.scss';
 
-export const SeoFallback = () => {
+interface SeoFallbackProps {
+  isHidden?: boolean;
+}
+
+export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
   return (
-    <div className="seo-fallback">
-      <h1>SVG to Video Studio</h1>
-      <p>
-        Convert SVG animations to MP4, WebM, MKV, MOV, and other video formats
-        with transparency directly in your browser. A private, serverless,
-        frame-accurate converter for developers.
-      </p>
+    <div className={`seo-fallback ${isHidden ? 'is-hidden' : ''}`}>
+      <div className="splash-content">
+        <div className="splash-logo" aria-hidden="true">
+          <Logo />
+        </div>
+        <h1>
+          SVG to Video <small className="badge">STUDIO</small>
+        </h1>
+        <p className="description">
+          Convert SVG animations to high-quality MP4, WebM, MKV, or MOV videos
+          with alpha-channel transparency using <strong>WebCodecs</strong>{' '}
+          directly in your browser.
+        </p>
 
-      <p>
-        <a
-          href="https://github.com/GehDoc/svg-to-video"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          View on GitHub
-        </a>
-        {' | '}
-        <a
-          href="https://github.com/GehDoc/svg-to-video/blob/main/LICENSE"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          MIT License
-        </a>
-      </p>
+        <div className="loader">
+          <div className="loader-bar" />
+          <p>Initializing Studio...</p>
+        </div>
 
-      <p>Loading the studio...</p>
+        <div className="splash-links">
+          <a
+            href="https://github.com/GehDoc/svg-to-video"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View on GitHub
+          </a>
+          <span className="separator">•</span>
+          <a
+            href="https://github.com/GehDoc/svg-to-video/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            MIT License
+          </a>
+        </div>
+      </div>
     </div>
   );
 };

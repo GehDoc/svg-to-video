@@ -7,8 +7,10 @@
   --text-muted: #64748b; /* Slate 500 - Better distinction from Slate 800 */
   --text-h: #0f172a;
   --primary: #5e61e6;
+  --primary-text: #5e61e6;
   --primary-hover: #4338ca;
   --accent: #aa3bff;
+  --accent-text: #aa3bff;
   --error: #dc2626;
   --card: #ffffff;
 
@@ -49,8 +51,10 @@
     --text-muted: #94a3b8; /* Slate 400 - Clear distinction from --text */
     --text-h: #f8fafc; /* Slate 50 */
     --primary: #5e61e6;
+    --primary-text: #9fa2ff;
     --primary-hover: #4338ca;
     --accent: #c084fc;
+    --accent-text: #c084fc;
     --card: #334155;
 
     --sponsor: #ff6685;

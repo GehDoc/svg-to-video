@@ -1,7 +1,7 @@
 {
   "name": "@svg-to-video/web",
-  "version": "0.14.0",
-  "description": "High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) with transparent background support, frame-accurate rendering, and instant copy to clipboard (Data URL).",
+  "version": "0.15.0",
+  "description": "Professional CSS-animated SVG to Video Studio: frame-accurate rendering, alpha-channel transparency, and serverless WebCodecs.",
   "author": "GehDoc",
   "repository": {
     "type": "git",
