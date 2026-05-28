@@ -23,9 +23,13 @@ test.setTimeout(120000);
 test('Generate Demo Video - Web Studio', async ({ page }) => {
   await page.goto('/');
 
-  // Wait for the app to be ready
+  // Wait for the app to be ready and splash screen to fade out
   await page.waitForSelector('input[type="file"]');
   await page.waitForLoadState('networkidle');
+
+  // Ensure Splash Screen is gone before starting recording interactions
+  const splash = page.locator('.seo-fallback');
+  await splash.waitFor({ state: 'hidden', timeout: 5000 });
 
   // =========================================================================
   // 1. INJECTION OF DRIVER.JS (Local dependencies)
@@ -166,7 +170,6 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   );
   await page.setInputFiles('input[type="file"]', svgPath);
   // Not timeout before the file is fully processed, as the dropzone will change apparence causing highlighting issues.
-  await page.waitForTimeout(500);
 
   // Step 2: Select Format
   await spotlight(
