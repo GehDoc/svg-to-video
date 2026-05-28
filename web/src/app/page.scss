@@ -1,0 +1,10 @@
+.studio-wrapper {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  height: 100%;
+  width: 100%;
+}
+
+.studio-wrapper.is-visible {
+  opacity: 1;
+}

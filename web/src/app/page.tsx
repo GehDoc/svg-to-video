@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Studio } from '../components/Studio';
 import { SeoFallback } from '../components/SeoFallback';
+import './page.scss';
 
 export default function Page() {
   const [mounted, setMounted] = useState(false);
