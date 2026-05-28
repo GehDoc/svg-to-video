@@ -1,3 +1,4 @@
+import Logo from '../assets/logo.svg?react';
 import './SeoFallback.scss';
 
 export const SeoFallback = () => {
@@ -5,20 +6,7 @@ export const SeoFallback = () => {
     <div className="seo-fallback">
       <div className="splash-content">
         <div className="splash-logo" aria-hidden="true">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#5e61e6"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M23 7l-7 5 7 5V7z" />
-            <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
-            <polyline points="7 10 5 12 7 14" />
-            <polyline points="10 10 12 12 10 14" />
-          </svg>
+          <Logo />
         </div>
         <h1>
           SVG to Video <small className="badge">STUDIO</small>
