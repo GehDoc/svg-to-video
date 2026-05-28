@@ -1,9 +1,13 @@
 import Logo from '../assets/logo.svg?react';
 import './SeoFallback.scss';
 
-export const SeoFallback = () => {
+interface SeoFallbackProps {
+  isHidden?: boolean;
+}
+
+export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
   return (
-    <div className="seo-fallback">
+    <div className={`seo-fallback ${isHidden ? 'is-hidden' : ''}`}>
       <div className="splash-content">
         <div className="splash-logo" aria-hidden="true">
           <Logo />
