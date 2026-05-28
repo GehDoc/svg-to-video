@@ -8,7 +8,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/GehDoc/svg-to-video?color=blue)](https://github.com/GehDoc/svg-to-video/releases)
 [![Last Commit](https://img.shields.io/github/last-commit/GehDoc/svg-to-video)](https://gehdoc.github.io/svg-to-video/commits/main)
 
-A high-fidelity tool to render CSS-animated SVGs into high-quality videos (MP4, WebM, MKV, MOV).
+A high-fidelity tool to transform your CSS-animated SVGs into high-quality MP4, WebM, MKV, or MOV videos with perfect alpha-channel transparency directly in your browser.
 
 <div align="center">
   <img src="https://gehdoc.github.io/svg-to-video/assets/demo.gif" width="800" alt="SVG to Video Demo">
