@@ -49,6 +49,7 @@
     --text-muted: #94a3b8; /* Slate 400 - Clear distinction from --text */
     --text-h: #f8fafc; /* Slate 50 */
     --primary: #5e61e6;
+    --primary-text: #9fa2ff;
     --primary-hover: #4338ca;
     --accent: #c084fc;
     --card: #334155;
