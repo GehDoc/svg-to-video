@@ -13,12 +13,13 @@ export const SeoFallback = () => {
         </h1>
         <p className="description">
           Convert SVG animations to high-quality MP4, WebM, MKV, or MOV videos
-          with alpha-channel transparency directly in your browser.
+          with alpha-channel transparency using <strong>WebCodecs</strong>{' '}
+          directly in your browser.
         </p>
 
         <div className="loader">
           <div className="loader-bar" />
-          <p>Initializing WebCodecs Studio...</p>
+          <p>Initializing Studio...</p>
         </div>
 
         <div className="splash-links">

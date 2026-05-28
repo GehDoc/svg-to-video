@@ -9,9 +9,10 @@ describe('SeoFallback', () => {
     expect(screen.getAllByText(/STUDIO/i)).toBeDefined();
   });
 
-  it('contains the SEO description', () => {
+  it('contains the SEO description with WebCodecs', () => {
     render(<SeoFallback />);
     expect(screen.getByText(/alpha-channel transparency/i)).toBeDefined();
+    expect(screen.getByText(/WebCodecs/i)).toBeDefined();
   });
 
   it('provides links to GitHub and License', () => {
