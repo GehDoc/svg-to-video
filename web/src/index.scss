@@ -1,3 +1,5 @@
+@import './styles/breakpoints';
+
 :root {
   /* Base Colors & Theme */
   --bg: #ffffff;
@@ -37,7 +39,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  @media (max-width: 1024px) {
+  @media (max-width: $mobile-breakpoint) {
     font-size: 15px;
   }
 }
@@ -94,7 +96,7 @@ body {
   flex: 1;
   overflow: hidden;
 
-  @media (max-width: 1024px) {
+  @media (max-width: $mobile-breakpoint) {
     flex-direction: column;
     overflow-y: auto;
   }
@@ -111,7 +113,7 @@ h2 {
 h1 {
   font-size: 3.5rem;
   letter-spacing: -0.04em;
-  @media (max-width: 1024px) {
+  @media (max-width: $mobile-breakpoint) {
     font-size: 2.25rem;
   }
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import '../index.css';
+import '../index.scss';
 import pkg from '../../package.json';
 
 const siteName = 'SVG to Video';

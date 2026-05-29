@@ -1,3 +1,5 @@
+@import '../styles/breakpoints';
+
 .monitor-panel {
   flex: 1;
   background: var(--bg);
@@ -6,7 +8,7 @@
   height: 100%;
   overflow: hidden;
 
-  @media (max-width: 1024px) {
+  @media (max-width: $mobile-breakpoint) {
     height: auto;
     overflow: visible;
   }
