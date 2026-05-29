@@ -1,6 +1,6 @@
-/*!*************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[10].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[10].use[3]!./src/index.css ***!
-  \*************************************************************************************************************************************************************************************************************************************************************/
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/index.scss ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 :root {
   /* Base Colors & Theme */
   --bg: #ffffff;
@@ -16,20 +16,16 @@
   --accent-text: #aa3bff;
   --error: #dc2626;
   --card: #ffffff;
-
   --sponsor: #ca263f;
   --sponsor-bg: #fff0f3;
   --sponsor-hover: #ffe0e6;
-
   --code-bg: #f1f5f9;
   --shadow:
     0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-
   /* Typography */
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
   --heading: 'Inter', system-ui, -apple-system, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
-
   font: 16px/1.5 var(--sans);
   letter-spacing: -0.01em;
   color-scheme: light dark;
@@ -39,8 +35,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
+}
+@media (max-width: 1024px) {
+  :root {
     font-size: 15px;
   }
 }
@@ -59,17 +56,14 @@
     --accent: #c084fc;
     --accent-text: #c084fc;
     --card: #334155;
-
     --sponsor: #ff6685;
     --sponsor-bg: rgba(218, 55, 81, 0.1);
     --sponsor-hover: rgba(218, 55, 81, 0.2);
-
     --code-bg: #1e293b;
     --shadow:
       0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
   }
 }
-
 body {
   margin: 0;
   overflow: hidden;
@@ -97,6 +91,12 @@ body {
   flex: 1 1;
   overflow: hidden;
 }
+@media (max-width: 1024px) {
+  .studio-layout {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+}
 
 h1,
 h2 {
@@ -109,7 +109,9 @@ h2 {
 h1 {
   font-size: 3.5rem;
   letter-spacing: -0.04em;
-  @media (max-width: 1024px) {
+}
+@media (max-width: 1024px) {
+  h1 {
     font-size: 2.25rem;
   }
 }
@@ -131,4 +133,3 @@ code {
   border-radius: 4px;
   color: var(--text-h);
 }
-

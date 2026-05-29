@@ -9,6 +9,11 @@
   justify-content: space-between;
   align-items: center;
 }
+@media (max-width: 1024px) {
+  .header {
+    padding: 0.75rem 1rem;
+  }
+}
 .header .header-title {
   margin: 0;
   font-size: 1.25rem;
@@ -17,6 +22,12 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+@media (max-width: 1024px) {
+  .header .header-title {
+    font-size: 1rem;
+    gap: 0.25rem;
+  }
 }
 .header .header-title .header-title-link {
   display: flex;
@@ -38,6 +49,13 @@
   color: var(--bg);
   border-radius: 3px;
   font-weight: 700;
+}
+@media (max-width: 1024px) {
+  .header .header-badge {
+    font-size: 0.8rem;
+    padding: 0.1rem 0.3rem;
+    margin-left: 0.25rem;
+  }
 }
 /*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/Dropdown/Dropdown.scss ***!
@@ -162,6 +180,11 @@
   align-items: center;
   gap: 1rem;
 }
+@media (max-width: 1024px) {
+  .header-menu-container {
+    gap: 0.5rem;
+  }
+}
 
 .header-sponsor-btn {
   display: inline-flex;
@@ -175,6 +198,12 @@
   background-color: var(--sponsor-bg);
   color: var(--sponsor);
   transition: background-color 0.2s ease, transform 0.1s ease;
+}
+@media (max-width: 1024px) {
+  .header-sponsor-btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
 }
 .header-sponsor-btn .icon-heart {
   color: var(--sponsor);
@@ -214,6 +243,11 @@
   cursor: pointer;
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-muted);
+}
+@media (max-width: 1024px) {
+  .dropzone {
+    padding: 1rem;
+  }
 }
 .dropzone:hover:not(.disabled) {
   background: rgba(255, 255, 255, 0.08);
@@ -317,6 +351,14 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+@media (max-width: 1024px) {
+  .config-panel {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
 }
 
 .config-content {
@@ -893,6 +935,12 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+}
+@media (max-width: 1024px) {
+  .monitor-panel {
+    height: auto;
+    overflow: visible;
+  }
 }
 /*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/SeoFallback.scss ***!
