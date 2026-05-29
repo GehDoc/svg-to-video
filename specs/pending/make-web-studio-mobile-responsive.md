@@ -15,12 +15,12 @@ Improve the usability of the web studio on mobile devices by making the layout r
 
 ## ✅ Task List
 
-- [ ] **Analysis**
-  - [ ] Identify breaking layout components (e.g., fixed-width containers in `ConfigPanel`, `MonitorPanel`, `SeoFallback`).
-- [ ] **UI / Integration**
-  - [ ] Update `web/src/app/page.tsx` and related components (`ConfigPanel`, `MonitorPanel`, `SeoFallback`) to use mobile-first CSS.
-  - [ ] Adjust grid or flex layouts to stack vertically on small screens.
-  - [ ] Ensure inputs and buttons are touch-friendly.
+- [x] **Analysis**
+  - [x] Identify breaking layout components (e.g., fixed-width containers in `ConfigPanel`, `MonitorPanel`, `SeoFallback`).
+- [x] **UI / Integration**
+  - [x] Update `web/src/app/page.tsx` and related components (`ConfigPanel`, `MonitorPanel`, `SeoFallback`) to use mobile-first CSS.
+  - [x] Adjust grid or flex layouts to stack vertically on small screens.
+  - [x] Ensure inputs and buttons are touch-friendly.
 - [ ] **Validation**
   - [ ] Verify responsiveness in browser developer tools (emulated mobile view).
 

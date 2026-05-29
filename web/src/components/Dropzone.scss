@@ -8,6 +8,9 @@
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-muted);
 
+  @media (max-width: 1024px) {
+    padding: 1rem;
+  }
   &:hover:not(.disabled) {
     background: rgba(255, 255, 255, 0.08);
     border-color: var(--primary);

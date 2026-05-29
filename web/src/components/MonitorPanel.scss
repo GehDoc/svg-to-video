@@ -5,4 +5,9 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+
+  @media (max-width: 1024px) {
+    height: auto;
+    overflow: visible;
+  }
 }

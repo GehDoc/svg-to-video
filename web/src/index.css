@@ -93,6 +93,11 @@ body {
   display: flex;
   flex: 1;
   overflow: hidden;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    overflow-y: auto;
+  }
 }
 
 h1,
