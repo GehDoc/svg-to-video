@@ -1,8 +1,14 @@
+@import '../styles/breakpoints';
+
 .header-menu-container {
   position: relative;
   display: flex;
   align-items: center;
   gap: 1rem;
+
+  @media (max-width: $mobile-breakpoint) {
+    gap: 0.5rem;
+  }
 }
 
 .header-sponsor-btn {
@@ -19,6 +25,11 @@
   transition:
     background-color 0.2s ease,
     transform 0.1s ease;
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
 
   .icon-heart {
     color: var(--sponsor);

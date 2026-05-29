@@ -1,3 +1,5 @@
+@import '../styles/breakpoints';
+
 .dropzone {
   border: 2px dashed var(--border);
   border-radius: 8px;
@@ -8,6 +10,9 @@
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-muted);
 
+  @media (max-width: $mobile-breakpoint) {
+    padding: 1rem;
+  }
   &:hover:not(.disabled) {
     background: rgba(255, 255, 255, 0.08);
     border-color: var(--primary);
