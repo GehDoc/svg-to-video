@@ -5,7 +5,7 @@ import pkg from '../../package.json';
 
 const siteName = 'SVG to Video';
 const description =
-  'High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) with transparent background support, frame-accurate rendering.';
+  'High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) and animated image converter (aPNG, GIF) with transparent background support.';
 const url = 'https://gehdoc.github.io/svg-to-video/';
 const imageUrl =
   'https://gehdoc.github.io/svg-to-video/assets/social-preview.svg';
@@ -42,7 +42,8 @@ const jsonLd = {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   featureList: [
     'High-fidelity SVG to video conversion',
-    'Transparent background support (WebM)',
+    'Animated aPNG and GIF export',
+    'Transparent background support (WebM, aPNG, GIF89a)',
     'Frame-accurate Web Animations API scrubbing',
     'Serverless browser-based rendering',
   ],

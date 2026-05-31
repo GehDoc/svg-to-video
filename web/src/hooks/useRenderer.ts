@@ -6,6 +6,8 @@ import pkg from '../../../package.json';
 import * as Mediabunny from 'mediabunny';
 
 import { getFormatById } from '../utils/discoverFormats';
+import { ApngEncoder } from '../utils/encoders/ApngEncoder';
+import { GifEncoder } from '../utils/encoders/GifEncoder';
 
 export type ResolutionPreset = 'original' | '720p' | '1080p';
 export type CaptureMethod = 'optimal' | 'high-fidelity';
@@ -152,26 +154,51 @@ export const useRenderer = (
 
         await rendererRef.current.loadSvg(svgContent, width, height);
 
-        const target = new Mediabunny.BufferTarget();
-        const outputFormat = new formatInfo.OutputFormatClass();
-        const output = new Mediabunny.Output({
-          format: outputFormat,
-          target,
-        });
-
-        const metadata: VideoMetadata = {};
-        if (settings.metadata?.title?.trim()) {
-          metadata.title = settings.metadata.title.trim();
-        }
-        metadata.comment = mergeMetadataComments(
-          settings.metadata?.comment?.trim(),
-          pkg.version
+        const isCustomFormat = ['apng', 'gif', 'gif-transparent'].includes(
+          settings.format
         );
 
-        output.setMetadataTags(metadata);
+        let apngEncoder: ApngEncoder | null = null;
+        let gifEncoder: GifEncoder | null = null;
+        let target: Mediabunny.BufferTarget | null = null;
+        let output: Mediabunny.Output | null = null;
+        let source: Mediabunny.CanvasSource | null = null;
 
-        const videoCodec = await getBestCodec(width, height, settings.format);
-        if (!videoCodec) {
+        if (settings.format === 'apng') {
+          apngEncoder = new ApngEncoder(width, height);
+        } else if (
+          settings.format === 'gif' ||
+          settings.format === 'gif-transparent'
+        ) {
+          const transColor =
+            settings.format === 'gif-transparent'
+              ? settings.backgroundColor
+              : undefined;
+          gifEncoder = new GifEncoder(width, height, transColor);
+        } else {
+          target = new Mediabunny.BufferTarget();
+          const outputFormat = new formatInfo.OutputFormatClass();
+          output = new Mediabunny.Output({
+            format: outputFormat,
+            target,
+          });
+
+          const metadata: VideoMetadata = {};
+          if (settings.metadata?.title?.trim()) {
+            metadata.title = settings.metadata.title.trim();
+          }
+          metadata.comment = mergeMetadataComments(
+            settings.metadata?.comment?.trim(),
+            pkg.version
+          );
+
+          output.setMetadataTags(metadata);
+        }
+
+        const videoCodec = isCustomFormat
+          ? 'N/A'
+          : await getBestCodec(width, height, settings.format);
+        if (!isCustomFormat && !videoCodec) {
           throw new Error('No supported video codec found.');
         }
 
@@ -180,7 +207,7 @@ export const useRenderer = (
           meta: {
             originalSize: `${origWidth}x${origHeight}`,
             finalSize: `${width}x${height}`,
-            codec: videoCodec,
+            codec: videoCodec || 'N/A',
             eta: 0,
           },
         }));
@@ -188,23 +215,27 @@ export const useRenderer = (
         const canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
-        const ctx = canvas.getContext('2d', { alpha: settings.isTransparent });
+        const ctx = canvas.getContext('2d', {
+          alpha:
+            settings.isTransparent || settings.format === 'gif-transparent',
+        });
         if (!ctx) throw new Error('Could not get 2D context');
 
-        if (!settings.isTransparent) {
-          ctx.fillStyle = settings.backgroundColor;
-          ctx.fillRect(0, 0, width, height);
+        if (!isCustomFormat) {
+          if (!settings.isTransparent) {
+            ctx.fillStyle = settings.backgroundColor;
+            ctx.fillRect(0, 0, width, height);
+          }
+
+          source = new Mediabunny.CanvasSource(canvas, {
+            codec: videoCodec as Mediabunny.VideoCodec,
+            bitrate: Mediabunny.QUALITY_HIGH,
+            alpha: settings.isTransparent ? 'keep' : 'discard',
+          });
+          output!.addVideoTrack(source);
+
+          await output!.start();
         }
-
-        const source = new Mediabunny.CanvasSource(canvas, {
-          codec: videoCodec,
-          bitrate: Mediabunny.QUALITY_HIGH,
-          alpha: settings.isTransparent ? 'keep' : 'discard',
-        });
-        output.addVideoTrack(source);
-
-        await output.start();
-        // ... (rest of rendering logic remains the same)
 
         const totalAnimationFrames = Math.ceil(
           settings.duration * settings.fps
@@ -225,16 +256,33 @@ export const useRenderer = (
           await rendererRef.current.seek(timeMs);
           const bitmap = await rendererRef.current.capture(
             settings.captureMethod,
-            settings.isTransparent
+            settings.isTransparent || settings.format === 'gif-transparent'
           );
           ctx.clearRect(0, 0, width, height);
-          if (!settings.isTransparent) {
+          if (
+            !settings.isTransparent ||
+            settings.format === 'gif-transparent'
+          ) {
             ctx.fillStyle = settings.backgroundColor;
             ctx.fillRect(0, 0, width, height);
           }
           ctx.drawImage(bitmap, 0, 0, width, height);
+
+          if (isCustomFormat) {
+            if (apngEncoder) {
+              const imageData = ctx.getImageData(0, 0, width, height);
+              apngEncoder.addFrame(
+                new Uint8Array(imageData.data),
+                frameDuration * 1000
+              );
+            } else if (gifEncoder) {
+              gifEncoder.addFrame(ctx, frameDuration * 1000);
+            }
+          } else {
+            await source!.add((frame - 1) * frameDuration, frameDuration);
+          }
+
           bitmap.close();
-          await source.add((frame - 1) * frameDuration, frameDuration);
 
           const elapsedTime = (performance.now() - startTime) / 1000;
           const eta = Math.round((totalFrames - frame) * (elapsedTime / frame));
@@ -258,7 +306,7 @@ export const useRenderer = (
           await rendererRef.current.seek(settings.duration * 1000);
           const finalBitmap = await rendererRef.current.capture(
             settings.captureMethod,
-            settings.isTransparent
+            settings.isTransparent || settings.format === 'gif-transparent'
           );
 
           for (let frame = 1; frame <= totalHoldFrames; frame++) {
@@ -272,12 +320,31 @@ export const useRenderer = (
             }
             const currentFrame = totalAnimationFrames + frame;
             ctx.clearRect(0, 0, width, height);
-            if (!settings.isTransparent) {
+            if (
+              !settings.isTransparent ||
+              settings.format === 'gif-transparent'
+            ) {
               ctx.fillStyle = settings.backgroundColor;
               ctx.fillRect(0, 0, width, height);
             }
             ctx.drawImage(finalBitmap, 0, 0, width, height);
-            await source.add((currentFrame - 1) * frameDuration, frameDuration);
+
+            if (isCustomFormat) {
+              if (apngEncoder) {
+                const imageData = ctx.getImageData(0, 0, width, height);
+                apngEncoder.addFrame(
+                  new Uint8Array(imageData.data),
+                  frameDuration * 1000
+                );
+              } else if (gifEncoder) {
+                gifEncoder.addFrame(ctx, frameDuration * 1000);
+              }
+            } else {
+              await source!.add(
+                (currentFrame - 1) * frameDuration,
+                frameDuration
+              );
+            }
 
             const elapsedTime = (performance.now() - startTime) / 1000;
             const eta = Math.round(
@@ -306,13 +373,26 @@ export const useRenderer = (
           status: 'Finalizing video...',
         });
 
-        await output.finalize();
+        let blob: Blob;
 
-        const resultBuffer = target.buffer;
-        if (!resultBuffer) throw new Error('Output buffer is empty');
-        const blob = new Blob([resultBuffer], {
-          type: formatInfo.mimeType,
-        });
+        if (isCustomFormat) {
+          if (apngEncoder) {
+            const buffer = await apngEncoder.finalize();
+            blob = new Blob([buffer], { type: formatInfo.mimeType });
+          } else if (gifEncoder) {
+            blob = await gifEncoder.finalize();
+          } else {
+            throw new Error('No encoder initialized for custom format');
+          }
+        } else {
+          await output!.finalize();
+          const resultBuffer = target!.buffer;
+          if (!resultBuffer) throw new Error('Output buffer is empty');
+          blob = new Blob([resultBuffer], {
+            type: formatInfo.mimeType,
+          });
+        }
+
         const url = URL.createObjectURL(blob);
         setState({ isRendering: false, progress: 100, status: 'Done!' });
 

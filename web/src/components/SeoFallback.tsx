@@ -16,9 +16,9 @@ export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
           SVG to Video <small className="badge">STUDIO</small>
         </h1>
         <p className="description">
-          Convert SVG animations to high-quality MP4, WebM, MKV, or MOV videos
-          with alpha-channel transparency using <strong>WebCodecs</strong>{' '}
-          directly in your browser.
+          Convert SVG animations to high-quality videos (MP4, WebM, MKV, MOV) or
+          animated images (aPNG, GIF) with alpha-channel transparency directly
+          in your browser.
         </p>
 
         <div className="loader">

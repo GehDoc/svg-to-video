@@ -8,7 +8,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/GehDoc/svg-to-video?color=blue)](https://github.com/GehDoc/svg-to-video/releases)
 [![Last Commit](https://img.shields.io/github/last-commit/GehDoc/svg-to-video)](https://gehdoc.github.io/svg-to-video/commits/main)
 
-A high-fidelity tool to transform your CSS-animated SVGs into high-quality MP4, WebM, MKV, or MOV videos with perfect alpha-channel transparency directly in your browser.
+A high-fidelity tool to transform your CSS-animated SVGs into high-quality videos (MP4, WebM, MKV, MOV) or lightweight animated formats (aPNG, GIF) with perfect alpha-channel transparency directly in your browser.
 
 <div align="center">
   <img src="https://gehdoc.github.io/svg-to-video/assets/demo.gif" width="800" alt="SVG to Video Demo">
@@ -19,18 +19,18 @@ A high-fidelity tool to transform your CSS-animated SVGs into high-quality MP4, 
 
 Choose the entry point that matches your needs:
 
-- **[Web Studio](https://gehdoc.github.io/svg-to-video/)**: The easiest way to convert SVGs in your browser without any installation.
+- **[Web Studio](https://gehdoc.github.io/svg-to-video/)**: The easiest way to convert SVGs to video, **aPNG, or GIF** in your browser without any installation.
 - **[CLI / Docker Tool](#-cli--docker-tool)**: For batch processing, server-side automation, and CI/CD integration.
 
 ---
 
 ## 🌟 Why SVG to Video?
 
-- **Transparent Backgrounds**: Export your animations with a full alpha channel using WebM, perfect for overlays in video editing tools like Premiere or DaVinci Resolve.
-- **Privacy-First**: The Web Studio runs entirely in your browser using **WebCodecs**—your SVG files never leave your computer.
+- **Transparent Backgrounds**: Export your animations with a full alpha channel using **WebM or aPNG**, and indexed transparency with **GIF89a**. Perfect for overlays in video editing tools or web use.
+- **Privacy-First**: The Web Studio runs entirely in your browser—your SVG files never leave your computer.
 - **Frame-Accurate**: Our engine scrubs the **Web Animations API**, ensuring every frame is captured exactly as rendered.
 - **Copy to Clipboard**: Instant export to **Base64 Data URL**—copy your video and embed it directly into your HTML, CSS, or JS code without manual downloads. Perfect for rapid prototyping and developers.
-- **Metadata Injection**: Support for custom video titles and comments. Mandatory attribution is automatically appended to the end of the video's comment metadata. Note: We use the `comment` tag for attribution because FFmpeg/MP4 container support for custom tags like `encoded_by` is inconsistent across platforms.
+- **Metadata Injection**: Support for custom video titles and comments (standard video formats).
 - **Versatile**: Whether you need an accessible [Web Studio](#web-studio) for quick conversions or a powerful [CLI tool](#cli--docker-tool) for batch automation and CI/CD pipelines, this project has you covered.
 
 ## 🌐 Web Studio
