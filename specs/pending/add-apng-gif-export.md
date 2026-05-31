@@ -5,17 +5,17 @@
 
 ## 🎯 Objective
 
-Add support for exporting animations to light alternative formats, specifically aPNG (Animated PNG) and optimized GIF, strictly within the Web Studio application, ensuring they are correctly categorized in the UI with transparency support status.
+Add support for exporting animations to light alternative formats, specifically aPNG (Animated PNG) and GIF (both optimized opaque and transparent GIF89a), strictly within the Web Studio application, ensuring they are correctly categorized in the UI with transparency support status.
 
 ## 🛠 Technical Strategy
 
 - **Core Technologies**: WebCodecs, Canvas API (for rendering)
 - **Architecture**:
-  - **Format Discovery**: Extend `AVAILABLE_FORMATS` in `web/src/utils/discoverFormats.ts` with stubs that satisfy `Mediabunny.OutputFormat`. (Done)
+  - **Format Discovery**: Extend `AVAILABLE_FORMATS` in `web/src/utils/discoverFormats.ts` with stubs for `apng`, `gif` (opaque), and `gif-transparent` (GIF89a).
   - **Encoder Backbone**: Implement a collector that captures raw `ImageBitmap` frames from the renderer.
   - **aPNG Encoding**: Use `upng-js` to encode the collected frames into an Animated PNG.
-  - **GIF Encoding**: Use `gif.js` or `omggif` to encode frames into an optimized GIF.
-  - **Renderer Branching**: Modify `web/src/hooks/useRenderer.ts` to detect these special formats and use a custom rendering loop that skips `Mediabunny.Output` and instead feeds frames to the collector.
+  - **GIF Encoding**: Use `gif.js` or `omggif`. For transparent GIFs (GIF89a), implement a palette-based approach where the "transparent" background color is mapped to the GIF transparent index.
+  - **Renderer Branching**: Modify `web/src/hooks/useRenderer.ts` to detect these special formats and use a custom rendering loop.
 - **Key Dependencies**:
   - `upng-js`
   - `gif.js` or `omggif`
@@ -23,21 +23,18 @@ Add support for exporting animations to light alternative formats, specifically 
 ## ✅ Task List
 
 - [ ] **Infrastructure & Types (Web Studio)**
-  - [x] Define `aPNG` and `GIF` formats in `web/src/utils/discoverFormats.ts`.
+  - [x] Define `aPNG` and `GIF` (opaque) formats in `web/src/utils/discoverFormats.ts`.
+  - [ ] Add `GIF (Transparent)` format to `web/src/utils/discoverFormats.ts` with `supportsAlpha: true`.
   - [x] Update `VideoFormat` type in `web/src/utils/discoverFormats.ts` to reflect transparency capabilities.
-  - [ ] Refine `OutputFormat` stubs if necessary during integration.
 - [ ] **Encoder Implementation**
-  - [ ] Research and select the best GIF library for performance/size.
   - [ ] Implement `ApngEncoder` using `UPNG.js`.
-  - [ ] Implement `GifEncoder` using the selected library.
+  - [ ] Implement `GifEncoder` supporting both opaque and transparent (GIF89a) modes.
 - [ ] **Web Studio Integration**
   - [ ] Update `useRenderer.ts` to support "Collector" based rendering.
-  - [ ] Implement the frame collection logic in `useRenderer.ts`.
-  - [ ] Integrate encoders into the finalization step of `useRenderer.ts`.
+  - [ ] Ensure the selected background color is correctly passed to the GIF encoder for transparency mapping.
 - [ ] **Testing**
-  - [x] Update `web/src/utils/discoverFormats.test.ts` to verify discovery. (Done)
-  - [ ] Add unit tests for the new encoders.
-  - [ ] Add an E2E test case for aPNG and GIF export.
+  - [x] Update `web/src/utils/discoverFormats.test.ts` to verify discovery.
+  - [ ] Add unit tests for transparency handling in GIF89a.
 
 ## 🧪 Verification Plan
 

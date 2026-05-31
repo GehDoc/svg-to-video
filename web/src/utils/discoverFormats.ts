@@ -128,6 +128,46 @@ export const AVAILABLE_FORMATS: VideoFormat[] = [
       }
     },
   },
+  {
+    id: 'gif-transparent',
+    label: 'GIF (Transparent)',
+    extension: '.gif',
+    mimeType: 'image/gif',
+    supportsAlpha: true,
+    supportsMetadata: false,
+    OutputFormatClass: class extends Mediabunny.OutputFormat {
+      get fileExtension() {
+        return '.gif';
+      }
+      get mimeType() {
+        return 'image/gif';
+      }
+      getSupportedCodecs(): Mediabunny.MediaCodec[] {
+        return [];
+      }
+      getSupportedTrackCounts(): Mediabunny.TrackCountLimits {
+        return {
+          video: { min: 1, max: 1 },
+          audio: { min: 0, max: 0 },
+          subtitle: { min: 0, max: 0 },
+          total: { min: 1, max: 1 },
+        };
+      }
+      get supportsVideoRotationMetadata() {
+        return false;
+      }
+      get supportsTimestampedMediaData() {
+        return true;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      _createMuxer(): any {
+        return null;
+      }
+      get _name() {
+        return 'GIF (Transparent)';
+      }
+    },
+  },
 ];
 
 /**
