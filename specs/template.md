@@ -21,6 +21,9 @@ _One-sentence summary of the user value and technical goal._
   - [ ] [Task 2]
 - [ ] **UI / Integration**
   - [ ] [Task 3]
+- [ ] **Documentation & SEO**
+  - [ ] Update README.md
+  - [ ] Update SEO metadata (layout.tsx, SeoFallback.tsx)
 
 ## 🧪 Verification Plan
 
