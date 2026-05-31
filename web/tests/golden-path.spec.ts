@@ -163,14 +163,14 @@ test.describe('SVG to Video Golden Path', () => {
     );
     await page.setInputFiles('input[type="file"]', svgPath);
 
-    await page.selectOption('#format', 'gif-transparent');
+    await page.selectOption('#format', 'gif');
     await page.check('#transparent');
 
     await page.fill('#duration', '0.5');
     await page.fill('#fps', '10');
 
     const exportButton = page.getByRole('button', {
-      name: /Export GIF-TRANSPARENT/i,
+      name: /Export GIF/i,
     });
     await exportButton.click();
 
@@ -197,6 +197,7 @@ test.describe('SVG to Video Golden Path', () => {
     await page.setInputFiles('input[type="file"]', svgPath);
 
     await page.selectOption('#format', 'gif');
+    await page.uncheck('#transparent');
 
     await page.fill('#duration', '0.5');
     await page.fill('#fps', '10');

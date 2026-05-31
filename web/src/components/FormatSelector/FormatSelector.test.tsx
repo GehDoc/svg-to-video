@@ -65,18 +65,9 @@ describe('FormatSelector', () => {
       OutputFormatClass: MockOutputFormat,
     },
     {
-      id: 'gif-transparent',
-      label: 'GIF (Transparent)',
-      supportsAlpha: true,
-      supportsMetadata: false,
-      extension: '.gif',
-      mimeType: 'image/gif',
-      OutputFormatClass: MockOutputFormat,
-    },
-    {
       id: 'gif',
       label: 'GIF',
-      supportsAlpha: false,
+      supportsAlpha: true,
       supportsMetadata: false,
       extension: '.gif',
       mimeType: 'image/gif',
@@ -100,13 +91,12 @@ describe('FormatSelector', () => {
     );
     expect(alphaOptions).toContain('webm');
     expect(alphaOptions).toContain('apng');
-    expect(alphaOptions).toContain('gif-transparent');
+    expect(alphaOptions).toContain('gif');
 
     const standardOptions = Array.from(
       groups[1].querySelectorAll('option')
     ).map((o) => o.value);
     expect(standardOptions).toContain('mp4');
-    expect(standardOptions).toContain('gif');
   });
 
   it('should call onChange when selection changes', () => {

@@ -154,9 +154,7 @@ export const useRenderer = (
 
         await rendererRef.current.loadSvg(svgContent, width, height);
 
-        const isCustomFormat = ['apng', 'gif', 'gif-transparent'].includes(
-          settings.format
-        );
+        const isCustomFormat = ['apng', 'gif'].includes(settings.format);
 
         let apngEncoder: ApngEncoder | null = null;
         let gifEncoder: GifEncoder | null = null;
@@ -166,14 +164,10 @@ export const useRenderer = (
 
         if (settings.format === 'apng') {
           apngEncoder = new ApngEncoder(width, height);
-        } else if (
-          settings.format === 'gif' ||
-          settings.format === 'gif-transparent'
-        ) {
-          const transColor =
-            settings.format === 'gif-transparent'
-              ? settings.backgroundColor
-              : undefined;
+        } else if (settings.format === 'gif') {
+          const transColor = settings.isTransparent
+            ? settings.backgroundColor
+            : undefined;
           gifEncoder = new GifEncoder(width, height, transColor);
         } else {
           target = new Mediabunny.BufferTarget();
@@ -216,8 +210,7 @@ export const useRenderer = (
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d', {
-          alpha:
-            settings.isTransparent || settings.format === 'gif-transparent',
+          alpha: settings.isTransparent,
         });
         if (!ctx) throw new Error('Could not get 2D context');
 
@@ -256,13 +249,11 @@ export const useRenderer = (
           await rendererRef.current.seek(timeMs);
           const bitmap = await rendererRef.current.capture(
             settings.captureMethod,
-            settings.isTransparent || settings.format === 'gif-transparent'
+            settings.isTransparent
           );
           ctx.clearRect(0, 0, width, height);
-          if (
-            !settings.isTransparent ||
-            settings.format === 'gif-transparent'
-          ) {
+          // For GIF, even if transparent, we fill the background with the key color
+          if (!settings.isTransparent || settings.format === 'gif') {
             ctx.fillStyle = settings.backgroundColor;
             ctx.fillRect(0, 0, width, height);
           }
@@ -306,7 +297,7 @@ export const useRenderer = (
           await rendererRef.current.seek(settings.duration * 1000);
           const finalBitmap = await rendererRef.current.capture(
             settings.captureMethod,
-            settings.isTransparent || settings.format === 'gif-transparent'
+            settings.isTransparent
           );
 
           for (let frame = 1; frame <= totalHoldFrames; frame++) {
@@ -320,10 +311,8 @@ export const useRenderer = (
             }
             const currentFrame = totalAnimationFrames + frame;
             ctx.clearRect(0, 0, width, height);
-            if (
-              !settings.isTransparent ||
-              settings.format === 'gif-transparent'
-            ) {
+            // For GIF, even if transparent, we fill the background with the key color
+            if (!settings.isTransparent || settings.format === 'gif') {
               ctx.fillStyle = settings.backgroundColor;
               ctx.fillRect(0, 0, width, height);
             }

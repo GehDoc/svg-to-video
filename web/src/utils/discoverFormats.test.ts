@@ -44,7 +44,7 @@ describe('discoverFormats', () => {
     expect(apng?.mimeType).toBe('image/png');
 
     const gif = formats.find((f) => f.id === 'gif');
-    expect(gif?.supportsAlpha).toBe(false);
+    expect(gif?.supportsAlpha).toBe(true);
     expect(gif?.mimeType).toBe('image/gif');
   });
 });
