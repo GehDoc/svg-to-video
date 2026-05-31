@@ -55,6 +55,33 @@ describe('FormatSelector', () => {
       mimeType: 'video/mp4',
       OutputFormatClass: MockOutputFormat,
     },
+    {
+      id: 'apng',
+      label: 'aPNG',
+      supportsAlpha: true,
+      supportsMetadata: false,
+      extension: '.png',
+      mimeType: 'image/png',
+      OutputFormatClass: MockOutputFormat,
+    },
+    {
+      id: 'gif-transparent',
+      label: 'GIF (Transparent)',
+      supportsAlpha: true,
+      supportsMetadata: false,
+      extension: '.gif',
+      mimeType: 'image/gif',
+      OutputFormatClass: MockOutputFormat,
+    },
+    {
+      id: 'gif',
+      label: 'GIF',
+      supportsAlpha: false,
+      supportsMetadata: false,
+      extension: '.gif',
+      mimeType: 'image/gif',
+      OutputFormatClass: MockOutputFormat,
+    },
   ];
 
   it('should render options grouped by alpha support', () => {
@@ -66,6 +93,20 @@ describe('FormatSelector', () => {
     expect(groups.length).toBe(2);
     expect(groups[0].getAttribute('label')).toBe('Supports Alpha');
     expect(groups[1].getAttribute('label')).toBe('Standard');
+
+    // Check individual options in groups
+    const alphaOptions = Array.from(groups[0].querySelectorAll('option')).map(
+      (o) => o.value
+    );
+    expect(alphaOptions).toContain('webm');
+    expect(alphaOptions).toContain('apng');
+    expect(alphaOptions).toContain('gif-transparent');
+
+    const standardOptions = Array.from(
+      groups[1].querySelectorAll('option')
+    ).map((o) => o.value);
+    expect(standardOptions).toContain('mp4');
+    expect(standardOptions).toContain('gif');
   });
 
   it('should call onChange when selection changes', () => {

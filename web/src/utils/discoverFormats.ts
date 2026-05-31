@@ -188,6 +188,17 @@ export const discoverFormats = async (): Promise<VideoFormat[]> => {
       const instance = new format.OutputFormatClass();
       const codecs = instance.getSupportedVideoCodecs();
 
+      // For custom formats like aPNG or GIF that don't use WebCodecs,
+      // we bypass the encodable codec check.
+      if (['apng', 'gif', 'gif-transparent'].includes(format.id)) {
+        encodableFormats.push({
+          ...format,
+          extension: instance.fileExtension,
+          mimeType: instance.mimeType,
+        });
+        continue;
+      }
+
       // Check if at least one codec is encodable in the current browser.
       // We use a standard 720p resolution for the check.
       const bestCodec = await Mediabunny.getFirstEncodableVideoCodec(codecs, {

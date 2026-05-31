@@ -119,6 +119,104 @@ test.describe('SVG to Video Golden Path', () => {
     expect(download.suggestedFilename()).toBe('font-test.webm');
   });
 
+  test('should successfully render an SVG into an aPNG with transparency', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/font-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    await page.selectOption('#format', 'apng');
+    await page.check('#transparent');
+
+    await page.fill('#duration', '0.5'); // Shorter for faster test
+    await page.fill('#fps', '10');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export APNG/i,
+    });
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('font-test.png');
+  });
+
+  test('should successfully render an SVG into a transparent GIF (GIF89a)', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/font-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    await page.selectOption('#format', 'gif-transparent');
+    await page.check('#transparent');
+
+    await page.fill('#duration', '0.5');
+    await page.fill('#fps', '10');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export GIF-TRANSPARENT/i,
+    });
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('font-test.gif');
+  });
+
+  test('should successfully render an SVG into an opaque GIF', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/font-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    await page.selectOption('#format', 'gif');
+
+    await page.fill('#duration', '0.5');
+    await page.fill('#fps', '10');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export GIF/i,
+    });
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('font-test.gif');
+  });
+
   test('should successfully render an SVG with custom metadata', async ({
     page,
   }) => {

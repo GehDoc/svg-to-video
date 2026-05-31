@@ -35,17 +35,29 @@ Add support for exporting animations to light alternative formats, specifically 
 - [x] **Testing**
   - [x] Update `web/src/utils/discoverFormats.test.ts` to verify discovery.
   - [x] Add unit tests for transparency handling in GIF89a.
+  - [x] **E2E Test Extension**
+    - [x] Locate `web/tests/golden-path.spec.ts`.
+    - [x] Add a new test case: "should successfully render an SVG into an aPNG with transparency".
+    - [x] Add a new test case: "should successfully render an SVG into a transparent GIF (GIF89a)".
+    - [x] Add a new test case: "should successfully render an SVG into an opaque GIF".
+  - [x] **Component & Integration Verification**
+    - [x] Investigate why aPNG/GIF formats are not appearing in `FormatSelector`.
+    - [x] Fix `discoverFormats.ts` to ensure non-WebCodecs formats are not filtered out.
+    - [x] Add unit tests in `web/src/components/FormatSelector/FormatSelector.test.tsx` to ensure new formats are rendered in correct groups.
 - [x] **Documentation & SEO**
-  - [x] Update `README.md` to include aPNG and GIF support.
+  - [x] Update README.md to include aPNG and GIF support.
   - [x] Update `web/src/app/layout.tsx` metadata and JSON-LD.
   - [x] Update `web/src/components/SeoFallback.tsx` description.
 
 ## 🧪 Verification Plan
 
-- [ ] Manual Test: Run the Web Studio, select aPNG/GIF format, export a sample animation, verify result.
-- [ ] Automated Test: `npm run test` in `web/` directory.
+- [x] Manual Test: Run the Web Studio, select aPNG/GIF format, export a sample animation, verify result.
+- [x] Automated Test: `npm run test` in `web/` directory.
 
 ## 📝 Change Log
 
 - 2026-05-30: Initial spec created.
 - 2026-05-30: CORRECTIVE UPDATE - Reverting status to Pending as implementation was only stubbed. Branch `feat/add-apng-gif-export` created.
+- 2026-05-30: Full implementation of aPNG and GIF (opaque/transparent) encoders.
+- 2026-05-30: Fixed format discovery and added comprehensive E2E and unit tests.
+- 2026-05-30: Updated documentation and SEO.
