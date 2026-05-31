@@ -11,32 +11,33 @@ Add support for exporting animations to light alternative formats, specifically 
 
 - **Core Technologies**: WebCodecs, Canvas API (for rendering)
 - **Architecture**:
-  - Extend `VideoFormat` definition within `web/src/utils/discoverFormats.ts`.
-  - Implement `ImageSequenceMuxer` (in `web/src/utils/ImageSequenceMuxer.ts`) to collect raw frames.
-  - Integrate `UPNG.js` for aPNG encoding.
-  - Integrate a GIF encoder (e.g., `gif.js` or `omggif`).
-  - Modify `web/src/hooks/useRenderer.ts` to branch the rendering logic for these non-video-codec formats.
+  - **Format Discovery**: Extend `AVAILABLE_FORMATS` in `web/src/utils/discoverFormats.ts` with stubs that satisfy `Mediabunny.OutputFormat`. (Done)
+  - **Encoder Backbone**: Implement a collector that captures raw `ImageBitmap` frames from the renderer.
+  - **aPNG Encoding**: Use `upng-js` to encode the collected frames into an Animated PNG.
+  - **GIF Encoding**: Use `gif.js` or `omggif` to encode frames into an optimized GIF.
+  - **Renderer Branching**: Modify `web/src/hooks/useRenderer.ts` to detect these special formats and use a custom rendering loop that skips `Mediabunny.Output` and instead feeds frames to the collector.
 - **Key Dependencies**:
   - `upng-js`
-  - `gif.js.optimized` (or similar)
+  - `gif.js` or `omggif`
 
 ## ✅ Task List
 
 - [ ] **Infrastructure & Types (Web Studio)**
-  - [x] Define `aPNG` and `GIF` formats in `web/src/utils/discoverFormats.ts` (Stubs added).
+  - [x] Define `aPNG` and `GIF` formats in `web/src/utils/discoverFormats.ts`.
   - [x] Update `VideoFormat` type in `web/src/utils/discoverFormats.ts` to reflect transparency capabilities.
-  - [ ] Implement robust `OutputFormat` classes for aPNG and GIF.
+  - [ ] Refine `OutputFormat` stubs if necessary during integration.
 - [ ] **Encoder Implementation**
-  - [ ] Integrate/Implement aPNG encoder using `UPNG.js`.
-  - [ ] Integrate/Implement GIF encoder using a suitable library.
-  - [x] Create `ImageSequenceMuxer` base class (Initial version created).
+  - [ ] Research and select the best GIF library for performance/size.
+  - [ ] Implement `ApngEncoder` using `UPNG.js`.
+  - [ ] Implement `GifEncoder` using the selected library.
 - [ ] **Web Studio Integration**
-  - [ ] Modify `useRenderer.ts` to handle `ImageSequenceMuxer`-based formats.
-  - [ ] Ensure `FormatSelector` handles the new formats correctly (already handles categorization by `supportsAlpha`).
+  - [ ] Update `useRenderer.ts` to support "Collector" based rendering.
+  - [ ] Implement the frame collection logic in `useRenderer.ts`.
+  - [ ] Integrate encoders into the finalization step of `useRenderer.ts`.
 - [ ] **Testing**
-  - [ ] Create/Update `web/src/utils/discoverFormats.test.ts` to include new formats.
-  - [ ] Add unit tests for `ImageSequenceMuxer` and specific encoders.
-  - [ ] Verify export flow in E2E tests (`web/tests/`).
+  - [x] Update `web/src/utils/discoverFormats.test.ts` to verify discovery. (Done)
+  - [ ] Add unit tests for the new encoders.
+  - [ ] Add an E2E test case for aPNG and GIF export.
 
 ## 🧪 Verification Plan
 
