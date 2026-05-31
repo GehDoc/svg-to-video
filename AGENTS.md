@@ -8,11 +8,11 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - **If linked to Issue #XX**:
      - Create branch: `feat/XX-description`.
      - Initialize spec: `specs/pending/XX-description.md`.
-     - Commit initial spec immediately.
+     - Commit initial spec, push, and create a Pull Request (using `gh pr create`) immediately.
    - **If not linked to an issue**:
      - Create branch: `feat/description`.
      - Initialize spec: `specs/pending/description.md` (no number prefix).
-     - Commit initial spec immediately.
+     - Commit initial spec, push, and create a Pull Request (using `gh pr create`) immediately.
 
    NEVER use a random number to fill the gap if no issue number is available.
 
