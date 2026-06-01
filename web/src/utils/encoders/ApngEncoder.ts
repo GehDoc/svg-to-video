@@ -23,8 +23,8 @@ export class ApngEncoder {
     const buffers = this.frames.map((f) => f.data.buffer) as ArrayBuffer[];
     const delays = this.frames.map((f) => f.delay);
 
-    // UPNG.encode(frames, w, h, cnum, [delays])
-    // cnum: number of colors in the palette. 0 for lossless PNG.
+    // UPNG.encode expects an array of ArrayBuffers (one per frame)
+    // The frames should be in RGBA format (as added in `addFrame`)
     return UPNG.encode(buffers, this.width, this.height, 0, delays);
   }
 }
