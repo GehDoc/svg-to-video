@@ -252,8 +252,8 @@ export const useRenderer = (
             settings.isTransparent
           );
           ctx.clearRect(0, 0, width, height);
-          // For GIF, even if transparent, we fill the background with the key color
-          if (!settings.isTransparent || settings.format === 'gif') {
+          // Fill background if not transparent OR if the format requires color keying
+          if (!settings.isTransparent || formatInfo.needsColorKeying) {
             ctx.fillStyle = settings.backgroundColor;
             ctx.fillRect(0, 0, width, height);
           }
@@ -311,8 +311,8 @@ export const useRenderer = (
             }
             const currentFrame = totalAnimationFrames + frame;
             ctx.clearRect(0, 0, width, height);
-            // For GIF, even if transparent, we fill the background with the key color
-            if (!settings.isTransparent || settings.format === 'gif') {
+            // Fill background if not transparent OR if the format requires color keying
+            if (!settings.isTransparent || formatInfo.needsColorKeying) {
               ctx.fillStyle = settings.backgroundColor;
               ctx.fillRect(0, 0, width, height);
             }

@@ -19,6 +19,7 @@ interface MonitorPanelProps {
   rendererRef: React.RefObject<RendererHandle | null>;
   backgroundColor: string;
   isTransparent: boolean;
+  needsColorKeying: boolean;
   onCancel: () => void;
   onClearError: () => void;
 }
@@ -37,6 +38,7 @@ export const MonitorPanel = ({
   rendererRef,
   backgroundColor,
   isTransparent,
+  needsColorKeying,
   onCancel,
   onClearError,
 }: MonitorPanelProps) => {
@@ -60,6 +62,7 @@ export const MonitorPanel = ({
           rendererRef={rendererRef}
           backgroundColor={backgroundColor}
           isTransparent={isTransparent}
+          needsColorKeying={needsColorKeying}
           onCancel={onCancel}
           onClearError={onClearError}
         />
