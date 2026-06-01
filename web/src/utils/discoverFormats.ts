@@ -7,6 +7,7 @@ export interface VideoFormat {
   mimeType: string;
   supportsAlpha: boolean;
   supportsMetadata: boolean;
+  needsColorKeying?: boolean;
   // We store the class to instantiate it later
   OutputFormatClass: new () => Mediabunny.OutputFormat;
 }
@@ -95,6 +96,7 @@ export const AVAILABLE_FORMATS: VideoFormat[] = [
     mimeType: 'image/gif',
     supportsAlpha: true,
     supportsMetadata: false,
+    needsColorKeying: true,
     OutputFormatClass: class extends Mediabunny.OutputFormat {
       get fileExtension() {
         return '.gif';

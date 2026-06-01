@@ -3,8 +3,19 @@ import { render, screen, cleanup } from '@testing-library/react';
 import { test, expect, afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { ConfigPanel } from './ConfigPanel';
+import * as discoverFormats from '../utils/discoverFormats';
+import * as isTransparencySupported from '../utils/isTransparencySupported';
 
 afterEach(cleanup);
+
+vi.mock('../utils/discoverFormats', () => ({
+  getFormatById: vi.fn(),
+  discoverFormats: vi.fn().mockResolvedValue([]),
+}));
+
+vi.mock('../utils/isTransparencySupported', () => ({
+  isTransparencySupported: vi.fn(),
+}));
 
 const defaultProps = {
   svgContent: null,
@@ -39,7 +50,39 @@ const defaultProps = {
   onMetadataChange: vi.fn(),
 };
 
+test('ConfigPanel: GIF with transparent background enables background color selector', () => {
+  vi.mocked(discoverFormats.getFormatById).mockReturnValue({
+    id: 'gif',
+    label: 'GIF',
+    extension: '.gif',
+    mimeType: 'image/gif',
+    supportsAlpha: true,
+    supportsMetadata: false,
+    needsColorKeying: true,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    OutputFormatClass: class {} as any,
+  });
+  vi.mocked(isTransparencySupported.isTransparencySupported).mockReturnValue(
+    true
+  );
+
+  render(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      format="gif"
+      isTransparent={true}
+    />
+  );
+
+  const bgColorInput = screen.getByLabelText(/Background color hex code/i);
+  expect(bgColorInput).not.toBeDisabled();
+});
+
 test('ConfigPanel dependency: MP4 disables transparency toggle', () => {
+  vi.mocked(isTransparencySupported.isTransparencySupported).mockReturnValue(
+    false
+  );
   render(
     <ConfigPanel
       {...defaultProps}
@@ -54,6 +97,9 @@ test('ConfigPanel dependency: MP4 disables transparency toggle', () => {
 });
 
 test('ConfigPanel dependency: WebM enables transparency toggle', () => {
+  vi.mocked(isTransparencySupported.isTransparencySupported).mockReturnValue(
+    true
+  );
   render(
     <ConfigPanel
       {...defaultProps}
