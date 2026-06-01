@@ -16,6 +16,7 @@ Add support for exporting animations to light alternative formats, specifically 
   - **aPNG Encoding**: Use `upng-js` to encode the collected frames into an Animated PNG. (Done)
   - **GIF Encoding**: Use `gif.js` or `omggif`. For transparent GIFs (GIF89a), implement a palette-based approach where the "transparent" background color is mapped to the GIF transparent index. (Done using `gif.js.optimized`)
   - **Renderer Branching**: Modify `web/src/hooks/useRenderer.ts` to detect these special formats and use a custom rendering loop. (Done)
+  - **Automated Transparency Verification**: Leverage existing `ffprobe` and `pngjs` helpers in `tests/helpers/e2e.ts` to analyze the alpha channel/transparency indices of generated outputs in E2E tests.
 - **Key Dependencies**:
   - `upng-js`
   - `gif.js.optimized`
@@ -54,12 +55,12 @@ Add support for exporting animations to light alternative formats, specifically 
   - [x] **Previewer Test**: Add unit test in `SuccessView.test.tsx` to verify `<img>` tag rendering.
   - [ ] **aPNG Transparency Bug**: Investigate and fix why aPNG transparency is not preserved.
   - [ ] **UI Logic Refinement**: Introduce a `needsColorKeying` property to `VideoFormat`. Allow background color selection even when "Transparent Background" is checked if the format has `needsColorKeying: true`.
-  - [ ] **Automated Transparency Verification**: Update all E2E tests for aPNG and GIF to verify pixel-level transparency in the output files (using a tool like `pixelmatch` or similar in Playwright).
+  - [ ] **Automated Transparency Verification**: Update all E2E tests for aPNG and GIF to verify pixel-level transparency in the output files (using `pngjs` for PNG/GIF analysis and `ffprobe` for WebM).
 
 ## 🧪 Verification Plan
 
 - [x] Manual Test: Run the Web Studio, select aPNG/GIF format, export a sample animation, verify result.
-- [x] Automated Test: `npm run test` in `web/` directory.
+- [ ] Automated Test: Implement and run automated pixel-level transparency verification for all supported formats in the E2E suite.
 
 ## 📝 Change Log
 
