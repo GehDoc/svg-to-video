@@ -1,7 +1,7 @@
 # Spec: Add aPNG and Optimized GIF Export Support (Web Studio Only)
 
 **GitHub Issue**: N/A
-**Status**: 🟢 Completed
+**Status**: 🟠 Pending (Addressing Bugs)
 
 ## 🎯 Objective
 
@@ -49,6 +49,12 @@ Add support for exporting animations to light alternative formats, specifically 
   - [x] Update `web/src/app/layout.tsx` metadata and JSON-LD.
   - [x] Update `web/src/components/SeoFallback.tsx` description.
 
+- [ ] **Bug Fixes & Refinements**
+  - [x] **Previewer Bug**: Use `<img>` tag instead of `<video>` for aPNG and GIF in `SuccessView`.
+  - [x] **Previewer Test**: Add unit test in `SuccessView.test.tsx` to verify `<img>` tag rendering.
+  - [ ] **aPNG Transparency Bug**: Investigate and fix why aPNG transparency is not preserved.
+  - [ ] **UI Logic Refinement**: Introduce a `needsColorKeying` property to `VideoFormat`. Allow background color selection even when "Transparent Background" is checked if the format has `needsColorKeying: true`.
+
 ## 🧪 Verification Plan
 
 - [x] Manual Test: Run the Web Studio, select aPNG/GIF format, export a sample animation, verify result.
@@ -61,3 +67,5 @@ Add support for exporting animations to light alternative formats, specifically 
 - 2026-05-30: Full implementation of aPNG and GIF (opaque/transparent) encoders.
 - 2026-05-30: Fixed format discovery and added comprehensive E2E and unit tests.
 - 2026-05-30: Updated documentation and SEO.
+- 2026-05-30: RE-OPENED - Identified bugs in previewer and transparency handling.
+- 2026-05-30: Verified previewer bug fix with unit tests.

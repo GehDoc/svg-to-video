@@ -80,3 +80,30 @@ test('SuccessView renders donation support link', () => {
     'https://github.com/GehDoc/svg-to-video/?sponsor=1'
   );
 });
+
+test('SuccessView renders img tag for png/gif previews', () => {
+  const { rerender } = render(
+    <SuccessView
+      fileName="test.png"
+      fileSize="100 KB"
+      renderedUrl="blob:test.png"
+      onDownload={vi.fn()}
+      onBack={vi.fn()}
+    />
+  );
+  expect(screen.getByRole('img')).toBeInTheDocument();
+  expect(screen.getByRole('img')).toHaveAttribute('src', 'blob:test.png');
+  expect(screen.queryByRole('video')).not.toBeInTheDocument();
+
+  rerender(
+    <SuccessView
+      fileName="test.gif"
+      fileSize="100 KB"
+      renderedUrl="blob:test.gif"
+      onDownload={vi.fn()}
+      onBack={vi.fn()}
+    />
+  );
+  expect(screen.getByRole('img')).toBeInTheDocument();
+  expect(screen.getByRole('img')).toHaveAttribute('src', 'blob:test.gif');
+});

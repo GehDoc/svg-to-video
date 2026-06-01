@@ -51,6 +51,8 @@ export const SuccessView = ({
     return <FaCopy />;
   };
 
+  const isImage = fileName.endsWith('.png') || fileName.endsWith('.gif');
+
   return (
     <div className="success-card">
       <header className="success-header">
@@ -63,10 +65,14 @@ export const SuccessView = ({
         </p>
       </header>
       <div className="success-preview">
-        <video src={renderedUrl} controls autoPlay loop>
-          <track kind="captions" srcLang="en" label="English" default />
-          Your browser does not support the video tag.
-        </video>
+        {isImage ? (
+          <img src={renderedUrl} alt="Rendered animation preview" />
+        ) : (
+          <video src={renderedUrl} controls autoPlay loop>
+            <track kind="captions" srcLang="en" label="English" default />
+            Your browser does not support the video tag.
+          </video>
+        )}
       </div>
       <div className="success-actions">
         <Button variant="primary" onClick={onDownload}>
