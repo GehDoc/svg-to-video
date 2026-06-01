@@ -53,8 +53,8 @@ Add support for exporting animations to light alternative formats, specifically 
 - [ ] **Bug Fixes & Refinements**
   - [x] **Previewer Bug**: Use `<img>` tag instead of `<video>` for aPNG and GIF in `SuccessView`.
   - [x] **Previewer Test**: Add unit test in `SuccessView.test.tsx` to verify `<img>` tag rendering.
-  - [ ] **aPNG Transparency Bug**: Investigate and fix why aPNG transparency is not preserved.
-  - [ ] **UI Logic Refinement**: Introduce a `needsColorKeying` property to `VideoFormat`. Allow background color selection even when "Transparent Background" is checked if the format has `needsColorKeying: true`.
+  - [x] **aPNG Transparency Bug**: Investigate and fix why aPNG transparency is not preserved.
+  - [x] **UI Logic Refinement**: Introduce a `needsColorKeying` property to `VideoFormat`. Allow background color selection even when "Transparent Background" is checked if the format has `needsColorKeying: true`.
   - [ ] **Automated Transparency Verification**: Update all E2E tests for aPNG and GIF to verify pixel-level transparency in the output files (using `pngjs` for PNG/GIF analysis and `ffprobe` for WebM).
 
 ## 🧪 Verification Plan
