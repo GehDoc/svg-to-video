@@ -140,6 +140,27 @@ export const getFormatById = (id: string): VideoFormat | undefined => {
 };
 
 /**
+ * Gets the MIME type for a given format ID.
+ * Throws if format is not found.
+ */
+export const getMimeTypeById = (id: string): string => {
+  const format = getFormatById(id);
+  if (!format) {
+    throw new Error(
+      `Critical Error: Format info not found for format ID: ${id}`
+    );
+  }
+  return format.mimeType;
+};
+
+/**
+ * Checks if a MIME type refers to an image format.
+ */
+export const isImageMimeType = (mimeType: string): boolean => {
+  return mimeType.startsWith('image/');
+};
+
+/**
  * Discovers the video formats supported by the current browser.
  */
 export const discoverFormats = async (): Promise<VideoFormat[]> => {

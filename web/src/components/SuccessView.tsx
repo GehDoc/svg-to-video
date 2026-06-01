@@ -3,12 +3,14 @@ import { Button } from './Button/Button';
 import { FaHeart, FaCopy, FaCheck, FaTimes } from 'react-icons/fa';
 import pkg from '../../package.json';
 import { copyDataUrl } from '../utils/clipboard';
+import { isImageMimeType } from '../utils/discoverFormats';
 import './SuccessView.scss';
 
 interface SuccessViewProps {
   fileName: string;
   fileSize: string | null;
   renderedUrl: string;
+  mimeType: string;
   onDownload: () => void;
   onBack: () => void;
   onCopyOverride?: (url: string) => Promise<boolean>;
@@ -18,6 +20,7 @@ export const SuccessView = ({
   fileName,
   fileSize,
   renderedUrl,
+  mimeType,
   onDownload,
   onBack,
   onCopyOverride,
@@ -51,7 +54,7 @@ export const SuccessView = ({
     return <FaCopy />;
   };
 
-  const isImage = fileName.endsWith('.png') || fileName.endsWith('.gif');
+  const isImage = isImageMimeType(mimeType);
 
   return (
     <div className="success-card">
@@ -68,7 +71,13 @@ export const SuccessView = ({
         {isImage ? (
           <img src={renderedUrl} alt="Rendered animation preview" />
         ) : (
-          <video src={renderedUrl} controls autoPlay loop>
+          <video
+            src={renderedUrl}
+            controls
+            autoPlay
+            loop
+            data-testid="video-preview"
+          >
             <track kind="captions" srcLang="en" label="English" default />
             Your browser does not support the video tag.
           </video>
