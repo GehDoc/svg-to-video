@@ -19,16 +19,17 @@ A high-fidelity tool to transform your CSS-animated SVGs into high-quality video
 
 Choose the entry point that matches your needs:
 
-- **[Web Studio](https://gehdoc.github.io/svg-to-video/)**: The easiest way to convert SVGs to video, **aPNG, or GIF** in your browser without any installation.
+- **[Web Studio](https://gehdoc.github.io/svg-to-video/)**: The easiest way to convert SVGs to video, **high-fidelity aPNG, or optimized GIF** in your browser without any installation.
 - **[CLI / Docker Tool](#-cli--docker-tool)**: For batch processing, server-side automation, and CI/CD integration.
 
 ---
 
 ## 🌟 Why SVG to Video?
 
-- **Transparent Backgrounds**: Export your animations with a full alpha channel using **WebM or aPNG**, and indexed transparency with **GIF89a**. Perfect for overlays in video editing tools or web use.
+- **Transparent Backgrounds**: Export your animations with a full alpha channel using **WebM or aPNG**, and optimized indexed transparency with **GIF89a**. Perfect for overlays in video editing tools or web use.
 - **Privacy-First**: The Web Studio runs entirely in your browser—your SVG files never leave your computer.
 - **Frame-Accurate**: Our engine scrubs the **Web Animations API**, ensuring every frame is captured exactly as rendered.
+- **Universal Animated Formats**: Beyond video, generate lightweight **Animated PNGs (aPNG)** and **GIFs** perfect for documentation, Slack, or GitHub, with full control over background transparency.
 - **Copy to Clipboard**: Instant export to **Base64 Data URL**—copy your video and embed it directly into your HTML, CSS, or JS code without manual downloads. Perfect for rapid prototyping and developers.
 - **Metadata Injection**: Support for custom video titles and comments (standard video formats).
 - **Versatile**: Whether you need an accessible [Web Studio](#web-studio) for quick conversions or a powerful [CLI tool](#cli--docker-tool) for batch automation and CI/CD pipelines, this project has you covered.
