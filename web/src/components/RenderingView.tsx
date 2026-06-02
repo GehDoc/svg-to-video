@@ -14,7 +14,6 @@ interface RenderingViewProps {
   rendererRef: React.RefObject<RendererHandle | null>;
   backgroundColor: string;
   isTransparent: boolean;
-  needsColorKeying: boolean;
   onCancel: () => void;
   onClearError: () => void;
 }
@@ -27,7 +26,6 @@ export const RenderingView = ({
   rendererRef,
   backgroundColor,
   isTransparent,
-  needsColorKeying,
   onCancel,
   onClearError,
 }: RenderingViewProps) => {
@@ -46,7 +44,6 @@ export const RenderingView = ({
             height={targetDim.height}
             backgroundColor={backgroundColor}
             isTransparent={isTransparent}
-            needsColorKeying={needsColorKeying}
             isRendering={state.isRendering}
           />
 

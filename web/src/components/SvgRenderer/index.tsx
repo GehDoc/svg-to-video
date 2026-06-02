@@ -34,7 +34,6 @@ interface SvgRendererProps {
   height?: number;
   backgroundColor?: string;
   isTransparent?: boolean;
-  needsColorKeying?: boolean;
   isRendering?: boolean;
 }
 
@@ -47,7 +46,6 @@ const SvgRenderer = memo(
         height,
         backgroundColor,
         isTransparent,
-        needsColorKeying,
         isRendering,
       },
       ref
@@ -257,16 +255,11 @@ const SvgRenderer = memo(
           <div
             className="monitor-viewport"
             style={{
-              backgroundColor:
-                isTransparent && !needsColorKeying
-                  ? 'transparent'
-                  : backgroundColor,
-              backgroundImage:
-                isTransparent && !needsColorKeying
-                  ? 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%)'
-                  : 'none',
-              backgroundSize:
-                isTransparent && !needsColorKeying ? '20px 20px' : 'auto',
+              backgroundColor,
+              backgroundImage: isTransparent
+                ? 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%)'
+                : 'none',
+              backgroundSize: isTransparent ? '20px 20px' : 'auto',
             }}
           >
             <iframe

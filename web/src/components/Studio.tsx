@@ -7,7 +7,7 @@ import {
   type ResolutionPreset,
   type RenderSettings,
 } from '../hooks/useRenderer';
-import { getFormatById, getMimeTypeById } from '../utils/discoverFormats';
+import { getMimeTypeById } from '../utils/discoverFormats';
 import { analyzeSvgAnimation } from '../../../shared/analyzeSvgAnimation.js';
 import type { VideoMetadata } from '../../../shared/metadata';
 import { Header } from './Header';
@@ -41,10 +41,6 @@ export const Studio = () => {
   const { render, cancel, clearError, state } = useRenderer(rendererRef);
 
   const mimeType = useMemo(() => getMimeTypeById(format), [format]);
-
-  const needsColorKeying = useMemo(() => {
-    return !!getFormatById(format)?.needsColorKeying;
-  }, [format]);
 
   const originalDim = useMemo(() => {
     if (!svgContent)
@@ -186,7 +182,6 @@ export const Studio = () => {
           rendererRef={rendererRef}
           backgroundColor={backgroundColor}
           isTransparent={isTransparent}
-          needsColorKeying={needsColorKeying}
           onCancel={cancel}
           onClearError={clearError}
           mimeType={mimeType}

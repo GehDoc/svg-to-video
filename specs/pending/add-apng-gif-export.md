@@ -45,14 +45,14 @@ Add support for exporting animations to light alternative formats, specifically 
     - [x] Investigate why aPNG/GIF formats are not appearing in `FormatSelector`.
     - [x] Fix `discoverFormats.ts` to ensure non-WebCodecs formats are not filtered out.
     - [x] Add unit tests in `web/src/components/FormatSelector/FormatSelector.test.tsx` to ensure new formats are rendered in correct groups.
-- [ ] **Documentation & SEO**
-      **Status**: 🟠 Pending (Documentation Update Required)
+- [x] **Documentation & SEO**
+      **Status**: 🟢 Completed
 
-- [ ] **Migration to gifenc**
+- [x] **Migration to gifenc**
   - [x] Uninstall `gif.js.optimized`.
   - [x] Install `gifenc` (`npm install gifenc`).
   - [x] Refactor `web/src/utils/encoders/GifEncoder.ts` to use `gifenc`.
-  - [ ] Verify functionality and fix potential issues in Web Studio.
+  - [x] Verify functionality and fix potential issues in Web Studio.
 
   ...
   - [x] **Bug Fixes & Refinements**
@@ -78,3 +78,4 @@ Add support for exporting animations to light alternative formats, specifically 
 - 2026-05-30: Verified previewer bug fix with unit tests.
 - 2026-05-30: Implemented automated transparency verification in E2E suite.
 - 2026-06-02: Decided to migrate to `gifenc` instead of `gifshot`. Refactored encoder to use `gifenc` and added support for Node.js/jsdom canvas mock environment.
+  ironment.

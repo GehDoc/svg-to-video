@@ -162,11 +162,22 @@ export const useRenderer = (
         let output: Mediabunny.Output | null = null;
         let source: Mediabunny.CanvasSource | null = null;
 
+        const backgroundColor =
+          !settings.isTransparent || formatInfo.needsColorKeying
+            ? settings.backgroundColor
+            : undefined;
+        console.log(
+          'Background color for rendering:',
+          backgroundColor,
+          'Transparent:',
+          settings.isTransparent
+        );
+
         if (settings.format === 'apng') {
           apngEncoder = new ApngEncoder(width, height);
         } else if (settings.format === 'gif') {
           const transColor = settings.isTransparent
-            ? settings.backgroundColor
+            ? backgroundColor
             : undefined;
           gifEncoder = new GifEncoder(width, height, transColor);
         } else {
@@ -215,11 +226,6 @@ export const useRenderer = (
         if (!ctx) throw new Error('Could not get 2D context');
 
         if (!isCustomFormat) {
-          if (!settings.isTransparent) {
-            ctx.fillStyle = settings.backgroundColor;
-            ctx.fillRect(0, 0, width, height);
-          }
-
           source = new Mediabunny.CanvasSource(canvas, {
             codec: videoCodec as Mediabunny.VideoCodec,
             bitrate: Mediabunny.QUALITY_HIGH,
@@ -253,9 +259,17 @@ export const useRenderer = (
           );
           ctx.clearRect(0, 0, width, height);
           // Fill background if not transparent OR if the format requires color keying
-          if (!settings.isTransparent || formatInfo.needsColorKeying) {
-            ctx.fillStyle = settings.backgroundColor;
+          if (backgroundColor) {
+            if (formatInfo.needsColorKeying) {
+              // Draw a matte silhouette of the image to blend the alpha channel against
+              ctx.drawImage(bitmap, 0, 0, width, height);
+              ctx.globalCompositeOperation = 'source-in';
+            }
+            ctx.fillStyle = backgroundColor;
             ctx.fillRect(0, 0, width, height);
+
+            // Standard drawing mode
+            ctx.globalCompositeOperation = 'source-over';
           }
           ctx.drawImage(bitmap, 0, 0, width, height);
 
@@ -312,9 +326,17 @@ export const useRenderer = (
             const currentFrame = totalAnimationFrames + frame;
             ctx.clearRect(0, 0, width, height);
             // Fill background if not transparent OR if the format requires color keying
-            if (!settings.isTransparent || formatInfo.needsColorKeying) {
-              ctx.fillStyle = settings.backgroundColor;
+            if (backgroundColor) {
+              if (formatInfo.needsColorKeying) {
+                // Draw a matte silhouette of the image to blend the alpha channel against
+                ctx.drawImage(finalBitmap, 0, 0, width, height);
+                ctx.globalCompositeOperation = 'source-in';
+              }
+              ctx.fillStyle = backgroundColor;
               ctx.fillRect(0, 0, width, height);
+
+              // Standard drawing mode
+              ctx.globalCompositeOperation = 'source-over';
             }
             ctx.drawImage(finalBitmap, 0, 0, width, height);
 
