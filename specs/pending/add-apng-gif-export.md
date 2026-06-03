@@ -46,7 +46,7 @@ Add support for exporting animations to light alternative formats, specifically 
     - [x] Add unit tests in `web/src/components/FormatSelector/FormatSelector.test.tsx` to ensure new formats are rendered in correct groups.
 - [x] **Documentation & SEO**
   - [x] Update `README.md` with aPNG/GIF features.
-  - [x] Audit `web/src/app/layout.tsx` for metadata updates.
+  - [x] Audit `web/src/app/layout.tsx` for metadata updates (Title, Description, Keywords, OG/Twitter).
   - [x] Update `web/src/components/SeoFallback.tsx`.
   - [x] Add relevant keywords to `package.json`.
 
