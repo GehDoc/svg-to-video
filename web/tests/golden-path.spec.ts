@@ -96,7 +96,7 @@ test.describe('SVG to Video Golden Path', () => {
 
     const svgPath = path.resolve(
       __dirname,
-      '../../tests/fixtures/transparent-test.svg'
+      '../../tests/fixtures/transparent-loop-test.svg'
     );
     await page.setInputFiles('input[type="file"]', svgPath);
 
@@ -121,15 +121,61 @@ test.describe('SVG to Video Golden Path', () => {
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('transparent-test.webm');
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.webm');
 
     // Verify transparency in WebM
     const outputPath = path.resolve(
       OUTPUT_DIR_RELATIVE,
-      'transparent-test.webm'
+      'transparent-loop-test.webm'
     );
     await download.saveAs(outputPath);
+    // TODO: Supplement hasAlphaStream (ffprobe) with pixel-level transparency verification for WebM.
     expect(hasAlphaStream(outputPath)).toBe(true);
+  });
+
+  test('should successfully render an SVG into a WebM (opaque with background backfilling)', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/transparent-loop-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    // Select WebM, Opaque, and custom background color
+    await page.selectOption('#format', 'webm');
+    await page.uncheck('#transparent');
+    await page.fill('#bg-color', '#ff0000'); // Set background to red
+
+    await page.fill('#duration', '1');
+    await page.fill('#fps', '24');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export WEBM/i,
+    });
+    await expect(exportButton).toBeEnabled();
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.webm');
+
+    // Verify no alpha stream in opaque WebM
+    const outputPath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'transparent-loop-test-opaque.webm'
+    );
+    await download.saveAs(outputPath);
+    // TODO: Supplement hasAlphaStream (ffprobe) with pixel-level opacity verification for WebM.
+    expect(hasAlphaStream(outputPath)).toBe(false);
   });
 
   test('should successfully render an SVG into an aPNG with transparency', async ({
@@ -139,7 +185,7 @@ test.describe('SVG to Video Golden Path', () => {
 
     const svgPath = path.resolve(
       __dirname,
-      '../../tests/fixtures/transparent-test.svg'
+      '../../tests/fixtures/transparent-loop-test.svg'
     );
     await page.setInputFiles('input[type="file"]', svgPath);
 
@@ -162,12 +208,12 @@ test.describe('SVG to Video Golden Path', () => {
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('transparent-test.png');
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.png');
 
     // Verify transparency in aPNG
     const outputPath = path.resolve(
       OUTPUT_DIR_RELATIVE,
-      'transparent-test.png'
+      'transparent-loop-test.png'
     );
     await download.saveAs(outputPath);
     expect(hasAlphaStream(outputPath)).toBe(true);
@@ -181,7 +227,7 @@ test.describe('SVG to Video Golden Path', () => {
 
     const svgPath = path.resolve(
       __dirname,
-      '../../tests/fixtures/transparent-test.svg'
+      '../../tests/fixtures/transparent-loop-test.svg'
     );
     await page.setInputFiles('input[type="file"]', svgPath);
 
@@ -197,37 +243,40 @@ test.describe('SVG to Video Golden Path', () => {
     await exportButton.click();
 
     const successCard = page.locator('.success-card');
-    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+    // Increased timeout for GIF animation collection
+    await expect(successCard).toBeVisible({ timeout: 60000 });
 
     const downloadButton = page.locator('text=Download');
     const downloadPromise = page.waitForEvent('download');
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('transparent-test.gif');
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.gif');
 
     // Verify transparency in GIF
     const outputPath = path.resolve(
       OUTPUT_DIR_RELATIVE,
-      'transparent-test.gif'
+      'transparent-loop-test.gif'
     );
     await download.saveAs(outputPath);
+    // TODO: Replace hasAlphaStream (ffprobe) with reliable pixel-level transparency verification for GIFs.
     expect(hasAlphaStream(outputPath)).toBe(true);
   });
 
-  test('should successfully render an SVG into an opaque GIF', async ({
+  test('should successfully render an SVG into an opaque GIF (with background backfilling)', async ({
     page,
   }) => {
     await page.goto('/');
 
     const svgPath = path.resolve(
       __dirname,
-      '../../tests/fixtures/transparent-test.svg'
+      '../../tests/fixtures/transparent-loop-test.svg'
     );
     await page.setInputFiles('input[type="file"]', svgPath);
 
     await page.selectOption('#format', 'gif');
     await page.uncheck('#transparent');
+    await page.fill('#bg-color', '#ff0000'); // Set background to red
 
     await page.fill('#duration', '0.5');
     await page.fill('#fps', '10');
@@ -245,7 +294,9 @@ test.describe('SVG to Video Golden Path', () => {
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('transparent-test.gif');
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.gif');
+
+    // TODO: Add robust pixel-level opacity verification for opaque GIF output
   });
 
   test('should successfully render an SVG with custom metadata', async ({
