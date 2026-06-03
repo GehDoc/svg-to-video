@@ -157,7 +157,7 @@ export const getMimeTypeById = (id: string): string => {
  * Checks if a MIME type refers to an image format.
  */
 export const isImageMimeType = (mimeType: string): boolean => {
-  return mimeType.startsWith('image/');
+  return !!mimeType && mimeType.startsWith('image/');
 };
 
 /**
