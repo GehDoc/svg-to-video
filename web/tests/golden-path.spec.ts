@@ -377,8 +377,11 @@ test.describe('SVG to Video Golden Path', () => {
       'transparent-loop-test.gif'
     );
     await download.saveAs(outputPath);
-    // TODO: Replace hasAlphaStream (ffprobe) with reliable pixel-level transparency verification for GIFs.
-    expect(hasAlphaStream(outputPath)).toBe(true);
+
+    // Extract a frame to check transparency
+    const framePath = path.resolve(OUTPUT_DIR_RELATIVE, 'gif-frame.png');
+    extractFrame(outputPath, framePath);
+    expect(isPixelTransparent(framePath, 10, 10)).toBe(true);
   });
 
   test('should successfully render an SVG into an opaque GIF (with background backfilling)', async ({
@@ -414,7 +417,21 @@ test.describe('SVG to Video Golden Path', () => {
 
     expect(download.suggestedFilename()).toBe('transparent-loop-test.gif');
 
-    // TODO: Add robust pixel-level opacity verification for opaque GIF output
+    // Verify background color (flattened red background - allow tolerance for encoding)
+    const outputPath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'transparent-loop-test.gif'
+    );
+    await download.saveAs(outputPath);
+    const framePath = path.resolve(OUTPUT_DIR_RELATIVE, 'gif-opaque-frame.png');
+    extractFrame(outputPath, framePath);
+    const pixel = getPixelRGBA(framePath, 10, 10);
+
+    // Check if pixel is close to Red and Opaque
+    expect(pixel.r).toBeGreaterThan(240);
+    expect(pixel.g).toBeLessThan(15);
+    expect(pixel.b).toBeLessThan(15);
+    expect(pixel.a).toBe(255); // Opaque
   });
 
   test('should successfully render an SVG with custom metadata', async ({
