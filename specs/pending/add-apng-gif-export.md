@@ -1,7 +1,7 @@
 # Spec: Add aPNG and Optimized GIF Export Support (Web Studio Only)
 
 **GitHub Issue**: N/A
-**Status**: 🟠 Pending (SEO & Documentation Audit)
+**Status**: 🟠 Pending (Verification TODOs)
 
 ## 🎯 Objective
 
@@ -66,7 +66,12 @@ Add support for exporting animations to light alternative formats, specifically 
 ## 🧪 Verification Plan
 
 - [x] Manual Test: Run the Web Studio, select aPNG/GIF format, export a sample animation, verify result.
-- [x] Automated Test: Implement and run automated pixel-level transparency verification for all supported formats in the E2E suite.
+- [ ] Automated Test: Implement and run automated pixel-level transparency verification for all supported formats in the E2E suite.
+  - [ ] TODO: Add pixel-level transparency verification for MP4 output.
+  - [ ] TODO: Supplement `hasAlphaStream` (ffprobe) with pixel-level transparency verification for WebM.
+  - [ ] TODO: Supplement `hasAlphaStream` (ffprobe) with pixel-level opacity verification for WebM.
+  - [ ] TODO: Replace `hasAlphaStream` (ffprobe) with reliable pixel-level transparency verification for GIFs.
+  - [ ] TODO: Add robust pixel-level opacity verification for opaque GIF output.
 
 ## 📝 Change Log
 
