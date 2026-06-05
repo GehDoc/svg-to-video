@@ -6,6 +6,13 @@ import ffprobeStatic from 'ffprobe-static';
 
 export const FIXTURE_DIR_RELATIVE = './tests/fixtures';
 export const OUTPUT_DIR_RELATIVE = './out-dir-test';
+export const SUCCESS_TIMEOUT = 30000;
+
+export const ensureOutputDir = () => {
+  if (!fs.existsSync(OUTPUT_DIR_RELATIVE)) {
+    fs.mkdirSync(OUTPUT_DIR_RELATIVE, { recursive: true });
+  }
+};
 
 export const getTestPaths = (fixtureName: string, extension = '.mp4') => {
   return {
@@ -39,6 +46,25 @@ export const getProbeMetadata = (filePath: string): Record<string, string> => {
   return data;
 };
 
+export const getFrameCount = (filePath: string): number => {
+  const output = execFileSync(
+    ffprobeStatic.path,
+    [
+      '-v',
+      'error',
+      '-select_streams',
+      'v:0',
+      '-show_entries',
+      'stream=nb_frames',
+      '-of',
+      'default=nokey=1:noprint_wrappers=1',
+      filePath,
+    ],
+    { encoding: 'utf-8' }
+  );
+  return parseInt(output.trim(), 10);
+};
+
 export const extractFrame = (videoPath: string, framePath: string): boolean => {
   const args = ['-y'];
   if (videoPath.endsWith('.webm')) {
@@ -47,7 +73,7 @@ export const extractFrame = (videoPath: string, framePath: string): boolean => {
     args.push('-c:v', 'libvpx-vp9');
   }
   args.push('-i', videoPath, '-vframes', '1', '-pix_fmt', 'rgba', framePath);
-  
+
   spawnSync('ffmpeg', args, {
     stdio: 'pipe',
   });

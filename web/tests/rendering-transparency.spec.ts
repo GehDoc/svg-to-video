@@ -1,0 +1,362 @@
+import { test, expect } from '@playwright/test';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import {
+  hasAlphaStream,
+  isPixelTransparent,
+  extractFrame,
+  getPixelRGBA,
+  OUTPUT_DIR_RELATIVE,
+  SUCCESS_TIMEOUT,
+  ensureOutputDir,
+} from '../../tests/helpers/e2e.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Ensure output dir for E2E verification
+ensureOutputDir();
+
+test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
+  test('should successfully render an SVG into an MP4 (opaque with background backfilling)', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/transparent-loop-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    // Select MP4 (default), Opaque, and custom background color
+    await page.uncheck('#transparent');
+    await page.fill('#bg-color', '#ff0000'); // Set background to red
+
+    await page.fill('#duration', '0.5');
+    await page.fill('#fps', '10');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export MP4/i,
+    });
+    await expect(exportButton).toBeEnabled();
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.mp4');
+
+    // Verify background color (flattened red background - allow tolerance for encoding)
+    const outputPath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'transparent-loop-test-opaque.mp4'
+    );
+    await download.saveAs(outputPath);
+    const framePath = path.resolve(OUTPUT_DIR_RELATIVE, 'frame.png');
+    extractFrame(outputPath, framePath);
+    const pixel = getPixelRGBA(framePath, 10, 10);
+
+    // Check if pixel is close to Red
+    expect(pixel.r).toBeGreaterThan(240);
+    expect(pixel.g).toBeLessThan(15);
+    expect(pixel.b).toBeLessThan(15);
+    expect(pixel.a).toBe(255); // Opaque
+  });
+
+  test('should successfully render an SVG into a WebM with transparency', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/transparent-loop-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    // Select WebM and Transparency
+    await page.selectOption('#format', 'webm');
+    await page.check('#transparent');
+
+    await page.fill('#duration', '1');
+    await page.fill('#fps', '24');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export WEBM/i,
+    });
+    await expect(exportButton).toBeEnabled();
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.webm');
+
+    // Verify transparency in WebM
+    const outputPath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'transparent-loop-test.webm'
+    );
+    await download.saveAs(outputPath);
+
+    // Extract a frame and verify transparency
+    const framePath = path.resolve(OUTPUT_DIR_RELATIVE, 'webm-frame.png');
+    extractFrame(outputPath, framePath);
+    expect(isPixelTransparent(framePath, 10, 10)).toBe(true);
+    expect(hasAlphaStream(outputPath)).toBe(true);
+  });
+
+  test('should successfully render an SVG into a WebM (opaque with background backfilling)', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/transparent-loop-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    // Select WebM, Opaque, and custom background color
+    await page.selectOption('#format', 'webm');
+    await page.uncheck('#transparent');
+    await page.fill('#bg-color', '#ff0000'); // Set background to red
+
+    await page.fill('#duration', '1');
+    await page.fill('#fps', '24');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export WEBM/i,
+    });
+    await expect(exportButton).toBeEnabled();
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.webm');
+
+    // Verify no alpha stream and correct background color in opaque WebM
+    const outputPath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'transparent-loop-test-opaque.webm'
+    );
+    await download.saveAs(outputPath);
+
+    // Extract a frame and verify opacity and background color
+    const framePath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'webm-opaque-frame.png'
+    );
+    extractFrame(outputPath, framePath);
+    const pixel = getPixelRGBA(framePath, 10, 10);
+
+    // Check if pixel is close to Red
+    expect(pixel.r).toBeGreaterThan(240);
+    expect(pixel.g).toBeLessThan(15);
+    expect(pixel.b).toBeLessThan(15);
+    expect(pixel.a).toBe(255); // Opaque
+  });
+
+  test('should successfully render an SVG into an aPNG with transparency', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/transparent-loop-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    await page.selectOption('#format', 'apng');
+    await page.check('#transparent');
+
+    await page.fill('#duration', '0.5'); // Shorter for faster test
+    await page.fill('#fps', '10');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export APNG/i,
+    });
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.png');
+
+    // Verify transparency in aPNG
+    const outputPath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'transparent-loop-test.png'
+    );
+    await download.saveAs(outputPath);
+    expect(hasAlphaStream(outputPath)).toBe(true);
+    expect(isPixelTransparent(outputPath)).toBe(true);
+  });
+
+  test('should successfully render an SVG into an aPNG (opaque with background backfilling)', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/transparent-loop-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    // Select aPNG, Opaque, and custom background color
+    await page.selectOption('#format', 'apng');
+    await page.uncheck('#transparent');
+    await page.fill('#bg-color', '#ff0000'); // Set background to red
+
+    await page.fill('#duration', '0.5');
+    await page.fill('#fps', '10');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export APNG/i,
+    });
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.png');
+
+    // Verify background color (flattened red background)
+    const outputPath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'transparent-loop-test-opaque.png'
+    );
+    await download.saveAs(outputPath);
+    const pixel = getPixelRGBA(outputPath, 10, 10);
+
+    // Check if pixel is close to Red
+    expect(pixel.r).toBeGreaterThan(240);
+    expect(pixel.g).toBeLessThan(15);
+    expect(pixel.b).toBeLessThan(15);
+    expect(pixel.a).toBe(255); // Opaque
+  });
+
+  test('should successfully render an SVG into a transparent GIF (GIF89a)', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/transparent-loop-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    await page.selectOption('#format', 'gif');
+    await page.check('#transparent');
+
+    await page.fill('#duration', '0.5');
+    await page.fill('#fps', '10');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export GIF/i,
+    });
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    // Increased timeout for GIF animation collection
+    await expect(successCard).toBeVisible({ timeout: 60000 });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.gif');
+
+    // Verify transparency in GIF
+    const outputPath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'transparent-loop-test.gif'
+    );
+    await download.saveAs(outputPath);
+
+    // Extract a frame to check transparency
+    const framePath = path.resolve(OUTPUT_DIR_RELATIVE, 'gif-frame.png');
+    extractFrame(outputPath, framePath);
+    expect(isPixelTransparent(framePath, 10, 10)).toBe(true);
+  });
+
+  test('should successfully render an SVG into an opaque GIF (with background backfilling)', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/transparent-loop-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    await page.selectOption('#format', 'gif');
+    await page.uncheck('#transparent');
+    await page.fill('#bg-color', '#ff0000'); // Set background to red
+
+    await page.fill('#duration', '0.5');
+    await page.fill('#fps', '10');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export GIF/i,
+    });
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.gif');
+
+    // Verify background color (flattened red background - allow tolerance for encoding)
+    const outputPath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'transparent-loop-test.gif'
+    );
+    await download.saveAs(outputPath);
+    const framePath = path.resolve(OUTPUT_DIR_RELATIVE, 'gif-opaque-frame.png');
+    extractFrame(outputPath, framePath);
+    const pixel = getPixelRGBA(framePath, 10, 10);
+
+    // Check if pixel is close to Red and Opaque
+    expect(pixel.r).toBeGreaterThan(240);
+    expect(pixel.g).toBeLessThan(15);
+    expect(pixel.b).toBeLessThan(15);
+    expect(pixel.a).toBe(255); // Opaque
+  });
+});
