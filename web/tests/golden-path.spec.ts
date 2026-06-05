@@ -182,7 +182,11 @@ test.describe('SVG to Video Golden Path', () => {
       'transparent-loop-test.webm'
     );
     await download.saveAs(outputPath);
-    // TODO: Supplement hasAlphaStream (ffprobe) with pixel-level transparency verification for WebM.
+
+    // Extract a frame and verify transparency
+    const framePath = path.resolve(OUTPUT_DIR_RELATIVE, 'webm-frame.png');
+    extractFrame(outputPath, framePath);
+    expect(isPixelTransparent(framePath, 10, 10)).toBe(true);
     expect(hasAlphaStream(outputPath)).toBe(true);
   });
 
@@ -221,14 +225,26 @@ test.describe('SVG to Video Golden Path', () => {
 
     expect(download.suggestedFilename()).toBe('transparent-loop-test.webm');
 
-    // Verify no alpha stream in opaque WebM
+    // Verify no alpha stream and correct background color in opaque WebM
     const outputPath = path.resolve(
       OUTPUT_DIR_RELATIVE,
       'transparent-loop-test-opaque.webm'
     );
     await download.saveAs(outputPath);
-    // TODO: Supplement hasAlphaStream (ffprobe) with pixel-level opacity verification for WebM.
-    expect(hasAlphaStream(outputPath)).toBe(false);
+
+    // Extract a frame and verify opacity and background color
+    const framePath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'webm-opaque-frame.png'
+    );
+    extractFrame(outputPath, framePath);
+    const pixel = getPixelRGBA(framePath, 10, 10);
+
+    // Check if pixel is close to Red
+    expect(pixel.r).toBeGreaterThan(240);
+    expect(pixel.g).toBeLessThan(15);
+    expect(pixel.b).toBeLessThan(15);
+    expect(pixel.a).toBe(255); // Opaque
   });
 
   test('should successfully render an SVG into an aPNG with transparency', async ({

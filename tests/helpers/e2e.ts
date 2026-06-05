@@ -40,7 +40,15 @@ export const getProbeMetadata = (filePath: string): Record<string, string> => {
 };
 
 export const extractFrame = (videoPath: string, framePath: string): boolean => {
-  spawnSync('ffmpeg', ['-y', '-i', videoPath, '-vframes', '1', framePath], {
+  const args = ['-y'];
+  if (videoPath.endsWith('.webm')) {
+    // Explicitly use libvpx-vp9 to preserve the alpha channel during decoding,
+    // as the default decoder may flatten transparent backgrounds to black.
+    args.push('-c:v', 'libvpx-vp9');
+  }
+  args.push('-i', videoPath, '-vframes', '1', '-pix_fmt', 'rgba', framePath);
+  
+  spawnSync('ffmpeg', args, {
     stdio: 'pipe',
   });
   return fs.existsSync(framePath);
