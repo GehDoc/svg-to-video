@@ -6,6 +6,8 @@ import {
   getProbeMetadata,
   hasAlphaStream,
   isPixelTransparent,
+  extractFrame,
+  getPixelRGBA,
   OUTPUT_DIR_RELATIVE,
 } from '../../tests/helpers/e2e.js';
 
@@ -87,6 +89,58 @@ test.describe('SVG to Video Golden Path', () => {
       name: /Export/i,
     });
     await expect(exportButtonAgain).toBeEnabled();
+  });
+
+  test('should successfully render an SVG into an MP4 (opaque with background backfilling)', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/transparent-loop-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    // Select MP4 (default), Opaque, and custom background color
+    await page.uncheck('#transparent');
+    await page.fill('#bg-color', '#ff0000'); // Set background to red
+
+    await page.fill('#duration', '0.5');
+    await page.fill('#fps', '10');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export MP4/i,
+    });
+    await expect(exportButton).toBeEnabled();
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.mp4');
+
+    // Verify background color (flattened red background - allow tolerance for encoding)
+    const outputPath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'transparent-loop-test-opaque.mp4'
+    );
+    await download.saveAs(outputPath);
+    const framePath = path.resolve(OUTPUT_DIR_RELATIVE, 'frame.png');
+    extractFrame(outputPath, framePath);
+    const pixel = getPixelRGBA(framePath, 10, 10);
+
+    // Check if pixel is close to Red
+    expect(pixel.r).toBeGreaterThan(240);
+    expect(pixel.g).toBeLessThan(15);
+    expect(pixel.b).toBeLessThan(15);
+    expect(pixel.a).toBe(255); // Opaque
+    // TODO: Add pixel-level transparency verification for MP4 output.
   });
 
   test('should successfully render an SVG into a WebM with transparency', async ({

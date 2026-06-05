@@ -46,14 +46,20 @@ export const extractFrame = (videoPath: string, framePath: string): boolean => {
   return fs.existsSync(framePath);
 };
 
-export const getPixelColor = (imagePath: string): string => {
+export const getPixelRGBA = (
+  imagePath: string,
+  x = 0,
+  y = 0
+): { r: number; g: number; b: number; a: number } => {
   const data = fs.readFileSync(imagePath);
   const png = PNG.sync.read(data);
-  const idx = 0;
-  const r = png.data[idx];
-  const g = png.data[idx + 1];
-  const b = png.data[idx + 2];
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
+  const idx = (png.width * y + x) << 2;
+  return {
+    r: png.data[idx],
+    g: png.data[idx + 1],
+    b: png.data[idx + 2],
+    a: png.data[idx + 3],
+  };
 };
 
 export const isPixelTransparent = (
