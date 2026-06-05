@@ -72,7 +72,7 @@ Add support for exporting animations to light alternative formats, specifically 
   - [ ] TODO: Supplement `hasAlphaStream` (ffprobe) with pixel-level opacity verification for WebM.
   - [ ] TODO: Replace `hasAlphaStream` (ffprobe) with reliable pixel-level transparency verification for GIFs.
   - [ ] TODO: Add robust pixel-level opacity verification for opaque GIF output.
-  - [ ] TODO: Assert frame count > 1 for all animated format exports (WebM, aPNG, GIF) to verify animation is preserved.
+  - [ ] TODO: Assert frame count == (FPS \* Duration) for all animated format exports (WebM, aPNG, GIF) to verify full animation capture.
 
 ## 🏗 Future Refactoring: Decoupling useRenderer from Encoding Details
 
