@@ -166,12 +166,6 @@ export const useRenderer = (
           !settings.isTransparent || formatInfo.needsColorKeying
             ? settings.backgroundColor
             : undefined;
-        console.log(
-          'Background color for rendering:',
-          backgroundColor,
-          'Transparent:',
-          settings.isTransparent
-        );
 
         if (settings.format === 'apng') {
           apngEncoder = new ApngEncoder(width, height);
