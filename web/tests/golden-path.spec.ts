@@ -289,6 +289,55 @@ test.describe('SVG to Video Golden Path', () => {
     expect(isPixelTransparent(outputPath)).toBe(true);
   });
 
+  test('should successfully render an SVG into an aPNG (opaque with background backfilling)', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    const svgPath = path.resolve(
+      __dirname,
+      '../../tests/fixtures/transparent-loop-test.svg'
+    );
+    await page.setInputFiles('input[type="file"]', svgPath);
+
+    // Select aPNG, Opaque, and custom background color
+    await page.selectOption('#format', 'apng');
+    await page.uncheck('#transparent');
+    await page.fill('#bg-color', '#ff0000'); // Set background to red
+
+    await page.fill('#duration', '0.5');
+    await page.fill('#fps', '10');
+
+    const exportButton = page.getByRole('button', {
+      name: /Export APNG/i,
+    });
+    await exportButton.click();
+
+    const successCard = page.locator('.success-card');
+    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+
+    const downloadButton = page.locator('text=Download');
+    const downloadPromise = page.waitForEvent('download');
+    await downloadButton.click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toBe('transparent-loop-test.png');
+
+    // Verify background color (flattened red background)
+    const outputPath = path.resolve(
+      OUTPUT_DIR_RELATIVE,
+      'transparent-loop-test-opaque.png'
+    );
+    await download.saveAs(outputPath);
+    const pixel = getPixelRGBA(outputPath, 10, 10);
+
+    // Check if pixel is close to Red
+    expect(pixel.r).toBeGreaterThan(240);
+    expect(pixel.g).toBeLessThan(15);
+    expect(pixel.b).toBeLessThan(15);
+    expect(pixel.a).toBe(255); // Opaque
+  });
+
   test('should successfully render an SVG into a transparent GIF (GIF89a)', async ({
     page,
   }) => {
