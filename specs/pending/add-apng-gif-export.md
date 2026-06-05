@@ -67,7 +67,7 @@ Add support for exporting animations to light alternative formats, specifically 
 
 - [x] Manual Test: Run the Web Studio, select aPNG/GIF format, export a sample animation, verify result.
 - [ ] Automated Test: Implement and run automated pixel-level transparency verification for all supported formats in the E2E suite.
-  - [ ] TODO: Add pixel-level transparency verification for MP4 output.
+  - [x] TODO: Add pixel-level transparency verification for MP4 output.
   - [ ] TODO: Supplement `hasAlphaStream` (ffprobe) with pixel-level transparency verification for WebM.
   - [ ] TODO: Supplement `hasAlphaStream` (ffprobe) with pixel-level opacity verification for WebM.
   - [ ] TODO: Replace `hasAlphaStream` (ffprobe) with reliable pixel-level transparency verification for GIFs.

@@ -140,7 +140,6 @@ test.describe('SVG to Video Golden Path', () => {
     expect(pixel.g).toBeLessThan(15);
     expect(pixel.b).toBeLessThan(15);
     expect(pixel.a).toBe(255); // Opaque
-    // TODO: Add pixel-level transparency verification for MP4 output.
   });
 
   test('should successfully render an SVG into a WebM with transparency', async ({
