@@ -14,26 +14,6 @@ export const ensureOutputDir = () => {
   }
 };
 
-/**
- * Sanitizes a string for use in filenames.
- */
-export const slugify = (text: string): string => {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-};
-
-/**
- * Generates a unique, readable output path for a test artifact.
- */
-export const getTestOutputPath = (testInfo: any, filename: string): string => {
-  const testSlug = slugify(testInfo.title);
-  const uniqueFilename = `${testSlug}--${filename}`;
-  return path.resolve(OUTPUT_DIR_RELATIVE, uniqueFilename);
-};
-
 export const getTestPaths = (fixtureName: string, extension = '.mp4') => {
   return {
     inputFile: path.join(FIXTURE_DIR_RELATIVE, `${fixtureName}.svg`),

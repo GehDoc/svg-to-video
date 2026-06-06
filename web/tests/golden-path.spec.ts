@@ -3,10 +3,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   getProbeMetadata,
-  getTestOutputPath,
   SUCCESS_TIMEOUT,
   ensureOutputDir,
 } from '../../tests/helpers/e2e.js';
+import { getTestOutputPath } from './helpers/web-e2e.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

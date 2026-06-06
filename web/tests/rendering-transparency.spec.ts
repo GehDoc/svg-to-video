@@ -6,10 +6,10 @@ import {
   isPixelTransparent,
   extractFrame,
   getPixelRGBA,
-  getTestOutputPath,
   SUCCESS_TIMEOUT,
   ensureOutputDir,
 } from '../../tests/helpers/e2e.js';
+import { getTestOutputPath } from './helpers/web-e2e.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
