@@ -110,11 +110,8 @@ export const isPixelTransparent = (
   x = 0,
   y = 0
 ): boolean => {
-  const data = fs.readFileSync(imagePath);
-  const png = PNG.sync.read(data);
-  const idx = (png.width * y + x) << 2;
-  const alpha = png.data[idx + 3];
-  return alpha === 0;
+  const pixel = getPixelRGBA(imagePath, x, y);
+  return pixel.a === 0;
 };
 
 export const hasAlphaStream = (filePath: string): boolean => {
