@@ -47,6 +47,7 @@ export const getProbeMetadata = (filePath: string): Record<string, string> => {
 };
 
 export const getFrameCount = (filePath: string): number => {
+  // Try nb_frames first (fast, from metadata)
   const output = execFileSync(
     ffprobeStatic.path,
     [
@@ -61,8 +62,32 @@ export const getFrameCount = (filePath: string): number => {
       filePath,
     ],
     { encoding: 'utf-8' }
-  );
-  return parseInt(output.trim(), 10);
+  ).trim();
+
+  let count = parseInt(output, 10);
+
+  // If nb_frames is missing (e.g. GIF, aPNG), count them manually
+  if (isNaN(count)) {
+    const manualOutput = execFileSync(
+      ffprobeStatic.path,
+      [
+        '-v',
+        'error',
+        '-select_streams',
+        'v:0',
+        '-count_frames',
+        '-show_entries',
+        'stream=nb_read_frames',
+        '-of',
+        'default=nokey=1:noprint_wrappers=1',
+        filePath,
+      ],
+      { encoding: 'utf-8' }
+    ).trim();
+    count = parseInt(manualOutput, 10);
+  }
+
+  return count;
 };
 
 export const extractFrame = (videoPath: string, framePath: string): boolean => {

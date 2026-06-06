@@ -6,6 +6,7 @@ import {
   isPixelTransparent,
   extractFrame,
   getPixelRGBA,
+  getFrameCount,
   SUCCESS_TIMEOUT,
   ensureOutputDir,
 } from '../../tests/helpers/e2e.js';
@@ -204,6 +205,10 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     // Verify transparency in aPNG
     const outputPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(outputPath);
+
+    // Verify frame count
+    expect(getFrameCount(outputPath)).toBe(5);
+
     expect(hasAlphaStream(outputPath)).toBe(true);
     expect(isPixelTransparent(outputPath)).toBe(true);
   });
@@ -293,6 +298,9 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     const outputPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(outputPath);
 
+    // Verify frame count
+    expect(getFrameCount(outputPath)).toBe(5);
+
     // Extract a frame to check transparency
     const framePath = getTestOutputPath(testInfo, 'frame.png');
     extractFrame(outputPath, framePath);
@@ -336,6 +344,10 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     // Verify background color (flattened red background - allow tolerance for encoding)
     const outputPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(outputPath);
+
+    // Verify frame count
+    expect(getFrameCount(outputPath)).toBe(5);
+
     const framePath = getTestOutputPath(testInfo, 'frame.png');
     extractFrame(outputPath, framePath);
     const pixel = getPixelRGBA(framePath, 10, 10);
