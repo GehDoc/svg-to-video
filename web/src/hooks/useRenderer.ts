@@ -1,13 +1,8 @@
 import { useState, useCallback, useRef } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
-import type { VideoMetadata } from '../../../shared/metadata';
-import { mergeMetadataComments } from '../../../shared/metadata';
-import pkg from '../../../package.json';
-import * as Mediabunny from 'mediabunny';
-
 import { getFormatById } from '../utils/discoverFormats';
-import { ApngEncoder } from '../utils/encoders/ApngEncoder';
-import { GifEncoder } from '../utils/encoders/GifEncoder';
+import { createEncoder } from '../utils/encoders/EncoderFactory';
+import type { VideoMetadata } from '@shared/metadata';
 
 export type ResolutionPreset = 'original' | '720p' | '1080p';
 export type CaptureMethod = 'optimal' | 'high-fidelity';
@@ -95,23 +90,7 @@ export const calculateFinalDimensions = (
   return { width, height };
 };
 
-export const getBestCodec = async (
-  width: number,
-  height: number,
-  formatId: string
-) => {
-  const format = getFormatById(formatId);
-  if (!format) throw new Error(`Unknown format: ${formatId}`);
-
-  const outputFormat = new format.OutputFormatClass();
-  return await Mediabunny.getFirstEncodableVideoCodec(
-    outputFormat.getSupportedVideoCodecs(),
-    {
-      width,
-      height,
-    }
-  );
-};
+import { VideoEncoder } from '../utils/encoders/types';
 
 export const useRenderer = (
   rendererRef: React.RefObject<RendererHandle | null>
@@ -123,6 +102,7 @@ export const useRenderer = (
   });
 
   const cancelRef = useRef(false);
+  const activeEncoderRef = useRef<VideoEncoder | null>(null);
   const settingsRef = useRef<RenderSettings | null>(null);
 
   const render = useCallback(
@@ -154,62 +134,13 @@ export const useRenderer = (
 
         await rendererRef.current.loadSvg(svgContent, width, height);
 
-        const isCustomFormat = ['apng', 'gif'].includes(settings.format);
-
-        let apngEncoder: ApngEncoder | null = null;
-        let gifEncoder: GifEncoder | null = null;
-        let target: Mediabunny.BufferTarget | null = null;
-        let output: Mediabunny.Output | null = null;
-        let source: Mediabunny.CanvasSource | null = null;
+        const encoder = createEncoder(settings.format);
+        activeEncoderRef.current = encoder;
 
         const backgroundColor =
           !settings.isTransparent || formatInfo.needsColorKeying
             ? settings.backgroundColor
             : undefined;
-
-        if (settings.format === 'apng') {
-          apngEncoder = new ApngEncoder(width, height);
-        } else if (settings.format === 'gif') {
-          const transColor = settings.isTransparent
-            ? backgroundColor
-            : undefined;
-          gifEncoder = new GifEncoder(width, height, transColor);
-        } else {
-          target = new Mediabunny.BufferTarget();
-          const outputFormat = new formatInfo.OutputFormatClass();
-          output = new Mediabunny.Output({
-            format: outputFormat,
-            target,
-          });
-
-          const metadata: VideoMetadata = {};
-          if (settings.metadata?.title?.trim()) {
-            metadata.title = settings.metadata.title.trim();
-          }
-          metadata.comment = mergeMetadataComments(
-            settings.metadata?.comment?.trim(),
-            pkg.version
-          );
-
-          output.setMetadataTags(metadata);
-        }
-
-        const videoCodec = isCustomFormat
-          ? 'N/A'
-          : await getBestCodec(width, height, settings.format);
-        if (!isCustomFormat && !videoCodec) {
-          throw new Error('No supported video codec found.');
-        }
-
-        setState((s) => ({
-          ...s,
-          meta: {
-            originalSize: `${origWidth}x${origHeight}`,
-            finalSize: `${width}x${height}`,
-            codec: videoCodec || 'N/A',
-            eta: 0,
-          },
-        }));
 
         const canvas = document.createElement('canvas');
         canvas.width = width;
@@ -219,68 +150,66 @@ export const useRenderer = (
         });
         if (!ctx) throw new Error('Could not get 2D context');
 
-        if (!isCustomFormat) {
-          source = new Mediabunny.CanvasSource(canvas, {
-            codec: videoCodec as Mediabunny.VideoCodec,
-            bitrate: Mediabunny.QUALITY_HIGH,
-            alpha: settings.isTransparent ? 'keep' : 'discard',
-          });
-          output!.addVideoTrack(source);
+        await encoder.init(
+          {
+            width,
+            height,
+            fps: settings.fps,
+            duration: settings.duration,
+            backgroundColor,
+            isTransparent: settings.isTransparent,
+            metadata: settings.metadata,
+            format: settings.format,
+            mimeType: formatInfo.mimeType,
+          },
+          canvas
+        );
 
-          await output!.start();
-        }
+        setState((s) => ({
+          ...s,
+          meta: {
+            originalSize: `${origWidth}x${origHeight}`,
+            finalSize: `${width}x${height}`,
+            codec: 'In progress...', // Codec info is now inside the encoder
+            eta: 0,
+          },
+        }));
 
         const totalAnimationFrames = Math.ceil(
           settings.duration * settings.fps
         );
         const totalHoldFrames = Math.ceil(settings.hold * settings.fps);
         const totalFrames = totalAnimationFrames + totalHoldFrames;
-        const frameDuration = 1 / settings.fps;
+        const frameDuration = 1000 / settings.fps;
         const startTime = performance.now();
 
         // 1. Animation Loop
         for (let frame = 1; frame <= totalAnimationFrames; frame++) {
           if (cancelRef.current) {
+            encoder.cancel();
             setState({ isRendering: false, progress: 0, status: 'Cancelled' });
             return;
           }
 
-          const timeMs = ((frame - 1) / settings.fps) * 1000;
+          const timeMs = (frame - 1) * frameDuration;
           await rendererRef.current.seek(timeMs);
           const bitmap = await rendererRef.current.capture(
             settings.captureMethod,
             settings.isTransparent
           );
           ctx.clearRect(0, 0, width, height);
-          // Fill background if not transparent OR if the format requires color keying
           if (backgroundColor) {
             if (formatInfo.needsColorKeying) {
-              // Draw a matte silhouette of the image to blend the alpha channel against
               ctx.drawImage(bitmap, 0, 0, width, height);
               ctx.globalCompositeOperation = 'source-in';
             }
             ctx.fillStyle = backgroundColor;
             ctx.fillRect(0, 0, width, height);
-
-            // Standard drawing mode
             ctx.globalCompositeOperation = 'source-over';
           }
           ctx.drawImage(bitmap, 0, 0, width, height);
 
-          if (isCustomFormat) {
-            if (apngEncoder) {
-              const imageData = ctx.getImageData(0, 0, width, height);
-              apngEncoder.addFrame(
-                new Uint8Array(imageData.data),
-                frameDuration * 1000
-              );
-            } else if (gifEncoder) {
-              gifEncoder.addFrame(ctx, frameDuration * 1000);
-            }
-          } else {
-            await source!.add((frame - 1) * frameDuration, frameDuration);
-          }
-
+          await encoder.addFrame(timeMs, frameDuration);
           bitmap.close();
 
           const elapsedTime = (performance.now() - startTime) / 1000;
@@ -310,6 +239,7 @@ export const useRenderer = (
 
           for (let frame = 1; frame <= totalHoldFrames; frame++) {
             if (cancelRef.current) {
+              encoder.cancel();
               setState({
                 isRendering: false,
                 progress: 0,
@@ -318,38 +248,21 @@ export const useRenderer = (
               return;
             }
             const currentFrame = totalAnimationFrames + frame;
+            const timeMs = (currentFrame - 1) * frameDuration;
+
             ctx.clearRect(0, 0, width, height);
-            // Fill background if not transparent OR if the format requires color keying
             if (backgroundColor) {
               if (formatInfo.needsColorKeying) {
-                // Draw a matte silhouette of the image to blend the alpha channel against
                 ctx.drawImage(finalBitmap, 0, 0, width, height);
                 ctx.globalCompositeOperation = 'source-in';
               }
               ctx.fillStyle = backgroundColor;
               ctx.fillRect(0, 0, width, height);
-
-              // Standard drawing mode
               ctx.globalCompositeOperation = 'source-over';
             }
             ctx.drawImage(finalBitmap, 0, 0, width, height);
 
-            if (isCustomFormat) {
-              if (apngEncoder) {
-                const imageData = ctx.getImageData(0, 0, width, height);
-                apngEncoder.addFrame(
-                  new Uint8Array(imageData.data),
-                  frameDuration * 1000
-                );
-              } else if (gifEncoder) {
-                gifEncoder.addFrame(ctx, frameDuration * 1000);
-              }
-            } else {
-              await source!.add(
-                (currentFrame - 1) * frameDuration,
-                frameDuration
-              );
-            }
+            await encoder.addFrame(timeMs, frameDuration);
 
             const elapsedTime = (performance.now() - startTime) / 1000;
             const eta = Math.round(
@@ -378,26 +291,7 @@ export const useRenderer = (
           status: 'Finalizing video...',
         });
 
-        let blob: Blob;
-
-        if (isCustomFormat) {
-          if (apngEncoder) {
-            const buffer = await apngEncoder.finalize();
-            blob = new Blob([buffer], { type: formatInfo.mimeType });
-          } else if (gifEncoder) {
-            blob = await gifEncoder.finalize();
-          } else {
-            throw new Error('No encoder initialized for custom format');
-          }
-        } else {
-          await output!.finalize();
-          const resultBuffer = target!.buffer;
-          if (!resultBuffer) throw new Error('Output buffer is empty');
-          blob = new Blob([resultBuffer], {
-            type: formatInfo.mimeType,
-          });
-        }
-
+        const blob = await encoder.finalize();
         const url = URL.createObjectURL(blob);
         setState({ isRendering: false, progress: 100, status: 'Done!' });
 
@@ -433,6 +327,9 @@ export const useRenderer = (
 
   const cancel = useCallback(() => {
     cancelRef.current = true;
+    if (activeEncoderRef.current) {
+      activeEncoderRef.current.cancel();
+    }
     setState({ isRendering: false, progress: 0, status: 'Ready' });
 
     if (typeof umami !== 'undefined' && settingsRef.current) {

@@ -85,12 +85,12 @@ I want to refactor `useRenderer` to decouple it from the direct technical knowle
 
 **Key Steps:**
 
-- [ ] **Define Encoder Contract**: List all video encoding lifecycle steps (e.g., `init`, `addFrame`, `finalize`, `cancel`) and define the expected input and output of each step.
-- [ ] **Implement Encoder Adapters**: Evolve `ApngEncoder.ts` and `GifEncoder.ts` to directly implement the new contract, acting as adapters for their respective 3rd-party libraries. Implement a similar adapter for `MediaBunny` to handle standard video formats.
-- [ ] **Encoder Factory**: The `RenderSettings.format` (or a dedicated registry) should expose a factory method to create the appropriate encoder based on the format.
-- [ ] **Refactor useRenderer**: Update `useRenderer` to only call the factory method to create the encoder and then call the generic encoder methods without knowing the underlying implementation details.
-- [ ] **Responsibility Isolation**: Ensure `useRenderer` is only responsible for managing the rendering lifecycle (scrubbing, timing) and delegating encoding tasks to the encoder instance.
-- [ ] **Cleanup**: Remove any direct references to specific encoding libraries or formats from `useRenderer.ts`, making it more maintainable and easier to extend.
+- [x] **Define Encoder Contract**: List all video encoding lifecycle steps (e.g., `init`, `addFrame`, `finalize`, `cancel`) and define the expected input and output of each step.
+- [x] **Implement Encoder Adapters**: Evolve `ApngEncoder.ts` and `GifEncoder.ts` to directly implement the new contract, acting as adapters for their respective 3rd-party libraries. Implement a similar adapter for `MediaBunny` to handle standard video formats.
+- [x] **Encoder Factory**: The `RenderSettings.format` (or a dedicated registry) should expose a factory method to create the appropriate encoder based on the format.
+- [x] **Refactor useRenderer**: Update `useRenderer` to only call the factory method to create the encoder and then call the generic encoder methods without knowing the underlying implementation details.
+- [x] **Responsibility Isolation**: Ensure `useRenderer` is only responsible for managing the rendering lifecycle (scrubbing, timing) and delegating encoding tasks to the encoder instance.
+- [x] **Cleanup**: Remove any direct references to specific encoding libraries or formats from `useRenderer.ts`, making it more maintainable and easier to extend.
 - [ ] **Unit Testing**: Test `useRenderer` with mock encoders that implement the generic interface to verify rendering logic independently of encoding implementations.
 
 ## 📝 Change Log
