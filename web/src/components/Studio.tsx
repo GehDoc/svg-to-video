@@ -8,8 +8,8 @@ import {
   type RenderSettings,
 } from '../hooks/useRenderer';
 import { getMimeTypeById } from '../utils/discoverFormats';
-import { analyzeSvgAnimation } from '../../../shared/analyzeSvgAnimation.js';
-import type { VideoMetadata } from '../../../shared/metadata';
+import { analyzeSvgAnimation } from '@shared/analyzeSvgAnimation.js';
+import type { VideoMetadata } from '@shared/metadata';
 import { Header } from './Header';
 import { ConfigPanel } from './ConfigPanel';
 import { MonitorPanel } from './MonitorPanel';

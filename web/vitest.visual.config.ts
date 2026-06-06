@@ -14,6 +14,9 @@ export default defineConfig({
       include: '**/*.svg?react',
     }),
   ],
+  optimizeDeps: {
+    include: ['gifenc', 'upng-js'],
+  },
   resolve: {
     alias: {
       '@shared': path.resolve(dirname, '../shared'),
