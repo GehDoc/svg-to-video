@@ -30,4 +30,18 @@ test.describe('SVG to Video Web Smoke Test', () => {
     const body = await response?.text();
     expect(body).toContain('<loc>https://gehdoc.github.io/svg-to-video/</loc>');
   });
+
+  test('should apply mobile layout breakpoint on small screen', async ({
+    page,
+  }) => {
+    // Set viewport to mobile size
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/');
+
+    const layout = page.locator('.studio-layout');
+    await expect(layout).toBeVisible();
+
+    // Verify computed style for mobile breakpoint
+    await expect(layout).toHaveCSS('flex-direction', 'column');
+  });
 });
