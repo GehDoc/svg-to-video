@@ -76,6 +76,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           install-playwright: 'true'
+          install-ffmpeg: 'true'
       - name: Run Web E2E tests
         run: npm run test:web -w web
 
