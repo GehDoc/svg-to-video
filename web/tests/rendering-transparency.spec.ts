@@ -13,6 +13,10 @@ import { getTestOutputPath } from './helpers/web-e2e.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const TEST_DURATION = '0.5';
+const TEST_FPS = '10';
+const TEST_BG_COLOR = '#ff0000';
+
 // Ensure output dir for E2E verification
 ensureOutputDir();
 
@@ -30,10 +34,10 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
 
     // Select MP4 (default), Opaque, and custom background color
     await page.uncheck('#transparent');
-    await page.fill('#bg-color', '#ff0000'); // Set background to red
+    await page.fill('#bg-color', TEST_BG_COLOR); // Set background to red
 
-    await page.fill('#duration', '0.5');
-    await page.fill('#fps', '10');
+    await page.fill('#duration', TEST_DURATION);
+    await page.fill('#fps', TEST_FPS);
 
     const exportButton = page.getByRole('button', {
       name: /Export MP4/i,
@@ -81,8 +85,8 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     await page.selectOption('#format', 'webm');
     await page.check('#transparent');
 
-    await page.fill('#duration', '1');
-    await page.fill('#fps', '24');
+    await page.fill('#duration', TEST_DURATION);
+    await page.fill('#fps', TEST_FPS);
 
     const exportButton = page.getByRole('button', {
       name: /Export WEBM/i,
@@ -126,10 +130,10 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     // Select WebM, Opaque, and custom background color
     await page.selectOption('#format', 'webm');
     await page.uncheck('#transparent');
-    await page.fill('#bg-color', '#ff0000'); // Set background to red
+    await page.fill('#bg-color', TEST_BG_COLOR); // Set background to red
 
-    await page.fill('#duration', '1');
-    await page.fill('#fps', '24');
+    await page.fill('#duration', TEST_DURATION);
+    await page.fill('#fps', TEST_FPS);
 
     const exportButton = page.getByRole('button', {
       name: /Export WEBM/i,
@@ -178,8 +182,8 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     await page.selectOption('#format', 'apng');
     await page.check('#transparent');
 
-    await page.fill('#duration', '0.5'); // Shorter for faster test
-    await page.fill('#fps', '10');
+    await page.fill('#duration', TEST_DURATION);
+    await page.fill('#fps', TEST_FPS);
 
     const exportButton = page.getByRole('button', {
       name: /Export APNG/i,
@@ -218,10 +222,10 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     // Select aPNG, Opaque, and custom background color
     await page.selectOption('#format', 'apng');
     await page.uncheck('#transparent');
-    await page.fill('#bg-color', '#ff0000'); // Set background to red
+    await page.fill('#bg-color', TEST_BG_COLOR); // Set background to red
 
-    await page.fill('#duration', '0.5');
-    await page.fill('#fps', '10');
+    await page.fill('#duration', TEST_DURATION);
+    await page.fill('#fps', TEST_FPS);
 
     const exportButton = page.getByRole('button', {
       name: /Export APNG/i,
@@ -265,8 +269,8 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     await page.selectOption('#format', 'gif');
     await page.check('#transparent');
 
-    await page.fill('#duration', '0.5');
-    await page.fill('#fps', '10');
+    await page.fill('#duration', TEST_DURATION);
+    await page.fill('#fps', TEST_FPS);
 
     const exportButton = page.getByRole('button', {
       name: /Export GIF/i,
@@ -308,10 +312,10 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
 
     await page.selectOption('#format', 'gif');
     await page.uncheck('#transparent');
-    await page.fill('#bg-color', '#ff0000'); // Set background to red
+    await page.fill('#bg-color', TEST_BG_COLOR); // Set background to red
 
-    await page.fill('#duration', '0.5');
-    await page.fill('#fps', '10');
+    await page.fill('#duration', TEST_DURATION);
+    await page.fill('#fps', TEST_FPS);
 
     const exportButton = page.getByRole('button', {
       name: /Export GIF/i,
