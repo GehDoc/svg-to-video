@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   getProbeMetadata,
-  OUTPUT_DIR_RELATIVE,
+  getTestOutputPath,
   SUCCESS_TIMEOUT,
   ensureOutputDir,
 } from '../../tests/helpers/e2e.js';
@@ -14,7 +14,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 ensureOutputDir();
 
 test.describe('SVG to Video Golden Path', () => {
-  test('should successfully render an SVG into an MP4', async ({ page }) => {
+  test('should successfully render an SVG into an MP4', async ({
+    page,
+  }, testInfo) => {
     // 1. Load the page
     await page.goto('/');
 
@@ -54,10 +56,11 @@ test.describe('SVG to Video Golden Path', () => {
     const download = await downloadPromise;
 
     // Verify download filename
-    expect(download.suggestedFilename()).toBe('font-test.mp4');
+    const suggestedName = download.suggestedFilename();
+    expect(suggestedName).toBe('font-test.mp4');
 
     // Verify metadata of the downloaded file
-    const downloadPath = path.resolve(OUTPUT_DIR_RELATIVE, 'font-test.mp4');
+    const downloadPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(downloadPath);
 
     const data = getProbeMetadata(downloadPath);
@@ -86,7 +89,7 @@ test.describe('SVG to Video Golden Path', () => {
 
   test('should successfully render an SVG with custom metadata', async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.goto('/');
 
     const svgPath = path.resolve(
@@ -116,13 +119,11 @@ test.describe('SVG to Video Golden Path', () => {
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('font-test.mp4');
+    const suggestedName = download.suggestedFilename();
+    expect(suggestedName).toBe('font-test.mp4');
 
     // Verify metadata of the downloaded file
-    const downloadPath = path.resolve(
-      OUTPUT_DIR_RELATIVE,
-      'font-test-metadata.mp4'
-    );
+    const downloadPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(downloadPath);
 
     const data = getProbeMetadata(downloadPath);

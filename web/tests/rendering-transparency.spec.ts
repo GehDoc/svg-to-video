@@ -6,7 +6,7 @@ import {
   isPixelTransparent,
   extractFrame,
   getPixelRGBA,
-  OUTPUT_DIR_RELATIVE,
+  getTestOutputPath,
   SUCCESS_TIMEOUT,
   ensureOutputDir,
 } from '../../tests/helpers/e2e.js';
@@ -19,7 +19,7 @@ ensureOutputDir();
 test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
   test('should successfully render an SVG into an MP4 (opaque with background backfilling)', async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.goto('/');
 
     const svgPath = path.resolve(
@@ -49,15 +49,13 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('transparent-loop-test.mp4');
+    const suggestedName = download.suggestedFilename();
+    expect(suggestedName).toBe('transparent-loop-test.mp4');
 
     // Verify background color (flattened red background - allow tolerance for encoding)
-    const outputPath = path.resolve(
-      OUTPUT_DIR_RELATIVE,
-      'transparent-loop-test-opaque.mp4'
-    );
+    const outputPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(outputPath);
-    const framePath = path.resolve(OUTPUT_DIR_RELATIVE, 'frame.png');
+    const framePath = getTestOutputPath(testInfo, 'frame.png');
     extractFrame(outputPath, framePath);
     const pixel = getPixelRGBA(framePath, 10, 10);
 
@@ -70,7 +68,7 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
 
   test('should successfully render an SVG into a WebM with transparency', async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.goto('/');
 
     const svgPath = path.resolve(
@@ -100,17 +98,15 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('transparent-loop-test.webm');
+    const suggestedName = download.suggestedFilename();
+    expect(suggestedName).toBe('transparent-loop-test.webm');
 
     // Verify transparency in WebM
-    const outputPath = path.resolve(
-      OUTPUT_DIR_RELATIVE,
-      'transparent-loop-test.webm'
-    );
+    const outputPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(outputPath);
 
     // Extract a frame and verify transparency
-    const framePath = path.resolve(OUTPUT_DIR_RELATIVE, 'webm-frame.png');
+    const framePath = getTestOutputPath(testInfo, 'frame.png');
     extractFrame(outputPath, framePath);
     expect(isPixelTransparent(framePath, 10, 10)).toBe(true);
     expect(hasAlphaStream(outputPath)).toBe(true);
@@ -118,7 +114,7 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
 
   test('should successfully render an SVG into a WebM (opaque with background backfilling)', async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.goto('/');
 
     const svgPath = path.resolve(
@@ -149,20 +145,15 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('transparent-loop-test.webm');
+    const suggestedName = download.suggestedFilename();
+    expect(suggestedName).toBe('transparent-loop-test.webm');
 
     // Verify no alpha stream and correct background color in opaque WebM
-    const outputPath = path.resolve(
-      OUTPUT_DIR_RELATIVE,
-      'transparent-loop-test-opaque.webm'
-    );
+    const outputPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(outputPath);
 
     // Extract a frame and verify opacity and background color
-    const framePath = path.resolve(
-      OUTPUT_DIR_RELATIVE,
-      'webm-opaque-frame.png'
-    );
+    const framePath = getTestOutputPath(testInfo, 'frame.png');
     extractFrame(outputPath, framePath);
     const pixel = getPixelRGBA(framePath, 10, 10);
 
@@ -175,7 +166,7 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
 
   test('should successfully render an SVG into an aPNG with transparency', async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.goto('/');
 
     const svgPath = path.resolve(
@@ -203,13 +194,11 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('transparent-loop-test.png');
+    const suggestedName = download.suggestedFilename();
+    expect(suggestedName).toBe('transparent-loop-test.png');
 
     // Verify transparency in aPNG
-    const outputPath = path.resolve(
-      OUTPUT_DIR_RELATIVE,
-      'transparent-loop-test.png'
-    );
+    const outputPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(outputPath);
     expect(hasAlphaStream(outputPath)).toBe(true);
     expect(isPixelTransparent(outputPath)).toBe(true);
@@ -217,7 +206,7 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
 
   test('should successfully render an SVG into an aPNG (opaque with background backfilling)', async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.goto('/');
 
     const svgPath = path.resolve(
@@ -247,13 +236,11 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('transparent-loop-test.png');
+    const suggestedName = download.suggestedFilename();
+    expect(suggestedName).toBe('transparent-loop-test.png');
 
     // Verify background color (flattened red background)
-    const outputPath = path.resolve(
-      OUTPUT_DIR_RELATIVE,
-      'transparent-loop-test-opaque.png'
-    );
+    const outputPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(outputPath);
     const pixel = getPixelRGBA(outputPath, 10, 10);
 
@@ -266,7 +253,7 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
 
   test('should successfully render an SVG into a transparent GIF (GIF89a)', async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.goto('/');
 
     const svgPath = path.resolve(
@@ -295,24 +282,22 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('transparent-loop-test.gif');
+    const suggestedName = download.suggestedFilename();
+    expect(suggestedName).toBe('transparent-loop-test.gif');
 
     // Verify transparency in GIF
-    const outputPath = path.resolve(
-      OUTPUT_DIR_RELATIVE,
-      'transparent-loop-test.gif'
-    );
+    const outputPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(outputPath);
 
     // Extract a frame to check transparency
-    const framePath = path.resolve(OUTPUT_DIR_RELATIVE, 'gif-frame.png');
+    const framePath = getTestOutputPath(testInfo, 'frame.png');
     extractFrame(outputPath, framePath);
     expect(isPixelTransparent(framePath, 10, 10)).toBe(true);
   });
 
   test('should successfully render an SVG into an opaque GIF (with background backfilling)', async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.goto('/');
 
     const svgPath = path.resolve(
@@ -341,15 +326,13 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('transparent-loop-test.gif');
+    const suggestedName = download.suggestedFilename();
+    expect(suggestedName).toBe('transparent-loop-test.gif');
 
     // Verify background color (flattened red background - allow tolerance for encoding)
-    const outputPath = path.resolve(
-      OUTPUT_DIR_RELATIVE,
-      'transparent-loop-test.gif'
-    );
+    const outputPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(outputPath);
-    const framePath = path.resolve(OUTPUT_DIR_RELATIVE, 'gif-opaque-frame.png');
+    const framePath = getTestOutputPath(testInfo, 'frame.png');
     extractFrame(outputPath, framePath);
     const pixel = getPixelRGBA(framePath, 10, 10);
 
