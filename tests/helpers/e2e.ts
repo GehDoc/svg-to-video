@@ -74,10 +74,19 @@ export const extractFrame = (videoPath: string, framePath: string): boolean => {
   }
   args.push('-i', videoPath, '-vframes', '1', '-pix_fmt', 'rgba', framePath);
 
-  spawnSync('ffmpeg', args, {
-    stdio: 'pipe',
-  });
-  return fs.existsSync(framePath);
+  const result = spawnSync('ffmpeg', args, { stdio: 'pipe' });
+
+  if (result.status !== 0) {
+    throw new Error(
+      `ffmpeg failed to extract frame: ${result.stderr.toString()}`
+    );
+  }
+
+  if (!fs.existsSync(framePath)) {
+    throw new Error(`ffmpeg failed to create frame at ${framePath}`);
+  }
+
+  return true;
 };
 
 export const getPixelRGBA = (
