@@ -91,7 +91,7 @@ I want to refactor `useRenderer` to decouple it from the direct technical knowle
 - [x] **Refactor useRenderer**: Update `useRenderer` to only call the factory method to create the encoder and then call the generic encoder methods without knowing the underlying implementation details.
 - [x] **Responsibility Isolation**: Ensure `useRenderer` is only responsible for managing the rendering lifecycle (scrubbing, timing) and delegating encoding tasks to the encoder instance.
 - [x] **Cleanup**: Remove any direct references to specific encoding libraries or formats from `useRenderer.ts`, making it more maintainable and easier to extend.
-- [ ] **Unit Testing**: Test `useRenderer` with mock encoders that implement the generic interface to verify rendering logic independently of encoding implementations.
+- [x] **Unit Testing**: Test `useRenderer` with mock encoders that implement the generic interface to verify rendering logic independently of encoding implementations.
 
 ## 📝 Change Log
 
