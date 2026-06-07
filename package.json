@@ -1,6 +1,6 @@
 {
   "name": "svg-to-video",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "type": "module",
   "description": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
   "author": "GehDoc",
@@ -56,7 +56,10 @@
     "prettier": "^3.8.1",
     "prettier-plugin-sh": "^0.18.0",
     "typescript": "^5.0.0",
-    "typescript-eslint": "^8.59.3"
+    "typescript-eslint": "^8.59.3",
+    "vitest": "4.1.8",
+    "@vitest/browser-playwright": "4.1.8",
+    "@vitest/coverage-v8": "4.1.8"
   },
   "scripts": {
     "lint": "eslint . && npm run lint -w web",
@@ -87,12 +90,12 @@
     "web"
   ],
   "overrides": {
-    "vitest": "4.1.6",
-    "@vitest/spy": "4.1.6",
-    "@vitest/expect": "4.1.6",
-    "@vitest/utils": "4.1.6",
-    "@vitest/mocker": "4.1.6",
-    "@vitest/runner": "4.1.6",
-    "@vitest/snapshot": "4.1.6"
+    "vitest": "$vitest",
+    "@vitest/spy": "$vitest",
+    "@vitest/expect": "$vitest",
+    "@vitest/utils": "$vitest",
+    "@vitest/mocker": "$vitest",
+    "@vitest/runner": "$vitest",
+    "@vitest/snapshot": "$vitest"
   }
 }

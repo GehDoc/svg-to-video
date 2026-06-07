@@ -1,6 +1,6 @@
 {
   "name": "@svg-to-video/web",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "description": "Professional CSS-animated SVG to Video (MP4, WebM, MKV, MOV) and Animated Image (aPNG, GIF) Studio: frame-accurate rendering, alpha-channel transparency, and serverless WebCodecs.",
   "author": "GehDoc",
   "repository": {
@@ -37,7 +37,7 @@
     "coi-serviceworker": "^0.1.7",
     "gifenc": "^1.0.3",
     "mediabunny": "^1.39.2",
-    "next": "^16.2.6",
+    "next": "^16.2.7",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-icons": "^5.6.0"
@@ -50,7 +50,7 @@
     "@storybook/addon-vitest": "^10.3.5",
     "@storybook/react": "^10.3.5",
     "@storybook/react-vite": "^10.3.5",
-    "@storybook/test-runner": "^0.24.3",
+    "@storybook/test-runner": "^0.24.4",
     "@svgr/webpack": "^8.1.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -60,8 +60,8 @@
     "@types/umami": "^2.10.1",
     "@types/upng-js": "^2.1.5",
     "@vitejs/plugin-react": "^6.0.0",
-    "@vitest/browser-playwright": "^4.1.1",
-    "@vitest/coverage-v8": "^4.1.1",
+    "@vitest/browser-playwright": "4.1.8",
+    "@vitest/coverage-v8": "4.1.8",
     "axe-playwright": "^2.2.2",
     "driver.js": "^1.4.0",
     "eslint": "^9.39.4",
@@ -79,6 +79,6 @@
     "vite": "^8.0.5",
     "vite-plugin-sitemap": "^0.8.2",
     "vite-plugin-svgr": "^5.2.0",
-    "vitest": "^4.1.8"
+    "vitest": "4.1.8"
   }
 }
