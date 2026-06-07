@@ -56,7 +56,10 @@
     "prettier": "^3.8.1",
     "prettier-plugin-sh": "^0.18.0",
     "typescript": "^5.0.0",
-    "typescript-eslint": "^8.59.3"
+    "typescript-eslint": "^8.59.3",
+    "vitest": "4.1.8",
+    "@vitest/browser-playwright": "4.1.8",
+    "@vitest/coverage-v8": "4.1.8"
   },
   "scripts": {
     "lint": "eslint . && npm run lint -w web",
@@ -85,5 +88,16 @@
   },
   "workspaces": [
     "web"
-  ]
+  ],
+  "overrides": {
+    "vitest": "$vitest",
+    "@vitest/spy": "$vitest",
+    "@vitest/expect": "$vitest",
+    "@vitest/utils": "$vitest",
+    "@vitest/mocker": "$vitest",
+    "@vitest/runner": "$vitest",
+    "@vitest/snapshot": "$vitest",
+    "postcss": "8.5.14",
+    "uuid": "8.3.3"
+  }
 }
