@@ -85,14 +85,5 @@
   },
   "workspaces": [
     "web"
-  ],
-  "overrides": {
-    "vitest": "4.1.6",
-    "@vitest/spy": "4.1.6",
-    "@vitest/expect": "4.1.6",
-    "@vitest/utils": "4.1.6",
-    "@vitest/mocker": "4.1.6",
-    "@vitest/runner": "4.1.6",
-    "@vitest/snapshot": "4.1.6"
-  }
+  ]
 }
