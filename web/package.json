@@ -1,6 +1,6 @@
 {
   "name": "@svg-to-video/web",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "description": "Professional CSS-animated SVG to Video (MP4, WebM, MKV, MOV) and Animated Image (aPNG, GIF) Studio: frame-accurate rendering, alpha-channel transparency, and serverless WebCodecs.",
   "author": "GehDoc",
   "repository": {
