@@ -79,6 +79,6 @@
     "vite": "^8.0.5",
     "vite-plugin-sitemap": "^0.8.2",
     "vite-plugin-svgr": "^5.2.0",
-    "vitest": "^4.1.1"
+    "vitest": "^4.1.8"
   }
 }
