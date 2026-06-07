@@ -96,8 +96,6 @@
     "@vitest/utils": "$vitest",
     "@vitest/mocker": "$vitest",
     "@vitest/runner": "$vitest",
-    "@vitest/snapshot": "$vitest",
-    "postcss": "8.5.14",
-    "uuid": "8.3.3"
+    "@vitest/snapshot": "$vitest"
   }
 }
