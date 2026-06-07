@@ -255,7 +255,7 @@ const SvgRenderer = memo(
           <div
             className="monitor-viewport"
             style={{
-              backgroundColor: isTransparent ? 'transparent' : backgroundColor,
+              backgroundColor,
               backgroundImage: isTransparent
                 ? 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%)'
                 : 'none',

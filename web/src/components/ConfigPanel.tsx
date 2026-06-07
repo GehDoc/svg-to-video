@@ -276,13 +276,19 @@ export const ConfigPanel = ({
                 id="bg-color"
                 value={backgroundColor}
                 onChange={(e) => onBackgroundColorChange(e.target.value)}
-                disabled={isOptionsDisabled || isTransparent}
+                disabled={
+                  isOptionsDisabled ||
+                  (isTransparent && !getFormatById(format)?.needsColorKeying)
+                }
               />
               <input
                 type="text"
                 value={backgroundColor}
                 onChange={(e) => onBackgroundColorChange(e.target.value)}
-                disabled={isOptionsDisabled || isTransparent}
+                disabled={
+                  isOptionsDisabled ||
+                  (isTransparent && !getFormatById(format)?.needsColorKeying)
+                }
                 className="color-text-input"
                 aria-label="Background color hex code"
               />

@@ -1,4 +1,4 @@
-@import '../styles/breakpoints';
+@use '../styles/breakpoints' as *;
 
 .header-menu-container {
   position: relative;

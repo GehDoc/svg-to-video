@@ -9,10 +9,10 @@ describe('SeoFallback', () => {
     expect(screen.getAllByText(/STUDIO/i)).toBeDefined();
   });
 
-  it('contains the SEO description with WebCodecs', () => {
+  it('contains the SEO description with transparency support', () => {
     render(<SeoFallback />);
     expect(screen.getByText(/alpha-channel transparency/i)).toBeDefined();
-    expect(screen.getByText(/WebCodecs/i)).toBeDefined();
+    expect(screen.getByText(/animated images \(aPNG, GIF\)/i)).toBeDefined();
   });
 
   it('provides links to GitHub and License', () => {

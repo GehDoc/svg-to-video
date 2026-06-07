@@ -9,6 +9,7 @@ const meta: Meta<typeof SuccessView> = {
     fileName: 'animation.mp4',
     fileSize: '2.5 MB',
     renderedUrl: 'https://example.com/video.mp4',
+    mimeType: 'video/mp4',
     onDownload: fn(),
     onBack: fn(),
     onCopyOverride: fn(),
@@ -47,5 +48,21 @@ export const CopyError: Story = {
     const canvas = within(canvasElement);
     const copyBtn = canvas.getByRole('button', { name: /Copy Data URL/i });
     await userEvent.click(copyBtn);
+  },
+};
+
+export const APNG: Story = {
+  args: {
+    fileName: 'animation.png',
+    mimeType: 'image/png',
+    renderedUrl: 'https://gehdoc.github.io/svg-to-video/assets/demo.gif', // Using gif as placeholder for image preview
+  },
+};
+
+export const GIF: Story = {
+  args: {
+    fileName: 'animation.gif',
+    mimeType: 'image/gif',
+    renderedUrl: 'https://gehdoc.github.io/svg-to-video/assets/demo.gif',
   },
 };

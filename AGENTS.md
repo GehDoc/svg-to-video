@@ -8,19 +8,20 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - **If linked to Issue #XX**:
      - Create branch: `feat/XX-description`.
      - Initialize spec: `specs/pending/XX-description.md`.
-     - Commit initial spec immediately.
+     - Commit initial spec, push, and create a Pull Request (using `gh pr create`) immediately.
    - **If not linked to an issue**:
      - Create branch: `feat/description`.
      - Initialize spec: `specs/pending/description.md` (no number prefix).
-     - Commit initial spec immediately.
+     - Commit initial spec, push, and create a Pull Request (using `gh pr create`) immediately.
 
    NEVER use a random number to fill the gap if no issue number is available.
 
 2. **Spec-First Mentality**: Do not write functional code until a corresponding specification exists in `specs/pending/`.
 3. **Link to GitHub**: If the feature is linked to a GitHub Issue, the spec MUST link to the issue URL at the top of the file.
-4. **Checklist Discipline**: Update the task list checkboxes `[x]` in the spec file immediately after completing a task and verifying it.
+4. **Checklist Discipline**: Update the task list checkboxes `[x]` in the spec file immediately after completing a task and verifying it. Include documentation and SEO updates in your checklist if they apply.
 5. **State Persistence**: If the technical strategy changes during our conversation, your FIRST action is to update the `.md` file in `specs/pending/`.
-6. **Clean Up**: When a feature is complete and verified, move the spec file from `specs/pending/` to `specs/completed/` and update its status to `🟢 Completed`.
+6. **Documentation & SEO**: Always refer to the "Maintaining SEO & Metadata" section in `CONTRIBUTING.md` when adding new user-facing features.
+7. **Clean Up**: When a feature is complete and verified, move the spec file from `specs/pending/` to `specs/completed/` and update its status to `🟢 Completed`.
 
 ## 🛠 How to Create a New Spec
 

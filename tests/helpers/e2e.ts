@@ -6,6 +6,13 @@ import ffprobeStatic from 'ffprobe-static';
 
 export const FIXTURE_DIR_RELATIVE = './tests/fixtures';
 export const OUTPUT_DIR_RELATIVE = './out-dir-test';
+export const SUCCESS_TIMEOUT = 30000;
+
+export const ensureOutputDir = () => {
+  if (!fs.existsSync(OUTPUT_DIR_RELATIVE)) {
+    fs.mkdirSync(OUTPUT_DIR_RELATIVE, { recursive: true });
+  }
+};
 
 export const getTestPaths = (fixtureName: string, extension = '.mp4') => {
   return {
@@ -23,7 +30,7 @@ export const getProbeMetadata = (filePath: string): Record<string, string> => {
       '-select_streams',
       'v:0',
       '-show_entries',
-      'stream=width,height:format=duration:format_tags:stream_tags',
+      'stream=width,height,pix_fmt:format=duration:format_tags:stream_tags',
       '-of',
       'default=noprint_wrappers=1:nokey=0',
       filePath,
@@ -39,19 +46,104 @@ export const getProbeMetadata = (filePath: string): Record<string, string> => {
   return data;
 };
 
-export const extractFrame = (videoPath: string, framePath: string): boolean => {
-  spawnSync('ffmpeg', ['-y', '-i', videoPath, '-vframes', '1', framePath], {
-    stdio: 'pipe',
-  });
-  return fs.existsSync(framePath);
+export const getFrameCount = (filePath: string): number => {
+  // Try nb_frames first (fast, from metadata)
+  const output = execFileSync(
+    ffprobeStatic.path,
+    [
+      '-v',
+      'error',
+      '-select_streams',
+      'v:0',
+      '-show_entries',
+      'stream=nb_frames',
+      '-of',
+      'default=nokey=1:noprint_wrappers=1',
+      filePath,
+    ],
+    { encoding: 'utf-8' }
+  ).trim();
+
+  let count = parseInt(output, 10);
+
+  // If nb_frames is missing (e.g. GIF, aPNG), count them manually
+  if (isNaN(count)) {
+    const manualOutput = execFileSync(
+      ffprobeStatic.path,
+      [
+        '-v',
+        'error',
+        '-select_streams',
+        'v:0',
+        '-count_frames',
+        '-show_entries',
+        'stream=nb_read_frames',
+        '-of',
+        'default=nokey=1:noprint_wrappers=1',
+        filePath,
+      ],
+      { encoding: 'utf-8' }
+    ).trim();
+    count = parseInt(manualOutput, 10);
+  }
+
+  return count;
 };
 
-export const getPixelColor = (imagePath: string): string => {
+export const extractFrame = (videoPath: string, framePath: string): boolean => {
+  const args = ['-y'];
+  if (videoPath.endsWith('.webm')) {
+    // Explicitly use libvpx-vp9 to preserve the alpha channel during decoding,
+    // as the default decoder may flatten transparent backgrounds to black.
+    args.push('-c:v', 'libvpx-vp9');
+  }
+  args.push('-i', videoPath, '-vframes', '1', '-pix_fmt', 'rgba', framePath);
+
+  const result = spawnSync('ffmpeg', args, { stdio: 'pipe' });
+
+  if (result.status !== 0) {
+    throw new Error(
+      `ffmpeg failed to extract frame: ${result.stderr.toString()}`
+    );
+  }
+
+  if (!fs.existsSync(framePath)) {
+    throw new Error(`ffmpeg failed to create frame at ${framePath}`);
+  }
+
+  return true;
+};
+
+export const getPixelRGBA = (
+  imagePath: string,
+  x = 0,
+  y = 0
+): { r: number; g: number; b: number; a: number } => {
   const data = fs.readFileSync(imagePath);
   const png = PNG.sync.read(data);
-  const idx = 0;
-  const r = png.data[idx];
-  const g = png.data[idx + 1];
-  const b = png.data[idx + 2];
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
+  const idx = (png.width * y + x) << 2;
+  return {
+    r: png.data[idx],
+    g: png.data[idx + 1],
+    b: png.data[idx + 2],
+    a: png.data[idx + 3],
+  };
+};
+
+export const isPixelTransparent = (
+  imagePath: string,
+  x = 0,
+  y = 0
+): boolean => {
+  const pixel = getPixelRGBA(imagePath, x, y);
+  return pixel.a === 0;
+};
+
+export const hasAlphaStream = (filePath: string): boolean => {
+  const data = getProbeMetadata(filePath);
+  // WebM uses alpha_mode tag
+  if (data['TAG:alpha_mode'] === '1') return true;
+  // PNG, GIF report alpha in pix_fmt (rgba, bgra, yuva420p, etc.)
+  if (data['pix_fmt'] && data['pix_fmt'].includes('a')) return true;
+  return false;
 };

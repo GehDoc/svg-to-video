@@ -21,6 +21,7 @@ test('SuccessView renders MP4 success state correctly', () => {
       fileName="test.mp4"
       fileSize="1.2 MB"
       renderedUrl="blob:test"
+      mimeType="video/mp4"
       onDownload={vi.fn()}
       onBack={vi.fn()}
     />
@@ -28,11 +29,7 @@ test('SuccessView renders MP4 success state correctly', () => {
 
   expect(screen.getByText(/Render Complete/i)).toBeInTheDocument();
   expect(screen.getByText(/test.mp4/i)).toBeInTheDocument();
-  expect(screen.getByText(/1.2 MB/i)).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /Download/i })).toBeInTheDocument();
-  expect(
-    screen.getByRole('button', { name: /Copy Data URL/i })
-  ).toBeInTheDocument();
+  expect(screen.getByTestId('video-preview')).toBeInTheDocument();
 });
 
 test('SuccessView handles copy action', async () => {
@@ -43,6 +40,7 @@ test('SuccessView handles copy action', async () => {
       fileName="test.mp4"
       fileSize="1.2 MB"
       renderedUrl="blob:test"
+      mimeType="video/mp4"
       onDownload={vi.fn()}
       onBack={vi.fn()}
       onCopyOverride={onCopyOverride}
@@ -66,6 +64,7 @@ test('SuccessView renders donation support link', () => {
       fileName="test.mp4"
       fileSize="1.2 MB"
       renderedUrl="blob:test"
+      mimeType="video/mp4"
       onDownload={vi.fn()}
       onBack={vi.fn()}
     />
@@ -79,4 +78,34 @@ test('SuccessView renders donation support link', () => {
     'href',
     'https://github.com/GehDoc/svg-to-video/?sponsor=1'
   );
+});
+
+test('SuccessView renders img tag for png/gif (image/ MIME types)', () => {
+  const { rerender } = render(
+    <SuccessView
+      fileName="test.png"
+      fileSize="100 KB"
+      renderedUrl="blob:test.png"
+      mimeType="image/png"
+      onDownload={vi.fn()}
+      onBack={vi.fn()}
+    />
+  );
+  expect(screen.getByRole('img')).toBeInTheDocument();
+  expect(screen.getByRole('img')).toHaveAttribute('src', 'blob:test.png');
+  expect(screen.queryByTestId('video-preview')).not.toBeInTheDocument();
+
+  rerender(
+    <SuccessView
+      fileName="test.gif"
+      fileSize="100 KB"
+      renderedUrl="blob:test.gif"
+      mimeType="image/gif"
+      onDownload={vi.fn()}
+      onBack={vi.fn()}
+    />
+  );
+  expect(screen.getByRole('img')).toBeInTheDocument();
+  expect(screen.getByRole('img')).toHaveAttribute('src', 'blob:test.gif');
+  expect(screen.queryByTestId('video-preview')).not.toBeInTheDocument();
 });

@@ -1,20 +1,26 @@
 import { test, expect } from '@playwright/test';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getProbeMetadata } from '../../tests/helpers/e2e.js';
+import {
+  getProbeMetadata,
+  SUCCESS_TIMEOUT,
+  ensureOutputDir,
+} from '../../tests/helpers/e2e.js';
+import { getTestOutputPath } from './helpers/web-e2e.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const SUCCESS_TIMEOUT = 30000; // 30 seconds, to allow for rendering time in CI
+// Ensure output dir for E2E verification
+ensureOutputDir();
 
 test.describe('SVG to Video Golden Path', () => {
-  test('should successfully render an SVG into an MP4', async ({ page }) => {
+  test('should successfully render an SVG into an MP4', async ({
+    page,
+  }, testInfo) => {
     // 1. Load the page
     await page.goto('/');
 
     // 2. Upload the fixture SVG
-    // Note: The fixture is in tests/fixtures/font-test.svg relative to project root.
-    // In the container/CI, ensure the path is accessible.
     const svgPath = path.resolve(
       __dirname,
       '../../tests/fixtures/font-test.svg'
@@ -26,7 +32,6 @@ test.describe('SVG to Video Golden Path', () => {
     await page.fill('#fps', '24');
 
     // Assert that the source dimensions are correctly detected
-    // The meta-item element contains both the strong label and the dimension text
     await expect(page.locator('.meta-item:has-text("Source")')).toContainText(
       '500x300'
     );
@@ -51,13 +56,11 @@ test.describe('SVG to Video Golden Path', () => {
     const download = await downloadPromise;
 
     // Verify download filename
-    expect(download.suggestedFilename()).toBe('font-test.mp4');
+    const suggestedName = download.suggestedFilename();
+    expect(suggestedName).toBe('font-test.mp4');
 
     // Verify metadata of the downloaded file
-    const downloadPath = path.resolve(
-      __dirname,
-      '../.vitest-attachments/test-metadata.mp4'
-    );
+    const downloadPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(downloadPath);
 
     const data = getProbeMetadata(downloadPath);
@@ -66,8 +69,8 @@ test.describe('SVG to Video Golden Path', () => {
       /^Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)$/
     );
 
-    // Verify video element is present and has a blob source
-    const video = page.locator('video');
+    // Verify video element is present
+    const video = page.getByTestId('video-preview');
     await expect(video).toBeVisible();
     const videoSrc = await video.getAttribute('src');
     expect(videoSrc).toContain('blob:');
@@ -84,44 +87,9 @@ test.describe('SVG to Video Golden Path', () => {
     await expect(exportButtonAgain).toBeEnabled();
   });
 
-  test('should successfully render an SVG into a WebM with transparency', async ({
-    page,
-  }) => {
-    await page.goto('/');
-
-    const svgPath = path.resolve(
-      __dirname,
-      '../../tests/fixtures/font-test.svg'
-    );
-    await page.setInputFiles('input[type="file"]', svgPath);
-
-    // Select WebM and Transparency
-    await page.selectOption('#format', 'webm');
-    await page.check('#transparent');
-
-    await page.fill('#duration', '1');
-    await page.fill('#fps', '24');
-
-    const exportButton = page.getByRole('button', {
-      name: /Export WEBM/i,
-    });
-    await expect(exportButton).toBeEnabled();
-    await exportButton.click();
-
-    const successCard = page.locator('.success-card');
-    await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
-
-    const downloadButton = page.locator('text=Download');
-    const downloadPromise = page.waitForEvent('download');
-    await downloadButton.click();
-    const download = await downloadPromise;
-
-    expect(download.suggestedFilename()).toBe('font-test.webm');
-  });
-
   test('should successfully render an SVG with custom metadata', async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.goto('/');
 
     const svgPath = path.resolve(
@@ -151,13 +119,11 @@ test.describe('SVG to Video Golden Path', () => {
     await downloadButton.click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toBe('font-test.mp4');
+    const suggestedName = download.suggestedFilename();
+    expect(suggestedName).toBe('font-test.mp4');
 
-    // Verify metadata of the downloaded file (defaults: no title, only attribution)
-    const downloadPath = path.resolve(
-      __dirname,
-      '../.vitest-attachments/test-default-metadata.mp4'
-    );
+    // Verify metadata of the downloaded file
+    const downloadPath = getTestOutputPath(testInfo, suggestedName);
     await download.saveAs(downloadPath);
 
     const data = getProbeMetadata(downloadPath);

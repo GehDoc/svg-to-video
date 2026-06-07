@@ -5,16 +5,28 @@ import pkg from '../../package.json';
 
 const siteName = 'SVG to Video';
 const description =
-  'High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) with transparent background support, frame-accurate rendering.';
+  'High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) and optimized animated image converter (aPNG, GIF) with perfect alpha-channel transparency.';
 const url = 'https://gehdoc.github.io/svg-to-video/';
 const imageUrl =
   'https://gehdoc.github.io/svg-to-video/assets/social-preview.svg';
 
 export const metadata: Metadata = {
-  title: 'SVG to Video - Professional Animated SVG Converter',
+  title: 'SVG to Video - Convert Animated SVG to MP4, WebM, aPNG & GIF',
   description,
+  keywords: [
+    'animated svg',
+    'svg to video',
+    'svg to mp4',
+    'svg to webm',
+    'svg to apng',
+    'svg to gif',
+    'transparent background',
+    'alpha channel',
+    'web animations api',
+    'browser-based converter',
+  ],
   openGraph: {
-    title: siteName,
+    title: 'SVG to Video - Animated SVG Converter',
     description,
     url,
     siteName,
@@ -24,7 +36,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: siteName,
+    title: 'SVG to Video - Animated SVG Converter',
     description,
     images: [imageUrl],
   },
@@ -42,7 +54,8 @@ const jsonLd = {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   featureList: [
     'High-fidelity SVG to video conversion',
-    'Transparent background support (WebM)',
+    'Optimized animated image export (aPNG, GIF)',
+    'Transparent background support (WebM, aPNG, GIF89a)',
     'Frame-accurate Web Animations API scrubbing',
     'Serverless browser-based rendering',
   ],
@@ -56,6 +69,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="/favicon.svg" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

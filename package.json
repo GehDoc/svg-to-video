@@ -1,8 +1,8 @@
 {
   "name": "svg-to-video",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "type": "module",
-  "description": "Professional animated SVG to MP4/WebM/MKV/MOV converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
+  "description": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
   "author": "GehDoc",
   "repository": {
     "type": "git",
@@ -26,6 +26,9 @@
     "convert",
     "mp4",
     "webm",
+    "apng",
+    "gif",
+    "gifenc",
     "transparency",
     "alpha-channel",
     "web-animations-api"
@@ -84,12 +87,12 @@
     "web"
   ],
   "overrides": {
-    "vitest": "4.1.4",
-    "@vitest/spy": "4.1.4",
-    "@vitest/expect": "4.1.4",
-    "@vitest/utils": "4.1.4",
-    "@vitest/mocker": "4.1.4",
-    "@vitest/runner": "4.1.4",
-    "@vitest/snapshot": "4.1.4"
+    "vitest": "4.1.6",
+    "@vitest/spy": "4.1.6",
+    "@vitest/expect": "4.1.6",
+    "@vitest/utils": "4.1.6",
+    "@vitest/mocker": "4.1.6",
+    "@vitest/runner": "4.1.6",
+    "@vitest/snapshot": "4.1.6"
   }
 }

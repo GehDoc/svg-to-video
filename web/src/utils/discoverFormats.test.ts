@@ -4,6 +4,9 @@ import { discoverFormats } from './discoverFormats';
 // Mock Mediabunny to avoid actual browser codec checks in test environment
 vi.mock('mediabunny', () => {
   class MockOutputFormat {
+    getSupportedCodecs() {
+      return ['vp9'];
+    }
     getSupportedVideoCodecs() {
       return ['vp9'];
     }
@@ -15,19 +18,33 @@ vi.mock('mediabunny', () => {
     }
   }
   return {
+    OutputFormat: MockOutputFormat,
     Mp4OutputFormat: MockOutputFormat,
     WebMOutputFormat: MockOutputFormat,
     MkvOutputFormat: MockOutputFormat,
     MovOutputFormat: MockOutputFormat,
-    getFirstEncodableVideoCodec: vi.fn().mockResolvedValue('vp9'),
+    getFirstEncodableVideoCodec: vi.fn().mockImplementation((codecs) => {
+      // For testing, say any codec or even no codecs (for apng/gif) is encodable
+      return Promise.resolve(codecs.length > 0 ? codecs[0] : 'mock-codec');
+    }),
   };
 });
 
 describe('discoverFormats', () => {
-  it('should discover supported formats', async () => {
+  it('should discover supported formats, including aPNG and GIF', async () => {
     const formats = await discoverFormats();
     expect(formats.length).toBeGreaterThan(0);
-    expect(formats[0]).toHaveProperty('id');
-    expect(formats[0]).toHaveProperty('supportsAlpha');
+
+    const ids = formats.map((f) => f.id);
+    expect(ids).toContain('apng');
+    expect(ids).toContain('gif');
+
+    const apng = formats.find((f) => f.id === 'apng');
+    expect(apng?.supportsAlpha).toBe(true);
+    expect(apng?.mimeType).toBe('image/png');
+
+    const gif = formats.find((f) => f.id === 'gif');
+    expect(gif?.supportsAlpha).toBe(true);
+    expect(gif?.mimeType).toBe('image/gif');
   });
 });

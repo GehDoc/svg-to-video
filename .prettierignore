@@ -3,5 +3,7 @@ out-dir
 dist
 build
 web/dist
+web/.next
+.next
 web/playwright-report
 web/test-results

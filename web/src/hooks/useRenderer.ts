@@ -1,11 +1,8 @@
 import { useState, useCallback, useRef } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
-import type { VideoMetadata } from '../../../shared/metadata';
-import { mergeMetadataComments } from '../../../shared/metadata';
-import pkg from '../../../package.json';
-import * as Mediabunny from 'mediabunny';
-
 import { getFormatById } from '../utils/discoverFormats';
+import { createEncoder } from '../utils/encoders/EncoderFactory';
+import type { VideoMetadata } from '@shared/metadata';
 
 export type ResolutionPreset = 'original' | '720p' | '1080p';
 export type CaptureMethod = 'optimal' | 'high-fidelity';
@@ -93,23 +90,7 @@ export const calculateFinalDimensions = (
   return { width, height };
 };
 
-export const getBestCodec = async (
-  width: number,
-  height: number,
-  formatId: string
-) => {
-  const format = getFormatById(formatId);
-  if (!format) throw new Error(`Unknown format: ${formatId}`);
-
-  const outputFormat = new format.OutputFormatClass();
-  return await Mediabunny.getFirstEncodableVideoCodec(
-    outputFormat.getSupportedVideoCodecs(),
-    {
-      width,
-      height,
-    }
-  );
-};
+import { VideoEncoder } from '../utils/encoders/types';
 
 export const useRenderer = (
   rendererRef: React.RefObject<RendererHandle | null>
@@ -121,6 +102,7 @@ export const useRenderer = (
   });
 
   const cancelRef = useRef(false);
+  const activeEncoderRef = useRef<VideoEncoder | null>(null);
   const settingsRef = useRef<RenderSettings | null>(null);
 
   const render = useCallback(
@@ -152,89 +134,83 @@ export const useRenderer = (
 
         await rendererRef.current.loadSvg(svgContent, width, height);
 
-        const target = new Mediabunny.BufferTarget();
-        const outputFormat = new formatInfo.OutputFormatClass();
-        const output = new Mediabunny.Output({
-          format: outputFormat,
-          target,
+        const encoder = createEncoder(settings.format);
+        activeEncoderRef.current = encoder;
+
+        const backgroundColor =
+          !settings.isTransparent || formatInfo.needsColorKeying
+            ? settings.backgroundColor
+            : undefined;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d', {
+          alpha: settings.isTransparent,
         });
+        if (!ctx) throw new Error('Could not get 2D context');
 
-        const metadata: VideoMetadata = {};
-        if (settings.metadata?.title?.trim()) {
-          metadata.title = settings.metadata.title.trim();
-        }
-        metadata.comment = mergeMetadataComments(
-          settings.metadata?.comment?.trim(),
-          pkg.version
+        await encoder.init(
+          {
+            width,
+            height,
+            fps: settings.fps,
+            duration: settings.duration,
+            backgroundColor,
+            isTransparent: settings.isTransparent,
+            metadata: settings.metadata,
+            format: settings.format,
+            mimeType: formatInfo.mimeType,
+          },
+          canvas
         );
-
-        output.setMetadataTags(metadata);
-
-        const videoCodec = await getBestCodec(width, height, settings.format);
-        if (!videoCodec) {
-          throw new Error('No supported video codec found.');
-        }
 
         setState((s) => ({
           ...s,
           meta: {
             originalSize: `${origWidth}x${origHeight}`,
             finalSize: `${width}x${height}`,
-            codec: videoCodec,
+            codec: 'In progress...', // Codec info is now inside the encoder
             eta: 0,
           },
         }));
-
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d', { alpha: settings.isTransparent });
-        if (!ctx) throw new Error('Could not get 2D context');
-
-        if (!settings.isTransparent) {
-          ctx.fillStyle = settings.backgroundColor;
-          ctx.fillRect(0, 0, width, height);
-        }
-
-        const source = new Mediabunny.CanvasSource(canvas, {
-          codec: videoCodec,
-          bitrate: Mediabunny.QUALITY_HIGH,
-          alpha: settings.isTransparent ? 'keep' : 'discard',
-        });
-        output.addVideoTrack(source);
-
-        await output.start();
-        // ... (rest of rendering logic remains the same)
 
         const totalAnimationFrames = Math.ceil(
           settings.duration * settings.fps
         );
         const totalHoldFrames = Math.ceil(settings.hold * settings.fps);
         const totalFrames = totalAnimationFrames + totalHoldFrames;
-        const frameDuration = 1 / settings.fps;
+        const frameDuration = 1000 / settings.fps;
         const startTime = performance.now();
 
         // 1. Animation Loop
         for (let frame = 1; frame <= totalAnimationFrames; frame++) {
           if (cancelRef.current) {
+            encoder.cancel();
             setState({ isRendering: false, progress: 0, status: 'Cancelled' });
             return;
           }
 
-          const timeMs = ((frame - 1) / settings.fps) * 1000;
+          const timeMs = (frame - 1) * frameDuration;
           await rendererRef.current.seek(timeMs);
           const bitmap = await rendererRef.current.capture(
             settings.captureMethod,
             settings.isTransparent
           );
           ctx.clearRect(0, 0, width, height);
-          if (!settings.isTransparent) {
-            ctx.fillStyle = settings.backgroundColor;
+          if (backgroundColor) {
+            if (formatInfo.needsColorKeying) {
+              ctx.drawImage(bitmap, 0, 0, width, height);
+              ctx.globalCompositeOperation = 'source-in';
+            }
+            ctx.fillStyle = backgroundColor;
             ctx.fillRect(0, 0, width, height);
+            ctx.globalCompositeOperation = 'source-over';
           }
           ctx.drawImage(bitmap, 0, 0, width, height);
+
+          await encoder.addFrame(timeMs, frameDuration);
           bitmap.close();
-          await source.add((frame - 1) * frameDuration, frameDuration);
 
           const elapsedTime = (performance.now() - startTime) / 1000;
           const eta = Math.round((totalFrames - frame) * (elapsedTime / frame));
@@ -263,6 +239,7 @@ export const useRenderer = (
 
           for (let frame = 1; frame <= totalHoldFrames; frame++) {
             if (cancelRef.current) {
+              encoder.cancel();
               setState({
                 isRendering: false,
                 progress: 0,
@@ -271,13 +248,21 @@ export const useRenderer = (
               return;
             }
             const currentFrame = totalAnimationFrames + frame;
+            const timeMs = (currentFrame - 1) * frameDuration;
+
             ctx.clearRect(0, 0, width, height);
-            if (!settings.isTransparent) {
-              ctx.fillStyle = settings.backgroundColor;
+            if (backgroundColor) {
+              if (formatInfo.needsColorKeying) {
+                ctx.drawImage(finalBitmap, 0, 0, width, height);
+                ctx.globalCompositeOperation = 'source-in';
+              }
+              ctx.fillStyle = backgroundColor;
               ctx.fillRect(0, 0, width, height);
+              ctx.globalCompositeOperation = 'source-over';
             }
             ctx.drawImage(finalBitmap, 0, 0, width, height);
-            await source.add((currentFrame - 1) * frameDuration, frameDuration);
+
+            await encoder.addFrame(timeMs, frameDuration);
 
             const elapsedTime = (performance.now() - startTime) / 1000;
             const eta = Math.round(
@@ -306,13 +291,7 @@ export const useRenderer = (
           status: 'Finalizing video...',
         });
 
-        await output.finalize();
-
-        const resultBuffer = target.buffer;
-        if (!resultBuffer) throw new Error('Output buffer is empty');
-        const blob = new Blob([resultBuffer], {
-          type: formatInfo.mimeType,
-        });
+        const blob = await encoder.finalize();
         const url = URL.createObjectURL(blob);
         setState({ isRendering: false, progress: 100, status: 'Done!' });
 
@@ -348,6 +327,9 @@ export const useRenderer = (
 
   const cancel = useCallback(() => {
     cancelRef.current = true;
+    if (activeEncoderRef.current) {
+      activeEncoderRef.current.cancel();
+    }
     setState({ isRendering: false, progress: 0, status: 'Ready' });
 
     if (typeof umami !== 'undefined' && settingsRef.current) {

@@ -11,6 +11,7 @@ interface MonitorPanelProps {
   state: RenderState;
   fileName: string;
   fileSize: string | null;
+  mimeType: string;
   onDownload: () => void;
   onBack: () => void;
   originalDim: { width: number; height: number };
@@ -28,6 +29,7 @@ export const MonitorPanel = ({
   state,
   fileName,
   fileSize,
+  mimeType,
   onDownload,
   onBack,
   originalDim,
@@ -45,6 +47,7 @@ export const MonitorPanel = ({
           fileName={fileName}
           fileSize={fileSize}
           renderedUrl={renderedUrl}
+          mimeType={mimeType}
           onDownload={onDownload}
           onBack={onBack}
         />

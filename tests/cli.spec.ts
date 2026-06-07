@@ -7,7 +7,7 @@ import {
   getTestPaths,
   getProbeMetadata,
   extractFrame,
-  getPixelColor,
+  getPixelRGBA,
 } from './helpers/e2e.js';
 
 describe('CLI Functionality', () => {
@@ -139,15 +139,10 @@ describe('CLI Functionality', () => {
         extractFrame(outputFile, framePath),
         'Frame should be extracted'
       );
-      const actualColor = getPixelColor(framePath);
-      const expectedColor = '#0000FF';
-      const diff = Math.abs(
-        parseInt(actualColor.slice(5), 16) -
-          parseInt(expectedColor.slice(5), 16)
-      );
+      const pixel = getPixelRGBA(framePath);
       assert.ok(
-        diff <= 5,
-        `Expected color close to ${expectedColor}, got ${actualColor}`
+        pixel.b > 240 && pixel.r < 15 && pixel.g < 15,
+        `Expected blue, got ${JSON.stringify(pixel)}`
       );
     });
     test('should render font-test.svg with explicit scale factor', () => {
