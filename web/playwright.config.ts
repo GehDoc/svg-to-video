@@ -14,6 +14,13 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: '**/demo.spec.ts',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'demo',
+      testMatch: '**/demo.spec.ts',
+      fullyParallel: false,
       use: { ...devices['Desktop Chrome'] },
     },
   ],
