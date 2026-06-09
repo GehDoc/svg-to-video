@@ -1,42 +1,49 @@
-# Spec: Refactor Encoder Coupling (Registry Pattern)
+# Spec: Refactor Encoder Coupling (Decentralized Registry)
 
 **GitHub Issue**: N/A
 **Status**: 🟠 Pending
 
 ## 🎯 Objective
 
-Refactor the encoder discovery and creation system to use a centralized `FormatRegistry`. This ensures that format-specific knowledge is fully encapsulated within `VideoFormat` factory objects, and `useRenderer.ts` is decoupled from concrete encoder implementations.
+Further decentralize the encoder architecture by moving format metadata and factories into the encoder implementations, ensuring the system is resolution-agnostic during discovery, and removing the central `Formats.ts` registration file.
 
 ## 🛠 Technical Strategy
 
-- **`VideoFormat` as a Factory**: Enhance the `VideoFormat` interface to include metadata (`mimeType`, `extension`, `supportsAlpha`) and factory methods (`createEncoder`, `isSupported`).
-- **`FormatRegistry`**: A central singleton to manage the list of available `VideoFormat` objects. It provides methods to discover supported formats and retrieve them by ID.
-- **`VideoEncoder` Interface**: Generic contract for all encoders, including runtime hooks like `needsColorKeying` to keep the renderer logic agnostic.
-- **Encapsulation**: - No direct knowledge of `Mediabunny`, `UPNG`, or `gifenc` in `useRenderer.ts` or `discoverFormats.ts`. - Knowledge of specific `OutputFormat` classes is moved into the `VideoFormat` implementations.
-  **Status**: 🟢 Completed
-
-...
+- **Decentralized Metadata**:
+  - Move `VideoFormat` implementations (factories) into their respective encoder files (`MediaBunnyEncoder.ts`, `ApngEncoder.ts`, `GifEncoder.ts`).
+  - Encoders will export their corresponding `VideoFormat` instances.
+- **Explicit Registration**:
+  - Remove auto-registration from module load time.
+  - `discoverFormats.ts` will explicitly register the known format factories into the `FormatRegistry`.
+- **Resolution-Agnostic Discovery**:
+  - `discoverFormats` will return all registered formats for the UI selector without performing `isSupported` resolution checks.
+- **Renderer-Level Validation**:
+  - `useRenderer.ts` will perform the `isSupported(resolution)` check right before starting the render process.
+- **Registry as a Service**:
+  - Keep `FormatRegistry` but ensure it's used as a controlled service rather than a hidden global side-effect.
 
 ## ✅ Task List
 
-- [x] **Core Logic & Interfaces (`web/src/utils/encoders/types.ts`)**
-  - [x] Update `VideoEncoder` interface with `needsColorKeying`.
-  - [x] Define `VideoFormat` as a metadata + factory interface.
-- [x] **Registry Implementation (`web/src/utils/encoders/Registry.ts`)**
-  - [x] Create `FormatRegistry` to manage `VideoFormat` instances.
-- [x] **Format Implementations (`web/src/utils/encoders/Formats.ts`)**
-  - [x] Implement `Mp4Format`, `WebMFormat`, `ApngFormat`, `GifFormat`, etc.
-  - [x] Register them in the central `FormatRegistry`.
-- [x] **Integration**
-  - [x] Refactor `web/src/utils/discoverFormats.ts` to delegate to `FormatRegistry`.
-  - [x] Refactor `useRenderer.ts` to use `FormatRegistry` for encoder instantiation.
-- [x] **Verification**
-  - [x] Update and run unit tests for discovery and rendering.
+- [ ] **Encoders Refactoring**
+  - [x] Move `MediaBunnyFormat` and its registrations to `MediaBunnyEncoder.ts`.
+  - [x] Move `ApngFormat` to `ApngEncoder.ts`.
+  - [x] Move `GifFormat` to `GifEncoder.ts`.
+- [ ] **Registry & Discovery Refactoring**
+  - [x] Remove `web/src/utils/encoders/Formats.ts`.
+  - [x] Update `web/src/utils/discoverFormats.ts` to register formats explicitly.
+  - [x] Remove resolution filtering from `discoverFormats`.
+- [ ] **Renderer Integration**
+  - [x] Update `useRenderer.ts` to call `format.isSupported({ width, height })` and handle the error if not supported.
+- [ ] **Verification**
+  - [x] Update unit tests to match the new discovery and registration flow.
 
-- [ ] Automated Test: `npm run test` in `web/`.
-- [ ] Manual Test: Verify all formats (MP4, WebM, APNG, GIF) render correctly with appropriate transparency support.
+## 🧪 Verification Plan
+
+- [x] Automated Test: `npm run test:unit -w web`.
+- [ ] Manual Test: Verify the format selector shows all formats initially, and rendering fails gracefully if a resolution is unsupported.
 
 ## 📝 Change Log
 
 - 2026-06-08: Initial spec created.
 - 2026-06-08: Redesigned to use a central Format Registry and Factory pattern for complete decoupling.
+- 2026-06-08: Further decentralized by moving metadata to encoders and deferring support checks.

@@ -1,5 +1,5 @@
 import * as Mediabunny from 'mediabunny';
-import { VideoEncoder, EncoderOptions } from './types';
+import { VideoEncoder, EncoderOptions, VideoFormat } from './types';
 import { mergeMetadataComments } from '@shared/metadata';
 import type { VideoMetadata } from '@shared/metadata';
 import pkg from '../../../../package.json';
@@ -89,3 +89,53 @@ export class MediaBunnyEncoder implements VideoEncoder {
     return false;
   }
 }
+
+export class MediaBunnyFormat implements VideoFormat {
+  constructor(
+    public readonly id: string,
+    public readonly label: string,
+    private OutputFormatClass: new () => Mediabunny.OutputFormat,
+    public readonly supportsAlpha: boolean,
+    public readonly supportsMetadata: boolean
+  ) {}
+
+  get extension(): string {
+    return new this.OutputFormatClass().fileExtension;
+  }
+
+  get mimeType(): string {
+    return new this.OutputFormatClass().mimeType;
+  }
+
+  createEncoder(): VideoEncoder {
+    return new MediaBunnyEncoder(new this.OutputFormatClass());
+  }
+
+  async isSupported(resolution: {
+    width: number;
+    height: number;
+  }): Promise<boolean> {
+    try {
+      const instance = new this.OutputFormatClass();
+      const codecs = instance.getSupportedVideoCodecs();
+      const bestCodec = await Mediabunny.getFirstEncodableVideoCodec(
+        codecs,
+        resolution
+      );
+      return !!bestCodec;
+    } catch {
+      return false;
+    }
+  }
+
+  get needsColorKeying(): boolean {
+    return false;
+  }
+}
+
+export const MEDIABUNNY_FORMATS = [
+  new MediaBunnyFormat('mp4', 'MP4', Mediabunny.Mp4OutputFormat, false, true),
+  new MediaBunnyFormat('webm', 'WebM', Mediabunny.WebMOutputFormat, true, true),
+  new MediaBunnyFormat('mkv', 'MKV', Mediabunny.MkvOutputFormat, true, true),
+  new MediaBunnyFormat('mov', 'MOV', Mediabunny.MovOutputFormat, false, true),
+];

@@ -133,6 +133,13 @@ export const useRenderer = (
 
         await rendererRef.current.loadSvg(svgContent, width, height);
 
+        const isSupported = await format.isSupported({ width, height });
+        if (!isSupported) {
+          throw new Error(
+            `The selected format ${format.label} is not supported at ${width}x${height} resolution in this browser.`
+          );
+        }
+
         const encoder = format.createEncoder();
         activeEncoderRef.current = encoder;
 

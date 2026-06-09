@@ -81,6 +81,7 @@ describe('useRenderer hook', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(formatRegistry.getFormat).mockReturnValue(mockFormat);
+    vi.mocked(mockFormat.isSupported).mockResolvedValue(true);
     vi.mocked(mockRenderer.loadSvg).mockResolvedValue(undefined);
     vi.mocked(mockRenderer.seek).mockResolvedValue(undefined);
   });

@@ -1,7 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-
-// We must import Formats to trigger registration
-import './encoders/Formats';
 import { discoverFormats, getFormatById } from './discoverFormats';
 
 // Mock Mediabunny
@@ -47,7 +44,7 @@ describe('discoverFormats', () => {
     vi.clearAllMocks();
   });
 
-  it('should discover supported formats from registry', async () => {
+  it('should discover all registered formats', async () => {
     const formats = await discoverFormats();
     expect(formats.length).toBeGreaterThan(0);
 
@@ -61,7 +58,7 @@ describe('discoverFormats', () => {
     expect(apng?.mimeType).toBe('image/png');
   });
 
-  it('should get format by id from registry', () => {
+  it('should get format by id', () => {
     const mp4 = getFormatById('mp4');
     expect(mp4).toBeDefined();
     expect(mp4?.id).toBe('mp4');
