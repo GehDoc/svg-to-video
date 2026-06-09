@@ -86,4 +86,8 @@ export class GifEncoder implements VideoEncoder {
   cancel(): void {
     this.frames = [];
   }
+
+  get needsColorKeying(): boolean {
+    return true;
+  }
 }

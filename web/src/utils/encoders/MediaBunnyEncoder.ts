@@ -3,7 +3,6 @@ import { VideoEncoder, EncoderOptions } from './types';
 import { mergeMetadataComments } from '@shared/metadata';
 import type { VideoMetadata } from '@shared/metadata';
 import pkg from '../../../../package.json';
-import { getFormatById } from '../discoverFormats';
 
 export class MediaBunnyEncoder implements VideoEncoder {
   private options: EncoderOptions | null = null;
@@ -12,6 +11,8 @@ export class MediaBunnyEncoder implements VideoEncoder {
   private output: Mediabunny.Output | null = null;
   private source: Mediabunny.CanvasSource | null = null;
 
+  constructor(private outputFormat: Mediabunny.OutputFormat) {}
+
   async init(
     options: EncoderOptions,
     canvas: HTMLCanvasElement
@@ -19,12 +20,8 @@ export class MediaBunnyEncoder implements VideoEncoder {
     this.options = options;
     this.canvas = canvas;
 
-    const formatInfo = getFormatById(options.format);
-    if (!formatInfo) throw new Error(`Unknown format: ${options.format}`);
-
-    const outputFormat = new formatInfo.OutputFormatClass();
     const videoCodec = await Mediabunny.getFirstEncodableVideoCodec(
-      outputFormat.getSupportedVideoCodecs(),
+      this.outputFormat.getSupportedVideoCodecs(),
       {
         width: options.width,
         height: options.height,
@@ -37,7 +34,7 @@ export class MediaBunnyEncoder implements VideoEncoder {
 
     this.target = new Mediabunny.BufferTarget();
     this.output = new Mediabunny.Output({
-      format: outputFormat,
+      format: this.outputFormat,
       target: this.target,
     });
 
@@ -86,5 +83,9 @@ export class MediaBunnyEncoder implements VideoEncoder {
     this.output = null;
     this.target = null;
     this.source = null;
+  }
+
+  get needsColorKeying(): boolean {
+    return false;
   }
 }

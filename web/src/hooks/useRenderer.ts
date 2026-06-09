@@ -1,7 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
-import { getFormatById } from '../utils/discoverFormats';
-import { createEncoder } from '../utils/encoders/EncoderFactory';
+import { formatRegistry } from '../utils/encoders/Registry';
 import type { VideoMetadata } from '@shared/metadata';
 
 export type ResolutionPreset = 'original' | '720p' | '1080p';
@@ -109,8 +108,8 @@ export const useRenderer = (
     async (svgContent: string, settings: RenderSettings) => {
       if (!rendererRef.current) return;
 
-      const formatInfo = getFormatById(settings.format);
-      if (!formatInfo) throw new Error(`Unknown format: ${settings.format}`);
+      const format = formatRegistry.getFormat(settings.format);
+      if (!format) throw new Error(`Unknown format: ${settings.format}`);
 
       cancelRef.current = false;
       settingsRef.current = settings;
@@ -134,11 +133,11 @@ export const useRenderer = (
 
         await rendererRef.current.loadSvg(svgContent, width, height);
 
-        const encoder = createEncoder(settings.format);
+        const encoder = format.createEncoder();
         activeEncoderRef.current = encoder;
 
         const backgroundColor =
-          !settings.isTransparent || formatInfo.needsColorKeying
+          !settings.isTransparent || encoder.needsColorKeying
             ? settings.backgroundColor
             : undefined;
 
@@ -160,7 +159,7 @@ export const useRenderer = (
             isTransparent: settings.isTransparent,
             metadata: settings.metadata,
             format: settings.format,
-            mimeType: formatInfo.mimeType,
+            mimeType: format.mimeType,
           },
           canvas
         );
@@ -199,7 +198,7 @@ export const useRenderer = (
           );
           ctx.clearRect(0, 0, width, height);
           if (backgroundColor) {
-            if (formatInfo.needsColorKeying) {
+            if (encoder.needsColorKeying) {
               ctx.drawImage(bitmap, 0, 0, width, height);
               ctx.globalCompositeOperation = 'source-in';
             }
@@ -252,7 +251,7 @@ export const useRenderer = (
 
             ctx.clearRect(0, 0, width, height);
             if (backgroundColor) {
-              if (formatInfo.needsColorKeying) {
+              if (encoder.needsColorKeying) {
                 ctx.drawImage(finalBitmap, 0, 0, width, height);
                 ctx.globalCompositeOperation = 'source-in';
               }

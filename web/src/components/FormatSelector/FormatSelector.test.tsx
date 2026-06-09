@@ -3,34 +3,6 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { FormatSelector } from './FormatSelector';
 import type { VideoFormat } from '../../utils/discoverFormats';
-import * as Mediabunny from 'mediabunny';
-
-class MockOutputFormat extends Mediabunny.OutputFormat {
-  getSupportedCodecs() {
-    return [];
-  }
-  getSupportedTrackCounts() {
-    return {
-      total: { min: 0, max: 3 },
-      video: { min: 0, max: 1 },
-      audio: { min: 0, max: 1 },
-      subtitle: { min: 0, max: 1 },
-    };
-  }
-
-  get fileExtension() {
-    return '.mp4';
-  }
-  get mimeType() {
-    return 'video/mp4';
-  }
-  get supportsVideoRotationMetadata() {
-    return false;
-  }
-  get supportsTimestampedMediaData() {
-    return false;
-  }
-}
 
 describe('FormatSelector', () => {
   afterEach(() => {
@@ -44,7 +16,7 @@ describe('FormatSelector', () => {
       supportsMetadata: true,
       extension: '.webm',
       mimeType: 'video/webm',
-      OutputFormatClass: MockOutputFormat,
+      needsColorKeying: false,
     },
     {
       id: 'mp4',
@@ -53,7 +25,7 @@ describe('FormatSelector', () => {
       supportsMetadata: true,
       extension: '.mp4',
       mimeType: 'video/mp4',
-      OutputFormatClass: MockOutputFormat,
+      needsColorKeying: false,
     },
     {
       id: 'apng',
@@ -62,7 +34,7 @@ describe('FormatSelector', () => {
       supportsMetadata: false,
       extension: '.png',
       mimeType: 'image/png',
-      OutputFormatClass: MockOutputFormat,
+      needsColorKeying: false,
     },
     {
       id: 'gif',
@@ -71,7 +43,7 @@ describe('FormatSelector', () => {
       supportsMetadata: false,
       extension: '.gif',
       mimeType: 'image/gif',
-      OutputFormatClass: MockOutputFormat,
+      needsColorKeying: true,
     },
   ];
 

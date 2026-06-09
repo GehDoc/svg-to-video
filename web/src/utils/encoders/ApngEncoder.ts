@@ -50,4 +50,8 @@ export class ApngEncoder implements VideoEncoder {
   cancel(): void {
     this.frames = [];
   }
+
+  get needsColorKeying(): boolean {
+    return false;
+  }
 }

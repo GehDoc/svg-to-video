@@ -13,26 +13,40 @@ export interface EncoderOptions {
 }
 
 export interface VideoEncoder {
-  /**
-   * Initializes the encoder with required settings and the canvas to capture from.
-   * Can be async for libraries that need setup (like MediaBunny/WebCodecs).
-   */
   init(options: EncoderOptions, canvas: HTMLCanvasElement): Promise<void>;
-
-  /**
-   * Adds a single frame to the encoding sequence.
-   * @param timestampMs The absolute timestamp of this frame in milliseconds.
-   * @param durationMs The duration this frame should be displayed in milliseconds.
-   */
   addFrame(timestampMs: number, durationMs: number): Promise<void>;
-
-  /**
-   * Finalizes the encoding process and returns the result as a Blob.
-   */
   finalize(): Promise<Blob>;
+  cancel(): void;
+  /**
+   * Runtime hook for the renderer to know if this encoder instance
+   * requires color keying to handle transparency.
+   */
+  readonly needsColorKeying?: boolean;
+}
+
+/**
+ * Enhanced VideoFormat interface acting as a Factory for encoders.
+ */
+export interface VideoFormat {
+  readonly id: string;
+  readonly label: string;
+  readonly extension: string;
+  readonly mimeType: string;
+  readonly supportsAlpha: boolean;
+  readonly supportsMetadata: boolean;
 
   /**
-   * Cancels any pending encoding operations and cleans up resources.
+   * Creates a new instance of the encoder for this format.
    */
-  cancel(): void;
+  createEncoder(): VideoEncoder;
+
+  /**
+   * Checks if this format is supported in the current environment.
+   */
+  isSupported(resolution: { width: number; height: number }): Promise<boolean>;
+
+  /**
+   * Returns true if this format requires color keying for transparency.
+   */
+  readonly needsColorKeying: boolean;
 }
