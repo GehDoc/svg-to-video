@@ -1,5 +1,5 @@
 import * as Mediabunny from 'mediabunny';
-import { VideoEncoder, EncoderOptions, VideoFormat } from './types';
+import { VideoEncoder, EncoderOptions, BaseFormat } from './types';
 import { mergeMetadataComments } from '@shared/metadata';
 import type { VideoMetadata } from '@shared/metadata';
 import pkg from '../../../../package.json';
@@ -90,14 +90,16 @@ export class MediaBunnyEncoder implements VideoEncoder {
   }
 }
 
-export class MediaBunnyFormat implements VideoFormat {
+export class MediaBunnyFormat extends BaseFormat {
   constructor(
     public readonly id: string,
     public readonly label: string,
     private OutputFormatClass: new () => Mediabunny.OutputFormat,
-    public readonly supportsAlpha: boolean,
-    public readonly supportsMetadata: boolean
-  ) {}
+    override readonly supportsAlpha: boolean,
+    override readonly supportsMetadata: boolean
+  ) {
+    super();
+  }
 
   get extension(): string {
     return new this.OutputFormatClass().fileExtension;
@@ -111,7 +113,7 @@ export class MediaBunnyFormat implements VideoFormat {
     return new MediaBunnyEncoder(new this.OutputFormatClass());
   }
 
-  async isSupported(resolution: {
+  override async isSupported(resolution: {
     width: number;
     height: number;
   }): Promise<boolean> {
@@ -126,10 +128,6 @@ export class MediaBunnyFormat implements VideoFormat {
     } catch {
       return false;
     }
-  }
-
-  get needsColorKeying(): boolean {
-    return false;
   }
 }
 

@@ -24,17 +24,20 @@ Further decentralize the encoder architecture by moving format metadata and fact
 
 ## ✅ Task List
 
-- [ ] **Encoders Refactoring**
+- [x] **Encoders Refactoring**
   - [x] Move `MediaBunnyFormat` and its registrations to `MediaBunnyEncoder.ts`.
   - [x] Move `ApngFormat` to `ApngEncoder.ts`.
   - [x] Move `GifFormat` to `GifEncoder.ts`.
-- [ ] **Registry & Discovery Refactoring**
+- [x] **Registry & Discovery Refactoring**
   - [x] Remove `web/src/utils/encoders/Formats.ts`.
   - [x] Update `web/src/utils/discoverFormats.ts` to register formats explicitly.
   - [x] Remove resolution filtering from `discoverFormats`.
-- [ ] **Renderer Integration**
+- [x] **Code Quality & Redundancy**
+  - [x] Implement `BaseFormat` to provide sensible defaults for format metadata and support checks.
+  - [x] Refactor `ApngFormat`, `GifFormat`, and `MediaBunnyFormat` to extend `BaseFormat`.
+- [x] **Renderer Integration**
   - [x] Update `useRenderer.ts` to call `format.isSupported({ width, height })` and handle the error if not supported.
-- [ ] **Verification**
+- [x] **Verification**
   - [x] Update unit tests to match the new discovery and registration flow.
 
 ## 🧪 Verification Plan

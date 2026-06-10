@@ -1,5 +1,5 @@
 import { GIFEncoder, quantize, applyPalette, WriteFrameOpts } from 'gifenc';
-import { VideoEncoder, EncoderOptions, VideoFormat } from './types';
+import { VideoEncoder, EncoderOptions, BaseFormat } from './types';
 
 export class GifEncoder implements VideoEncoder {
   private frames: { data: Uint8ClampedArray; delay: number }[] = [];
@@ -92,20 +92,15 @@ export class GifEncoder implements VideoEncoder {
   }
 }
 
-export class GifFormat implements VideoFormat {
+export class GifFormat extends BaseFormat {
   readonly id = 'gif';
   readonly label = 'GIF';
   readonly extension = '.gif';
   readonly mimeType = 'image/gif';
-  readonly supportsAlpha = true;
-  readonly supportsMetadata = false;
-  readonly needsColorKeying = true;
+  override readonly supportsAlpha = true;
+  override readonly needsColorKeying = true;
 
   createEncoder(): VideoEncoder {
     return new GifEncoder();
-  }
-
-  async isSupported(): Promise<boolean> {
-    return true;
   }
 }

@@ -50,3 +50,26 @@ export interface VideoFormat {
    */
   readonly needsColorKeying: boolean;
 }
+
+/**
+ * Abstract base class for VideoFormat implementations to reduce redundancy.
+ */
+export abstract class BaseFormat implements VideoFormat {
+  abstract readonly id: string;
+  abstract readonly label: string;
+  abstract readonly extension: string;
+  abstract readonly mimeType: string;
+
+  readonly supportsAlpha: boolean = false;
+  readonly supportsMetadata: boolean = false;
+  readonly needsColorKeying: boolean = false;
+
+  abstract createEncoder(): VideoEncoder;
+
+  async isSupported(_resolution: {
+    width: number;
+    height: number;
+  }): Promise<boolean> {
+    return true; // Most formats work everywhere; MediaBunny will override this.
+  }
+}
