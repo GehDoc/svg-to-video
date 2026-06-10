@@ -4,13 +4,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useRenderer, RenderSettings } from './useRenderer';
-import { createEncoder } from '../utils/encoders/EncoderFactory';
+import { formatRegistry } from '../utils/encoders/Registry';
 import { RendererHandle } from '../components/SvgRenderer';
-import { VideoEncoder } from '../utils/encoders/types';
+import { VideoEncoder, VideoFormat } from '../utils/encoders/types';
 
-// Mock the factory
-vi.mock('../utils/encoders/EncoderFactory', () => ({
-  createEncoder: vi.fn(),
+// Mock Format Registry
+vi.mock('../utils/encoders/Registry', () => ({
+  formatRegistry: {
+    getFormat: vi.fn(),
+  },
 }));
 
 // Mock URL.createObjectURL
@@ -49,6 +51,19 @@ describe('useRenderer hook', () => {
       .fn()
       .mockResolvedValue(new Blob(['test'], { type: 'video/mp4' })),
     cancel: vi.fn(),
+    needsColorKeying: false,
+  };
+
+  const mockFormat: VideoFormat = {
+    id: 'mp4',
+    label: 'MP4',
+    extension: '.mp4',
+    mimeType: 'video/mp4',
+    supportsAlpha: false,
+    supportsMetadata: true,
+    needsColorKeying: false,
+    createEncoder: vi.fn().mockReturnValue(mockEncoder),
+    isSupported: vi.fn().mockResolvedValue(true),
   };
 
   const defaultSettings: RenderSettings = {
@@ -65,7 +80,8 @@ describe('useRenderer hook', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(createEncoder).mockReturnValue(mockEncoder);
+    vi.mocked(formatRegistry.getFormat).mockReturnValue(mockFormat);
+    vi.mocked(mockFormat.isSupported).mockResolvedValue(true);
     vi.mocked(mockRenderer.loadSvg).mockResolvedValue(undefined);
     vi.mocked(mockRenderer.seek).mockResolvedValue(undefined);
   });

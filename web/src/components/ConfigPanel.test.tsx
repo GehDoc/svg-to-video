@@ -59,8 +59,6 @@ test('ConfigPanel: GIF with transparent background enables background color sele
     supportsAlpha: true,
     supportsMetadata: false,
     needsColorKeying: true,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    OutputFormatClass: class {} as any,
   });
   vi.mocked(isTransparencySupported.isTransparencySupported).mockReturnValue(
     true

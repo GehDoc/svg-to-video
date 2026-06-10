@@ -1,5 +1,5 @@
 import { GIFEncoder, quantize, applyPalette, WriteFrameOpts } from 'gifenc';
-import { VideoEncoder, EncoderOptions } from './types';
+import { VideoEncoder, EncoderOptions, BaseFormat } from './types';
 
 export class GifEncoder implements VideoEncoder {
   private frames: { data: Uint8ClampedArray; delay: number }[] = [];
@@ -85,5 +85,22 @@ export class GifEncoder implements VideoEncoder {
 
   cancel(): void {
     this.frames = [];
+  }
+
+  get needsColorKeying(): boolean {
+    return true;
+  }
+}
+
+export class GifFormat extends BaseFormat {
+  readonly id = 'gif';
+  readonly label = 'GIF';
+  readonly extension = '.gif';
+  readonly mimeType = 'image/gif';
+  override readonly supportsAlpha = true;
+  override readonly needsColorKeying = true;
+
+  createEncoder(): VideoEncoder {
+    return new GifEncoder();
   }
 }

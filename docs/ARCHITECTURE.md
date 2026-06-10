@@ -99,9 +99,22 @@ This section documents how to add new output formats and manage the alpha channe
 
 ### Adding New Formats
 
-1.  **Format Support**: Ensure the new format is supported by `mediabunny`.
-2.  **Dependencies**: In `web/src/hooks/useRenderer.ts`, update the `getBestCodec` and `render` functions to handle the new `OutputFormat` class.
-3.  **UI Dependencies**: Update `isTransparencySupported` in `web/src/utils/isTransparencySupported.ts` to reflect if the format supports transparency.
+The project uses a **Registry of Format Factories** to decouple the rendering engine from specific encoder implementations.
+
+1.  **Encoder Implementation**: Create a new encoder class (if needed) in `web/src/utils/encoders/` that implements the `VideoEncoder` interface.
+2.  **Format Factory**: Implement a new `VideoFormat` class (usually extending `BaseFormat` for sensible defaults) in the same file as your encoder.
+    - Define properties like `id`, `label`, `extension`, `mimeType`.
+    - Set `supportsAlpha` and `needsColorKeying` as needed.
+3.  **Registration**: Export your format instance(s) and register them in `web/src/utils/discoverFormats.ts` within the `registerFormats` function.
+
+```typescript
+// Example: web/src/utils/discoverFormats.ts
+const registerFormats = () => {
+  if (formatRegistry.getAllFormats().length > 0) return;
+  // ...
+  formatRegistry.register(new MyNewFormat());
+};
+```
 
 ### Handling Transparency (Alpha Channel)
 

@@ -1,50 +1,72 @@
-import { describe, it, expect, vi } from 'vitest';
-import { discoverFormats } from './discoverFormats';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { discoverFormats, getFormatById } from './discoverFormats';
 
-// Mock Mediabunny to avoid actual browser codec checks in test environment
+// Mock Mediabunny
 vi.mock('mediabunny', () => {
   class MockOutputFormat {
-    getSupportedCodecs() {
-      return ['vp9'];
-    }
     getSupportedVideoCodecs() {
-      return ['vp9'];
+      return ['mock-codec'];
     }
     get fileExtension() {
-      return '.test';
+      return '.mock';
     }
     get mimeType() {
-      return 'video/test';
+      return 'video/mock';
     }
   }
   return {
-    OutputFormat: MockOutputFormat,
-    Mp4OutputFormat: MockOutputFormat,
-    WebMOutputFormat: MockOutputFormat,
-    MkvOutputFormat: MockOutputFormat,
-    MovOutputFormat: MockOutputFormat,
-    getFirstEncodableVideoCodec: vi.fn().mockImplementation((codecs) => {
-      // For testing, say any codec or even no codecs (for apng/gif) is encodable
-      return Promise.resolve(codecs.length > 0 ? codecs[0] : 'mock-codec');
-    }),
+    Mp4OutputFormat: class extends MockOutputFormat {
+      get mimeType() {
+        return 'video/mp4';
+      }
+    },
+    WebMOutputFormat: class extends MockOutputFormat {
+      get mimeType() {
+        return 'video/webm';
+      }
+    },
+    MkvOutputFormat: class extends MockOutputFormat {
+      get mimeType() {
+        return 'video/x-matroska';
+      }
+    },
+    MovOutputFormat: class extends MockOutputFormat {
+      get mimeType() {
+        return 'video/quicktime';
+      }
+    },
+    getFirstEncodableVideoCodec: vi.fn().mockResolvedValue('mock-codec'),
   };
 });
 
 describe('discoverFormats', () => {
-  it('should discover supported formats, including aPNG and GIF', async () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should discover all registered formats', async () => {
     const formats = await discoverFormats();
     expect(formats.length).toBeGreaterThan(0);
 
     const ids = formats.map((f) => f.id);
     expect(ids).toContain('apng');
     expect(ids).toContain('gif');
+    expect(ids).toContain('mp4');
 
     const apng = formats.find((f) => f.id === 'apng');
     expect(apng?.supportsAlpha).toBe(true);
     expect(apng?.mimeType).toBe('image/png');
+  });
 
-    const gif = formats.find((f) => f.id === 'gif');
-    expect(gif?.supportsAlpha).toBe(true);
-    expect(gif?.mimeType).toBe('image/gif');
+  it('should get format by id', () => {
+    const mp4 = getFormatById('mp4');
+    expect(mp4).toBeDefined();
+    expect(mp4?.id).toBe('mp4');
+    expect(mp4?.mimeType).toBe('video/mp4');
+  });
+
+  it('should return undefined for unknown format', () => {
+    const unknown = getFormatById('unknown');
+    expect(unknown).toBeUndefined();
   });
 });

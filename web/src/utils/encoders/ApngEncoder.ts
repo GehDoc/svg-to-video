@@ -1,5 +1,5 @@
 import UPNG from 'upng-js';
-import { VideoEncoder, EncoderOptions } from './types';
+import { VideoEncoder, EncoderOptions, BaseFormat } from './types';
 
 export interface EncoderFrame {
   data: Uint8Array; // RGBA
@@ -49,5 +49,21 @@ export class ApngEncoder implements VideoEncoder {
 
   cancel(): void {
     this.frames = [];
+  }
+
+  get needsColorKeying(): boolean {
+    return false;
+  }
+}
+
+export class ApngFormat extends BaseFormat {
+  readonly id = 'apng';
+  readonly label = 'aPNG';
+  readonly extension = '.png';
+  readonly mimeType = 'image/png';
+  override readonly supportsAlpha = true;
+
+  createEncoder(): VideoEncoder {
+    return new ApngEncoder();
   }
 }
