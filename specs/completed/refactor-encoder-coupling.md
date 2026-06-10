@@ -40,13 +40,17 @@ Further decentralize the encoder architecture by moving format metadata and fact
 - [x] **Verification**
   - [x] Update unit tests to match the new discovery and registration flow.
 
+- [x] **Documentation**
+  - [x] Update `docs/ARCHITECTURE.md` to reflect the new registry-based architecture.
+
 ## 🧪 Verification Plan
 
 - [x] Automated Test: `npm run test:unit -w web`.
-- [ ] Manual Test: Verify the format selector shows all formats initially, and rendering fails gracefully if a resolution is unsupported.
+- [x] Manual Test: Verify the format selector shows all formats initially, and rendering fails gracefully if a resolution is unsupported.
 
 ## 📝 Change Log
 
 - 2026-06-08: Initial spec created.
 - 2026-06-08: Redesigned to use a central Format Registry and Factory pattern for complete decoupling.
 - 2026-06-08: Further decentralized by moving metadata to encoders and deferring support checks.
+- 2026-06-08: Refactored to use `BaseFormat` abstract class and updated architecture documentation.
