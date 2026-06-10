@@ -1,0 +1,1 @@
+import{i as e}from"./preload-helper-CSTgzvhI.js";var t,n=e((()=>{t=(e,t)=>{let n=`Converted from SVG by svg-to-video${t?` v${t}`:``} (https://gehdoc.github.io/svg-to-video/)`;return e?`${e} | ${n}`:n}}));export{t as n,n as t};
