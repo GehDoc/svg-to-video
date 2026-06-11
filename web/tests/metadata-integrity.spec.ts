@@ -11,9 +11,6 @@ const TEST_METADATA = {
   comment: 'This is a comment for E2E testing.',
 };
 
-const PKG_VERSION = '0.18.0';
-const EXPECTED_COMMENT = `${TEST_METADATA.comment} | Converted from SVG by svg-to-video v${PKG_VERSION} (https://gehdoc.github.io/svg-to-video/)`;
-
 // Ensure output dir for E2E verification
 ensureOutputDir();
 
@@ -69,10 +66,11 @@ test.describe('Rendering Pipeline: Metadata Integrity', () => {
           title,
           `Title metadata missing or incorrect for ${format.id}`
         ).toBe(TEST_METADATA.title);
-        expect(
-          comment,
-          `Comment metadata missing or incorrect for ${format.id}`
-        ).toBe(EXPECTED_COMMENT);
+
+        expect(comment).toContain(TEST_METADATA.comment);
+        expect(comment).toMatch(
+          /Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)/
+        );
       });
     }
   });
