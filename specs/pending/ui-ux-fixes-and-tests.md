@@ -26,8 +26,8 @@ Improve UI robustness by validating numeric inputs, exposing renderer errors ear
 - [x] **Metadata & Transparency Testing**
   - [x] Refactor `web/tests/rendering-transparency.spec.ts` to extract common E2E infrastructure.
   - [x] Create `web/tests/metadata-integrity.spec.ts` to verify metadata support for all formats.
-- [ ] **Demo Enhancements**
-  - [ ] Update `demo.spec.ts` to morph the highlight zone between elements instead of resetting it.
+- [x] **Demo Enhancements**
+  - [x] Update `demo.spec.ts` to morph the highlight zone between elements instead of resetting it.
 - [ ] **Bug Fix: Transparent GIF**
   - [ ] Fix "Transparent color not found in palette" error in `GifEncoder.ts`.
   - [ ] (Waiting for user repro) Verify fix with provided SVG and background color.
