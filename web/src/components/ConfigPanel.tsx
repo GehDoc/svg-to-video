@@ -39,6 +39,7 @@ interface ConfigPanelProps {
   onIsDraggingChange: (d: boolean) => void;
   state: RenderState;
   onStartRender: () => void;
+  validationError: string | null;
   originalDim: { isDimensionsDetected: boolean };
   renderedUrl: string | null;
   metadata: VideoMetadata;
@@ -72,6 +73,7 @@ export const ConfigPanel = ({
   onIsDraggingChange,
   state,
   onStartRender,
+  validationError,
   originalDim,
   renderedUrl,
   metadata,
@@ -362,10 +364,15 @@ export const ConfigPanel = ({
       </div>
 
       <div className="render-actions">
+        {validationError && (
+          <p className="validation-error" role="alert">
+            {validationError}
+          </p>
+        )}
         <Button
           variant="primary"
           onClick={onStartRender}
-          disabled={!svgContent || isRenderingOrSuccess}
+          disabled={!svgContent || isRenderingOrSuccess || !!validationError}
         >
           {state.isRendering
             ? 'Processing...'

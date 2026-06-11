@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { test, expect, afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { ConfigPanel } from './ConfigPanel';
@@ -44,6 +44,7 @@ const defaultProps = {
   onIsDraggingChange: vi.fn(),
   state: { isRendering: false, status: 'Idle', progress: 0 },
   onStartRender: vi.fn(),
+  validationError: null,
   originalDim: { width: 0, height: 0, isDimensionsDetected: false },
   renderedUrl: null,
   metadata: { title: '', comment: '' },
@@ -109,4 +110,34 @@ test('ConfigPanel dependency: WebM enables transparency toggle', () => {
 
   const checkbox = screen.getByLabelText(/Transparent Background/i);
   expect(checkbox).not.toBeDisabled();
+});
+
+test('ConfigPanel: displays validation error and disables export button', () => {
+  render(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      validationError="Format not supported"
+    />
+  );
+
+  expect(screen.getByText('Format not supported')).toBeInTheDocument();
+  const exportButton = screen.getByRole('button', { name: /Export MP4/i });
+  expect(exportButton).toBeDisabled();
+});
+
+test('ConfigPanel: duration input handles empty/invalid values by calling onDurationChange with 0', () => {
+  const onDurationChange = vi.fn();
+  render(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      onDurationChange={onDurationChange}
+    />
+  );
+
+  const durationInput = screen.getByLabelText(/Dur. \(s\)/i);
+
+  fireEvent.change(durationInput, { target: { value: '' } });
+  expect(onDurationChange).toHaveBeenCalledWith(0);
 });
