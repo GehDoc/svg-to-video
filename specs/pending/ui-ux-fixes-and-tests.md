@@ -33,6 +33,7 @@ Improve UI robustness by validating numeric inputs, exposing renderer errors ear
   - [ ] (Waiting for user repro) Verify fix with provided SVG and background color.
 - [ ] **Documentation**
   - [ ] Update documentation to reflect any user-facing changes or new testing procedures.
+  - [ ] Create a follow-up ticket/issue to add metadata support for aPNG and GIF formats.
 
 ## 🧪 Verification Plan
 
