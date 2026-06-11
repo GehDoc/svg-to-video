@@ -54,97 +54,63 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     side: 'top' | 'bottom' | 'left' | 'right' = 'bottom',
     align: 'start' | 'center' | 'end' = 'start'
   ) => {
-    // 0. Close existing popover if any, to avoid conflicts with the scroll to the next highlight
-    await page.evaluate(() => {
-      const popover = document.querySelector('.driver-popover') as HTMLElement;
-      if (popover) {
-        // This turns the popover completely invisible instantly
-        // without destroying Driver.js's state or removing the node
-        popover.style.visibility = 'hidden';
-      }
-    });
-
     const locator =
       typeof target === 'string' ? page.locator(target).first() : target;
 
-    // 1. Ensure the element is attached to the DOM
+    // 1. Ensure the element is attached
     await locator.waitFor({ state: 'attached' });
 
-    // 2. Force a native browser SMOOTH scroll to the element first
+    // 2. Trigger Morph and Scroll simultaneously (no popover yet)
     await locator.evaluate((element) => {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center', // Centers the element in the viewport for a better looking demo
-      });
+      window.driverObj!.highlight({ element });
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
-    // 3. Dynamically locate the scrollable parent container and track its frames
+    // 3. Wait for the scroll to stabilize
     await locator.evaluate(async (element) => {
-      // Helper function to find the nearest scrollable parent element
       const getScrollParent = (
         node: HTMLElement | null
       ): HTMLElement | null => {
-        if (node == null) {
-          return null;
-        }
+        if (node == null) return null;
         if (node.scrollHeight > node.clientHeight) {
           const overflowY = window.getComputedStyle(node).overflowY;
-          if (overflowY === 'auto' || overflowY === 'scroll') {
-            return node;
-          }
+          if (overflowY === 'auto' || overflowY === 'scroll') return node;
         }
         return getScrollParent(node.parentElement);
       };
 
       const scrollContainer = getScrollParent(element as HTMLElement);
-
-      // Monitor the container's internal scroll position until it settles
       if (scrollContainer) {
         await new Promise((resolve) => {
           let lastPos = scrollContainer.scrollTop;
           let identicalFrameCount = 0;
-
           function verifyMovement() {
             const currentPos = scrollContainer!.scrollTop;
-
-            if (currentPos === lastPos) {
-              identicalFrameCount++;
-            } else {
-              identicalFrameCount = 0; // Container is still smoothly scrolling
-            }
+            if (currentPos === lastPos) identicalFrameCount++;
+            else identicalFrameCount = 0;
             lastPos = currentPos;
-
-            // Settle frame allowance
-            if (identicalFrameCount > 8) {
-              resolve(true);
-            } else {
-              requestAnimationFrame(verifyMovement);
-            }
+            if (identicalFrameCount > 10) resolve(true);
+            else requestAnimationFrame(verifyMovement);
           }
           requestAnimationFrame(verifyMovement);
         });
+      } else {
+        await new Promise((r) => setTimeout(r, 500));
       }
     });
 
-    // 4. Now that we are smoothly positioned near the element, trigger Driver.js
-    await locator.evaluate(
-      (element, config) => {
-        const { title, description, side, align } = config;
-
-        window.driverObj!.highlight({
-          element,
-          popover: title
-            ? {
-                title,
-                description,
-                side,
-                align,
-              }
-            : undefined,
-        });
-      },
-      { title, description, side, align }
-    );
+    // 4. Show the popover once stable
+    if (title) {
+      await locator.evaluate(
+        (element, { title, description, side, align }) => {
+          window.driverObj!.highlight({
+            element,
+            popover: { title, description, side, align },
+          });
+        },
+        { title, description, side, align }
+      );
+    }
 
     await page.waitForTimeout(1500);
   };

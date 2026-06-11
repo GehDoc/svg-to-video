@@ -1,6 +1,6 @@
 {
   "name": "svg-to-video",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "type": "module",
   "description": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
   "author": "GehDoc",

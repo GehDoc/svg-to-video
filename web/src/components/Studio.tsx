@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, useRef } from 'react';
+import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import type { RendererHandle } from './SvgRenderer/index';
 import {
   useRenderer,
@@ -10,6 +10,7 @@ import {
 import { getMimeTypeById } from '../utils/discoverFormats';
 import { analyzeSvgAnimation } from '@shared/analyzeSvgAnimation.js';
 import type { VideoMetadata } from '@shared/metadata';
+import { formatRegistry } from '../utils/encoders/Registry';
 import { Header } from './Header';
 import { ConfigPanel } from './ConfigPanel';
 import { MonitorPanel } from './MonitorPanel';
@@ -64,8 +65,52 @@ export const Studio = () => {
     });
   }, [originalDim, preset, scale]);
 
+  const [supportError, setSupportError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let ignore = false;
+
+    if (!svgContent) {
+      if (supportError) {
+        Promise.resolve().then(() => {
+          if (!ignore) setSupportError(null);
+        });
+      }
+      return;
+    }
+
+    const checkSupport = async () => {
+      const { width, height } = targetDim;
+      const formatObj = formatRegistry.getFormat(format);
+
+      if (formatObj) {
+        const isSupported = await formatObj.isSupported({ width, height });
+        if (!ignore) {
+          setSupportError(
+            isSupported
+              ? null
+              : `The selected format is not supported at ${width}x${height} in this browser.`
+          );
+        }
+      }
+    };
+
+    checkSupport();
+    return () => {
+      ignore = true;
+    };
+  }, [format, targetDim, svgContent, supportError]);
+
+  const validationError = useMemo(() => {
+    if (!svgContent) return null;
+    if (duration <= 0) return 'Duration must be greater than 0s';
+    if (fps <= 0) return 'FPS must be at least 1';
+    if (fps > 60) return 'FPS cannot exceed 60';
+    return supportError;
+  }, [svgContent, duration, fps, supportError]);
+
   const handleStartRender = useCallback(async () => {
-    if (!svgContent) return;
+    if (!svgContent || validationError) return;
     setRenderedUrl(null);
     setFileSize(null);
 
@@ -94,6 +139,7 @@ export const Studio = () => {
     }
   }, [
     svgContent,
+    validationError,
     duration,
     fps,
     preset,
@@ -164,6 +210,7 @@ export const Studio = () => {
           onIsDraggingChange={setIsDragging}
           state={state}
           onStartRender={handleStartRender}
+          validationError={validationError}
           originalDim={originalDim}
           renderedUrl={renderedUrl}
           metadata={metadata}

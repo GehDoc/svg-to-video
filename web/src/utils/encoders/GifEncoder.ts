@@ -47,13 +47,17 @@ export class GifEncoder implements VideoEncoder {
     );
 
     // 1. Generate palette
-    const palette = quantize(allPixels, 256, { format });
-    const transparentIndex = isTransparent
+    const colorCount = isTransparent ? 255 : 256;
+    const palette = quantize(allPixels, colorCount, { format });
+    let transparentIndex = isTransparent
       ? palette.findIndex(([_r, _g, _b, a]) => a === 0)
       : -1;
 
     if (isTransparent && transparentIndex === -1) {
-      throw new Error('Transparent color specified but not found in palette');
+      // If we need transparency but none was found in the palette (quantization might have merged it away),
+      // we must force one. Since we quantized for 255 colors, we can safely add the 256th.
+      palette.push([0, 0, 0, 0]);
+      transparentIndex = palette.length - 1;
     }
 
     // 2. Encode frames

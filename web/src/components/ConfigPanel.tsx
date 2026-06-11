@@ -39,6 +39,7 @@ interface ConfigPanelProps {
   onIsDraggingChange: (d: boolean) => void;
   state: RenderState;
   onStartRender: () => void;
+  validationError: string | null;
   originalDim: { isDimensionsDetected: boolean };
   renderedUrl: string | null;
   metadata: VideoMetadata;
@@ -72,6 +73,7 @@ export const ConfigPanel = ({
   onIsDraggingChange,
   state,
   onStartRender,
+  validationError,
   originalDim,
   renderedUrl,
   metadata,
@@ -209,9 +211,13 @@ export const ConfigPanel = ({
               <input
                 type="number"
                 id="duration"
-                value={duration}
-                onChange={(e) => onDurationChange(parseFloat(e.target.value))}
-                min={1}
+                value={isNaN(duration) ? '' : duration}
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value);
+                  onDurationChange(isNaN(val) ? 0 : val);
+                }}
+                min={0.1}
+                step={0.1}
                 disabled={isOptionsDisabled}
               />
             </div>
@@ -220,8 +226,11 @@ export const ConfigPanel = ({
               <input
                 type="number"
                 id="hold"
-                value={hold}
-                onChange={(e) => onHoldChange(parseFloat(e.target.value))}
+                value={isNaN(hold) ? '' : hold}
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value);
+                  onHoldChange(isNaN(val) ? 0 : val);
+                }}
                 min={0}
                 step={0.5}
                 disabled={isOptionsDisabled}
@@ -232,8 +241,11 @@ export const ConfigPanel = ({
               <input
                 type="number"
                 id="fps"
-                value={fps}
-                onChange={(e) => onFpsChange(parseInt(e.target.value))}
+                value={isNaN(fps) ? '' : fps}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  onFpsChange(isNaN(val) ? 0 : val);
+                }}
                 min={1}
                 max={60}
                 disabled={isOptionsDisabled}
@@ -352,10 +364,15 @@ export const ConfigPanel = ({
       </div>
 
       <div className="render-actions">
+        {validationError && (
+          <p className="validation-error" role="alert">
+            {validationError}
+          </p>
+        )}
         <Button
           variant="primary"
           onClick={onStartRender}
-          disabled={!svgContent || isRenderingOrSuccess}
+          disabled={!svgContent || isRenderingOrSuccess || !!validationError}
         >
           {state.isRendering
             ? 'Processing...'
