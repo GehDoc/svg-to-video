@@ -17,15 +17,15 @@ Improve UI robustness by validating numeric inputs, exposing renderer errors ear
 
 ## ✅ Task List
 
-- [ ] **UI Robustness**
-  - [ ] Prevent empty/NaN values for duration, hold, and fps in `ConfigPanel.tsx`.
-  - [ ] Ensure input fields are strictly numeric and provide sensible fallbacks.
-- [ ] **Error Handling**
-  - [ ] Expose format/resolution support errors to the UI earlier.
-  - [ ] Disable the Export button or show a warning if the current configuration is invalid.
-- [ ] **Metadata & Transparency Testing**
-  - [ ] Refactor `web/tests/rendering-transparency.spec.ts` to extract common E2E infrastructure.
-  - [ ] Create `web/tests/metadata-integrity.spec.ts` to verify metadata support for all formats.
+- [x] **UI Robustness**
+  - [x] Prevent empty/NaN values for duration, hold, and fps in `ConfigPanel.tsx`.
+  - [x] Ensure input fields are strictly numeric and provide sensible fallbacks.
+- [x] **Error Handling**
+  - [x] Expose format/resolution support errors to the UI earlier.
+  - [x] Disable the Export button or show a warning if the current configuration is invalid.
+- [x] **Metadata & Transparency Testing**
+  - [x] Refactor `web/tests/rendering-transparency.spec.ts` to extract common E2E infrastructure.
+  - [x] Create `web/tests/metadata-integrity.spec.ts` to verify metadata support for all formats.
 - [ ] **Demo Enhancements**
   - [ ] Update `demo.spec.ts` to morph the highlight zone between elements instead of resetting it.
 - [ ] **Bug Fix: Transparent GIF**
