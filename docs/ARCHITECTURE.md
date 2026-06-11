@@ -120,6 +120,7 @@ const registerFormats = () => {
 
 - **Canvas Initialization**: Always use `canvas.getContext('2d', { alpha: true })` for transparency support. For non-transparent exports, explicitly fill the background with the chosen color.
 - **Encoder Configuration**: When using transparency, ensure `alpha: 'keep'` is passed to the `CanvasSource` configuration.
+- **GIF Transparency**: The `GifEncoder` uses a palette reservation strategy. When transparency is enabled, visible colors are quantized to 255 slots, leaving the 256th slot guaranteed for the fully transparent color (`rgba(0,0,0,0)`). This ensures robust transparency even in color-rich animations.
 - **Renderer Script**: The internal renderer iframe must clear the canvas (`ctx.clearRect`) instead of filling it when `isTransparent` is true.
 
 ### Verification of Transparency

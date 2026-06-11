@@ -129,7 +129,10 @@ Beyond end-to-end testing, we use a multi-tiered strategy for component, accessi
 3. **CLI Integration Tests (`tests/cli.spec.ts`)**: Validate full user workflows for the CLI tool.
    - **Command**: `npm run test:cli`
 4. **Web Studio E2E Tests (`web/tests/*.spec.ts`)**: Validate full user workflows for the Web Studio using Playwright.
-   - **Command**: Run `npm run test:web -w web` from the root, or `npm run test:web` from within the `web/` directory.
+   - **Command**: Run `npm run test:web -w web` from the root.
+   - **Key Coverage**:
+     - `rendering-transparency.spec.ts`: Verifies alpha channel support across all formats.
+     - `metadata-integrity.spec.ts`: Verifies strictly that Title and Comment metadata are correctly embedded in supporting formats (MP4, WebM) and that inputs are disabled for non-supporting ones (aPNG, GIF).
 5. **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
    - **Command**: Run `npm run test:storybook -w web` from the root, or `npm run test:storybook` from within the `web/` directory.
 6. **Storybook Build**:
