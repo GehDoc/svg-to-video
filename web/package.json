@@ -72,7 +72,7 @@
     "jsdom": "^29.1.1",
     "playwright": "^1.58.2",
     "sass": "^1.99.0",
-    "storybook": "^10.3.5",
+    "storybook": "^10.4.6",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.56.1",
     "upng-js": "^2.1.0",
