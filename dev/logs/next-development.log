@@ -1,3 +1,3 @@
-{"timestamp":"00:00:01.284","source":"Server","level":"LOG","message":""}
-{"timestamp":"00:00:04.354","source":"Server","level":"LOG","message":"○ Compiling / ..."}
-{"timestamp":"00:00:12.166","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:00:01.285","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:04.346","source":"Server","level":"LOG","message":"○ Compiling / ..."}
+{"timestamp":"00:00:11.034","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
