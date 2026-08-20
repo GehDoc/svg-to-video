@@ -22,9 +22,31 @@ export const getTestPaths = (fixtureName: string, extension = '.mp4') => {
 };
 
 export const getProbeMetadata = (filePath: string): Record<string, string> => {
-  const data: Record<string, string> = {};
+  const output = execFileSync(
+    ffprobeStatic.path,
+    [
+      '-v',
+      'error',
+      '-select_streams',
+      'v:0',
+      '-show_entries',
+      'stream=width,height,pix_fmt:format=duration:format_tags:stream_tags',
+      '-of',
+      'default=noprint_wrappers=1:nokey=0',
+      filePath,
+    ],
+    { encoding: 'utf-8' }
+  );
 
-  if (filePath.endsWith('.png')) {
+  console.log(`Probe output for ${filePath}:`, output);
+
+  const data: Record<string, string> = {};
+  output.split('\n').forEach((line) => {
+    const [key, value] = line.split('=');
+    if (key && value !== undefined) data[key] = value;
+  });
+
+  if (filePath.endsWith('.png') && fs.existsSync(filePath)) {
     const buffer = fs.readFileSync(filePath);
     // Parse PNG tEXt chunks (signature is 8 bytes)
     let offset = 8;
@@ -42,10 +64,9 @@ export const getProbeMetadata = (filePath: string): Record<string, string> => {
       }
       offset += 12 + length;
     }
-    return data;
   }
 
-  if (filePath.endsWith('.gif')) {
+  if (filePath.endsWith('.gif') && fs.existsSync(filePath)) {
     const buffer = fs.readFileSync(filePath);
     // Look for Comment Extension: 0x21 0xFE
     for (let i = 0; i < buffer.length - 2; i++) {
@@ -74,31 +95,8 @@ export const getProbeMetadata = (filePath: string): Record<string, string> => {
         break;
       }
     }
-    return data;
   }
 
-  const output = execFileSync(
-    ffprobeStatic.path,
-    [
-      '-v',
-      'error',
-      '-select_streams',
-      'v:0',
-      '-show_entries',
-      'stream=width,height,pix_fmt:format=duration:format_tags:stream_tags',
-      '-of',
-      'default=noprint_wrappers=1:nokey=0',
-      filePath,
-    ],
-    { encoding: 'utf-8' }
-  );
-
-  console.log(`Probe output for ${filePath}:`, output);
-
-  output.split('\n').forEach((line) => {
-    const [key, value] = line.split('=');
-    if (key && value !== undefined) data[key] = value;
-  });
   return data;
 };
 
