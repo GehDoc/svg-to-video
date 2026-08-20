@@ -1,16 +1,31 @@
-export const crc32 = (buf: Uint8Array): number => {
-  let crc = 0xffffffff;
-  for (let i = 0; i < buf.length; i++) {
-    crc = (crc >>> 8) ^ table[(crc ^ buf[i]) & 0xff];
-  }
-  return (crc ^ 0xffffffff) >>> 0;
-};
+let crcTable: Uint32Array | null = null;
 
-const table = new Uint32Array(256);
-for (let i = 0; i < 256; i++) {
-  let c = i;
-  for (let j = 0; j < 8; j++) {
-    c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+function makeCrcTable(): Uint32Array {
+  const table = new Uint32Array(256);
+  for (let entryIndex = 0; entryIndex < 256; entryIndex++) {
+    let currentByte = entryIndex;
+    for (let bitIndex = 0; bitIndex < 8; bitIndex++) {
+      currentByte =
+        currentByte & 1 ? 0xedb88320 ^ (currentByte >>> 1) : currentByte >>> 1;
+    }
+    table[entryIndex] = currentByte;
   }
-  table[i] = c;
+  return table;
 }
+
+function getCrcTable(): Uint32Array {
+  if (!crcTable) {
+    crcTable = makeCrcTable();
+  }
+  return crcTable;
+}
+
+export const crc32 = (buffer: Uint8Array): number => {
+  const table = getCrcTable();
+  let crcChecksum = 0xffffffff;
+  for (let byteIndex = 0; byteIndex < buffer.length; byteIndex++) {
+    crcChecksum =
+      (crcChecksum >>> 8) ^ table[(crcChecksum ^ buffer[byteIndex]) & 0xff];
+  }
+  return (crcChecksum ^ 0xffffffff) >>> 0;
+};
