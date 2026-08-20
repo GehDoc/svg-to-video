@@ -37,7 +37,7 @@
     "coi-serviceworker": "^0.1.7",
     "gifenc": "^1.0.3",
     "mediabunny": "^1.39.2",
-    "next": "^16.2.7",
+    "next": "^16.3.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-icons": "^5.6.0"
@@ -60,8 +60,8 @@
     "@types/umami": "^2.10.1",
     "@types/upng-js": "^2.1.5",
     "@vitejs/plugin-react": "^6.0.0",
-    "@vitest/browser-playwright": "4.1.8",
-    "@vitest/coverage-v8": "4.1.8",
+    "@vitest/browser-playwright": "4.1.11",
+    "@vitest/coverage-v8": "4.1.11",
     "axe-playwright": "^2.2.2",
     "driver.js": "^1.4.0",
     "eslint": "^9.39.4",
@@ -72,13 +72,13 @@
     "jsdom": "^29.1.1",
     "playwright": "^1.58.2",
     "sass": "^1.99.0",
-    "storybook": "^10.3.5",
+    "storybook": "^10.4.6",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.56.1",
     "upng-js": "^2.1.0",
     "vite": "^8.0.5",
     "vite-plugin-sitemap": "^0.8.2",
     "vite-plugin-svgr": "^5.2.0",
-    "vitest": "4.1.8"
+    "vitest": "4.1.11"
   }
 }
