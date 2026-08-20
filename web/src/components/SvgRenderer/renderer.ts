@@ -138,10 +138,12 @@ export function getRendererScript(
       svgElements.forEach((svgElement, svgElementIndex) => {
         const cloneElement = cloneElements[svgElementIndex];
         // Ensure cloneElement is an element with a style property (covers both HTMLElement and SVGElement)
-        if (!(
-          cloneElement instanceof HTMLElement ||
-          cloneElement instanceof SVGElement
-        )) {
+        if (
+          !(
+            cloneElement instanceof HTMLElement ||
+            cloneElement instanceof SVGElement
+          )
+        ) {
           return;
         }
 
