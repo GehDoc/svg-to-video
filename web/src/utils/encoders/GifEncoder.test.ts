@@ -114,4 +114,52 @@ describe('GifEncoder', () => {
       })
     );
   });
+
+  it('should inject GIF Comment Extension when metadata is provided', async () => {
+    const palette: number[][] = Array.from({ length: 256 }, () => [
+      0, 0, 0, 255,
+    ]);
+    vi.mocked(gifenc.quantize).mockReturnValue(palette);
+    vi.mocked(gifenc.applyPalette).mockReturnValue(new Uint8Array(100));
+
+    // Mock GIF buffer ending with trailer 0x3B
+    const initialBuffer = new Uint8Array([
+      0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x3b,
+    ]);
+    vi.mocked(gifenc.GIFEncoder).mockImplementation(() => ({
+      writeFrame: vi.fn(),
+      finish: vi.fn(),
+      buffer: initialBuffer.buffer,
+      bytes: vi.fn(),
+      bytesView: vi.fn(),
+      writeHeader: vi.fn(),
+      reset: vi.fn(),
+      stream: vi.fn(),
+    }));
+
+    const metadata = { title: 'Hello', comment: 'World' };
+    const canvas = document.createElement('canvas');
+    await encoder.init({ ...mockOptions, metadata }, canvas);
+    await encoder.addFrame(0, 100);
+
+    const blob = await encoder.finalize();
+    const resultBuffer = new Uint8Array(await blob.arrayBuffer());
+
+    // Check if 0x21 0xFE (Comment Extension) exists
+    let found = false;
+    for (let i = 0; i < resultBuffer.length - 1; i++) {
+      if (resultBuffer[i] === 0x21 && resultBuffer[i + 1] === 0xfe) {
+        found = true;
+        break;
+      }
+    }
+    expect(found).toBe(true);
+
+    // Trailer 0x3B should still be at the end
+    expect(resultBuffer[resultBuffer.length - 1]).toBe(0x3b);
+
+    // Content check: "Hello - World"
+    const text = new TextDecoder().decode(resultBuffer);
+    expect(text).toContain('Hello - World');
+  });
 });

@@ -19,6 +19,8 @@ test.describe('Rendering Pipeline: Metadata Integrity', () => {
     const supportedFormats = [
       { id: 'mp4', extension: '.mp4' },
       { id: 'webm', extension: '.webm' },
+      { id: 'apng', extension: '.png' },
+      { id: 'gif', extension: '.gif' },
     ];
 
     for (const format of supportedFormats) {
@@ -49,6 +51,7 @@ test.describe('Rendering Pipeline: Metadata Integrity', () => {
         const metadata = getProbeMetadata(outputPath);
 
         // Helper to find a tag case-insensitively, with or without "TAG:" prefix
+
         const findTag = (tagName: string) => {
           const lowerTag = tagName.toLowerCase();
           for (const [key, value] of Object.entries(metadata)) {
@@ -71,42 +74,6 @@ test.describe('Rendering Pipeline: Metadata Integrity', () => {
         expect(comment).toMatch(
           /Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)/
         );
-      });
-    }
-  });
-
-  test.describe('Unsupported Formats (aPNG, GIF)', () => {
-    const unsupportedFormats = [
-      { id: 'apng', extension: '.png' },
-      { id: 'gif', extension: '.gif' },
-    ];
-
-    for (const format of unsupportedFormats) {
-      test(`should have metadata inputs disabled for ${format.id.toUpperCase()}`, async ({
-        page,
-      }) => {
-        await page.goto('/');
-
-        const svgPath = path.resolve(
-          __dirname,
-          '../../tests/fixtures/demo-fixture.svg'
-        );
-
-        await page.setInputFiles('input[type="file"]', svgPath);
-        await page.selectOption('#format', format.id);
-
-        // Verify that metadata fields are strictly disabled in the UI
-        const titleInput = page.locator('#meta-title');
-        const commentInput = page.locator('#meta-comment');
-
-        await expect(titleInput).toBeDisabled();
-        await expect(commentInput).toBeDisabled();
-
-        // Verify that export still works without metadata
-        const exportButton = page.getByRole('button', {
-          name: new RegExp(`Export ${format.id}`, 'i'),
-        });
-        await expect(exportButton).toBeEnabled();
       });
     }
   });

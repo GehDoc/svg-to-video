@@ -1,6 +1,6 @@
 # Spec: Add Metadata Support for aPNG and GIF
 
-**Status**: 🟠 Pending
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -19,20 +19,21 @@ Extend the current animated image encoders (`upng-js` and `gifenc`) to support e
 
 ## ✅ Task List
 
-- [ ] **Core Logic**
-  - [ ] Implement PNG chunk injection in `ApngEncoder.ts`.
-  - [ ] Implement GIF Comment Extension in `GifEncoder.ts`.
-- [ ] **UI Integration**
-  - [ ] Enable `#meta-title` and `#meta-comment` in `ConfigPanel.tsx` for these formats.
-- [ ] **Verification**
-  - [ ] Update `metadata-integrity.spec.ts` to include these formats in the "Supported" suite.
-  - [ ] Add unit tests for the metadata injection logic in `ApngEncoder.test.ts` and `GifEncoder.test.ts`.
+- [x] **Core Logic**
+  - [x] Implement PNG chunk injection in `ApngEncoder.ts`.
+  - [x] Implement GIF Comment Extension in `GifEncoder.ts`.
+- [x] **UI Integration**
+  - [x] Enable `#meta-title` and `#meta-comment` in `ConfigPanel.tsx` for these formats.
+- [x] **Verification**
+  - [x] Update `metadata-integrity.spec.ts` to include these formats in the "Supported" suite.
+  - [x] Add unit tests for the metadata injection logic in `ApngEncoder.test.ts` and `GifEncoder.test.ts`.
 
 ## 🧪 Verification Plan
 
-- [ ] Automated Test: `npm run test:web -- tests/metadata-integrity.spec.ts`
-- [ ] Automated Test: `npm run test:unit` for encoders.
+- [x] Automated Test: `npm run test:web -- tests/metadata-integrity.spec.ts`
+- [x] Automated Test: `npm run test:unit` for encoders.
 
 ## 📝 Change Log
 
 - 2026-06-11: Initial spec created and technical strategy refined.
+- 2026-08-20: Implemented PNG tEXt injection and GIF Comment Extension injection. Verified unit tests and Playwright E2E metadata integrity suite.

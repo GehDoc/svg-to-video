@@ -1,5 +1,7 @@
 import { GIFEncoder, quantize, applyPalette, WriteFrameOpts } from 'gifenc';
 import { VideoEncoder, EncoderOptions, BaseFormat } from './types';
+import { mergeMetadataComments } from '@shared/metadata';
+import pkg from '../../../../package.json';
 
 export class GifEncoder implements VideoEncoder {
   private frames: { data: Uint8ClampedArray; delay: number }[] = [];
@@ -33,7 +35,7 @@ export class GifEncoder implements VideoEncoder {
   async finalize(): Promise<Blob> {
     if (!this.options) throw new Error('Encoder not initialized');
 
-    const { width, height, isTransparent } = this.options;
+    const { width, height, isTransparent, metadata } = this.options;
     const encoder = GIFEncoder();
 
     const format = isTransparent ? 'rgba4444' : 'rgb565';
@@ -83,8 +85,55 @@ export class GifEncoder implements VideoEncoder {
     }
 
     encoder.finish();
-    const buffer = encoder.buffer;
-    return new Blob([buffer], { type: 'image/gif' });
+    const gifBytes = new Uint8Array(encoder.buffer);
+
+    let finalBuffer = gifBytes;
+
+    if (metadata && (metadata.title || metadata.comment)) {
+      const title = metadata.title?.trim();
+      const rawComment = metadata.comment?.trim();
+      const commentWithAttribution = mergeMetadataComments(
+        rawComment,
+        pkg.version
+      );
+
+      const commentText = title
+        ? `${title} - ${commentWithAttribution}`
+        : commentWithAttribution;
+
+      const textBytes = new TextEncoder().encode(commentText);
+      const commentBlocks: number[] = [0x21, 0xfe];
+
+      let offset = 0;
+      while (offset < textBytes.length) {
+        const blockSize = Math.min(255, textBytes.length - offset);
+        commentBlocks.push(blockSize);
+        for (let i = 0; i < blockSize; i++) {
+          commentBlocks.push(textBytes[offset + i]);
+        }
+        offset += blockSize;
+      }
+      commentBlocks.push(0x00);
+
+      const commentExtension = new Uint8Array(commentBlocks);
+      const trailerIndex = gifBytes.lastIndexOf(0x3b);
+
+      if (trailerIndex !== -1) {
+        finalBuffer = new Uint8Array(gifBytes.length + commentExtension.length);
+        finalBuffer.set(gifBytes.subarray(0, trailerIndex), 0);
+        finalBuffer.set(commentExtension, trailerIndex);
+        finalBuffer.set(
+          gifBytes.subarray(trailerIndex),
+          trailerIndex + commentExtension.length
+        );
+      } else {
+        finalBuffer = new Uint8Array(gifBytes.length + commentExtension.length);
+        finalBuffer.set(gifBytes, 0);
+        finalBuffer.set(commentExtension, gifBytes.length);
+      }
+    }
+
+    return new Blob([finalBuffer], { type: 'image/gif' });
   }
 
   cancel(): void {
@@ -102,6 +151,7 @@ export class GifFormat extends BaseFormat {
   readonly extension = '.gif';
   readonly mimeType = 'image/gif';
   override readonly supportsAlpha = true;
+  override readonly supportsMetadata = true;
   override readonly needsColorKeying = true;
 
   createEncoder(): VideoEncoder {
