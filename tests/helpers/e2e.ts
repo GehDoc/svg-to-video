@@ -38,8 +38,6 @@ export const getProbeMetadata = (filePath: string): Record<string, string> => {
     { encoding: 'utf-8' }
   );
 
-  console.log(`Probe output for ${filePath}:`, output);
-
   const data: Record<string, string> = {};
   output.split('\n').forEach((line) => {
     const [key, value] = line.split('=');

@@ -94,10 +94,6 @@ export class ApngEncoder implements VideoEncoder {
       ).getUint32(0, false);
       const ihdrEnd = 8 + 4 + 4 + ihdrLength + 4;
 
-      console.log(
-        `Injecting metadata at offset ${ihdrEnd}. IHDR length: ${ihdrLength}`
-      );
-
       const newBuffer = new Uint8Array(
         buffer.length + chunks.reduce((acc, c) => acc + c.length, 0)
       );
