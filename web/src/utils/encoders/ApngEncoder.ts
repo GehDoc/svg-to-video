@@ -47,67 +47,77 @@ export class ApngEncoder implements VideoEncoder {
     // UPNG.encode expects an array of ArrayBuffers (one per frame)
     let buffer = new Uint8Array(UPNG.encode(buffers, width, height, 0, delays));
 
-    // Inject Metadata (tEXt chunks)
-    if (metadata && (metadata.title || metadata.comment)) {
-      const chunks: Uint8Array[] = [];
-
-      const addTextChunk = (keyword: string, text: string) => {
-        const textBytes = new TextEncoder().encode(text);
-        const keywordBytes = new TextEncoder().encode(keyword);
-        const chunkData = new Uint8Array(
-          keywordBytes.length + 1 + textBytes.length
-        );
-        chunkData.set(keywordBytes, 0);
-        chunkData.set([0], keywordBytes.length);
-        chunkData.set(textBytes, keywordBytes.length + 1);
-
-        const chunkType = new TextEncoder().encode('tEXt');
-        const chunkLength = chunkData.length;
-
-        const chunk = new Uint8Array(12 + chunkLength);
-        const view = new DataView(chunk.buffer);
-        view.setUint32(0, chunkLength);
-        chunk.set(chunkType, 4);
-        chunk.set(chunkData, 8);
-
-        const crcInput = new Uint8Array(chunkType.length + chunkLength);
-        crcInput.set(chunkType);
-        crcInput.set(chunkData, chunkType.length);
-        view.setUint32(8 + chunkLength, crc32(crcInput));
-
-        chunks.push(chunk);
-      };
-
-      if (metadata.title) addTextChunk('Title', metadata.title);
-      const descriptionText = mergeMetadataComments(
-        metadata.comment,
-        pkg.version
-      );
-      addTextChunk('Description', descriptionText);
-
-      // Insert after IHDR chunk
-      // IHDR is chunk #1. The file starts with 8 bytes signature + 4 length + 4 type + IHDR data + 4 CRC.
-      const ihdrLength = new DataView(
-        buffer.buffer,
-        buffer.byteOffset + 8,
-        4
-      ).getUint32(0, false);
-      const ihdrEnd = 8 + 4 + 4 + ihdrLength + 4;
-
-      const newBuffer = new Uint8Array(
-        buffer.length + chunks.reduce((acc, c) => acc + c.length, 0)
-      );
-      newBuffer.set(buffer.slice(0, ihdrEnd), 0);
-      let offset = ihdrEnd;
-      for (const chunk of chunks) {
-        newBuffer.set(chunk, offset);
-        offset += chunk.length;
-      }
-      newBuffer.set(buffer.slice(ihdrEnd), offset);
-      buffer = newBuffer;
+    if (metadata) {
+      buffer = this.injectMetadata(buffer, metadata);
     }
 
     return new Blob([buffer], { type: mimeType });
+  }
+
+  private injectMetadata(
+    buffer: Uint8Array<ArrayBuffer>,
+    metadata: NonNullable<EncoderOptions['metadata']>
+  ): Uint8Array<ArrayBuffer> {
+    if (!metadata.title && !metadata.comment) {
+      return buffer;
+    }
+
+    const chunks: Uint8Array[] = [];
+
+    const addTextChunk = (keyword: string, text: string) => {
+      const textBytes = new TextEncoder().encode(text);
+      const keywordBytes = new TextEncoder().encode(keyword);
+      const chunkData = new Uint8Array(
+        keywordBytes.length + 1 + textBytes.length
+      );
+      chunkData.set(keywordBytes, 0);
+      chunkData.set([0], keywordBytes.length);
+      chunkData.set(textBytes, keywordBytes.length + 1);
+
+      const chunkType = new TextEncoder().encode('tEXt');
+      const chunkLength = chunkData.length;
+
+      const chunk = new Uint8Array(12 + chunkLength);
+      const view = new DataView(chunk.buffer);
+      view.setUint32(0, chunkLength);
+      chunk.set(chunkType, 4);
+      chunk.set(chunkData, 8);
+
+      const crcInput = new Uint8Array(chunkType.length + chunkLength);
+      crcInput.set(chunkType);
+      crcInput.set(chunkData, chunkType.length);
+      view.setUint32(8 + chunkLength, crc32(crcInput));
+
+      chunks.push(chunk);
+    };
+
+    if (metadata.title) addTextChunk('Title', metadata.title);
+    const descriptionText = mergeMetadataComments(
+      metadata.comment,
+      pkg.version
+    );
+    addTextChunk('Description', descriptionText);
+
+    // Insert after IHDR chunk
+    // IHDR is chunk #1. The file starts with 8 bytes signature + 4 length + 4 type + IHDR data + 4 CRC.
+    const ihdrLength = new DataView(
+      buffer.buffer,
+      buffer.byteOffset + 8,
+      4
+    ).getUint32(0, false);
+    const ihdrEnd = 8 + 4 + 4 + ihdrLength + 4;
+
+    const newBuffer = new Uint8Array(
+      buffer.length + chunks.reduce((acc, c) => acc + c.length, 0)
+    );
+    newBuffer.set(buffer.slice(0, ihdrEnd), 0);
+    let offset = ihdrEnd;
+    for (const chunk of chunks) {
+      newBuffer.set(chunk, offset);
+      offset += chunk.length;
+    }
+    newBuffer.set(buffer.slice(ihdrEnd), offset);
+    return newBuffer;
   }
 
   cancel(): void {

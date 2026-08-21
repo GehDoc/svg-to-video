@@ -85,55 +85,70 @@ export class GifEncoder implements VideoEncoder {
     }
 
     encoder.finish();
-    const gifBytes = new Uint8Array(encoder.buffer);
+    let gifBytes = new Uint8Array(encoder.buffer);
 
-    let finalBuffer = gifBytes;
-
-    if (metadata && (metadata.title || metadata.comment)) {
-      const title = metadata.title?.trim();
-      const rawComment = metadata.comment?.trim();
-      const commentWithAttribution = mergeMetadataComments(
-        rawComment,
-        pkg.version
-      );
-
-      const commentText = title
-        ? `${title} - ${commentWithAttribution}`
-        : commentWithAttribution;
-
-      const textBytes = new TextEncoder().encode(commentText);
-      const commentBlocks: number[] = [0x21, 0xfe];
-
-      let offset = 0;
-      while (offset < textBytes.length) {
-        const blockSize = Math.min(255, textBytes.length - offset);
-        commentBlocks.push(blockSize);
-        for (let i = 0; i < blockSize; i++) {
-          commentBlocks.push(textBytes[offset + i]);
-        }
-        offset += blockSize;
-      }
-      commentBlocks.push(0x00);
-
-      const commentExtension = new Uint8Array(commentBlocks);
-      const trailerIndex = gifBytes.lastIndexOf(0x3b);
-
-      if (trailerIndex !== -1) {
-        finalBuffer = new Uint8Array(gifBytes.length + commentExtension.length);
-        finalBuffer.set(gifBytes.subarray(0, trailerIndex), 0);
-        finalBuffer.set(commentExtension, trailerIndex);
-        finalBuffer.set(
-          gifBytes.subarray(trailerIndex),
-          trailerIndex + commentExtension.length
-        );
-      } else {
-        finalBuffer = new Uint8Array(gifBytes.length + commentExtension.length);
-        finalBuffer.set(gifBytes, 0);
-        finalBuffer.set(commentExtension, gifBytes.length);
-      }
+    if (metadata) {
+      gifBytes = this.injectMetadata(gifBytes, metadata);
     }
 
-    return new Blob([finalBuffer], { type: 'image/gif' });
+    return new Blob([gifBytes], { type: 'image/gif' });
+  }
+
+  private injectMetadata(
+    gifBytes: Uint8Array<ArrayBuffer>,
+    metadata: NonNullable<EncoderOptions['metadata']>
+  ): Uint8Array<ArrayBuffer> {
+    if (!metadata.title && !metadata.comment) {
+      return gifBytes;
+    }
+
+    const title = metadata.title?.trim();
+    const rawComment = metadata.comment?.trim();
+    const commentWithAttribution = mergeMetadataComments(
+      rawComment,
+      pkg.version
+    );
+
+    const commentText = title
+      ? `${title} - ${commentWithAttribution}`
+      : commentWithAttribution;
+
+    const textBytes = new TextEncoder().encode(commentText);
+    const commentBlocks: number[] = [0x21, 0xfe];
+
+    let offset = 0;
+    while (offset < textBytes.length) {
+      const blockSize = Math.min(255, textBytes.length - offset);
+      commentBlocks.push(blockSize);
+      for (let i = 0; i < blockSize; i++) {
+        commentBlocks.push(textBytes[offset + i]);
+      }
+      offset += blockSize;
+    }
+    commentBlocks.push(0x00);
+
+    const commentExtension = new Uint8Array(commentBlocks);
+    const trailerIndex = gifBytes.lastIndexOf(0x3b);
+
+    if (trailerIndex !== -1) {
+      const finalBuffer = new Uint8Array(
+        gifBytes.length + commentExtension.length
+      );
+      finalBuffer.set(gifBytes.subarray(0, trailerIndex), 0);
+      finalBuffer.set(commentExtension, trailerIndex);
+      finalBuffer.set(
+        gifBytes.subarray(trailerIndex),
+        trailerIndex + commentExtension.length
+      );
+      return finalBuffer;
+    } else {
+      const finalBuffer = new Uint8Array(
+        gifBytes.length + commentExtension.length
+      );
+      finalBuffer.set(gifBytes, 0);
+      finalBuffer.set(commentExtension, gifBytes.length);
+      return finalBuffer;
+    }
   }
 
   cancel(): void {
