@@ -72,8 +72,9 @@ If working without an agent, follow these steps to keep the project state synchr
 1.  **Branching**: Create a feature branch from `main`: `git checkout -b feat/XX-description` (or `feat/description` if not linked to an issue).
 2.  **Spec-First**: Create a Spec file in `specs/pending/` using the [specs/template.md](./specs/template.md).
 3.  **Implement & Trace**: Write code, keeping the spec's **Task List** `[x]` updated. Update the **Technical Strategy** if the approach deviates from the plan.
-4.  **Verify**:
+4.  **Verify & SEO Audit**:
     - Ensure all tasks in the spec are marked as complete.
+    - Audit public-facing metadata according to the [Maintaining SEO & Metadata](#-maintaining-seo--metadata) checklist (`layout.tsx`, `SeoFallback.tsx`, `README.md`, `package.json`).
     - Run the full verification suite: `npm run check`.
     - Document the successful verification in the spec's **Change Log**.
 5.  **Archive**: Update the **Status** to `🟢 Completed`, move the spec to `specs/completed/`, and merge your branch.
@@ -132,7 +133,7 @@ Beyond end-to-end testing, we use a multi-tiered strategy for component, accessi
    - **Command**: Run `npm run test:web -w web` from the root.
    - **Key Coverage**:
      - `rendering-transparency.spec.ts`: Verifies alpha channel support across all formats.
-     - `metadata-integrity.spec.ts`: Verifies strictly that Title and Comment metadata are correctly embedded in supporting formats (MP4, WebM) and that inputs are disabled for non-supporting ones (aPNG, GIF).
+     - `metadata-integrity.spec.ts`: Verifies strictly that Title and Comment metadata are correctly embedded across supporting formats (MP4, WebM, aPNG, GIF).
 5. **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
    - **Command**: Run `npm run test:storybook -w web` from the root, or `npm run test:storybook` from within the `web/` directory.
 6. **Storybook Build**:
