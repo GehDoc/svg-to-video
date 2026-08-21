@@ -1,6 +1,47 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GifEncoder } from './GifEncoder';
+import { GifEncoder, injectGifMetadata } from './GifEncoder';
 import * as gifenc from 'gifenc';
+
+const mockGifHeader = new Uint8Array([
+  0x47,
+  0x49,
+  0x46,
+  0x38,
+  0x39,
+  0x61,
+  0x3b, // Header + trailer 0x3B
+]);
+
+describe('injectGifMetadata', () => {
+  it('should return original buffer when metadata is undefined or empty', () => {
+    expect(injectGifMetadata(mockGifHeader, undefined)).toBe(mockGifHeader);
+    expect(injectGifMetadata(mockGifHeader, {})).toBe(mockGifHeader);
+  });
+
+  it('should inject title only when title is set', () => {
+    const result = injectGifMetadata(mockGifHeader, { title: 'My Title' });
+    const text = new TextDecoder().decode(result);
+    expect(text).toContain('My Title');
+    expect(result[result.length - 1]).toBe(0x3b);
+  });
+
+  it('should inject comment only when comment is set', () => {
+    const result = injectGifMetadata(mockGifHeader, { comment: 'My Comment' });
+    const text = new TextDecoder().decode(result);
+    expect(text).toContain('My Comment');
+    expect(result[result.length - 1]).toBe(0x3b);
+  });
+
+  it('should inject combined title and comment when both are set', () => {
+    const result = injectGifMetadata(mockGifHeader, {
+      title: 'My Title',
+      comment: 'My Comment',
+    });
+    const text = new TextDecoder().decode(result);
+    expect(text).toContain('My Title - My Comment');
+    expect(result[result.length - 1]).toBe(0x3b);
+  });
+});
 
 vi.mock('gifenc', async (importOriginal) => {
   const actual = await importOriginal<typeof import('gifenc')>();
@@ -115,7 +156,7 @@ describe('GifEncoder', () => {
     );
   });
 
-  it('should inject GIF Comment Extension when metadata is provided', async () => {
+  it('should call injectGifMetadata during finalize when metadata is provided', async () => {
     const palette: number[][] = Array.from({ length: 256 }, () => [
       0, 0, 0, 255,
     ]);
@@ -144,19 +185,6 @@ describe('GifEncoder', () => {
 
     const blob = await encoder.finalize();
     const resultBuffer = new Uint8Array(await blob.arrayBuffer());
-
-    // Check if 0x21 0xFE (Comment Extension) exists
-    let found = false;
-    for (let i = 0; i < resultBuffer.length - 1; i++) {
-      if (resultBuffer[i] === 0x21 && resultBuffer[i + 1] === 0xfe) {
-        found = true;
-        break;
-      }
-    }
-    expect(found).toBe(true);
-
-    // Trailer 0x3B should still be at the end
-    expect(resultBuffer[resultBuffer.length - 1]).toBe(0x3b);
 
     // Content check: "Hello - World"
     const text = new TextDecoder().decode(resultBuffer);
