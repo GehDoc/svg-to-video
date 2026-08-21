@@ -26,6 +26,7 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - `web/src/app/layout.tsx` (`keywords` & `jsonLd.featureList`)
    - `web/src/components/SeoFallback.tsx` (static fallback description)
    - `package.json` (`keywords`)
+   - GitHub Repository Metadata (Description & Topics via `gh repo edit`)
 7. **Clean Up**: Once code, tests, documentation, and SEO audits are complete and verified, update the spec status to `🟢 Completed` and move the spec file from `specs/pending/` to `specs/completed/`.
 
 ## 🛠 How to Create a New Spec
