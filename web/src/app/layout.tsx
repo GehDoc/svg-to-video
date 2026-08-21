@@ -56,6 +56,7 @@ const jsonLd = {
     'High-fidelity SVG to video conversion',
     'Optimized animated image export (aPNG, GIF)',
     'Transparent background support (WebM, aPNG, GIF89a)',
+    'Metadata embedding (Title and Comment across video and animated images)',
     'Frame-accurate Web Animations API scrubbing',
     'Serverless browser-based rendering',
   ],

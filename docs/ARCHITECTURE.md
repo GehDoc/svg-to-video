@@ -134,6 +134,14 @@ To verify if an export correctly contains an alpha channel:
     An output of `yuva420p` or `ya8` confirms alpha support.
 2.  **Visual Test**: Import the video into an editor like Figma or DaVinci Resolve and place it over a colored background layer.
 
+### Handling Metadata Injection
+
+The project supports embedding custom Title and Comment/Description metadata across output formats:
+
+- **Video Formats (MP4, WebM, MKV, MOV)**: Managed via `MediaBunnyEncoder.ts`, passing metadata tags directly to the Mediabunny container multiplexer.
+- **Animated PNG (aPNG)**: Implemented in `injectApngMetadata` (`ApngEncoder.ts`). Injects standard PNG `tEXt` chunks (`Title` and `Description`) into the binary buffer immediately after the `IHDR` chunk, calculating IEEE 802.3 CRC-32 checksums for each chunk.
+- **GIF**: Implemented in `injectGifMetadata` (`GifEncoder.ts`). Combines Title and Comment into a single text payload and injects a GIF89a Comment Extension block (`0x21 0xFE` with 255-byte sub-block chunking) directly before the GIF trailer byte (`0x3B`).
+
 ### UI Dependency Logic
 
 The `ConfigPanel` implements a two-way dependency:
