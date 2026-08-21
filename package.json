@@ -29,6 +29,7 @@
     "apng",
     "gif",
     "gifenc",
+    "metadata",
     "transparency",
     "alpha-channel",
     "web-animations-api"

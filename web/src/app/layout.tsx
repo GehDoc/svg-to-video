@@ -22,6 +22,8 @@ export const metadata: Metadata = {
     'svg to gif',
     'transparent background',
     'alpha channel',
+    'metadata injection',
+    'video metadata',
     'web animations api',
     'browser-based converter',
   ],
