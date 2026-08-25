@@ -43,6 +43,58 @@ export const getProbeMetadata = (filePath: string): Record<string, string> => {
     const [key, value] = line.split('=');
     if (key && value !== undefined) data[key] = value;
   });
+
+  if (filePath.endsWith('.png') && fs.existsSync(filePath)) {
+    const buffer = fs.readFileSync(filePath);
+    // Parse PNG tEXt chunks (signature is 8 bytes)
+    let offset = 8;
+    while (offset < buffer.length - 4) {
+      const length = buffer.readUInt32BE(offset);
+      const type = buffer.toString('ascii', offset + 4, offset + 8);
+      if (type === 'tEXt') {
+        const chunkData = buffer.subarray(offset + 8, offset + 8 + length);
+        const nullIdx = chunkData.indexOf(0);
+        if (nullIdx !== -1) {
+          const keyword = chunkData.toString('ascii', 0, nullIdx);
+          const text = chunkData.toString('utf-8', nullIdx + 1);
+          data[`TAG:${keyword.toLowerCase()}`] = text;
+        }
+      }
+      offset += 12 + length;
+    }
+  }
+
+  if (filePath.endsWith('.gif') && fs.existsSync(filePath)) {
+    const buffer = fs.readFileSync(filePath);
+    // Look for Comment Extension: 0x21 0xFE
+    for (let i = 0; i < buffer.length - 2; i++) {
+      if (buffer[i] === 0x21 && buffer[i + 1] === 0xfe) {
+        let offset = i + 2;
+        let commentText = '';
+        while (offset < buffer.length) {
+          const blockSize = buffer[offset];
+          if (blockSize === 0) break;
+          commentText += buffer.toString(
+            'utf-8',
+            offset + 1,
+            offset + 1 + blockSize
+          );
+          offset += 1 + blockSize;
+        }
+        if (commentText) {
+          const sepIdx = commentText.indexOf(' - ');
+          if (sepIdx !== -1) {
+            data['TAG:title'] = commentText.substring(0, sepIdx);
+            data['TAG:comment'] = commentText.substring(sepIdx + 3);
+          } else {
+            data['TAG:comment'] = commentText;
+          }
+        }
+        break;
+      }
+    }
+  }
+
   return data;
 };
 

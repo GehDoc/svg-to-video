@@ -22,8 +22,10 @@ _One-sentence summary of the user value and technical goal._
 - [ ] **UI / Integration**
   - [ ] [Task 3]
 - [ ] **Documentation & SEO**
-  - [ ] Update README.md
-  - [ ] Update SEO metadata (layout.tsx, SeoFallback.tsx)
+  - [ ] Update README.md & docs/ARCHITECTURE.md
+  - [ ] Update SEO keywords & JSON-LD in web/src/app/layout.tsx
+  - [ ] Update static fallback description in web/src/components/SeoFallback.tsx
+  - [ ] Update package.json keywords
 
 ## 🧪 Verification Plan
 

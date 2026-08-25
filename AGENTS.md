@@ -20,8 +20,14 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
 3. **Link to GitHub**: If the feature is linked to a GitHub Issue, the spec MUST link to the issue URL at the top of the file.
 4. **Checklist Discipline**: Update the task list checkboxes `[x]` in the spec file immediately after completing a task and verifying it. Include documentation and SEO updates in your checklist if they apply.
 5. **State Persistence**: If the technical strategy changes during our conversation, your FIRST action is to update the `.md` file in `specs/pending/`.
-6. **Documentation & SEO**: Always refer to the "Maintaining SEO & Metadata" section in `CONTRIBUTING.md` when adding new user-facing features.
-7. **Clean Up**: When a feature is complete and verified, move the spec file from `specs/pending/` to `specs/completed/` and update its status to `🟢 Completed`.
+6. **Documentation & SEO Pre-Flight**: Before finalizing any feature, systematically audit and update:
+   - `README.md` (features & capabilities)
+   - `docs/ARCHITECTURE.md` (if design or format strategies changed)
+   - `web/src/app/layout.tsx` (`keywords` & `jsonLd.featureList`)
+   - `web/src/components/SeoFallback.tsx` (static fallback description)
+   - `package.json` (`keywords`)
+   - GitHub Repository Metadata (Description & Topics via `gh repo edit`)
+7. **Clean Up**: Once code, tests, documentation, and SEO audits are complete and verified, update the spec status to `🟢 Completed` and move the spec file from `specs/pending/` to `specs/completed/`.
 
 ## 🛠 How to Create a New Spec
 
