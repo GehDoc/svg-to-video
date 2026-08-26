@@ -13,20 +13,30 @@ Extend the CLI tool (`svg-to-video`) to support exporting animated image formats
 - **Architecture**: Headless CLI tool (`src/index.ts` / CLI module).
 - **Key Dependencies**: `ffmpeg`, `commander` / CLI parser.
 
-### Core Changes:
+### Exact CLI Options & Accepted Values:
+
+1. **New Option: `--format <format>`**
+   - **Accepted Values**: `gif`, `apng`, `png` (alias for `apng`), `mp4`, `webm`, `mkv`, `mov`
+   - **Default Behavior**: If omitted, defaults to `webm` (when `--transparent` flag is present) or `mp4` (otherwise).
+   - **Output Filename**: Saved inside `<outDir>` as `<inputBasename>.<format>` (e.g., `input.svg` exported with `--format gif` to `./outDir` becomes `./outDir/input.gif`).
+
+2. **Enhanced Existing Options**:
+   - `--transparent`: Now supported for `gif` and `apng`/`png` formats (applies alpha channel / palette transparency in FFmpeg) as well as `webm`.
+   - `--metadata <items...>`: Supported for `gif` and `apng`/`png` outputs (injecting `title`, `comment`, and software generator metadata via FFmpeg).
+
+### Core Implementation Strategy:
 
 1. **Format Detection & Argument Parsing**:
-   - Update file extension parsing and CLI options in `src/index.ts` (and related CLI utilities) to support `.gif`, `.apng`, and `.png` (when specified for animated PNG).
+   - Update `RunOptions` interface and `commander` setup in `src/index.ts` to include `--format` option.
+   - Set output filename in `<outDir>` to `<inputBasename>.<format>`.
 2. **FFmpeg GIF Pipeline**:
-   - Implement complex filter graphs for palette generation (`palettegen`) and application (`paletteuse`) to generate high-quality GIFs.
-   - Respect `--transparent` / background options for GIF alpha transparency / palette handling.
+   - Implement complex filter graph using `palettegen` and `paletteuse` for high-quality palette-optimized GIFs (`-filter_complex "[0:v] palettegen=reserve_transparent=1 [p]; [0:v][p] paletteuse"` when transparent).
 3. **FFmpeg aPNG Pipeline**:
-   - Configure FFmpeg output options for aPNG format (`-f apng` or `.apng`/`.png` target).
-   - Preserve alpha channel when `--transparent` is supplied.
-4. **Metadata Embedding**:
-   - Ensure metadata arguments (`--metadata title="..." comment="..."` or custom tags) are properly mapped to FFmpeg format metadata parameters for GIF and aPNG.
+   - Configure FFmpeg aPNG output (`-f apng`, `-plays 0` for infinite looping).
+4. **Metadata & Transparency**:
+   - Wire metadata parameters (`title`, `comment`) and background transparency flags into GIF and aPNG FFmpeg invocations.
 5. **Integration Testing**:
-   - Add comprehensive tests in `tests/cli.spec.ts` validating GIF and aPNG export commands, transparency options, and output file existence/validity.
+   - Add test cases in `tests/cli.spec.ts` for GIF and aPNG output generation using `--format gif`, `--format apng`, `--transparent`, and `--metadata`.
 
 ## ✅ Task List
 
