@@ -1,7 +1,7 @@
 # Spec: 99 - CLI Animated Image Output Support (GIF & aPNG)
 
 **GitHub Issue**: [#99](https://github.com/GehDoc/svg-to-video/issues/99)
-**Status**: 🟠 Pending
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -40,27 +40,27 @@ Extend the CLI tool (`svg-to-video`) to support exporting animated image formats
 
 ## ✅ Task List
 
-- [ ] **Infrastructure & CLI Arguments**
-  - [ ] Update file extension detection and CLI format parameters to include `gif`, `apng`, `png`.
-- [ ] **Core Logic & FFmpeg Pipeline**
-  - [ ] Implement palette-optimized GIF encoding pipeline in `src/` FFmpeg integration.
-  - [ ] Implement aPNG encoding pipeline in `src/` FFmpeg integration.
-  - [ ] Support `--transparent` flag for GIF and aPNG CLI outputs.
-  - [ ] Wire `--metadata` parameters (`title`, `comment`) into GIF and aPNG export pipelines.
-- [ ] **Testing**
-  - [ ] Add integration test coverage for GIF and aPNG exports in `tests/cli.spec.ts`.
-- [ ] **Documentation & SEO**
-  - [ ] Update `README.md` (CLI features, usage instructions for GIF and aPNG)
-  - [ ] Update `docs/CLI.md` (CLI format descriptions and flags)
-  - [ ] Update `docs/ARCHITECTURE.md` (if CLI pipeline architectural details change)
-  - [ ] Update SEO keywords & JSON-LD in `web/src/app/layout.tsx`
-  - [ ] Update static fallback description in `web/src/components/SeoFallback.tsx`
-  - [ ] Update `package.json` keywords
+- [x] **Infrastructure & CLI Arguments**
+  - [x] Update file extension detection and CLI format parameters to include `gif`, `apng`, `png`.
+- [x] **Core Logic & FFmpeg Pipeline**
+  - [x] Implement palette-optimized GIF encoding pipeline in `src/` FFmpeg integration.
+  - [x] Implement aPNG encoding pipeline in `src/` FFmpeg integration.
+  - [x] Support `--transparent` flag for GIF and aPNG CLI outputs.
+  - [x] Wire `--metadata` parameters (`title`, `comment`) into GIF and aPNG export pipelines.
+- [x] **Testing**
+  - [x] Add integration test coverage for GIF and aPNG exports in `tests/cli.spec.ts`.
+- [x] **Documentation & SEO**
+  - [x] Update `README.md` (CLI features, usage instructions for GIF and aPNG)
+  - [x] Update `docs/CLI.md` (CLI format descriptions and flags)
+  - [x] Update `docs/ARCHITECTURE.md` (if CLI pipeline architectural details change)
+  - [x] Update SEO keywords & JSON-LD in `web/src/app/layout.tsx`
+  - [x] Update static fallback description in `web/src/components/SeoFallback.tsx`
+  - [x] Update `package.json` keywords
 
 ## 🧪 Verification Plan
 
-- [ ] Manual Test: Run CLI export commands generating `.gif` and `.apng` files with `--transparent` and `--metadata` parameters.
-- [ ] Automated Test: Execute test suite via `npm test` or `npx vitest` / `npx playwright test` to verify `tests/cli.spec.ts`.
+- [x] Manual Test: Run CLI export commands generating `.gif` and `.apng` files with `--transparent` and `--metadata` parameters.
+- [x] Automated Test: Execute test suite via `npm test` or `npx vitest` / `npx playwright test` to verify `tests/cli.spec.ts`.
 
 ## 📝 Change Log
 

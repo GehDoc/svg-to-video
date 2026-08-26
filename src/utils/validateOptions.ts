@@ -7,7 +7,10 @@ export interface ValidateOptionsParams {
   resolution: string;
   transparent: boolean;
   bgColor: string;
+  format?: string;
 }
+
+const ALLOWED_FORMATS = ['mp4', 'webm', 'mkv', 'mov', 'gif', 'apng', 'png'];
 
 export function validateOptions(options: ValidateOptionsParams): void {
   if (options.duration !== undefined && options.duration <= 0) {
@@ -20,5 +23,14 @@ export function validateOptions(options: ValidateOptionsParams): void {
 
   if (options.transparent && options.bgColor !== '#ffffff') {
     throw new Error('--transparent and --bg-color cannot be used together.');
+  }
+
+  if (
+    options.format &&
+    !ALLOWED_FORMATS.includes(options.format.toLowerCase())
+  ) {
+    throw new Error(
+      `Invalid format "${options.format}". Supported formats are: ${ALLOWED_FORMATS.join(', ')}.`
+    );
   }
 }
