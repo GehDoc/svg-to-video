@@ -1,42 +1,42 @@
 version: 2
 updates:
   # Single root npm workspace (handles web workspace via workspaces + root package-lock.json)
-  - package-ecosystem: "npm"
-    directory: "/"                      # root package.json and root package-lock.json (handles workspaces)
+  - package-ecosystem: npm
+    directory: /
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: weekly
+      day: monday
       time: "04:00"
     open-pull-requests-limit: 6
-    rebase-strategy: "auto"
+    rebase-strategy: auto
     labels:
-      - "dependencies"
-      - "dependabot"
+      - dependencies
+      - dependabot
     allow:
-      - dependency-type: "all"
+      - dependency-type: all
 
   # GitHub Actions workflow updates
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
-      day: "wednesday"
+      interval: weekly
+      day: wednesday
       time: "06:00"
     open-pull-requests-limit: 5
-    rebase-strategy: "auto"
+    rebase-strategy: auto
     labels:
-      - "ci"
-      - "dependabot"
+      - ci
+      - dependabot
 
   # Docker base images (Dockerfile FROM lines)
-  - package-ecosystem: "docker"
-    directory: "/"                      # Dependabot scans Dockerfiles in the repo
+  - package-ecosystem: docker
+    directory: /
     schedule:
-      interval: "weekly"
-      day: "thursday"
+      interval: weekly
+      day: thursday
       time: "06:30"
     open-pull-requests-limit: 3
-    rebase-strategy: "auto"
+    rebase-strategy: auto
     labels:
-      - "dependencies"
-      - "docker"
+      - dependencies
+      - docker
