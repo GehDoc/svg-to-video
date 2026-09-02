@@ -1,0 +1,43 @@
+import{n as e}from"./rolldown-runtime-DkW27tQK.js";import{d as t}from"./iframe-Db9mOgLA.js";import{t as n}from"./jsx-runtime-DeHZSEgm.js";function r(e){document.getAnimations().forEach(t=>{try{t.pause()}catch{}t.currentTime=e}),document.querySelectorAll(`svg`).forEach(t=>{try{t instanceof SVGSVGElement&&(typeof t.pauseAnimations==`function`&&t.pauseAnimations(),typeof t.setCurrentTime==`function`&&t.setCurrentTime(e/1e3))}catch{}})}function i(e){return!!e&&typeof e==`object`&&`type`in e&&typeof e.type==`string`&&[`LOAD_SVG`,`SEEK`,`CAPTURE`,`READY`,`SEEKED`,`CAPTURE_RESULT`,`SCRIPT_LOADED`].includes(e.type)}function a(e,t,n){let r=`fill.fill-opacity.fill-rule.stroke.stroke-opacity.stroke-width.stroke-linecap.stroke-linejoin.stroke-miterlimit.stroke-dasharray.stroke-dashoffset.opacity.display.visibility.filter.mask.clip-path.clip-rule.stop-color.stop-opacity.font-family.font-size.font-weight.font-style.text-anchor.text-decoration.dominant-baseline.alignment-baseline.baseline-shift.transform.transform-origin.x.y.width.height.cx.cy.r.rx.ry.color.flood-color.flood-opacity.lighting-color.mix-blend-mode.isolation`.split(`.`),i=document.getElementById(`svg-container`),a=document.getElementById(`capture-canvas`);if(!(i instanceof HTMLElement)||!(a instanceof HTMLCanvasElement)){console.error(`[Renderer] Required DOM elements not found.`);return}let o=!1;window.addEventListener(`message`,async s=>{if(s.origin!==n||s.source!==window.parent)return;let c=s.data;if(t(c)){if(c.type===`LOAD_SVG`){let{svgContent:t,width:r,height:s,timeMs:l}=c.payload;o=!1,i.innerHTML=t,i.style.width=r+`px`,i.style.height=s+`px`,i.style.backgroundColor=`transparent`,a.width=r,a.height=s,e(l),requestAnimationFrame(()=>{o=!0,window.parent.postMessage({type:`READY`},n)})}if(c.type===`SEEK`){if(!o)return;let{timeMs:t}=c.payload;e(t),await new Promise(e=>requestAnimationFrame(e)),window.parent.postMessage({type:`SEEKED`},n)}if(c.type===`CAPTURE`){if(!o)return;let{method:e}=c.payload,t=i.querySelector(`svg`),s=a.getContext(`2d`);if(!t||!s)return;let l=t.cloneNode(!0);if(!(l instanceof Element))return;let u=l,d=[t,...Array.from(t.querySelectorAll(`*`))],f=[u,...Array.from(u.querySelectorAll(`*`))];if(d.length!==f.length){console.error(`[Renderer] Clone structure mismatch`);return}d.forEach((t,n)=>{let i=f[n];if(!(i instanceof HTMLElement||i instanceof SVGElement))return;let a=t.tagName.toLowerCase();if([`animate`,`animatetransform`,`animatemotion`,`set`,`style`,`script`].includes(a))return;let o=window.getComputedStyle(t);if(e===`high-fidelity`)for(let e=0;e<o.length;e++){let t=o[e];i.style.setProperty(t,o.getPropertyValue(t),o.getPropertyPriority(t))}else for(let e of r){let t=o.getPropertyValue(e);t&&i.style.setProperty(e,t)}}),u.querySelectorAll(`animate, animateTransform, animateMotion, set, style, script`).forEach(e=>e.remove());let p=new XMLSerializer().serializeToString(u),m=new Blob([p],{type:`image/svg+xml;charset=utf-8`}),h=URL.createObjectURL(m),g=new Image;try{await new Promise((e,t)=>{g.onload=e,g.onerror=t,g.src=h}),s.clearRect(0,0,a.width,a.height),s.drawImage(g,0,0,a.width,a.height);let e=await createImageBitmap(a);window.parent.postMessage({type:`CAPTURE_RESULT`,payload:e},n,[e])}catch(e){console.error(`[Renderer] Capture failed:`,e)}finally{URL.revokeObjectURL(h)}}}}),window.parent.postMessage({type:`SCRIPT_LOADED`},n)}var o;function s(){return(s=e((()=>{o=`<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2" />
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+      }
+      #svg-container {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+      }
+      svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      canvas {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="svg-container"></div>
+    <canvas id="capture-canvas"></canvas>
+    <script type="module">
+      // RENDERER_SCRIPT_PLACEHOLDER
+    <\/script>
+  </body>
+</html>
+`})))()}var c,l,u;function d(){return(d=e((()=>{c=t(),s(),l=n(),u=(0,c.memo)((0,c.forwardRef)(({svgContent:e,width:t,height:n,backgroundColor:s,isTransparent:u,isRendering:d},f)=>{let p=(0,c.useRef)(null),[m,h]=(0,c.useState)(!1),[g,_]=(0,c.useState)(!1),[v,y]=(0,c.useState)({width:t||0,height:n||0});(0,c.useEffect)(()=>{let e=window.location.origin,t=`(${a.toString()})(window.seekAnimations, ${i.toString()}, "${e}");`,n=o.replace(`// RENDERER_SCRIPT_PLACEHOLDER`,`
+        window.seekAnimations = ${r.toString()};
+        ${t}
+      `),s=e=>{let t=window.location.origin;if(e.origin!==`null`&&e.origin!==t||e.source!==p.current?.contentWindow)return;let n=e.data;i(n)&&n.type===`SCRIPT_LOADED`&&_(!0)};window.addEventListener(`message`,s);let c=new Blob([n],{type:`text/html`}),l=URL.createObjectURL(c);return p.current&&(p.current.src=l),()=>{URL.revokeObjectURL(l),window.removeEventListener(`message`,s)}},[]);let b=(0,c.useCallback)(async(e,t,n)=>{h(!1),y({width:t,height:n});let r=p.current;if(r)return g||await new Promise(e=>{let t=n=>{let a=window.location.origin,o=n.data;(n.origin===`null`||n.origin===a)&&n.source===r.contentWindow&&i(o)&&o.type===`SCRIPT_LOADED`&&(window.removeEventListener(`message`,t),e())};window.addEventListener(`message`,t)}),new Promise(a=>{let o=e=>{let t=window.location.origin,n=e.data;(e.origin===`null`||e.origin===t)&&e.source===r.contentWindow&&i(n)&&n.type===`READY`&&(window.removeEventListener(`message`,o),h(!0),a())};window.addEventListener(`message`,o);let s={svgContent:e,width:t,height:n,timeMs:0};r.contentWindow?.postMessage({type:`LOAD_SVG`,payload:s},`*`)})},[g]);return(0,c.useEffect)(()=>{if(e&&t&&n&&(!d||v.width===0)){let r=v.width===0?0:100,i=setTimeout(()=>{b(e,t,n)},r);return()=>clearTimeout(i)}},[e,t,n,d,v.width,b]),(0,c.useImperativeHandle)(f,()=>({loadSvg:b,seek:async e=>new Promise(t=>{let n=p.current,r=e=>{let a=window.location.origin,o=e.data;(e.origin===`null`||e.origin===a)&&e.source===n?.contentWindow&&i(o)&&o.type===`SEEKED`&&(window.removeEventListener(`message`,r),t())};window.addEventListener(`message`,r);let a={timeMs:e};n?.contentWindow?.postMessage({type:`SEEK`,payload:a},`*`)}),capture:async(e,t)=>new Promise(n=>{let r=p.current,a=e=>{let t=window.location.origin,o=e.data;(e.origin===`null`||e.origin===t)&&e.source===r?.contentWindow&&i(o)&&o.type===`CAPTURE_RESULT`&&(window.removeEventListener(`message`,a),n(o.payload))};window.addEventListener(`message`,a);let o={method:e,transparent:t};r?.contentWindow?.postMessage({type:`CAPTURE`,payload:o},`*`)}),isReady:()=>m})),(0,l.jsxs)(`div`,{className:`renderer-monitor`,"data-testid":`svg-renderer`,children:[(0,l.jsx)(`p`,{className:`monitor-label`,children:`Live Monitor`}),(0,l.jsx)(`div`,{className:`monitor-viewport`,style:{backgroundColor:s,backgroundImage:u?`repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%)`:`none`,backgroundSize:u?`20px 20px`:`auto`},children:(0,l.jsx)(`iframe`,{ref:p,title:`svg-renderer`,sandbox:`allow-scripts`,style:{width:v.width,height:v.height,maxWidth:`100%`,maxHeight:`100%`,aspectRatio:`${v.width} / ${v.height}`,border:`none`,pointerEvents:`none`,backgroundColor:`transparent`}})})]})})),u.displayName=`SvgRenderer`,u.__docgenInfo={description:``,methods:[{name:`seek`,docblock:null,modifiers:[`async`],params:[{name:`timeMs`,optional:!1,type:{name:`number`}}],returns:null},{name:`capture`,docblock:null,modifiers:[`async`],params:[{name:`method`,optional:!1,type:{name:`union`,raw:`'optimal' | 'high-fidelity'`,elements:[{name:`literal`,value:`'optimal'`},{name:`literal`,value:`'high-fidelity'`}]}},{name:`transparent`,optional:!1,type:{name:`boolean`}}],returns:null},{name:`isReady`,docblock:null,modifiers:[],params:[],returns:null}],displayName:`SvgRenderer`,props:{svgContent:{required:!1,tsType:{name:`union`,raw:`string | null`,elements:[{name:`string`},{name:`null`}]},description:``},width:{required:!1,tsType:{name:`number`},description:``},height:{required:!1,tsType:{name:`number`},description:``},backgroundColor:{required:!1,tsType:{name:`string`},description:``},isTransparent:{required:!1,tsType:{name:`boolean`},description:``},isRendering:{required:!1,tsType:{name:`boolean`},description:``}}}})))()}export{d as n,u as t};
