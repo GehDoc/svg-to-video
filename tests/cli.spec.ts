@@ -332,7 +332,7 @@ describe('CLI Functionality', () => {
       const data = getProbeMetadata(outputFile);
       assert.strictEqual(data['TAG:title'], 'aPNG Title');
       assert.match(
-        data['TAG:description'] || data['TAG:comment'],
+        data['TAG:description'],
         /^aPNG Comment \| Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)$/
       );
     });
