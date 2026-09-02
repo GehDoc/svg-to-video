@@ -44,7 +44,10 @@ export const getProbeMetadata = (filePath: string): Record<string, string> => {
     if (key && value !== undefined) data[key] = value;
   });
 
-  if (filePath.endsWith('.png') && fs.existsSync(filePath)) {
+  if (
+    (filePath.endsWith('.png') || filePath.endsWith('.apng')) &&
+    fs.existsSync(filePath)
+  ) {
     const buffer = fs.readFileSync(filePath);
     // Parse PNG tEXt chunks (signature is 8 bytes)
     let offset = 8;

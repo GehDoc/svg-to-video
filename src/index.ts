@@ -8,7 +8,8 @@ import { fileURLToPath } from 'url';
 import { seekAnimations } from '../shared/animation-engine.js';
 import { validateOptions } from './utils/validateOptions.js';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
-import { mergeMetadataComments } from '../shared/metadata.js';
+import { formatRegistry } from './formats/registry.js';
+import { CLIFormatOptions } from './formats/types.js';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -30,6 +31,7 @@ interface RunOptions {
   transparent: boolean;
   bgColor: string;
   metadata?: string[];
+  format?: string;
 }
 
 async function main(): Promise<void> {
@@ -38,7 +40,7 @@ async function main(): Promise<void> {
     .name('svg-to-video')
     .version(pkg.version)
     .description(
-      `svg-to-video v${pkg.version} - Render a CSS-animated SVG to a high-quality video (MP4, WebM, MKV, MOV)`
+      `svg-to-video v${pkg.version} - Render a CSS-animated SVG to a high-quality video or animated image (MP4, WebM, MKV, MOV, GIF, aPNG)`
     )
     .usage('<svgPath> <fps> <outDir> [options]')
     .addHelpText(
@@ -100,6 +102,10 @@ Resources:
       '--metadata <items...>',
       'metadata tags (e.g., --metadata title="My Video" author="Me")'
     )
+    .option(
+      '--format <format>',
+      `output format: ${formatRegistry.getSupportedFormatNames().join(', ')}`
+    )
     .action(run);
 
   program.parse(process.argv);
@@ -114,8 +120,14 @@ async function run(
   outDir: string,
   options: RunOptions
 ): Promise<void> {
+  // Resolve format generator and output file extension via format registry
+  const { format, extension } = formatRegistry.resolveFormatAndExtension(
+    options.format,
+    options.transparent
+  );
   const inputBasename = path.basename(svgPath, path.extname(svgPath));
-  const outputFileName = `${inputBasename}${options.transparent ? '.webm' : '.mp4'}`;
+  const ext = extension.startsWith('.') ? extension : `.${extension}`;
+  const outputFileName = `${inputBasename}${ext}`;
   const outputFullPath = path.join(outDir, outputFileName);
 
   if (fs.existsSync(outputFullPath) && !options.force) {
@@ -162,7 +174,7 @@ async function run(
   console.log(`  Target:     ${path.join(outDir, outputFileName)}`);
 
   console.log(
-    `  Settings:   ${duration}s @ ${fps}fps (Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'})`
+    `  Settings:   ${duration}s @ ${fps}fps (Format: ${format}, Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'})`
   );
   if (puppeteerArgs.length > 0) {
     console.log(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
@@ -185,8 +197,9 @@ async function run(
     options.bgColor
   );
 
-  convertToMP4(
+  convertToOutput(
     outputFileName,
+    format,
     fps,
     padWidth,
     options.hold,
@@ -199,7 +212,7 @@ async function run(
     cleanupFrames(totalFrames, padWidth, outDir);
   }
 
-  console.log(`\n✅ Done! Video saved to ${path.join(outDir, outputFileName)}`);
+  console.log(`\n✅ Done! File saved to ${path.join(outDir, outputFileName)}`);
   console.log(
     '\x1b[2m%s\x1b[0m',
     `Love this tool? Star it on GitHub: ${pkg.homepage}`
@@ -216,133 +229,116 @@ async function createFrames(
   padWidth: number,
   outDir: string,
   puppeteerArgs: string[],
-  resolution: string,
-  scale: number,
+  resolutionPreset: string,
+  scaleFactor: number,
   transparent: boolean,
   bgColor: string
 ): Promise<void> {
+  console.log('📸 Rendering frames with Puppeteer...');
+
+  let width = 0;
+  let height = 0;
+
+  if (resolutionPreset === '1080p') {
+    width = 1920;
+    height = 1080;
+  } else if (resolutionPreset === '720p') {
+    width = 1280;
+    height = 720;
+  } else if (resolutionPreset === 'original') {
+    const dom = new JSDOM(svg);
+    const svgEl = dom.window.document.querySelector('svg');
+
+    if (!svgEl) {
+      throw new Error('Invalid SVG: No <svg> root element found.');
+    }
+
+    const viewBox = svgEl.getAttribute('viewBox');
+    const widthAttr = svgEl.getAttribute('width');
+    const heightAttr = svgEl.getAttribute('height');
+
+    if (viewBox) {
+      const parts = viewBox.trim().split(/[\s,]+/);
+      if (parts.length === 4) {
+        width = parseFloat(parts[2]);
+        height = parseFloat(parts[3]);
+      }
+    }
+
+    if ((!width || !height) && widthAttr && heightAttr) {
+      width = parseFloat(widthAttr);
+      height = parseFloat(heightAttr);
+    }
+
+    if (!width || !height) {
+      console.warn(
+        '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1280x720.'
+      );
+      width = 1280;
+      height = 720;
+    }
+
+    width = Math.round(width * scaleFactor);
+    height = Math.round(height * scaleFactor);
+  } else {
+    throw new Error(
+      `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', or 'original'.`
+    );
+  }
+
+  console.log('🚀 Preparing Puppeteer browser...');
+
   const browser: Browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', ...puppeteerArgs],
+    args: ['--no-sandbox', '--disable-setuid-sandbox', ...puppeteerArgs],
   });
 
   const page: Page = await browser.newPage();
+  await page.setViewport({ width, height });
 
-  await page.goto('about:blank');
-  await page.setContent(svg);
+  await page.setContent(svg, { waitUntil: 'domcontentloaded' });
 
-  // Set resolution
-  let width = 1920;
-  let height = 1080;
-  if (resolution === '720p') {
-    width = 1280;
-    height = 720;
-  } else if (resolution === '1080p') {
-    width = 1920;
-    height = 1080;
-  } else if (resolution === 'original') {
-    const dimensions = await page.evaluate(() => {
-      const svg = document.querySelector('svg');
-      if (!svg) return { width: 1920, height: 1080 };
-      return {
-        width: svg.width.baseVal.value,
-        height: svg.height.baseVal.value,
-      };
-    });
-    width = dimensions.width * scale;
-    height = dimensions.height * scale;
-  }
+  const bgStyle = transparent
+    ? 'html, body { background: transparent !important; }'
+    : bgColor
+      ? `html, body { background-color: ${bgColor} !important; }`
+      : '';
 
-  if (resolution !== 'original') {
-    await page.setViewport({ width, height });
-    const { width: svgW, height: svgH } = await page.evaluate(() => {
-      const svg = document.querySelector('svg');
-      if (!svg) return { width: 1920, height: 1080 };
-      return {
-        width: svg.width.baseVal.value,
-        height: svg.height.baseVal.value,
-      };
-    });
-    const scaleX = width / svgW;
-    const scaleY = height / svgH;
-    await page.addStyleTag({
-      content: `
-        svg {
-          transform: scale(${scaleX}, ${scaleY});
-          transform-origin: top left;
-          width: ${svgW}px;
-          height: ${svgH}px;
-        }
-      `,
-    });
-  } else {
-    // For original size, we need to inject the scale via CSS transform
-    await page.setViewport({ width, height });
-    await page.addStyleTag({
-      content: `
-            svg {
-              transform: scale(${scale});
-              transform-origin: top left;
-            }
-          `,
-    });
-  }
+  await page.addStyleTag({
+    content: `
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      svg { width: 100%; height: 100%; display: block; }
+      ${bgStyle}
+    `.trim(),
+  });
 
-  if (transparent) {
-    await page.addStyleTag({
-      content: `
-        svg {
-          background: transparent !important;
-        }
-      `,
-    });
-  } else if (bgColor) {
-    await page.addStyleTag({
-      content: `
-        svg {
-          background-color: ${bgColor} !important;
-        }
-      `,
-    });
-  }
-
-  const renderSettings: ScreenshotOptions = {
-    type: frameFileExtension,
+  const screenshotOptions: ScreenshotOptions = {
     omitBackground: transparent,
   };
-  console.log('🎨 Creating frames...');
+
+  console.log('📸 Rendering frames with Puppeteer...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
-    const animationTimeInSeconds = (frame - 1) / fps; // seconds from start
+    process.stdout.write(`\r📸 Rendering frame ${frame}/${totalFrames}`);
+    const timeMs = ((frame - 1) / fps) * 1000;
+    await page.evaluate(seekAnimations, timeMs);
 
-    // update all animations via the Web Animations API; this is
-    // sufficient for correct scrubbing regardless of the SVG's internal
-    // structure.
-    await page.evaluate(seekAnimations, animationTimeInSeconds * 1000);
-
-    await page.evaluate(() => new Promise((r) => requestAnimationFrame(r)));
-
-    const svgElement = await page.$('svg');
-    if (svgElement === null) {
-      console.error('❌ No SVG element found');
-      process.exit(1);
-    }
-
-    const framePath = path.join(outDir, getFrameFilename(frame, padWidth));
-    await svgElement.screenshot({ ...renderSettings, path: framePath });
-
-    if (frame % fps === 0 || frame === totalFrames) {
-      console.log(`  [Rendering] Frame ${frame} / ${totalFrames}`);
-    }
+    const filename = path.join(outDir, getFrameFilename(frame, padWidth));
+    await page.screenshot({
+      path: filename,
+      ...screenshotOptions,
+    });
   }
+  console.log('');
 
   await browser.close();
 }
 
 /**
- * convert the generated frames to an MP4 video using ffmpeg
+ * convert the generated frames to an output format using ffmpeg
  */
-function convertToMP4(
+function convertToOutput(
   outputFileName: string,
+  format: string,
   fps: number,
   padWidth: number,
   hold: number,
@@ -350,81 +346,43 @@ function convertToMP4(
   transparent: boolean,
   metadata?: string[]
 ): void {
-  console.log('📦 Encoding video with FFmpeg...');
+  console.log('📦 Encoding output with FFmpeg...');
 
-  const filters: string[] = [];
-  if (hold && hold > 0) {
-    filters.push(`tpad=stop_mode=clone:stop_duration=${hold}`);
+  const normalizedFormat = format.toLowerCase();
+  const generator = formatRegistry.get(normalizedFormat);
+  if (!generator) {
+    throw new Error(`Unsupported format: ${format}`);
   }
 
   const inputPattern = path.join(
     outDir,
     `%0${padWidth}d.${frameFileExtension}`
   );
-  const outputFullPath = path.join(outDir, outputFileName);
 
-  const args = [
-    '-hide_banner',
-    '-loglevel',
-    'warning',
-    '-y',
-    '-framerate',
-    String(fps),
-    '-i',
+  const formatOptions: CLIFormatOptions = {
+    outputFileName,
+    fps,
+    padWidth,
+    hold: hold || 0,
+    outDir,
+    transparent: !!transparent,
+    metadata,
     inputPattern,
-  ];
+    pkgVersion: pkg.version,
+  };
 
-  let userComment: string | undefined;
-  if (metadata) {
-    metadata.forEach((m) => {
-      if (m.startsWith('comment=')) {
-        userComment = m.split('=')[1];
-      } else {
-        args.push('-metadata', m);
-      }
-    });
-  }
-
-  args.push(
-    '-metadata',
-    `comment=${mergeMetadataComments(userComment, pkg.version)}`
-  );
-
-  if (filters.length) {
-    args.push('-vf', filters.join(','));
-  }
-
-  if (transparent) {
-    args.push(
-      '-c:v',
-      'libvpx-vp9',
-      '-pix_fmt',
-      'yuva420p',
-      '-f',
-      'webm',
-      outputFullPath
-    );
-  } else {
-    args.push(
-      '-c:v',
-      'libx264',
-      '-crf',
-      '20',
-      '-preset',
-      'slow',
-      '-pix_fmt',
-      'yuv420p',
-      '-movflags',
-      '+faststart',
-      outputFullPath
-    );
-  }
+  const args = generator.buildFfmpegArgs(formatOptions);
 
   try {
     const output = child_process.execFileSync('ffmpeg', args, {
       encoding: 'utf8',
     });
-    console.log(output);
+    if (output) console.log(output);
+
+    const outputFullPath = path.join(outDir, outputFileName);
+    if (generator.postProcess) {
+      generator.postProcess(outputFullPath, formatOptions);
+    }
   } catch (error) {
     console.error('❌ FFmpeg execution failed:');
     console.error(error);

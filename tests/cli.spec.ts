@@ -242,5 +242,121 @@ describe('CLI Functionality', () => {
         /^Test Comment \| Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)$/
       );
     });
+
+    test('should render font-test.svg to animated GIF with custom metadata', () => {
+      const { inputFile } = getTestPaths('font-test');
+      const outputFile = `${outputDir}/font-test.gif`;
+      const result = spawnSync(
+        'npx',
+        [
+          'tsx',
+          'src/index.ts',
+          inputFile,
+          '24',
+          outputDir,
+          '-d',
+          '1',
+          '--format',
+          'gif',
+          '--metadata',
+          'title=GIF Title',
+          'comment=GIF Comment',
+          '--force',
+        ],
+        { encoding: 'utf-8' }
+      );
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+
+      const data = getProbeMetadata(outputFile);
+      assert.strictEqual(data['TAG:title'], 'GIF Title');
+      assert.match(
+        data['TAG:comment'],
+        /^GIF Comment \| Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)$/
+      );
+    });
+
+    test('should render transparent-test.svg to transparent animated GIF', () => {
+      const { inputFile } = getTestPaths('transparent-test');
+      const outputFile = `${outputDir}/transparent-test.gif`;
+      const result = spawnSync(
+        'npx',
+        [
+          'tsx',
+          'src/index.ts',
+          inputFile,
+          '24',
+          outputDir,
+          '-d',
+          '1',
+          '--format',
+          'gif',
+          '--transparent',
+          '--force',
+        ],
+        { encoding: 'utf-8' }
+      );
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+
+      const data = getProbeMetadata(outputFile);
+      assert.strictEqual(data.width, '500');
+      assert.strictEqual(data.height, '300');
+    });
+
+    test('should render font-test.svg to animated PNG (aPNG) with custom metadata', () => {
+      const { inputFile } = getTestPaths('font-test');
+      const outputFile = `${outputDir}/font-test.apng`;
+      const result = spawnSync(
+        'npx',
+        [
+          'tsx',
+          'src/index.ts',
+          inputFile,
+          '24',
+          outputDir,
+          '-d',
+          '1',
+          '--format',
+          'apng',
+          '--metadata',
+          'title=aPNG Title',
+          'comment=aPNG Comment',
+          '--force',
+        ],
+        { encoding: 'utf-8' }
+      );
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+
+      const data = getProbeMetadata(outputFile);
+      assert.strictEqual(data['TAG:title'], 'aPNG Title');
+      assert.match(
+        data['TAG:description'],
+        /^aPNG Comment \| Converted from SVG by svg-to-video v\d+\.\d+\.\d+ \(https:\/\/gehdoc\.github\.io\/svg-to-video\/\)$/
+      );
+    });
+
+    test('should fail when an invalid format is specified', () => {
+      const { inputFile } = getTestPaths('font-test');
+      const result = spawnSync(
+        'npx',
+        [
+          'tsx',
+          'src/index.ts',
+          inputFile,
+          '24',
+          outputDir,
+          '-d',
+          '1',
+          '--format',
+          'invalidformat',
+          '--force',
+        ],
+        { encoding: 'utf-8' }
+      );
+      assert.strictEqual(result.status, 1);
+      assert.match(result.stderr, /Invalid format "invalidformat"/);
+    });
   });
 });

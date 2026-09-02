@@ -24,6 +24,8 @@ export const metadata: Metadata = {
     'alpha channel',
     'metadata injection',
     'video metadata',
+    'cli gif export',
+    'cli apng export',
     'web animations api',
     'browser-based converter',
   ],
