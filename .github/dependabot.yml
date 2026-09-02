@@ -6,7 +6,7 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: "04:00"
+      time: '04:00'
     open-pull-requests-limit: 6
     rebase-strategy: auto
     labels:
@@ -21,7 +21,7 @@ updates:
     schedule:
       interval: weekly
       day: wednesday
-      time: "06:00"
+      time: '06:00'
     open-pull-requests-limit: 5
     rebase-strategy: auto
     labels:
@@ -34,7 +34,7 @@ updates:
     schedule:
       interval: weekly
       day: thursday
-      time: "06:30"
+      time: '06:30'
     open-pull-requests-limit: 3
     rebase-strategy: auto
     labels:
