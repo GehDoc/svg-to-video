@@ -99,21 +99,25 @@ This section documents how to add new output formats and manage the alpha channe
 
 ### Adding New Formats
 
-The project uses a **Registry of Format Factories** to decouple the rendering engine from specific encoder implementations.
+The project uses modular **Registry of Format Factories** architecture in both the Web Studio and the CLI tool to decouple output encoding pipelines from specific format implementations.
 
-1.  **Encoder Implementation**: Create a new encoder class (if needed) in `web/src/utils/encoders/` that implements the `VideoEncoder` interface.
-2.  **Format Factory**: Implement a new `VideoFormat` class (usually extending `BaseFormat` for sensible defaults) in the same file as your encoder.
-    - Define properties like `id`, `label`, `extension`, `mimeType`.
-    - Set `supportsAlpha` and `needsColorKeying` as needed.
-3.  **Registration**: Export your format instance(s) and register them in `web/src/utils/discoverFormats.ts` within the `registerFormats` function.
+#### 1. Web Studio Format Registry (`web/src/utils/encoders/`)
+
+- **Encoder Implementation**: Create a new encoder class (if needed) in `web/src/utils/encoders/` implementing `VideoEncoder`.
+- **Format Factory**: Implement a `VideoFormat` class (extending `BaseFormat`).
+- **Registration**: Register format instances in `web/src/utils/discoverFormats.ts`.
+
+#### 2. CLI Format Registry (`src/formats/`)
+
+- **CLI Generator Implementation**: Implement `CLIFormatGenerator` in `src/formats/generators/` defining `id`, `extensions`, `supportsAlpha`, `buildFfmpegArgs(options)`, and optional `postProcess(...)`.
+- **Registration**: Register the generator strategy in `src/formats/registry.ts` (`CLIFormatRegistry`).
+- **Format Support & Resolution**: `formatRegistry.isSupported(format)` and `formatRegistry.resolveFormatAndExtension(rawFormat, transparent)` dynamically handle CLI format lookup and fallback resolution.
 
 ```typescript
-// Example: web/src/utils/discoverFormats.ts
-const registerFormats = () => {
-  if (formatRegistry.getAllFormats().length > 0) return;
-  // ...
-  formatRegistry.register(new MyNewFormat());
-};
+// Example: Registering CLI Format Generators in src/formats/registry.ts
+export const formatRegistry = new CLIFormatRegistry();
+formatRegistry.register(new GifFormatGenerator());
+formatRegistry.register(new ApngFormatGenerator());
 ```
 
 ### Handling Transparency (Alpha Channel)
