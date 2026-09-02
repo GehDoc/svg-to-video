@@ -1,4 +1,4 @@
-FROM node:20-slim
+FROM node:26-slim
 
 # 1. Setup Environment
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
