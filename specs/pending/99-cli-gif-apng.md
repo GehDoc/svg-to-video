@@ -37,10 +37,11 @@ Extend the CLI tool (`svg-to-video`) to support exporting animated image formats
    - Wire metadata parameters (`title`, `comment`) and background transparency flags into GIF and aPNG FFmpeg invocations.
 5. **Phase 1: Mutualized Metadata Injectors (`shared/`)**:
    - Move pure JS CRC32 calculator to `shared/crc32.ts`.
-   - Create `shared/metadataInjectors.ts` exporting `injectGifMetadata` and `injectPngMetadata` operating on `Uint8Array`.
-   - Update `web/src/utils/encoders/GifEncoder.ts` and `ApngEncoder.ts` to import from `shared/metadataInjectors.ts`.
-   - Update `src/index.ts` (CLI) to import from `shared/metadataInjectors.ts`.
-   - Add unit tests `shared/metadataInjectors.test.ts`.
+   - Create `shared/gifMetadataInjector.ts` (and `shared/gifMetadataInjector.test.ts`) exporting `injectGifMetadata`.
+   - Create `shared/apngMetadataInjector.ts` (and `shared/apngMetadataInjector.test.ts`) exporting `injectApngMetadata`.
+   - Ensure all `import` statements in `GifEncoder.ts` and `ApngEncoder.ts` are located strictly at the top of files.
+   - Update `web/src/utils/encoders/GifEncoder.ts` and `ApngEncoder.ts` to import from `shared/gifMetadataInjector.js` and `shared/apngMetadataInjector.js`.
+   - Update `src/index.ts` (CLI) to import from `shared/gifMetadataInjector.js` and `shared/apngMetadataInjector.js`.
 6. **Integration Testing**:
    - Add test cases in `tests/cli.spec.ts` for GIF and aPNG output generation using `--format gif`, `--format apng`, `--transparent`, and `--metadata`.
 
@@ -54,11 +55,12 @@ Extend the CLI tool (`svg-to-video`) to support exporting animated image formats
   - [x] Support `--transparent` flag for GIF and aPNG CLI outputs.
   - [x] Wire `--metadata` parameters (`title`, `comment`) into GIF and aPNG export pipelines.
 - [ ] **Phase 1: Code Mutualization (`shared/`)**
-  - [ ] Move universal CRC32 implementation to `shared/crc32.ts`.
-  - [ ] Create `shared/metadataInjectors.ts` with pure `Uint8Array`-based `injectGifMetadata` and `injectPngMetadata`.
+  - [x] Move universal CRC32 implementation to `shared/crc32.ts`.
+  - [ ] Split metadata injectors into `shared/gifMetadataInjector.ts` and `shared/apngMetadataInjector.ts`.
+  - [ ] Split injector unit tests into `shared/gifMetadataInjector.test.ts` and `shared/apngMetadataInjector.test.ts`.
+  - [ ] Move all `import` statements to the top of `GifEncoder.ts` and `ApngEncoder.ts`.
   - [ ] Update `web/src/utils/encoders/GifEncoder.ts` and `ApngEncoder.ts` to use shared injectors.
   - [ ] Update `src/index.ts` CLI output post-processing to use shared injectors.
-  - [ ] Add unit tests in `shared/metadataInjectors.test.ts`.
 - [x] **Testing**
   - [x] Add integration test coverage for GIF and aPNG exports in `tests/cli.spec.ts`.
 - [x] **Documentation & SEO**
@@ -78,3 +80,4 @@ Extend the CLI tool (`svg-to-video`) to support exporting animated image formats
 
 - 2026-08-26: Initial spec created by AI agent for Issue #99.
 - 2026-09-02: Added Phase 1 Code Mutualization strategy for shared metadata injectors.
+- 2026-09-02: Refined Phase 1 per review feedback (split into gifMetadataInjector / apngMetadataInjector, top-level imports).

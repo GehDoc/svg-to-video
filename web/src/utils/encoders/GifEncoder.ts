@@ -1,5 +1,6 @@
 import { GIFEncoder, quantize, applyPalette, WriteFrameOpts } from 'gifenc';
 import { VideoEncoder, EncoderOptions, BaseFormat } from './types';
+import { injectGifMetadata as sharedInjectGifMetadata } from '@shared/gifMetadataInjector';
 import pkg from '../../../../package.json';
 
 export class GifEncoder implements VideoEncoder {
@@ -101,9 +102,6 @@ export class GifEncoder implements VideoEncoder {
     return true;
   }
 }
-
-import { injectGifMetadata as sharedInjectGifMetadata } from '@shared/metadataInjectors';
-
 export function injectGifMetadata(
   gifBytes: Uint8Array<ArrayBuffer>,
   metadata?: EncoderOptions['metadata']

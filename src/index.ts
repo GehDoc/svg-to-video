@@ -9,10 +9,8 @@ import { seekAnimations } from '../shared/animation-engine.js';
 import { validateOptions } from './utils/validateOptions.js';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
 import { mergeMetadataComments } from '../shared/metadata.js';
-import {
-  injectGifMetadata,
-  injectApngMetadata,
-} from '../shared/metadataInjectors.js';
+import { injectGifMetadata } from '../shared/gifMetadataInjector.js';
+import { injectApngMetadata } from '../shared/apngMetadataInjector.js';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');

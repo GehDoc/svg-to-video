@@ -1,5 +1,6 @@
 import UPNG from 'upng-js';
 import { VideoEncoder, EncoderOptions, BaseFormat } from './types';
+import { injectApngMetadata as sharedInjectApngMetadata } from '@shared/apngMetadataInjector';
 import pkg from '../../../../package.json';
 
 export interface EncoderFrame {
@@ -62,9 +63,6 @@ export class ApngEncoder implements VideoEncoder {
     return false;
   }
 }
-
-import { injectApngMetadata as sharedInjectApngMetadata } from '@shared/metadataInjectors';
-
 export function injectApngMetadata(
   buffer: Uint8Array<ArrayBuffer>,
   metadata?: EncoderOptions['metadata']
