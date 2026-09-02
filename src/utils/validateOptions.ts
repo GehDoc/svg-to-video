@@ -1,3 +1,5 @@
+import { formatRegistry } from '../formats/registry.js';
+
 /**
  * Validates CLI options
  */
@@ -7,6 +9,7 @@ export interface ValidateOptionsParams {
   resolution: string;
   transparent: boolean;
   bgColor: string;
+  format?: string;
 }
 
 export function validateOptions(options: ValidateOptionsParams): void {
@@ -20,5 +23,12 @@ export function validateOptions(options: ValidateOptionsParams): void {
 
   if (options.transparent && options.bgColor !== '#ffffff') {
     throw new Error('--transparent and --bg-color cannot be used together.');
+  }
+
+  if (options.format && !formatRegistry.isSupported(options.format)) {
+    const supported = formatRegistry.getSupportedFormatNames().join(', ');
+    throw new Error(
+      `Invalid format "${options.format}". Supported formats are: ${supported}.`
+    );
   }
 }

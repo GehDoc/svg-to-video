@@ -69,12 +69,15 @@ Ensure [Node.js](https://nodejs.org/) and [FFmpeg](https://ffmpeg.org/) are inst
 npm install
 npx tsx src/index.ts examples/example.svg 60 ./out-dir
 
-# Node.js (explicit duration)
-npx tsx src/index.ts examples/example.svg 60 ./out-dir -d 5
+# Node.js (explicit duration & GIF output)
+npx tsx src/index.ts examples/example.svg 60 ./out-dir -d 5 --format gif --transparent
+
+# Node.js (animated PNG output)
+npx tsx src/index.ts examples/example.svg 60 ./out-dir -d 5 --format apng
 
 # Docker
 docker compose build
-docker compose run --rm svg-to-video examples/example.svg 60 ./out-dir -d 5
+docker compose run --rm svg-to-video examples/example.svg 60 ./out-dir -d 5 --format gif
 ```
 
 See [docs/CLI.md](./docs/CLI.md) for full usage, arguments, and options.

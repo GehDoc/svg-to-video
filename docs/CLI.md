@@ -16,17 +16,18 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 
 ## Options
 
-| Option                  | Description                                                                                                                                                                                                    |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `-d, --duration <secs>` | Desired animation duration in seconds. If omitted, duration is auto-detected.                                                                                                                                  |
-| `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                                                                                                                             |
-| `-f, --force`           | Overwrite the output video if it already exists.                                                                                                                                                               |
-| `--resolution <preset>` | Resolution preset: `720p`, `1080p`, or `original`. (Default: `original`)                                                                                                                                       |
-| `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`.                                                                                                           |
-| `--transparent`         | Render with a transparent background. (Cannot be used with `--bg-color`)                                                                                                                                       |
-| `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`) - (Cannot be used with `--transparent`)                                                                                                                   |
-| `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Note: Mandatory attribution is automatically appended to the 'comment' tag, as FFmpeg/MP4 container support for other custom tags is inconsistent. |
-| `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                                                                                               |
+| Option                  | Description                                                                                                                                                   |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-d, --duration <secs>` | Desired animation duration in seconds. If omitted, duration is auto-detected.                                                                                 |
+| `--format <format>`     | Output format: `mp4`, `webm`, `mkv`, `mov`, `gif`, `apng`, or `png`. (Default: `webm` if `--transparent`, otherwise `mp4`)                                    |
+| `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                                                                            |
+| `-f, --force`           | Overwrite the output video if it already exists.                                                                                                              |
+| `--resolution <preset>` | Resolution preset: `720p`, `1080p`, or `original`. (Default: `original`)                                                                                      |
+| `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`.                                                          |
+| `--transparent`         | Render with a transparent background (supported for `webm`, `gif`, `apng`, `mov`). (Cannot be used with `--bg-color`)                                         |
+| `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`) - (Cannot be used with `--transparent`)                                                                  |
+| `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Mandatory attribution is automatically appended to the 'comment' tag for video and image exports. |
+| `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                                              |
 
 ## Environment Variables
 
@@ -36,7 +37,10 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 
 ## Output Handling
 
-The tool creates the video in the specified `<outDir>`. The filename will match your input file. By default, it will **fail** if the destination file already exists to prevent accidental overwrites. Use `-f` to bypass this.
+The tool creates the output file in the specified `<outDir>`. The filename will match your input file with the chosen extension (`.mp4`, `.webm`, `.gif`, `.apng`, etc.). By default, it will **fail** if the destination file already exists to prevent accidental overwrites. Use `-f` to bypass this.
 
-- **Input:** `my-animation.svg`
+- **Input:** `my-animation.svg` (default)
 - **Result:** `./out-dir/my-animation.mp4`
+
+- **Input:** `my-animation.svg` (`--format gif`)
+- **Result:** `./out-dir/my-animation.gif`

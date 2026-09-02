@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { crc32 } from './crc32';
+import { crc32 } from '@shared/crc32';
 
 describe('crc32', () => {
   it('should calculate CRC32 for an empty buffer', () => {

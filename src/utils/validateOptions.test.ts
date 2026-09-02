@@ -29,6 +29,20 @@ describe('validateOptions', () => {
     );
   });
 
+  test('should throw error when invalid format is provided', () => {
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          bgColor: '#ffffff',
+          format: 'avi',
+        }),
+      /Invalid format "avi"\. Supported formats are:/
+    );
+  });
+
   test('should pass with valid options', () => {
     assert.doesNotThrow(() =>
       validateOptions({
@@ -36,6 +50,7 @@ describe('validateOptions', () => {
         resolution: '1080p',
         transparent: false,
         bgColor: '#ffffff',
+        format: 'gif',
       })
     );
   });
