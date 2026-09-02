@@ -9,10 +9,13 @@ import { seekAnimations } from '../shared/animation-engine.js';
 import { validateOptions } from './utils/validateOptions.js';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
 import { mergeMetadataComments } from '../shared/metadata.js';
+import {
+  injectGifMetadata,
+  injectApngMetadata,
+} from '../shared/metadataInjectors.js';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
-import zlib from 'zlib';
 import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 
 const __filename = fileURLToPath(import.meta.url);
@@ -517,26 +520,19 @@ function convertToOutput(
 
     if (normalizedFormat === 'gif') {
       const fileBuf = fs.readFileSync(outputFullPath);
-      const gifComment = title ? `${title} - ${finalComment}` : finalComment;
-      const updatedBuf = injectGifMetadata(fileBuf, gifComment);
+      const updatedBuf = injectGifMetadata(
+        fileBuf,
+        { title, comment: userComment },
+        pkg.version
+      );
       fs.writeFileSync(outputFullPath, updatedBuf);
     } else if (normalizedFormat === 'apng' || normalizedFormat === 'png') {
       const fileBuf = fs.readFileSync(outputFullPath);
-      const metadataMap: Record<string, string> = { Comment: finalComment };
-      if (title) metadataMap['Title'] = title;
-      if (metadata) {
-        metadata.forEach((m) => {
-          const eqIdx = m.indexOf('=');
-          if (eqIdx !== -1) {
-            const k = m.substring(0, eqIdx);
-            const v = m.substring(eqIdx + 1);
-            if (k !== 'comment' && k !== 'title') {
-              metadataMap[k] = v;
-            }
-          }
-        });
-      }
-      const updatedBuf = injectPngMetadata(fileBuf, metadataMap);
+      const updatedBuf = injectApngMetadata(
+        fileBuf,
+        { title, comment: userComment },
+        pkg.version
+      );
       fs.writeFileSync(outputFullPath, updatedBuf);
     }
   } catch (error) {
@@ -544,83 +540,6 @@ function convertToOutput(
     console.error(error);
     process.exit(1);
   }
-}
-
-/**
- * injects a GIF comment extension block into a GIF buffer
- */
-function injectGifMetadata(gifBuffer: Buffer, comment: string): Buffer {
-  if (gifBuffer.length < 13) return gifBuffer;
-  const packed = gifBuffer[10];
-  const hasGCT = (packed & 0x80) !== 0;
-  const gctSize = hasGCT ? 3 * (1 << ((packed & 0x07) + 1)) : 0;
-  const insertOffset = 13 + gctSize;
-
-  const commentBytes = Buffer.from(comment, 'utf-8');
-  const blocks: Buffer[] = [];
-  let pos = 0;
-  while (pos < commentBytes.length) {
-    const chunkSize = Math.min(255, commentBytes.length - pos);
-    const block = Buffer.alloc(1 + chunkSize);
-    block[0] = chunkSize;
-    commentBytes.copy(block, 1, pos, pos + chunkSize);
-    blocks.push(block);
-    pos += chunkSize;
-  }
-  const commentExtension = Buffer.concat([
-    Buffer.from([0x21, 0xfe]),
-    ...blocks,
-    Buffer.from([0x00]),
-  ]);
-
-  return Buffer.concat([
-    gifBuffer.subarray(0, insertOffset),
-    commentExtension,
-    gifBuffer.subarray(insertOffset),
-  ]);
-}
-
-/**
- * creates a PNG tEXt chunk buffer for a given keyword and text
- */
-function createPngTextChunk(keyword: string, text: string): Buffer {
-  const keywordBuf = Buffer.from(keyword, 'ascii');
-  const textBuf = Buffer.from(text, 'utf-8');
-  const data = Buffer.concat([keywordBuf, Buffer.from([0]), textBuf]);
-  const type = Buffer.from('tEXt', 'ascii');
-  const typeAndData = Buffer.concat([type, data]);
-  const crc = zlib.crc32(typeAndData);
-
-  const lengthBuf = Buffer.alloc(4);
-  lengthBuf.writeUInt32BE(data.length, 0);
-
-  const crcBuf = Buffer.alloc(4);
-  crcBuf.writeUInt32BE(crc, 0);
-
-  return Buffer.concat([lengthBuf, typeAndData, crcBuf]);
-}
-
-/**
- * injects PNG tEXt metadata chunks into a PNG/aPNG buffer right after the IHDR chunk
- */
-function injectPngMetadata(
-  pngBuffer: Buffer,
-  metadataMap: Record<string, string>
-): Buffer {
-  if (pngBuffer.length < 33) return pngBuffer;
-  const chunks: Buffer[] = [];
-  for (const [key, val] of Object.entries(metadataMap)) {
-    if (val) {
-      chunks.push(createPngTextChunk(key, val));
-    }
-  }
-  if (chunks.length === 0) return pngBuffer;
-  const injected = Buffer.concat(chunks);
-  return Buffer.concat([
-    pngBuffer.subarray(0, 33),
-    injected,
-    pngBuffer.subarray(33),
-  ]);
 }
 
 /**

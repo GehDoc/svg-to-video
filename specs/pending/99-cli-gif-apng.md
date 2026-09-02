@@ -1,16 +1,16 @@
 # Spec: 99 - CLI Animated Image Output Support (GIF & aPNG)
 
 **GitHub Issue**: [#99](https://github.com/GehDoc/svg-to-video/issues/99)
-**Status**: 🟢 Completed
+**Status**: 🟠 Pending (Phase 1 Refactoring)
 
 ## 🎯 Objective
 
-Extend the CLI tool (`svg-to-video`) to support exporting animated image formats (GIF and aPNG) with palette optimization, transparency support, and metadata tag embedding, matching feature parity with video outputs (MP4, WebM, MKV, MOV).
+Extend the CLI tool (`svg-to-video`) to support exporting animated image formats (GIF and aPNG) with palette optimization, transparency support, and metadata tag embedding, matching feature parity with video outputs (MP4, WebM, MKV, MOV). Refactor metadata injection helpers to share pure JS Web API implementations across Web Studio and CLI environments.
 
 ## 🛠 Technical Strategy
 
-- **Core Technologies**: Node.js, FFmpeg (`fluent-ffmpeg` / FFmpeg CLI pipeline), Puppeteer / Chromium frame scraping.
-- **Architecture**: Headless CLI tool (`src/index.ts` / CLI module).
+- **Core Technologies**: Node.js, FFmpeg (`fluent-ffmpeg` / FFmpeg CLI pipeline), Puppeteer / Chromium frame scraping, Web Standard APIs (`Uint8Array`, `TextEncoder`, `DataView`).
+- **Architecture**: Headless CLI tool (`src/index.ts` / CLI module), Shared Metadata Injectors (`shared/crc32.ts`, `shared/metadataInjectors.ts`).
 - **Key Dependencies**: `ffmpeg`, `commander` / CLI parser.
 
 ### Exact CLI Options & Accepted Values:
@@ -35,7 +35,13 @@ Extend the CLI tool (`svg-to-video`) to support exporting animated image formats
    - Configure FFmpeg aPNG output (`-f apng`, `-plays 0` for infinite looping).
 4. **Metadata & Transparency**:
    - Wire metadata parameters (`title`, `comment`) and background transparency flags into GIF and aPNG FFmpeg invocations.
-5. **Integration Testing**:
+5. **Phase 1: Mutualized Metadata Injectors (`shared/`)**:
+   - Move pure JS CRC32 calculator to `shared/crc32.ts`.
+   - Create `shared/metadataInjectors.ts` exporting `injectGifMetadata` and `injectPngMetadata` operating on `Uint8Array`.
+   - Update `web/src/utils/encoders/GifEncoder.ts` and `ApngEncoder.ts` to import from `shared/metadataInjectors.ts`.
+   - Update `src/index.ts` (CLI) to import from `shared/metadataInjectors.ts`.
+   - Add unit tests `shared/metadataInjectors.test.ts`.
+6. **Integration Testing**:
    - Add test cases in `tests/cli.spec.ts` for GIF and aPNG output generation using `--format gif`, `--format apng`, `--transparent`, and `--metadata`.
 
 ## ✅ Task List
@@ -47,6 +53,12 @@ Extend the CLI tool (`svg-to-video`) to support exporting animated image formats
   - [x] Implement aPNG encoding pipeline in `src/` FFmpeg integration.
   - [x] Support `--transparent` flag for GIF and aPNG CLI outputs.
   - [x] Wire `--metadata` parameters (`title`, `comment`) into GIF and aPNG export pipelines.
+- [ ] **Phase 1: Code Mutualization (`shared/`)**
+  - [ ] Move universal CRC32 implementation to `shared/crc32.ts`.
+  - [ ] Create `shared/metadataInjectors.ts` with pure `Uint8Array`-based `injectGifMetadata` and `injectPngMetadata`.
+  - [ ] Update `web/src/utils/encoders/GifEncoder.ts` and `ApngEncoder.ts` to use shared injectors.
+  - [ ] Update `src/index.ts` CLI output post-processing to use shared injectors.
+  - [ ] Add unit tests in `shared/metadataInjectors.test.ts`.
 - [x] **Testing**
   - [x] Add integration test coverage for GIF and aPNG exports in `tests/cli.spec.ts`.
 - [x] **Documentation & SEO**
@@ -65,3 +77,4 @@ Extend the CLI tool (`svg-to-video`) to support exporting animated image formats
 ## 📝 Change Log
 
 - 2026-08-26: Initial spec created by AI agent for Issue #99.
+- 2026-09-02: Added Phase 1 Code Mutualization strategy for shared metadata injectors.
