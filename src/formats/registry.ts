@@ -37,6 +37,46 @@ export class CLIFormatRegistry {
     return Array.from(unique);
   }
 
+  isSupported(formatOrExtension: string): boolean {
+    return this.get(formatOrExtension) !== undefined;
+  }
+
+  getSupportedFormatNames(): string[] {
+    const names = new Set<string>();
+    for (const gen of this.getAll()) {
+      names.add(gen.id);
+      for (const ext of gen.extensions) {
+        names.add(ext.startsWith('.') ? ext.slice(1) : ext);
+      }
+    }
+    return Array.from(names);
+  }
+
+  resolveFormatAndExtension(
+    rawFormat?: string,
+    transparent?: boolean
+  ): { generator: CLIFormatGenerator; format: string; extension: string } {
+    const selectedFormat = rawFormat
+      ? rawFormat.toLowerCase().trim()
+      : transparent
+        ? 'webm'
+        : 'mp4';
+
+    const generator = this.get(selectedFormat);
+    if (!generator) {
+      const supported = this.getSupportedFormatNames().join(', ');
+      throw new Error(
+        `Invalid format "${rawFormat}". Supported formats are: ${supported}.`
+      );
+    }
+
+    const extension = selectedFormat.startsWith('.')
+      ? selectedFormat
+      : generator.extensions[0];
+
+    return { generator, format: generator.id, extension };
+  }
+
   private registerDefaults(): void {
     this.register(new Mp4FormatGenerator());
     this.register(new WebmFormatGenerator());

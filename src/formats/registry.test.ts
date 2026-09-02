@@ -26,6 +26,31 @@ describe('CLIFormatRegistry', () => {
     assert.strictEqual(formatRegistry.get('.png')?.id, 'apng');
   });
 
+  test('should assert format support correctly', () => {
+    assert.strictEqual(formatRegistry.isSupported('mp4'), true);
+    assert.strictEqual(formatRegistry.isSupported('gif'), true);
+    assert.strictEqual(formatRegistry.isSupported('invalid_fmt'), false);
+  });
+
+  test('should resolve format and extension with default fallbacks', () => {
+    const res1 = formatRegistry.resolveFormatAndExtension(undefined, false);
+    assert.strictEqual(res1.format, 'mp4');
+    assert.strictEqual(res1.extension, '.mp4');
+
+    const res2 = formatRegistry.resolveFormatAndExtension(undefined, true);
+    assert.strictEqual(res2.format, 'webm');
+    assert.strictEqual(res2.extension, '.webm');
+
+    const res3 = formatRegistry.resolveFormatAndExtension('gif', false);
+    assert.strictEqual(res3.format, 'gif');
+    assert.strictEqual(res3.extension, '.gif');
+
+    assert.throws(
+      () => formatRegistry.resolveFormatAndExtension('invalid'),
+      /Invalid format "invalid"/
+    );
+  });
+
   test('should build correct FFmpeg args for MP4', () => {
     const mp4Gen = formatRegistry.get('mp4')!;
     const args = mp4Gen.buildFfmpegArgs({

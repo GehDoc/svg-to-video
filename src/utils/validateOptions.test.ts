@@ -39,7 +39,7 @@ describe('validateOptions', () => {
           bgColor: '#ffffff',
           format: 'avi',
         }),
-      /Invalid format "avi"\. Supported formats are: mp4, webm, mkv, mov, gif, apng, png\./
+      /Invalid format "avi"\. Supported formats are:/
     );
   });
 

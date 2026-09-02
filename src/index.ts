@@ -104,7 +104,7 @@ Resources:
     )
     .option(
       '--format <format>',
-      'output format: mp4, webm, mkv, mov, gif, apng, png'
+      `output format: ${formatRegistry.getSupportedFormatNames().join(', ')}`
     )
     .action(run);
 
@@ -120,12 +120,14 @@ async function run(
   outDir: string,
   options: RunOptions
 ): Promise<void> {
-  const format = (
-    options.format || (options.transparent ? 'webm' : 'mp4')
-  ).toLowerCase();
-  const ext = format === 'png' ? 'png' : format;
+  // Resolve format generator and output file extension via format registry
+  const { format, extension } = formatRegistry.resolveFormatAndExtension(
+    options.format,
+    options.transparent
+  );
   const inputBasename = path.basename(svgPath, path.extname(svgPath));
-  const outputFileName = `${inputBasename}.${ext}`;
+  const ext = extension.startsWith('.') ? extension : `.${extension}`;
+  const outputFileName = `${inputBasename}${ext}`;
   const outputFullPath = path.join(outDir, outputFileName);
 
   if (fs.existsSync(outputFullPath) && !options.force) {
