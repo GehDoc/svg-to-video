@@ -1,0 +1,42 @@
+version: 2
+updates:
+  # Single root npm workspace (handles web workspace via workspaces + root package-lock.json)
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '04:00'
+    open-pull-requests-limit: 6
+    rebase-strategy: auto
+    labels:
+      - dependencies
+      - dependabot
+    allow:
+      - dependency-type: all
+
+  # GitHub Actions workflow updates
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: wednesday
+      time: '06:00'
+    open-pull-requests-limit: 5
+    rebase-strategy: auto
+    labels:
+      - ci
+      - dependabot
+
+  # Docker base images (Dockerfile FROM lines)
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: thursday
+      time: '06:30'
+    open-pull-requests-limit: 3
+    rebase-strategy: auto
+    labels:
+      - dependencies
+      - docker
