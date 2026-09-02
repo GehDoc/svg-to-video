@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 import { CLIFormatGenerator, CLIFormatOptions } from '../types.js';
-import { mergeMetadataComments } from '../../../shared/metadata.js';
-import { injectApngMetadata } from '../../../shared/apngMetadataInjector.js';
+import { mergeMetadataComments } from '@shared/metadata.js';
+import { injectApngMetadata } from '@shared/apngMetadataInjector.js';
 
 export class ApngFormatGenerator implements CLIFormatGenerator {
   readonly id = 'apng';

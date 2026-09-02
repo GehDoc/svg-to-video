@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 import { CLIFormatGenerator, CLIFormatOptions } from '../types.js';
-import { mergeMetadataComments } from '../../../shared/metadata.js';
-import { injectGifMetadata } from '../../../shared/gifMetadataInjector.js';
+import { mergeMetadataComments } from '@shared/metadata.js';
+import { injectGifMetadata } from '@shared/gifMetadataInjector.js';
 
 export class GifFormatGenerator implements CLIFormatGenerator {
   readonly id = 'gif';

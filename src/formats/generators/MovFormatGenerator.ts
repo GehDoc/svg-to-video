@@ -1,6 +1,6 @@
 import path from 'path';
 import { CLIFormatGenerator, CLIFormatOptions } from '../types.js';
-import { mergeMetadataComments } from '../../../shared/metadata.js';
+import { mergeMetadataComments } from '@shared/metadata.js';
 
 export class MovFormatGenerator implements CLIFormatGenerator {
   readonly id = 'mov';

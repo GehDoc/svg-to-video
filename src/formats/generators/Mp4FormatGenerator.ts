@@ -1,6 +1,6 @@
 import path from 'path';
 import { CLIFormatGenerator, CLIFormatOptions } from '../types.js';
-import { mergeMetadataComments } from '../../../shared/metadata.js';
+import { mergeMetadataComments } from '@shared/metadata.js';
 
 export class Mp4FormatGenerator implements CLIFormatGenerator {
   readonly id = 'mp4';
