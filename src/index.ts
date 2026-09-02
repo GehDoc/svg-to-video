@@ -286,6 +286,8 @@ async function createFrames(
     );
   }
 
+  console.log('🚀 Preparing Puppeteer browser...');
+
   const browser: Browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox', ...puppeteerArgs],
@@ -294,40 +296,29 @@ async function createFrames(
   const page: Page = await browser.newPage();
   await page.setViewport({ width, height });
 
-  await page.goto('about:blank');
-  await page.setContent(svg);
+  await page.setContent(svg, { waitUntil: 'domcontentloaded' });
 
-  let styleTag = '';
-  if (transparent) {
-    styleTag =
-      '<style>html, body { background: transparent !important; }</style>';
-  } else if (bgColor) {
-    styleTag = `<style>html, body { background-color: ${bgColor} !important; }</style>`;
-  }
+  const bgStyle = transparent
+    ? 'html, body { background: transparent !important; }'
+    : bgColor
+      ? `html, body { background-color: ${bgColor} !important; }`
+      : '';
 
-  const htmlContent = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        ${styleTag}
-        <style>
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          svg { width: 100%; height: 100%; display: block; }
-        </style>
-      </head>
-      <body>
-        ${svg}
-      </body>
-    </html>
-  `;
-
-  await page.setContent(htmlContent, { waitUntil: 'domcontentloaded' });
+  await page.addStyleTag({
+    content: `
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      svg { width: 100%; height: 100%; display: block; }
+      ${bgStyle}
+    `.trim(),
+  });
 
   const screenshotOptions: ScreenshotOptions = {
     omitBackground: transparent,
   };
 
+  console.log('📸 Rendering frames with Puppeteer...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
+    process.stdout.write(`\r📸 Rendering frame ${frame}/${totalFrames}`);
     const timeMs = ((frame - 1) / fps) * 1000;
     await page.evaluate(seekAnimations, timeMs);
 
@@ -337,6 +328,7 @@ async function createFrames(
       ...screenshotOptions,
     });
   }
+  console.log('');
 
   await browser.close();
 }
