@@ -8,9 +8,8 @@ import { fileURLToPath } from 'url';
 import { seekAnimations } from '../shared/animation-engine.js';
 import { validateOptions } from './utils/validateOptions.js';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
-import { mergeMetadataComments } from '../shared/metadata.js';
-import { injectGifMetadata } from '../shared/gifMetadataInjector.js';
-import { injectApngMetadata } from '../shared/apngMetadataInjector.js';
+import { formatRegistry } from './formats/registry.js';
+import { CLIFormatOptions } from './formats/types.js';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -355,160 +354,30 @@ function convertToOutput(
 ): void {
   console.log('📦 Encoding output with FFmpeg...');
 
+  const normalizedFormat = format.toLowerCase();
+  const generator = formatRegistry.get(normalizedFormat);
+  if (!generator) {
+    throw new Error(`Unsupported format: ${format}`);
+  }
+
   const inputPattern = path.join(
     outDir,
     `%0${padWidth}d.${frameFileExtension}`
   );
-  const outputFullPath = path.join(outDir, outputFileName);
 
-  const args = [
-    '-hide_banner',
-    '-loglevel',
-    'warning',
-    '-y',
-    '-framerate',
-    String(fps),
-    '-i',
+  const formatOptions: CLIFormatOptions = {
+    outputFileName,
+    fps,
+    padWidth,
+    hold: hold || 0,
+    outDir,
+    transparent: !!transparent,
+    metadata,
     inputPattern,
-  ];
+    pkgVersion: pkg.version,
+  };
 
-  let userComment: string | undefined;
-  let title: string | undefined;
-  if (metadata) {
-    metadata.forEach((m) => {
-      if (m.startsWith('comment=')) {
-        userComment = m.split('=')[1];
-      } else if (m.startsWith('title=')) {
-        title = m.split('=')[1];
-        args.push('-metadata', m);
-      } else {
-        args.push('-metadata', m);
-      }
-    });
-  }
-
-  const finalComment = mergeMetadataComments(userComment, pkg.version);
-  const normalizedFormat = format.toLowerCase();
-
-  if (normalizedFormat === 'gif') {
-    const filters: string[] = [];
-    if (hold && hold > 0) {
-      filters.push(`tpad=stop_mode=clone:stop_duration=${hold}`);
-    }
-
-    const reserveTrans = transparent ? 1 : 0;
-    let filterComplex: string;
-    if (filters.length > 0) {
-      filterComplex = `${filters.join(',')},split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}[p];[b][p]paletteuse`;
-    } else {
-      filterComplex = `split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}[p];[b][p]paletteuse`;
-    }
-
-    args.push('-filter_complex', filterComplex);
-    args.push('-loop', '0');
-
-    const gifComment = title ? `${title} - ${finalComment}` : finalComment;
-    args.push('-metadata', `comment=${gifComment}`);
-    args.push('-f', 'gif', outputFullPath);
-  } else if (normalizedFormat === 'apng' || normalizedFormat === 'png') {
-    const filters: string[] = [];
-    if (hold && hold > 0) {
-      filters.push(`tpad=stop_mode=clone:stop_duration=${hold}`);
-    }
-    if (filters.length) {
-      args.push('-vf', filters.join(','));
-    }
-
-    args.push('-f', 'apng', '-plays', '0');
-    if (transparent) {
-      args.push('-pix_fmt', 'rgba');
-    } else {
-      args.push('-pix_fmt', 'rgb24');
-    }
-
-    args.push('-metadata', `comment=${finalComment}`);
-    args.push(outputFullPath);
-  } else {
-    const filters: string[] = [];
-    if (hold && hold > 0) {
-      filters.push(`tpad=stop_mode=clone:stop_duration=${hold}`);
-    }
-    if (filters.length) {
-      args.push('-vf', filters.join(','));
-    }
-
-    args.push('-metadata', `comment=${finalComment}`);
-
-    if (normalizedFormat === 'webm') {
-      if (transparent) {
-        args.push(
-          '-c:v',
-          'libvpx-vp9',
-          '-pix_fmt',
-          'yuva420p',
-          '-f',
-          'webm',
-          outputFullPath
-        );
-      } else {
-        args.push(
-          '-c:v',
-          'libvpx-vp9',
-          '-pix_fmt',
-          'yuv420p',
-          '-f',
-          'webm',
-          outputFullPath
-        );
-      }
-    } else if (normalizedFormat === 'mkv') {
-      if (transparent) {
-        args.push('-c:v', 'libvpx-vp9', '-pix_fmt', 'yuva420p', outputFullPath);
-      } else {
-        args.push(
-          '-c:v',
-          'libx264',
-          '-crf',
-          '20',
-          '-preset',
-          'slow',
-          '-pix_fmt',
-          'yuv420p',
-          outputFullPath
-        );
-      }
-    } else if (normalizedFormat === 'mov') {
-      if (transparent) {
-        args.push('-c:v', 'png', '-pix_fmt', 'rgba', outputFullPath);
-      } else {
-        args.push(
-          '-c:v',
-          'libx264',
-          '-crf',
-          '20',
-          '-preset',
-          'slow',
-          '-pix_fmt',
-          'yuv420p',
-          outputFullPath
-        );
-      }
-    } else {
-      args.push(
-        '-c:v',
-        'libx264',
-        '-crf',
-        '20',
-        '-preset',
-        'slow',
-        '-pix_fmt',
-        'yuv420p',
-        '-movflags',
-        '+faststart',
-        outputFullPath
-      );
-    }
-  }
+  const args = generator.buildFfmpegArgs(formatOptions);
 
   try {
     const output = child_process.execFileSync('ffmpeg', args, {
@@ -516,22 +385,9 @@ function convertToOutput(
     });
     if (output) console.log(output);
 
-    if (normalizedFormat === 'gif') {
-      const fileBuf = fs.readFileSync(outputFullPath);
-      const updatedBuf = injectGifMetadata(
-        fileBuf,
-        { title, comment: userComment },
-        pkg.version
-      );
-      fs.writeFileSync(outputFullPath, updatedBuf);
-    } else if (normalizedFormat === 'apng' || normalizedFormat === 'png') {
-      const fileBuf = fs.readFileSync(outputFullPath);
-      const updatedBuf = injectApngMetadata(
-        fileBuf,
-        { title, comment: userComment },
-        pkg.version
-      );
-      fs.writeFileSync(outputFullPath, updatedBuf);
+    const outputFullPath = path.join(outDir, outputFileName);
+    if (generator.postProcess) {
+      generator.postProcess(outputFullPath, formatOptions);
     }
   } catch (error) {
     console.error('❌ FFmpeg execution failed:');

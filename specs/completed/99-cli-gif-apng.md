@@ -1,7 +1,7 @@
 # Spec: 99 - CLI Animated Image Output Support (GIF & aPNG)
 
 **GitHub Issue**: [#99](https://github.com/GehDoc/svg-to-video/issues/99)
-**Status**: 🟠 Pending (Phase 2 CLI Refactoring)
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -66,12 +66,12 @@ Extend the CLI tool (`svg-to-video`) to support exporting animated image formats
   - [x] Move all `import` statements to the top of `GifEncoder.ts` and `ApngEncoder.ts`.
   - [x] Update `web/src/utils/encoders/GifEncoder.ts` and `ApngEncoder.ts` to use shared injectors.
   - [x] Update `src/index.ts` CLI output post-processing to use shared injectors.
-- [ ] **Phase 2: CLI Format Modularization (`src/formats/`)**
-  - [ ] Define `CLIFormatGenerator` & `CLIFormatOptions` interfaces in `src/formats/types.ts`.
-  - [ ] Implement format generators (`GifFormatGenerator`, `ApngFormatGenerator`, `Mp4FormatGenerator`, `WebmFormatGenerator`, `MkvFormatGenerator`, `MovFormatGenerator`).
-  - [ ] Implement `CLIFormatRegistry` in `src/formats/registry.ts`.
-  - [ ] Refactor `convertToOutput` in `src/index.ts` to use format registry.
-  - [ ] Add unit test suite in `src/formats/registry.test.ts`.
+- [x] **Phase 2: CLI Format Modularization (`src/formats/`)**
+  - [x] Define `CLIFormatGenerator` & `CLIFormatOptions` interfaces in `src/formats/types.ts`.
+  - [x] Implement format generators (`GifFormatGenerator`, `ApngFormatGenerator`, `Mp4FormatGenerator`, `WebmFormatGenerator`, `MkvFormatGenerator`, `MovFormatGenerator`).
+  - [x] Implement `CLIFormatRegistry` in `src/formats/registry.ts`.
+  - [x] Refactor `convertToOutput` in `src/index.ts` to use format registry.
+  - [x] Add unit test suite in `src/formats/registry.test.ts`.
 - [x] **Testing**
   - [x] Add integration test coverage for GIF and aPNG exports in `tests/cli.spec.ts`.
 - [x] **Documentation & SEO**
