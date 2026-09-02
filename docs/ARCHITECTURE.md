@@ -107,6 +107,15 @@ The project uses modular **Registry of Format Factories** architecture in both t
 - **Format Factory**: Implement a `VideoFormat` class (extending `BaseFormat`).
 - **Registration**: Register format instances in `web/src/utils/discoverFormats.ts`.
 
+```typescript
+// Example: web/src/utils/discoverFormats.ts
+const registerFormats = () => {
+  if (formatRegistry.getAllFormats().length > 0) return;
+  // ...
+  formatRegistry.register(new MyNewFormat());
+};
+```
+
 #### 2. CLI Format Registry (`src/formats/`)
 
 - **CLI Generator Implementation**: Implement `CLIFormatGenerator` in `src/formats/generators/` defining `id`, `extensions`, `supportsAlpha`, `buildFfmpegArgs(options)`, and optional `postProcess(...)`.
