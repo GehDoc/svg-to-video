@@ -23,7 +23,11 @@ export const HeaderDropdown = () => {
           target: '_blank',
           rel: 'noopener noreferrer',
           icon: <FaBug />,
-          onClick: () => {},
+          onClick: () => {
+            if (typeof umami !== 'undefined') {
+              umami.track('click-issue-report');
+            }
+          },
         },
       ],
     },
@@ -36,7 +40,11 @@ export const HeaderDropdown = () => {
           target: '_blank',
           rel: 'noopener noreferrer',
           icon: <FaGithub />,
-          onClick: () => {},
+          onClick: () => {
+            if (typeof umami !== 'undefined') {
+              umami.track('click-source-code');
+            }
+          },
         },
         {
           label: 'Buy me a Coffee',
@@ -45,7 +53,11 @@ export const HeaderDropdown = () => {
           rel: 'noopener noreferrer',
           icon: <FaCoffee />,
           rightElement: <span className="dropdown-arrow">↗</span>,
-          onClick: () => {},
+          onClick: () => {
+            if (typeof umami !== 'undefined') {
+              umami.track('click-sponsor', { location: 'dropdown' });
+            }
+          },
         },
       ],
     },

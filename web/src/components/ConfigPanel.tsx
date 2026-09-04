@@ -1,5 +1,10 @@
 import { useEffect, useState, type ChangeEvent, useCallback } from 'react';
-import type { ResolutionPreset, RenderState } from '../hooks/useRenderer';
+import {
+  parseSvgDimensions,
+  type ResolutionPreset,
+  type RenderState,
+} from '../hooks/useRenderer';
+import { analyzeSvgAnimation } from '@shared/analyzeSvgAnimation.js';
 import { isTransparencySupported } from '../utils/isTransparencySupported';
 import {
   discoverFormats,
@@ -88,18 +93,43 @@ export const ConfigPanel = ({
   const isRenderingOrSuccess = state.isRendering || !!renderedUrl;
   const isOptionsDisabled = isRenderingOrSuccess || !svgContent;
 
-  const processFile = (file: File) => {
+  const processFile = (file: File, method: 'file-picker' | 'drag-and-drop') => {
     const reader = new FileReader();
     reader.onload = (event) => {
       const content = event.target?.result as string;
       const baseName = file.name.replace(/\.svg$/i, '');
       onSvgContentChange(content, `${baseName}.mp4`);
+
+      if (typeof umami !== 'undefined') {
+        try {
+          const dim = parseSvgDimensions(content);
+          let aspectRatio: 'square' | 'landscape' | 'portrait' | 'unknown' =
+            'unknown';
+          if (dim.isDimensionsDetected && dim.width > 0 && dim.height > 0) {
+            if (dim.width === dim.height) aspectRatio = 'square';
+            else if (dim.width > dim.height) aspectRatio = 'landscape';
+            else aspectRatio = 'portrait';
+          }
+          const detectedDuration = analyzeSvgAnimation(content);
+          const hasAnimation =
+            detectedDuration !== undefined && detectedDuration > 0;
+          umami.track('file-load', {
+            method,
+            aspectRatio,
+            hasAnimation,
+            detectedDuration: detectedDuration ?? 0,
+            isDimensionsDetected: dim.isDimensionsDetected,
+          });
+        } catch {
+          /* ignore parse errors for tracking */
+        }
+      }
     };
     reader.readAsText(file);
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) processFile(e.target.files[0]);
+    if (e.target.files?.[0]) processFile(e.target.files[0], 'file-picker');
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -110,7 +140,7 @@ export const ConfigPanel = ({
       e.dataTransfer.files?.[0] &&
       e.dataTransfer.files[0].type === 'image/svg+xml'
     ) {
-      processFile(e.dataTransfer.files[0]);
+      processFile(e.dataTransfer.files[0], 'drag-and-drop');
     }
   };
 

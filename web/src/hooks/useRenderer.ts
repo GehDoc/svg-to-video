@@ -103,6 +103,7 @@ export const useRenderer = (
   const cancelRef = useRef(false);
   const activeEncoderRef = useRef<VideoEncoder | null>(null);
   const settingsRef = useRef<RenderSettings | null>(null);
+  const renderStartTimeRef = useRef<number | null>(null);
 
   const render = useCallback(
     async (svgContent: string, settings: RenderSettings) => {
@@ -113,12 +114,21 @@ export const useRenderer = (
 
       cancelRef.current = false;
       settingsRef.current = settings;
+      renderStartTimeRef.current = performance.now();
+      const videoDurationSec = settings.duration + settings.hold;
+      const totalAnimationFrames = Math.ceil(settings.duration * settings.fps);
+      const totalHoldFrames = Math.ceil(settings.hold * settings.fps);
+      const totalFrames = totalAnimationFrames + totalHoldFrames;
+
       setState({ isRendering: true, progress: 0, status: 'Initializing...' });
 
       if (typeof umami !== 'undefined') {
         umami.track('conversion-start', {
           format: settings.format,
           isTransparent: settings.isTransparent,
+          captureMethod: settings.captureMethod,
+          fps: settings.fps,
+          videoDurationSec,
         });
       }
 
@@ -181,11 +191,6 @@ export const useRenderer = (
           },
         }));
 
-        const totalAnimationFrames = Math.ceil(
-          settings.duration * settings.fps
-        );
-        const totalHoldFrames = Math.ceil(settings.hold * settings.fps);
-        const totalFrames = totalAnimationFrames + totalHoldFrames;
         const frameDuration = 1000 / settings.fps;
         const startTime = performance.now();
 
@@ -301,10 +306,23 @@ export const useRenderer = (
         const url = URL.createObjectURL(blob);
         setState({ isRendering: false, progress: 100, status: 'Done!' });
 
+        const processDurationSec = parseFloat(
+          (
+            (performance.now() -
+              (renderStartTimeRef.current || performance.now())) /
+            1000
+          ).toFixed(2)
+        );
+
         if (typeof umami !== 'undefined') {
           umami.track('conversion-success', {
             format: settings.format,
             isTransparent: settings.isTransparent,
+            captureMethod: settings.captureMethod,
+            fps: settings.fps,
+            videoDurationSec,
+            totalFrames,
+            processDurationSec,
           });
         }
 
@@ -317,11 +335,21 @@ export const useRenderer = (
           status: `Error: ${error.message}`,
         });
 
+        const processDurationSec = parseFloat(
+          (
+            (performance.now() -
+              (renderStartTimeRef.current || performance.now())) /
+            1000
+          ).toFixed(2)
+        );
+
         if (typeof umami !== 'undefined') {
           umami.track('conversion-failed', {
             error: error.message,
             format: settings.format,
             isTransparent: settings.isTransparent,
+            captureMethod: settings.captureMethod,
+            processDurationSec,
           });
         }
 
@@ -338,10 +366,18 @@ export const useRenderer = (
     }
     setState({ isRendering: false, progress: 0, status: 'Ready' });
 
+    const processDurationSec = renderStartTimeRef.current
+      ? parseFloat(
+          ((performance.now() - renderStartTimeRef.current) / 1000).toFixed(2)
+        )
+      : 0;
+
     if (typeof umami !== 'undefined' && settingsRef.current) {
       umami.track('conversion-cancel', {
         format: settingsRef.current.format,
         isTransparent: settingsRef.current.isTransparent,
+        captureMethod: settingsRef.current.captureMethod,
+        processDurationSec,
       });
     }
   }, []);

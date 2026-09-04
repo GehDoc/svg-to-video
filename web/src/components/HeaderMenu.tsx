@@ -25,6 +25,11 @@ export const HeaderMenu = () => {
         target="_blank"
         rel="noopener noreferrer"
         className="header-sponsor-btn"
+        onClick={() => {
+          if (typeof umami !== 'undefined') {
+            umami.track('click-sponsor', { location: 'header' });
+          }
+        }}
       >
         <FaHeart className="icon-heart" /> Sponsor
       </a>

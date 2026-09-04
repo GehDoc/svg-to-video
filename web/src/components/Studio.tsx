@@ -232,6 +232,7 @@ export const Studio = () => {
           onCancel={cancel}
           onClearError={clearError}
           mimeType={mimeType}
+          format={format}
         />
       </main>
     </div>

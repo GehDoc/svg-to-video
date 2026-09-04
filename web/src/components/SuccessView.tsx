@@ -11,6 +11,8 @@ interface SuccessViewProps {
   fileSize: string | null;
   renderedUrl: string;
   mimeType: string;
+  format?: string;
+  isTransparent?: boolean;
   onDownload: () => void;
   onBack: () => void;
   onCopyOverride?: (url: string) => Promise<boolean>;
@@ -21,6 +23,8 @@ export const SuccessView = ({
   fileSize,
   renderedUrl,
   mimeType,
+  format,
+  isTransparent,
   onDownload,
   onBack,
   onCopyOverride,
@@ -36,7 +40,11 @@ export const SuccessView = ({
     const success = await copyFn(renderedUrl);
 
     if (typeof umami !== 'undefined') {
-      umami.track('copy-data-url', { success });
+      umami.track('copy-data-url', {
+        success,
+        ...(format ? { format } : {}),
+        ...(typeof isTransparent === 'boolean' ? { isTransparent } : {}),
+      });
     }
 
     if (success) {
@@ -103,7 +111,16 @@ export const SuccessView = ({
         <span>
           <FaHeart className="icon-heart" /> Love this tool?{' '}
         </span>
-        <a href={pkg.funding.url} target="_blank" rel="noopener noreferrer">
+        <a
+          href={pkg.funding.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => {
+            if (typeof umami !== 'undefined') {
+              umami.track('click-sponsor', { location: 'success-view' });
+            }
+          }}
+        >
           Support its development on GitHub ↗
         </a>
       </div>
