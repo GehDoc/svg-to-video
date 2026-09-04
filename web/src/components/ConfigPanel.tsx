@@ -1,10 +1,5 @@
 import { useEffect, useState, type ChangeEvent, useCallback } from 'react';
-import {
-  parseSvgDimensions,
-  type ResolutionPreset,
-  type RenderState,
-} from '../hooks/useRenderer';
-import { analyzeSvgAnimation } from '@shared/analyzeSvgAnimation.js';
+import type { ResolutionPreset, RenderState } from '../hooks/useRenderer';
 import { isTransparencySupported } from '../utils/isTransparencySupported';
 import {
   discoverFormats,
@@ -101,28 +96,7 @@ export const ConfigPanel = ({
       onSvgContentChange(content, `${baseName}.mp4`);
 
       if (typeof umami !== 'undefined') {
-        try {
-          const dim = parseSvgDimensions(content);
-          let aspectRatio: 'square' | 'landscape' | 'portrait' | 'unknown' =
-            'unknown';
-          if (dim.isDimensionsDetected && dim.width > 0 && dim.height > 0) {
-            if (dim.width === dim.height) aspectRatio = 'square';
-            else if (dim.width > dim.height) aspectRatio = 'landscape';
-            else aspectRatio = 'portrait';
-          }
-          const detectedDuration = analyzeSvgAnimation(content);
-          const hasAnimation =
-            detectedDuration !== undefined && detectedDuration > 0;
-          umami.track('file-load', {
-            method,
-            aspectRatio,
-            hasAnimation,
-            detectedDuration: detectedDuration ?? 0,
-            isDimensionsDetected: dim.isDimensionsDetected,
-          });
-        } catch {
-          /* ignore parse errors for tracking */
-        }
+        umami.track('file-load', { method });
       }
     };
     reader.readAsText(file);
