@@ -43,20 +43,11 @@ export const Studio = () => {
 
   const mimeType = useMemo(() => getMimeTypeById(format), [format]);
 
-  const originalDim = useMemo(() => {
-    if (!svgContent)
-      return { width: 0, height: 0, isDimensionsDetected: false };
-    try {
-      const result = parseSvgDimensions(svgContent);
-      return {
-        width: result.width,
-        height: result.height,
-        isDimensionsDetected: result.isDimensionsDetected,
-      };
-    } catch {
-      return { width: 0, height: 0, isDimensionsDetected: false };
-    }
-  }, [svgContent]);
+  const [originalDim, setOriginalDim] = useState<{
+    width: number;
+    height: number;
+    isDimensionsDetected: boolean;
+  }>({ width: 0, height: 0, isDimensionsDetected: false });
 
   const targetDim = useMemo(() => {
     return calculateFinalDimensions(originalDim.width, originalDim.height, {
@@ -181,38 +172,42 @@ export const Studio = () => {
           onSvgContentChange={(content, name, method) => {
             setSvgContent(content);
             setFileName(name);
+
+            let dim = { width: 0, height: 0, isDimensionsDetected: false };
+            try {
+              dim = parseSvgDimensions(content);
+              setOriginalDim(dim);
+            } catch {
+              setOriginalDim({
+                width: 0,
+                height: 0,
+                isDimensionsDetected: false,
+              });
+            }
+
             const detectedDuration = analyzeSvgAnimation(content);
             if (detectedDuration !== undefined && detectedDuration > 0) {
               setDuration(detectedDuration);
             }
 
             if (typeof umami !== 'undefined') {
-              try {
-                const dim = parseSvgDimensions(content);
-                let aspectRatio:
-                  'square' | 'landscape' | 'portrait' | 'unknown' = 'unknown';
-                if (
-                  dim.isDimensionsDetected &&
-                  dim.width > 0 &&
-                  dim.height > 0
-                ) {
-                  if (dim.width === dim.height) aspectRatio = 'square';
-                  else if (dim.width > dim.height) aspectRatio = 'landscape';
-                  else aspectRatio = 'portrait';
-                }
-                const hasAnimation =
-                  detectedDuration !== undefined && detectedDuration > 0;
-
-                umami.track('file-load', {
-                  method,
-                  aspectRatio,
-                  hasAnimation,
-                  detectedDuration: detectedDuration ?? 0,
-                  isDimensionsDetected: dim.isDimensionsDetected,
-                });
-              } catch {
-                /* ignore parse error for tracking */
+              let aspectRatio: 'square' | 'landscape' | 'portrait' | 'unknown' =
+                'unknown';
+              if (dim.isDimensionsDetected && dim.width > 0 && dim.height > 0) {
+                if (dim.width === dim.height) aspectRatio = 'square';
+                else if (dim.width > dim.height) aspectRatio = 'landscape';
+                else aspectRatio = 'portrait';
               }
+              const hasAnimation =
+                detectedDuration !== undefined && detectedDuration > 0;
+
+              umami.track('file-load', {
+                method,
+                aspectRatio,
+                hasAnimation,
+                detectedDuration: detectedDuration ?? 0,
+                isDimensionsDetected: dim.isDimensionsDetected,
+              });
             }
           }}
           fileName={fileName}
