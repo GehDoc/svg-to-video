@@ -65,33 +65,6 @@ export const Studio = () => {
     });
   }, [originalDim, preset, scale]);
 
-  useEffect(() => {
-    if (!svgContent || typeof umami === 'undefined') return;
-
-    let aspectRatio: 'square' | 'landscape' | 'portrait' | 'unknown' =
-      'unknown';
-    if (
-      originalDim.isDimensionsDetected &&
-      originalDim.width > 0 &&
-      originalDim.height > 0
-    ) {
-      if (originalDim.width === originalDim.height) aspectRatio = 'square';
-      else if (originalDim.width > originalDim.height)
-        aspectRatio = 'landscape';
-      else aspectRatio = 'portrait';
-    }
-
-    const detectedDuration = analyzeSvgAnimation(svgContent);
-    const hasAnimation = detectedDuration !== undefined && detectedDuration > 0;
-
-    umami.track('file-parsed', {
-      aspectRatio,
-      hasAnimation,
-      detectedDuration: detectedDuration ?? 0,
-      isDimensionsDetected: originalDim.isDimensionsDetected,
-    });
-  }, [svgContent, originalDim]);
-
   const [supportError, setSupportError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -205,12 +178,41 @@ export const Studio = () => {
       <main className="studio-layout">
         <ConfigPanel
           svgContent={svgContent}
-          onSvgContentChange={(content, name) => {
+          onSvgContentChange={(content, name, method) => {
             setSvgContent(content);
             setFileName(name);
             const detectedDuration = analyzeSvgAnimation(content);
             if (detectedDuration !== undefined && detectedDuration > 0) {
               setDuration(detectedDuration);
+            }
+
+            if (typeof umami !== 'undefined') {
+              try {
+                const dim = parseSvgDimensions(content);
+                let aspectRatio:
+                  'square' | 'landscape' | 'portrait' | 'unknown' = 'unknown';
+                if (
+                  dim.isDimensionsDetected &&
+                  dim.width > 0 &&
+                  dim.height > 0
+                ) {
+                  if (dim.width === dim.height) aspectRatio = 'square';
+                  else if (dim.width > dim.height) aspectRatio = 'landscape';
+                  else aspectRatio = 'portrait';
+                }
+                const hasAnimation =
+                  detectedDuration !== undefined && detectedDuration > 0;
+
+                umami.track('file-load', {
+                  method,
+                  aspectRatio,
+                  hasAnimation,
+                  detectedDuration: detectedDuration ?? 0,
+                  isDimensionsDetected: dim.isDimensionsDetected,
+                });
+              } catch {
+                /* ignore parse error for tracking */
+              }
             }
           }}
           fileName={fileName}

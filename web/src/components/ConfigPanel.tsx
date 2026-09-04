@@ -14,7 +14,11 @@ import './ConfigPanel.scss';
 
 interface ConfigPanelProps {
   svgContent: string | null;
-  onSvgContentChange: (content: string, fileName: string) => void;
+  onSvgContentChange: (
+    content: string,
+    fileName: string,
+    method: 'file-picker' | 'drag-and-drop'
+  ) => void;
   fileName: string;
   onFileNameChange: (name: string) => void;
   duration: number;
@@ -93,11 +97,7 @@ export const ConfigPanel = ({
     reader.onload = (event) => {
       const content = event.target?.result as string;
       const baseName = file.name.replace(/\.svg$/i, '');
-      onSvgContentChange(content, `${baseName}.mp4`);
-
-      if (typeof umami !== 'undefined') {
-        umami.track('file-load', { method });
-      }
+      onSvgContentChange(content, `${baseName}.mp4`, method);
     };
     reader.readAsText(file);
   };
