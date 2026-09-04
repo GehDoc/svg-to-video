@@ -1,0 +1,38 @@
+{
+  "extends": ["config:base"],
+  "timezone": "UTC",
+  "schedule": ["before 05:00 on monday"],
+  "labels": ["dependencies", "renovate"],
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 5,
+  "semanticCommits": "enabled",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 05:00 on monday"]
+  },
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "branch",
+      "labels": ["patch"]
+    },
+    {
+      "matchUpdateTypes": ["minor"],
+      "matchPaths": ["^web/"],
+      "groupName": "web: minor updates",
+      "labels": ["minor", "web"]
+    },
+    {
+      "matchUpdateTypes": ["minor"],
+      "matchPaths": ["^(?!web/).*"],
+      "groupName": "root: minor updates",
+      "labels": ["minor"]
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "labels": ["major"],
+      "schedule": ["every weekend"]
+    }
+  ]
+}
