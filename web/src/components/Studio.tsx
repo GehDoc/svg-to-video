@@ -15,6 +15,7 @@ import { Header } from './Header';
 import { ConfigPanel } from './ConfigPanel';
 import { MonitorPanel } from './MonitorPanel';
 import { trackEvent } from '../utils/analytics';
+import { trackFileLoad } from '../utils/tracking/fileTracking';
 
 export const Studio = () => {
   const rendererRef = useRef<RendererHandle>(null);
@@ -187,23 +188,7 @@ export const Studio = () => {
               setDuration(detectedDuration);
             }
 
-            let aspectRatio: 'square' | 'landscape' | 'portrait' | 'unknown' =
-              'unknown';
-            if (dim.isDimensionsDetected && dim.width > 0 && dim.height > 0) {
-              if (dim.width === dim.height) aspectRatio = 'square';
-              else if (dim.width > dim.height) aspectRatio = 'landscape';
-              else aspectRatio = 'portrait';
-            }
-            const hasAnimation =
-              detectedDuration !== undefined && detectedDuration > 0;
-
-            trackEvent('file-load', {
-              method,
-              aspectRatio,
-              hasAnimation,
-              detectedDuration: detectedDuration ?? 0,
-              isDimensionsDetected: dim.isDimensionsDetected,
-            });
+            trackFileLoad(method, dim, detectedDuration);
           }}
           fileName={fileName}
           onFileNameChange={setFileName}

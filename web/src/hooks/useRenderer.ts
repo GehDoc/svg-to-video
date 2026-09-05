@@ -2,7 +2,12 @@ import { useState, useCallback, useRef } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
 import { formatRegistry } from '../utils/encoders/Registry';
 import type { VideoMetadata } from '@shared/metadata';
-import { trackEvent } from '../utils/analytics';
+import {
+  trackConversionStart,
+  trackConversionSuccess,
+  trackConversionFailed,
+  trackConversionCancel,
+} from '../utils/tracking/rendererTracking';
 
 export type ResolutionPreset = 'original' | '720p' | '1080p';
 export type CaptureMethod = 'optimal' | 'high-fidelity';
@@ -123,13 +128,7 @@ export const useRenderer = (
 
       setState({ isRendering: true, progress: 0, status: 'Initializing...' });
 
-      trackEvent('conversion-start', {
-        format: settings.format,
-        isTransparent: settings.isTransparent,
-        captureMethod: settings.captureMethod,
-        fps: settings.fps,
-        videoDurationSec,
-      });
+      trackConversionStart(settings, videoDurationSec);
 
       try {
         const { width: origWidth, height: origHeight } =
@@ -305,23 +304,12 @@ export const useRenderer = (
         const url = URL.createObjectURL(blob);
         setState({ isRendering: false, progress: 100, status: 'Done!' });
 
-        const processDurationSec = parseFloat(
-          (
-            (performance.now() -
-              (renderStartTimeRef.current || performance.now())) /
-            1000
-          ).toFixed(2)
-        );
-
-        trackEvent('conversion-success', {
-          format: settings.format,
-          isTransparent: settings.isTransparent,
-          captureMethod: settings.captureMethod,
-          fps: settings.fps,
+        trackConversionSuccess(
+          settings,
           videoDurationSec,
           totalFrames,
-          processDurationSec,
-        });
+          renderStartTimeRef.current
+        );
 
         return url;
       } catch (err) {
@@ -332,21 +320,7 @@ export const useRenderer = (
           status: `Error: ${error.message}`,
         });
 
-        const processDurationSec = parseFloat(
-          (
-            (performance.now() -
-              (renderStartTimeRef.current || performance.now())) /
-            1000
-          ).toFixed(2)
-        );
-
-        trackEvent('conversion-failed', {
-          error: error.message,
-          format: settings.format,
-          isTransparent: settings.isTransparent,
-          captureMethod: settings.captureMethod,
-          processDurationSec,
-        });
+        trackConversionFailed(settings, error, renderStartTimeRef.current);
 
         throw error;
       }
@@ -361,20 +335,7 @@ export const useRenderer = (
     }
     setState({ isRendering: false, progress: 0, status: 'Ready' });
 
-    const processDurationSec = renderStartTimeRef.current
-      ? parseFloat(
-          ((performance.now() - renderStartTimeRef.current) / 1000).toFixed(2)
-        )
-      : 0;
-
-    if (settingsRef.current) {
-      trackEvent('conversion-cancel', {
-        format: settingsRef.current.format,
-        isTransparent: settingsRef.current.isTransparent,
-        captureMethod: settingsRef.current.captureMethod,
-        processDurationSec,
-      });
-    }
+    trackConversionCancel(settingsRef.current, renderStartTimeRef.current);
   }, []);
 
   const clearError = useCallback(() => {
