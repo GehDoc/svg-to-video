@@ -38,11 +38,39 @@ Expose `svg-to-video` capabilities as an **Agentic Skill** and **Model Context P
   - [ ] Update static fallback description in `web/src/components/SeoFallback.tsx`
   - [ ] Update `package.json` keywords
 
+## 🧪 Testing Strategy
+
+Our testing strategy covers unit, integration, and E2E container validation to guarantee zero stdio protocol corruption and 100% rendering fidelity:
+
+### 1. CLI Machine Interface Tests (`tests/cli.spec.ts`)
+
+- **`--quiet` / `--silent` Validation**: Assert that stdout produces zero ANSI progress bars or interactive characters (`\r`).
+- **`--json` Output Validation**: Assert stdout returns parseable JSON containing output filepath, duration, resolution, and rendering status.
+
+### 2. MCP Server Protocol Tests (`tests/mcp.spec.ts`)
+
+- **Stdio Client-Server Integration**: Use `@modelcontextprotocol/sdk` Client to spawn the MCP server as a child process.
+- **`inspect_svg_animation` Tool**: Test against `examples/example.svg` to verify accurate detection of CSS keyframes, animation duration, and dimensions.
+- **`render_svg_to_video` Tool**: Execute real conversion invocations (`.mp4`, `.gif`, `.webm`) via MCP calls and assert output file existence and ffprobe validation.
+- **Error Handling**: Verify graceful error responses (JSON-RPC error payload) for missing files or malformed SVG input.
+
+### 3. Docker Container E2E Tests
+
+- Test running the MCP server inside Docker (`docker run -i --rm svg-to-video mcp`) over stdio transport to ensure Chrome, FFmpeg, and multi-language fonts resolve cleanly in containerized agent environments.
+
+### 4. Skill Frontmatter & Schema Validation
+
+- Automated check ensuring `skills/svg-to-video/SKILL.md` conforms to standard agent skill format and frontmatter schema.
+
+---
+
 ## 🧪 Verification Plan
 
 - [ ] Manual Test: Run MCP server via stdio test script and invoke `render_svg_to_video` on `examples/example.svg`.
-- [ ] Automated Test: `npm run test` validating CLI options (`--quiet`, `--json`) and MCP tool schemas.
+- [ ] Automated Test: `npm run test:cli` validating CLI machine options (`--quiet`, `--json`).
+- [ ] Automated Test: `npx tsx tests/mcp.spec.ts` validating MCP tool schemas and stdio RPC transport.
 
 ## 📝 Change Log
 
 - _2026-09-05: Initial spec created for Issue #114._
+- _2026-09-05: Added comprehensive multi-layer testing strategy for Issue #114._
