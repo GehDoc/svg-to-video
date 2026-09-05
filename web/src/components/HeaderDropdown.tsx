@@ -5,6 +5,7 @@ import {
   FaTag,
   FaBalanceScale,
 } from 'react-icons/fa';
+import { trackEvent } from '../utils/analytics';
 import pkg from '../../package.json';
 import { Dropdown } from './Dropdown/Dropdown';
 
@@ -24,9 +25,7 @@ export const HeaderDropdown = () => {
           rel: 'noopener noreferrer',
           icon: <FaBug />,
           onClick: () => {
-            if (typeof umami !== 'undefined') {
-              umami.track('click-issue-report');
-            }
+            trackEvent('click-issue-report');
           },
         },
       ],
@@ -41,9 +40,7 @@ export const HeaderDropdown = () => {
           rel: 'noopener noreferrer',
           icon: <FaGithub />,
           onClick: () => {
-            if (typeof umami !== 'undefined') {
-              umami.track('click-source-code');
-            }
+            trackEvent('click-source-code');
           },
         },
         {
@@ -54,9 +51,7 @@ export const HeaderDropdown = () => {
           icon: <FaCoffee />,
           rightElement: <span className="dropdown-arrow">↗</span>,
           onClick: () => {
-            if (typeof umami !== 'undefined') {
-              umami.track('click-sponsor', { location: 'dropdown' });
-            }
+            trackEvent('click-sponsor', { location: 'dropdown' });
           },
         },
       ],

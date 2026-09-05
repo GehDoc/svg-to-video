@@ -9,6 +9,7 @@ import {
 import { test, expect, afterEach, beforeEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { SuccessView } from './SuccessView';
+import pkg from '../../package.json';
 
 const trackMock = vi.fn();
 
@@ -62,6 +63,7 @@ test('SuccessView handles copy action', async () => {
       success: true,
       format: 'mp4',
       isTransparent: false,
+      version: pkg.version,
     })
   );
 
@@ -95,6 +97,7 @@ test('SuccessView renders donation support link and tracks click', () => {
   fireEvent.click(sponsorLink);
   expect(trackMock).toHaveBeenCalledWith('click-sponsor', {
     location: 'success-view',
+    version: pkg.version,
   });
 });
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from './Button/Button';
 import { FaHeart, FaCopy, FaCheck, FaTimes } from 'react-icons/fa';
+import { trackEvent } from '../utils/analytics';
 import pkg from '../../package.json';
 import { copyDataUrl } from '../utils/clipboard';
 import { isImageMimeType } from '../utils/discoverFormats';
@@ -39,13 +40,11 @@ export const SuccessView = ({
     const copyFn = onCopyOverride || copyDataUrl;
     const success = await copyFn(renderedUrl);
 
-    if (typeof umami !== 'undefined') {
-      umami.track('copy-data-url', {
-        success,
-        ...(format ? { format } : {}),
-        ...(typeof isTransparent === 'boolean' ? { isTransparent } : {}),
-      });
-    }
+    trackEvent('copy-data-url', {
+      success,
+      ...(format ? { format } : {}),
+      ...(typeof isTransparent === 'boolean' ? { isTransparent } : {}),
+    });
 
     if (success) {
       setCopyStatus('success');
@@ -116,9 +115,7 @@ export const SuccessView = ({
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => {
-            if (typeof umami !== 'undefined') {
-              umami.track('click-sponsor', { location: 'success-view' });
-            }
+            trackEvent('click-sponsor', { location: 'success-view' });
           }}
         >
           Support its development on GitHub ↗

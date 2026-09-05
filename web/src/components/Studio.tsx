@@ -14,6 +14,7 @@ import { formatRegistry } from '../utils/encoders/Registry';
 import { Header } from './Header';
 import { ConfigPanel } from './ConfigPanel';
 import { MonitorPanel } from './MonitorPanel';
+import { trackEvent } from '../utils/analytics';
 
 export const Studio = () => {
   const rendererRef = useRef<RendererHandle>(null);
@@ -146,9 +147,7 @@ export const Studio = () => {
 
   const handleDownload = useCallback(() => {
     if (renderedUrl) {
-      if (typeof umami !== 'undefined') {
-        umami.track('download-result', { format, isTransparent });
-      }
+      trackEvent('download-result', { format, isTransparent });
       const a = document.createElement('a');
       a.href = renderedUrl;
       a.download = fileName;
@@ -157,9 +156,7 @@ export const Studio = () => {
   }, [renderedUrl, fileName, format, isTransparent]);
 
   const handleBack = useCallback(() => {
-    if (typeof umami !== 'undefined') {
-      umami.track('back-to-studio', { format, isTransparent });
-    }
+    trackEvent('back-to-studio', { format, isTransparent });
     setRenderedUrl(null);
   }, [format, isTransparent]);
 
@@ -190,25 +187,23 @@ export const Studio = () => {
               setDuration(detectedDuration);
             }
 
-            if (typeof umami !== 'undefined') {
-              let aspectRatio: 'square' | 'landscape' | 'portrait' | 'unknown' =
-                'unknown';
-              if (dim.isDimensionsDetected && dim.width > 0 && dim.height > 0) {
-                if (dim.width === dim.height) aspectRatio = 'square';
-                else if (dim.width > dim.height) aspectRatio = 'landscape';
-                else aspectRatio = 'portrait';
-              }
-              const hasAnimation =
-                detectedDuration !== undefined && detectedDuration > 0;
-
-              umami.track('file-load', {
-                method,
-                aspectRatio,
-                hasAnimation,
-                detectedDuration: detectedDuration ?? 0,
-                isDimensionsDetected: dim.isDimensionsDetected,
-              });
+            let aspectRatio: 'square' | 'landscape' | 'portrait' | 'unknown' =
+              'unknown';
+            if (dim.isDimensionsDetected && dim.width > 0 && dim.height > 0) {
+              if (dim.width === dim.height) aspectRatio = 'square';
+              else if (dim.width > dim.height) aspectRatio = 'landscape';
+              else aspectRatio = 'portrait';
             }
+            const hasAnimation =
+              detectedDuration !== undefined && detectedDuration > 0;
+
+            trackEvent('file-load', {
+              method,
+              aspectRatio,
+              hasAnimation,
+              detectedDuration: detectedDuration ?? 0,
+              isDimensionsDetected: dim.isDimensionsDetected,
+            });
           }}
           fileName={fileName}
           onFileNameChange={setFileName}

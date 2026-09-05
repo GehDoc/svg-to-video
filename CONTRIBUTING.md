@@ -203,13 +203,15 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
 > **Tracking Mandate**: When adding new primary Call-to-Action (CTA) buttons or important navigation links, you **must** implement Umami event tracking. This helps us understand which features are most used and where users might be struggling.
 
 - **Implementation**: The tracker is self-hosted at `web/public/assets/3rd-party/analytics.js` and injected via `next/script` in `web/src/app/layout.tsx`.
-- **Programmatic Tracking**: Use `umami.track` with a safety guard to trigger events:
+- **Programmatic Tracking**: Use the `trackEvent` helper function from `web/src/utils/analytics.ts`:
 
   ```typescript
-  if (typeof umami !== 'undefined') {
-    umami.track('my-event-name', { property: 'value' });
-  }
+  import { trackEvent } from '../utils/analytics';
+
+  trackEvent('my-event-name', { property: 'value' });
   ```
+
+  `trackEvent` automatically performs the `typeof umami !== 'undefined'` safety check and appends the application `version` tag from `package.json` to every event payload.
 
 - **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
   1. The hostname is `localhost`, `127.0.0.1`, or a local network IP.

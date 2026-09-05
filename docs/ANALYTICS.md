@@ -4,6 +4,8 @@ This document outlines the event tracking strategy for the Web Studio using [Uma
 
 ## Event Schema
 
+Note: All events automatically include the application `version` tag (e.g. `version: "0.21.2"`) added by the centralized `trackEvent` helper.
+
 | Event Name           | Trigger                                               | Properties                                                                                                                                                                  |
 | :------------------- | :---------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `file-load`          | User ingests an SVG via file browser or drag-and-drop | `method` (`file-picker` \| `drag-and-drop`), `aspectRatio` (`square` \| `landscape` \| `portrait` \| `unknown`), `hasAnimation`, `detectedDuration`, `isDimensionsDetected` |
@@ -20,6 +22,6 @@ This document outlines the event tracking strategy for the Web Studio using [Uma
 
 ## Implementation Guidelines
 
-- **Safety Checks**: Always use `typeof umami !== 'undefined'` before calling `umami.track`.
+- **Centralized Helper**: Use `trackEvent(eventName, properties)` from `web/src/utils/analytics.ts`. It safely checks for Umami availability and automatically appends the application `version` to all event payloads.
 - **Environment**: Tracking is disabled in local development environments (localhost) and CI/CD pipelines to prevent data pollution.
 - **Privacy**: Tracking is cookie-less, respects Do Not Track settings, and never collects file contents, file names, or personal identifiable information (PII).

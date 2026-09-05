@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
 import { formatRegistry } from '../utils/encoders/Registry';
 import type { VideoMetadata } from '@shared/metadata';
+import { trackEvent } from '../utils/analytics';
 
 export type ResolutionPreset = 'original' | '720p' | '1080p';
 export type CaptureMethod = 'optimal' | 'high-fidelity';
@@ -122,15 +123,13 @@ export const useRenderer = (
 
       setState({ isRendering: true, progress: 0, status: 'Initializing...' });
 
-      if (typeof umami !== 'undefined') {
-        umami.track('conversion-start', {
-          format: settings.format,
-          isTransparent: settings.isTransparent,
-          captureMethod: settings.captureMethod,
-          fps: settings.fps,
-          videoDurationSec,
-        });
-      }
+      trackEvent('conversion-start', {
+        format: settings.format,
+        isTransparent: settings.isTransparent,
+        captureMethod: settings.captureMethod,
+        fps: settings.fps,
+        videoDurationSec,
+      });
 
       try {
         const { width: origWidth, height: origHeight } =
@@ -314,17 +313,15 @@ export const useRenderer = (
           ).toFixed(2)
         );
 
-        if (typeof umami !== 'undefined') {
-          umami.track('conversion-success', {
-            format: settings.format,
-            isTransparent: settings.isTransparent,
-            captureMethod: settings.captureMethod,
-            fps: settings.fps,
-            videoDurationSec,
-            totalFrames,
-            processDurationSec,
-          });
-        }
+        trackEvent('conversion-success', {
+          format: settings.format,
+          isTransparent: settings.isTransparent,
+          captureMethod: settings.captureMethod,
+          fps: settings.fps,
+          videoDurationSec,
+          totalFrames,
+          processDurationSec,
+        });
 
         return url;
       } catch (err) {
@@ -343,15 +340,13 @@ export const useRenderer = (
           ).toFixed(2)
         );
 
-        if (typeof umami !== 'undefined') {
-          umami.track('conversion-failed', {
-            error: error.message,
-            format: settings.format,
-            isTransparent: settings.isTransparent,
-            captureMethod: settings.captureMethod,
-            processDurationSec,
-          });
-        }
+        trackEvent('conversion-failed', {
+          error: error.message,
+          format: settings.format,
+          isTransparent: settings.isTransparent,
+          captureMethod: settings.captureMethod,
+          processDurationSec,
+        });
 
         throw error;
       }
@@ -372,8 +367,8 @@ export const useRenderer = (
         )
       : 0;
 
-    if (typeof umami !== 'undefined' && settingsRef.current) {
-      umami.track('conversion-cancel', {
+    if (settingsRef.current) {
+      trackEvent('conversion-cancel', {
         format: settingsRef.current.format,
         isTransparent: settingsRef.current.isTransparent,
         captureMethod: settingsRef.current.captureMethod,
