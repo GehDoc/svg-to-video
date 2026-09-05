@@ -2,6 +2,12 @@ import { useState, useCallback, useRef } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
 import { formatRegistry } from '../utils/encoders/Registry';
 import type { VideoMetadata } from '@shared/metadata';
+import {
+  trackConversionStart,
+  trackConversionSuccess,
+  trackConversionFailed,
+  trackConversionCancel,
+} from '../utils/tracking/rendererTracking';
 
 export type ResolutionPreset = 'original' | '720p' | '1080p';
 export type CaptureMethod = 'optimal' | 'high-fidelity';
@@ -103,6 +109,7 @@ export const useRenderer = (
   const cancelRef = useRef(false);
   const activeEncoderRef = useRef<VideoEncoder | null>(null);
   const settingsRef = useRef<RenderSettings | null>(null);
+  const renderStartTimeRef = useRef<number | null>(null);
 
   const render = useCallback(
     async (svgContent: string, settings: RenderSettings) => {
@@ -113,14 +120,15 @@ export const useRenderer = (
 
       cancelRef.current = false;
       settingsRef.current = settings;
+      renderStartTimeRef.current = performance.now();
+      const videoDurationSec = settings.duration + settings.hold;
+      const totalAnimationFrames = Math.ceil(settings.duration * settings.fps);
+      const totalHoldFrames = Math.ceil(settings.hold * settings.fps);
+      const totalFrames = totalAnimationFrames + totalHoldFrames;
+
       setState({ isRendering: true, progress: 0, status: 'Initializing...' });
 
-      if (typeof umami !== 'undefined') {
-        umami.track('conversion-start', {
-          format: settings.format,
-          isTransparent: settings.isTransparent,
-        });
-      }
+      trackConversionStart(settings, videoDurationSec);
 
       try {
         const { width: origWidth, height: origHeight } =
@@ -181,11 +189,6 @@ export const useRenderer = (
           },
         }));
 
-        const totalAnimationFrames = Math.ceil(
-          settings.duration * settings.fps
-        );
-        const totalHoldFrames = Math.ceil(settings.hold * settings.fps);
-        const totalFrames = totalAnimationFrames + totalHoldFrames;
         const frameDuration = 1000 / settings.fps;
         const startTime = performance.now();
 
@@ -301,12 +304,12 @@ export const useRenderer = (
         const url = URL.createObjectURL(blob);
         setState({ isRendering: false, progress: 100, status: 'Done!' });
 
-        if (typeof umami !== 'undefined') {
-          umami.track('conversion-success', {
-            format: settings.format,
-            isTransparent: settings.isTransparent,
-          });
-        }
+        trackConversionSuccess(
+          settings,
+          videoDurationSec,
+          totalFrames,
+          renderStartTimeRef.current
+        );
 
         return url;
       } catch (err) {
@@ -317,13 +320,7 @@ export const useRenderer = (
           status: `Error: ${error.message}`,
         });
 
-        if (typeof umami !== 'undefined') {
-          umami.track('conversion-failed', {
-            error: error.message,
-            format: settings.format,
-            isTransparent: settings.isTransparent,
-          });
-        }
+        trackConversionFailed(settings, error, renderStartTimeRef.current);
 
         throw error;
       }
@@ -338,12 +335,7 @@ export const useRenderer = (
     }
     setState({ isRendering: false, progress: 0, status: 'Ready' });
 
-    if (typeof umami !== 'undefined' && settingsRef.current) {
-      umami.track('conversion-cancel', {
-        format: settingsRef.current.format,
-        isTransparent: settingsRef.current.isTransparent,
-      });
-    }
+    trackConversionCancel(settingsRef.current, renderStartTimeRef.current);
   }, []);
 
   const clearError = useCallback(() => {

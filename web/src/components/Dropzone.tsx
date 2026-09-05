@@ -35,7 +35,7 @@ export const Dropzone = ({
       onDrop={disabled ? undefined : onDrop}
     >
       <div className="input-group" style={{ marginBottom: 0 }}>
-        <label htmlFor="svg-upload" data-umami-event="Open Converter">
+        <label htmlFor="svg-upload">
           {svgContent ? 'Change SVG' : 'Drop SVG here or click to upload'}
         </label>
         <div className="file-input-wrapper">

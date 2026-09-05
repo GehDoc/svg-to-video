@@ -3,10 +3,12 @@
  */
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HeaderMenu } from './HeaderMenu';
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
+import pkg from '../../package.json';
 
 test('HeaderMenu renders Sponsor button and toggles dropdown', () => {
+  vi.stubGlobal('umami', { track: vi.fn() });
   render(<HeaderMenu />);
 
   // Check Sponsor button
@@ -15,6 +17,12 @@ test('HeaderMenu renders Sponsor button and toggles dropdown', () => {
     'href',
     'https://github.com/GehDoc/svg-to-video/?sponsor=1'
   );
+
+  fireEvent.click(sponsorLink);
+  expect(window.umami.track).toHaveBeenCalledWith('click-sponsor', {
+    location: 'header',
+    version: pkg.version,
+  });
 
   // Check Burger trigger
   const burgerButton = screen.getByRole('button', { name: /open menu/i });

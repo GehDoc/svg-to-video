@@ -15,6 +15,7 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
      - Commit initial spec, push, and create a Pull Request (using `gh pr create`) immediately.
 
    NEVER use a random number to fill the gap if no issue number is available.
+   All PR and Release titles MUST follow the Purpose-Driven Principle per [CONTRIBUTING.md](./CONTRIBUTING.md#-title--naming-standards-prs--releases) (expressing feature purpose/value rather than implementation details).
 
 2. **Spec-First Mentality**: Do not write functional code until a corresponding specification exists in `specs/pending/`.
 3. **Link to GitHub**: If the feature is linked to a GitHub Issue, the spec MUST link to the issue URL at the top of the file.
@@ -25,8 +26,9 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - `docs/ARCHITECTURE.md` (if design or format strategies changed)
    - `web/src/app/layout.tsx` (`keywords` & `jsonLd.featureList`)
    - `web/src/components/SeoFallback.tsx` (static fallback description)
-   - `package.json` (`keywords`)
+   - `package.json` (`keywords` & version synchronization per [CONTRIBUTING.md](./CONTRIBUTING.md#-versioning-policy))
    - GitHub Repository Metadata (Description & Topics via `gh repo edit`)
+   - GitHub Releases: Draft and publish GitHub release (`vX.Y.Z` tag, title `X.Y.Z - Title`) per [CONTRIBUTING.md](./CONTRIBUTING.md#-release-note-best-practices). Do not commit release note `.md` files to git.
 7. **Clean Up**: Once code, tests, documentation, and SEO audits are complete and verified, update the spec status to `🟢 Completed` and move the spec file from `specs/pending/` to `specs/completed/`.
 
 ## 🛠 How to Create a New Spec
@@ -49,7 +51,7 @@ When asked to start a new feature:
 
 ## 📖 Reference Material
 
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)**: Contains workflow, commands, and SDD protocols.
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)**: Contains workflow, commands, versioning policies, and SDD protocols.
 - **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)**: Contains technical deep-dives (e.g., "Bake & Clean" algorithm) and testing strategies.
 
 Always consult these documents for implementation details and architectural integrity.

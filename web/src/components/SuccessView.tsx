@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from './Button/Button';
 import { FaHeart, FaCopy, FaCheck, FaTimes } from 'react-icons/fa';
+import { trackEvent } from '../utils/analytics';
 import pkg from '../../package.json';
 import { copyDataUrl } from '../utils/clipboard';
 import { isImageMimeType } from '../utils/discoverFormats';
@@ -11,6 +12,8 @@ interface SuccessViewProps {
   fileSize: string | null;
   renderedUrl: string;
   mimeType: string;
+  format?: string;
+  isTransparent?: boolean;
   onDownload: () => void;
   onBack: () => void;
   onCopyOverride?: (url: string) => Promise<boolean>;
@@ -21,6 +24,8 @@ export const SuccessView = ({
   fileSize,
   renderedUrl,
   mimeType,
+  format,
+  isTransparent,
   onDownload,
   onBack,
   onCopyOverride,
@@ -35,9 +40,11 @@ export const SuccessView = ({
     const copyFn = onCopyOverride || copyDataUrl;
     const success = await copyFn(renderedUrl);
 
-    if (typeof umami !== 'undefined') {
-      umami.track('copy-data-url', { success });
-    }
+    trackEvent('copy-data-url', {
+      success,
+      ...(format ? { format } : {}),
+      ...(typeof isTransparent === 'boolean' ? { isTransparent } : {}),
+    });
 
     if (success) {
       setCopyStatus('success');
@@ -103,7 +110,14 @@ export const SuccessView = ({
         <span>
           <FaHeart className="icon-heart" /> Love this tool?{' '}
         </span>
-        <a href={pkg.funding.url} target="_blank" rel="noopener noreferrer">
+        <a
+          href={pkg.funding.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => {
+            trackEvent('click-sponsor', { location: 'success-view' });
+          }}
+        >
           Support its development on GitHub ↗
         </a>
       </div>

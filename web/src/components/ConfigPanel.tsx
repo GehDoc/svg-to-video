@@ -14,7 +14,11 @@ import './ConfigPanel.scss';
 
 interface ConfigPanelProps {
   svgContent: string | null;
-  onSvgContentChange: (content: string, fileName: string) => void;
+  onSvgContentChange: (
+    content: string,
+    fileName: string,
+    method: 'file-picker' | 'drag-and-drop'
+  ) => void;
   fileName: string;
   onFileNameChange: (name: string) => void;
   duration: number;
@@ -88,18 +92,18 @@ export const ConfigPanel = ({
   const isRenderingOrSuccess = state.isRendering || !!renderedUrl;
   const isOptionsDisabled = isRenderingOrSuccess || !svgContent;
 
-  const processFile = (file: File) => {
+  const processFile = (file: File, method: 'file-picker' | 'drag-and-drop') => {
     const reader = new FileReader();
     reader.onload = (event) => {
       const content = event.target?.result as string;
       const baseName = file.name.replace(/\.svg$/i, '');
-      onSvgContentChange(content, `${baseName}.mp4`);
+      onSvgContentChange(content, `${baseName}.mp4`, method);
     };
     reader.readAsText(file);
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) processFile(e.target.files[0]);
+    if (e.target.files?.[0]) processFile(e.target.files[0], 'file-picker');
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -110,7 +114,7 @@ export const ConfigPanel = ({
       e.dataTransfer.files?.[0] &&
       e.dataTransfer.files[0].type === 'image/svg+xml'
     ) {
-      processFile(e.dataTransfer.files[0]);
+      processFile(e.dataTransfer.files[0], 'drag-and-drop');
     }
   };
 

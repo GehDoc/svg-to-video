@@ -203,11 +203,15 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
 > **Tracking Mandate**: When adding new primary Call-to-Action (CTA) buttons or important navigation links, you **must** implement Umami event tracking. This helps us understand which features are most used and where users might be struggling.
 
 - **Implementation**: The tracker is self-hosted at `web/public/assets/3rd-party/analytics.js` and injected via `next/script` in `web/src/app/layout.tsx`.
-- **Programmatic Tracking**: Use the global `window.umami.track` function to trigger events.
+- **Programmatic Tracking**: Use the `trackEvent` helper function from `web/src/utils/analytics.ts`:
 
   ```typescript
-  window.umami.track('my-event-name', { property: 'value' });
+  import { trackEvent } from '../utils/analytics';
+
+  trackEvent('my-event-name', { property: 'value' });
   ```
+
+  `trackEvent` automatically performs the `typeof umami !== 'undefined'` safety check and appends the application `version` tag from `package.json` to every event payload.
 
 - **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
   1. The hostname is `localhost`, `127.0.0.1`, or a local network IP.
@@ -219,22 +223,40 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
 
 ## 🏷 Versioning Policy
 
-To maintain synchronization across the project, every release must increment the version number in the following locations:
+To maintain synchronization across the project, every release or version bump must update the version number in the following locations:
 
 1. **Root `package.json`**: The `version` field.
 2. **Web `package.json`**: The `version` field.
+3. **Root `package-lock.json`**: Synchronized by running `npm install` (or `npm install --package-lock-only`).
 
-Use the `npm version [patch|minor|major]` command or update manually in these files, ensuring the version string is identical in both locations before committing. The repository README version badge updates automatically.
+Use `npm version [patch|minor|major]` or update manually in `package.json` files, then run `npm install` to synchronize `package-lock.json` before committing. The repository README version badge updates automatically.
 
-## 📝 Release Note Best Practices
+## 🏷 Title & Naming Standards (PRs & Releases)
 
-To maintain consistent, high-quality release notes, all agents and contributors should follow this structure:
+All Pull Request titles, git commit messages, and GitHub Release titles must follow the **Purpose-Driven Principle**:
 
-### 1. Title Structure
+### 🎯 Purpose-Driven Principle ("Why & What", not "How")
 
-- **Format**: `Release [Version] - [Short Descriptive Title]`
-- **Version**: Use the raw version number (e.g., `0.9.2`) without a `v` prefix.
-- **Prerequisite**: Ensure the version has been bumped in all project files according to our [Versioning Policy](#-versioning-policy) before finalizing release notes.
+- **Focus on Purpose**: Titles must express the high-level user value, feature capability, or core objective of the ticket. Avoid listing internal implementation details or refactor steps ("archeology").
+- ✅ **Good (Purpose-Driven)**: `feat(analytics): standardize Umami event tracking & conversion telemetry across Web Studio`
+- ❌ **Bad (Implementation Detail)**: `feat(analytics): centralize tracking helper, versioning payload, and domain helpers`
+
+### 🔀 Pull Request Title Format
+
+Follow Conventional Commits: `<type>(<scope>): <purpose-driven title>`
+
+- **Examples**:
+  - `feat(cli): add animated GIF and aPNG export support`
+  - `fix(renderer): resolve WebCodecs frame drops during high-FPS captures`
+  - `docs(analytics): document Umami telemetry schema and domain helpers`
+
+### 🏷 Release Title Format
+
+- **Format**: `[Version] - [Purpose-Driven Title]` (e.g., `0.21.0 - CLI GIF & aPNG Animated Image Support`).
+- **Rules**:
+  - Start with the raw version string `X.Y.Z - `.
+  - Do **NOT** prefix release titles with `"Release "` (e.g., avoid `Release 0.21.0 - ...`).
+  - Prerequisite: Ensure the version has been bumped across project files per our [Versioning Policy](#-versioning-policy) before publishing.
 
 ### 2. Content Structure
 
@@ -243,17 +265,28 @@ To maintain consistent, high-quality release notes, all agents and contributors 
   - **🚀 New Features**: Significant additions or changes that impact user workflows.
   - **🛠 Improvements**: Refactors, performance optimizations, or UI/UX tweaks.
   - **🧪 Testing & Quality**: Summary of test coverage additions or improvements.
-  - **📝 Documentation**: Any changes to docs, metadata, or SEO.
+  - **📝 Documentation & SEO**: Any changes to docs, metadata, or SEO.
 
 ### Example
 
-> **Release 0.9.1 - Extended Format Support & Web Studio Enhancements**
+> **0.9.1 - Extended Format Support & Web Studio Enhancements**
 >
 > This release introduces dynamic video format discovery and significant improvements to the Web Studio's export capabilities, documentation, and overall user experience.
 >
 > ### 🚀 New Features
 >
 > - ...
+
+### 3. Publishing GitHub Releases
+
+Releases are published on GitHub using the tag convention `vX.Y.Z` (e.g., `v0.21.0`). Release notes should **never** be committed as `.md` files in the repository.
+
+- **CLI Method** (pass notes directly or use an ephemeral file outside git):
+  ```bash
+  gh release create v0.21.0 --title "0.21.0 - CLI GIF & aPNG Animated Image Support" --notes "..."
+  ```
+- **Web UI Method**:
+  Navigate to GitHub Repository → Releases → **Draft a new release**. Select tag `vX.Y.Z`, set the title to `X.Y.Z - [Short Descriptive Title]`, and paste the formatted release notes.
 
 ## 🔍 Maintaining SEO & Metadata
 

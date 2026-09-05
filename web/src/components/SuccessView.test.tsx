@@ -6,14 +6,19 @@ import {
   fireEvent,
   waitFor,
 } from '@testing-library/react';
-import { test, expect, afterEach, vi } from 'vitest';
+import { test, expect, afterEach, beforeEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { SuccessView } from './SuccessView';
+import pkg from '../../package.json';
+
+const trackMock = vi.fn();
+
+beforeEach(() => {
+  trackMock.mockClear();
+  vi.stubGlobal('umami', { track: trackMock });
+});
 
 afterEach(cleanup);
-
-// Mock umami
-vi.stubGlobal('umami', { track: vi.fn() });
 
 test('SuccessView renders MP4 success state correctly', () => {
   render(
@@ -41,6 +46,8 @@ test('SuccessView handles copy action', async () => {
       fileSize="1.2 MB"
       renderedUrl="blob:test"
       mimeType="video/mp4"
+      format="mp4"
+      isTransparent={false}
       onDownload={vi.fn()}
       onBack={vi.fn()}
       onCopyOverride={onCopyOverride}
@@ -51,6 +58,14 @@ test('SuccessView handles copy action', async () => {
   fireEvent.click(copyBtn);
 
   expect(onCopyOverride).toHaveBeenCalled();
+  await waitFor(() =>
+    expect(trackMock).toHaveBeenCalledWith('copy-data-url', {
+      success: true,
+      format: 'mp4',
+      isTransparent: false,
+      version: pkg.version,
+    })
+  );
 
   // Verify success class is applied
   await waitFor(() => expect(copyBtn).toHaveClass('copy-button--success'));
@@ -58,7 +73,7 @@ test('SuccessView handles copy action', async () => {
   expect(copyBtn.querySelector('.icon-success')).toBeInTheDocument();
 });
 
-test('SuccessView renders donation support link', () => {
+test('SuccessView renders donation support link and tracks click', () => {
   render(
     <SuccessView
       fileName="test.mp4"
@@ -78,6 +93,12 @@ test('SuccessView renders donation support link', () => {
     'href',
     'https://github.com/GehDoc/svg-to-video/?sponsor=1'
   );
+
+  fireEvent.click(sponsorLink);
+  expect(trackMock).toHaveBeenCalledWith('click-sponsor', {
+    location: 'success-view',
+    version: pkg.version,
+  });
 });
 
 test('SuccessView renders img tag for png/gif (image/ MIME types)', () => {

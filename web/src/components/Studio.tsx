@@ -14,6 +14,8 @@ import { formatRegistry } from '../utils/encoders/Registry';
 import { Header } from './Header';
 import { ConfigPanel } from './ConfigPanel';
 import { MonitorPanel } from './MonitorPanel';
+import { trackEvent } from '../utils/analytics';
+import { trackFileLoad } from '../utils/tracking/fileTracking';
 
 export const Studio = () => {
   const rendererRef = useRef<RendererHandle>(null);
@@ -43,20 +45,11 @@ export const Studio = () => {
 
   const mimeType = useMemo(() => getMimeTypeById(format), [format]);
 
-  const originalDim = useMemo(() => {
-    if (!svgContent)
-      return { width: 0, height: 0, isDimensionsDetected: false };
-    try {
-      const result = parseSvgDimensions(svgContent);
-      return {
-        width: result.width,
-        height: result.height,
-        isDimensionsDetected: result.isDimensionsDetected,
-      };
-    } catch {
-      return { width: 0, height: 0, isDimensionsDetected: false };
-    }
-  }, [svgContent]);
+  const [originalDim, setOriginalDim] = useState<{
+    width: number;
+    height: number;
+    isDimensionsDetected: boolean;
+  }>({ width: 0, height: 0, isDimensionsDetected: false });
 
   const targetDim = useMemo(() => {
     return calculateFinalDimensions(originalDim.width, originalDim.height, {
@@ -155,9 +148,7 @@ export const Studio = () => {
 
   const handleDownload = useCallback(() => {
     if (renderedUrl) {
-      if (typeof umami !== 'undefined') {
-        umami.track('download-result', { format, isTransparent });
-      }
+      trackEvent('download-result', { format, isTransparent });
       const a = document.createElement('a');
       a.href = renderedUrl;
       a.download = fileName;
@@ -166,9 +157,7 @@ export const Studio = () => {
   }, [renderedUrl, fileName, format, isTransparent]);
 
   const handleBack = useCallback(() => {
-    if (typeof umami !== 'undefined') {
-      umami.track('back-to-studio', { format, isTransparent });
-    }
+    trackEvent('back-to-studio', { format, isTransparent });
     setRenderedUrl(null);
   }, [format, isTransparent]);
 
@@ -178,13 +167,28 @@ export const Studio = () => {
       <main className="studio-layout">
         <ConfigPanel
           svgContent={svgContent}
-          onSvgContentChange={(content, name) => {
+          onSvgContentChange={(content, name, method) => {
             setSvgContent(content);
             setFileName(name);
+
+            let dim = { width: 0, height: 0, isDimensionsDetected: false };
+            try {
+              dim = parseSvgDimensions(content);
+              setOriginalDim(dim);
+            } catch {
+              setOriginalDim({
+                width: 0,
+                height: 0,
+                isDimensionsDetected: false,
+              });
+            }
+
             const detectedDuration = analyzeSvgAnimation(content);
             if (detectedDuration !== undefined && detectedDuration > 0) {
               setDuration(detectedDuration);
             }
+
+            trackFileLoad(method, dim, detectedDuration);
           }}
           fileName={fileName}
           onFileNameChange={setFileName}
@@ -232,6 +236,7 @@ export const Studio = () => {
           onCancel={cancel}
           onClearError={clearError}
           mimeType={mimeType}
+          format={format}
         />
       </main>
     </div>

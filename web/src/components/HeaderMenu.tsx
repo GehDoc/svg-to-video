@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { FaBars, FaHeart } from 'react-icons/fa';
+import { trackEvent } from '../utils/analytics';
 import pkg from '../../package.json';
 import { HeaderDropdown } from './HeaderDropdown';
 import './HeaderMenu.scss';
@@ -25,6 +26,9 @@ export const HeaderMenu = () => {
         target="_blank"
         rel="noopener noreferrer"
         className="header-sponsor-btn"
+        onClick={() => {
+          trackEvent('click-sponsor', { location: 'header' });
+        }}
       >
         <FaHeart className="icon-heart" /> Sponsor
       </a>
