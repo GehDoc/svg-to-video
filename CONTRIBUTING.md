@@ -237,8 +237,7 @@ To maintain consistent, high-quality release notes, all agents and contributors 
 
 ### 1. Title Structure
 
-- **Format**: `Release [Version] - [Short Descriptive Title]`
-- **Version**: Use the raw version number (e.g., `0.9.2`) without a `v` prefix.
+- **Format**: `[Version] - [Short Descriptive Title]` (e.g., `0.21.0 - CLI GIF & aPNG Animated Image Support`). Do not prefix the title with "Release ".
 - **Prerequisite**: Ensure the version has been bumped in all project files according to our [Versioning Policy](#-versioning-policy) before finalizing release notes.
 
 ### 2. Content Structure
@@ -248,17 +247,28 @@ To maintain consistent, high-quality release notes, all agents and contributors 
   - **🚀 New Features**: Significant additions or changes that impact user workflows.
   - **🛠 Improvements**: Refactors, performance optimizations, or UI/UX tweaks.
   - **🧪 Testing & Quality**: Summary of test coverage additions or improvements.
-  - **📝 Documentation**: Any changes to docs, metadata, or SEO.
+  - **📝 Documentation & SEO**: Any changes to docs, metadata, or SEO.
 
 ### Example
 
-> **Release 0.9.1 - Extended Format Support & Web Studio Enhancements**
+> **0.9.1 - Extended Format Support & Web Studio Enhancements**
 >
 > This release introduces dynamic video format discovery and significant improvements to the Web Studio's export capabilities, documentation, and overall user experience.
 >
 > ### 🚀 New Features
 >
 > - ...
+
+### 3. Publishing GitHub Releases
+
+Releases are published on GitHub using the tag convention `vX.Y.Z` (e.g., `v0.21.0`). Release notes should **never** be committed as `.md` files in the repository.
+
+- **CLI Method** (pass notes directly or use an ephemeral file outside git):
+  ```bash
+  gh release create v0.21.0 --title "0.21.0 - CLI GIF & aPNG Animated Image Support" --notes "..."
+  ```
+- **Web UI Method**:
+  Navigate to GitHub Repository → Releases → **Draft a new release**. Select tag `vX.Y.Z`, set the title to `X.Y.Z - [Short Descriptive Title]`, and paste the formatted release notes.
 
 ## 🔍 Maintaining SEO & Metadata
 

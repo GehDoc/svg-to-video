@@ -27,6 +27,7 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - `web/src/components/SeoFallback.tsx` (static fallback description)
    - `package.json` (`keywords` & version synchronization per [CONTRIBUTING.md](./CONTRIBUTING.md#-versioning-policy))
    - GitHub Repository Metadata (Description & Topics via `gh repo edit`)
+   - GitHub Releases: Draft and publish GitHub release (`vX.Y.Z` tag, title `X.Y.Z - Title`) per [CONTRIBUTING.md](./CONTRIBUTING.md#-release-note-best-practices). Do not commit release note `.md` files to git.
 7. **Clean Up**: Once code, tests, documentation, and SEO audits are complete and verified, update the spec status to `🟢 Completed` and move the spec file from `specs/pending/` to `specs/completed/`.
 
 ## 🛠 How to Create a New Spec
