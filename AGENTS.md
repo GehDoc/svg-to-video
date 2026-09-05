@@ -15,6 +15,7 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
      - Commit initial spec, push, and create a Pull Request (using `gh pr create`) immediately.
 
    NEVER use a random number to fill the gap if no issue number is available.
+   All PR and Release titles MUST follow the Purpose-Driven Principle per [CONTRIBUTING.md](./CONTRIBUTING.md#-title--naming-standards-prs--releases) (expressing feature purpose/value rather than implementation details).
 
 2. **Spec-First Mentality**: Do not write functional code until a corresponding specification exists in `specs/pending/`.
 3. **Link to GitHub**: If the feature is linked to a GitHub Issue, the spec MUST link to the issue URL at the top of the file.

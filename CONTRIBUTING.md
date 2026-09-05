@@ -231,14 +231,32 @@ To maintain synchronization across the project, every release or version bump mu
 
 Use `npm version [patch|minor|major]` or update manually in `package.json` files, then run `npm install` to synchronize `package-lock.json` before committing. The repository README version badge updates automatically.
 
-## 📝 Release Note Best Practices
+## 🏷 Title & Naming Standards (PRs & Releases)
 
-To maintain consistent, high-quality release notes, all agents and contributors should follow this structure:
+All Pull Request titles, git commit messages, and GitHub Release titles must follow the **Purpose-Driven Principle**:
 
-### 1. Title Structure
+### 🎯 Purpose-Driven Principle ("Why & What", not "How")
 
-- **Format**: `[Version] - [Short Descriptive Title]` (e.g., `0.21.0 - CLI GIF & aPNG Animated Image Support`). Do not prefix the title with "Release ".
-- **Prerequisite**: Ensure the version has been bumped in all project files according to our [Versioning Policy](#-versioning-policy) before finalizing release notes.
+- **Focus on Purpose**: Titles must express the high-level user value, feature capability, or core objective of the ticket. Avoid listing internal implementation details or refactor steps ("archeology").
+- ✅ **Good (Purpose-Driven)**: `feat(analytics): standardize Umami event tracking & conversion telemetry across Web Studio`
+- ❌ **Bad (Implementation Detail)**: `feat(analytics): centralize tracking helper, versioning payload, and domain helpers`
+
+### 🔀 Pull Request Title Format
+
+Follow Conventional Commits: `<type>(<scope>): <purpose-driven title>`
+
+- **Examples**:
+  - `feat(cli): add animated GIF and aPNG export support`
+  - `fix(renderer): resolve WebCodecs frame drops during high-FPS captures`
+  - `docs(analytics): document Umami telemetry schema and domain helpers`
+
+### 🏷 Release Title Format
+
+- **Format**: `[Version] - [Purpose-Driven Title]` (e.g., `0.21.0 - CLI GIF & aPNG Animated Image Support`).
+- **Rules**:
+  - Start with the raw version string `X.Y.Z - `.
+  - Do **NOT** prefix release titles with `"Release "` (e.g., avoid `Release 0.21.0 - ...`).
+  - Prerequisite: Ensure the version has been bumped across project files per our [Versioning Policy](#-versioning-policy) before publishing.
 
 ### 2. Content Structure
 
