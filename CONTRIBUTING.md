@@ -223,12 +223,13 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
 
 ## 🏷 Versioning Policy
 
-To maintain synchronization across the project, every release must increment the version number in the following locations:
+To maintain synchronization across the project, every release or version bump must update the version number in the following locations:
 
 1. **Root `package.json`**: The `version` field.
 2. **Web `package.json`**: The `version` field.
+3. **Root `package-lock.json`**: Synchronized by running `npm install` (or `npm install --package-lock-only`).
 
-Use the `npm version [patch|minor|major]` command or update manually in these files, ensuring the version string is identical in both locations before committing. The repository README version badge updates automatically.
+Use `npm version [patch|minor|major]` or update manually in `package.json` files, then run `npm install` to synchronize `package-lock.json` before committing. The repository README version badge updates automatically.
 
 ## 📝 Release Note Best Practices
 

@@ -25,7 +25,7 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - `docs/ARCHITECTURE.md` (if design or format strategies changed)
    - `web/src/app/layout.tsx` (`keywords` & `jsonLd.featureList`)
    - `web/src/components/SeoFallback.tsx` (static fallback description)
-   - `package.json` (`keywords`)
+   - `package.json` (`keywords` & version synchronization per [CONTRIBUTING.md](./CONTRIBUTING.md#-versioning-policy))
    - GitHub Repository Metadata (Description & Topics via `gh repo edit`)
 7. **Clean Up**: Once code, tests, documentation, and SEO audits are complete and verified, update the spec status to `🟢 Completed` and move the spec file from `specs/pending/` to `specs/completed/`.
 
@@ -49,7 +49,7 @@ When asked to start a new feature:
 
 ## 📖 Reference Material
 
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)**: Contains workflow, commands, and SDD protocols.
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)**: Contains workflow, commands, versioning policies, and SDD protocols.
 - **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)**: Contains technical deep-dives (e.g., "Bake & Clean" algorithm) and testing strategies.
 
 Always consult these documents for implementation details and architectural integrity.
