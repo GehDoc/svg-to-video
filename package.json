@@ -35,10 +35,15 @@
     "metadata",
     "transparency",
     "alpha-channel",
-    "web-animations-api"
+    "web-animations-api",
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "agent-skill"
   ],
   "license": "MIT",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "commander": "^15.0.0",
     "jsdom": "^29.1.1",
     "puppeteer": "^25.8.0",
@@ -50,6 +55,8 @@
     "@types/jsdom": "^28.0.3",
     "@types/node": "^25.4.0",
     "@types/pngjs": "^6.0.5",
+    "@vitest/browser-playwright": "4.1.11",
+    "@vitest/coverage-v8": "4.1.11",
     "eslint": "^8.0.0",
     "ffprobe": "^1.1.2",
     "ffprobe-static": "^3.1.0",
@@ -60,18 +67,18 @@
     "prettier-plugin-sh": "^0.18.0",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.59.3",
-    "vitest": "4.1.11",
-    "@vitest/browser-playwright": "4.1.11",
-    "@vitest/coverage-v8": "4.1.11"
+    "vitest": "4.1.11"
   },
   "scripts": {
     "lint": "eslint . && npm run lint -w web",
     "lint:fix": "eslint . --fix && npm run lint:fix -w web",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
+    "mcp": "tsx src/mcp.ts",
     "test:cli": "tsx --test tests/cli.spec.ts",
+    "test:mcp": "tsx --test tests/mcp.spec.ts",
     "test:unit": "tsx --test src/**/*.test.ts tests/**/*.test.ts && vitest run shared/*.test.ts && npm run test:unit -w web",
-    "test": "npm run test:cli && npm run test:unit && npm run test:web -w web && npm run test:storybook -w web && npm run test:visual -w web",
+    "test": "npm run test:cli && npm run test:mcp && npm run test:unit && npm run test:web -w web && npm run test:storybook -w web && npm run test:visual -w web",
     "type-check": "tsc -p tsconfig.json --noEmit && npm run type-check -w web",
     "check": "npm run lint && npm run format && npm run type-check && npm run test",
     "check:fast": "npm run lint && npm run format && npm run type-check",
@@ -87,7 +94,8 @@
   },
   "main": "src/index.ts",
   "bin": {
-    "svg-to-video": "src/index.ts"
+    "svg-to-video": "src/index.ts",
+    "svg-to-video-mcp": "src/mcp.ts"
   },
   "workspaces": [
     "web"

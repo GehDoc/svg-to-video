@@ -18,8 +18,8 @@ export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
         <p className="description">
           Convert SVG animations to high-quality videos (MP4, WebM, MKV, MOV) or
           optimized animated images (aPNG, GIF) with perfect alpha-channel
-          transparency and custom metadata (title and comments) directly in your
-          browser.
+          transparency and custom metadata directly in your browser, via CLI, or
+          through Model Context Protocol (MCP) AI agent integrations.
         </p>
 
         <div className="loader">

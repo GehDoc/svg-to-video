@@ -32,6 +32,9 @@ interface RunOptions {
   bgColor: string;
   metadata?: string[];
   format?: string;
+  quiet: boolean;
+  silent: boolean;
+  json: boolean;
 }
 
 async function main(): Promise<void> {
@@ -106,7 +109,21 @@ Resources:
       '--format <format>',
       `output format: ${formatRegistry.getSupportedFormatNames().join(', ')}`
     )
+    .option('-q, --quiet', 'suppress interactive progress output', false)
+    .option('--silent', 'alias for --quiet', false)
+    .option(
+      '--json',
+      'output final conversion result as JSON (implies quiet mode)',
+      false
+    )
     .action(run);
+
+  program
+    .command('mcp')
+    .description('Start Model Context Protocol (MCP) server over stdio')
+    .action(async () => {
+      await import('./mcp.js');
+    });
 
   program.parse(process.argv);
 }
@@ -120,6 +137,20 @@ async function run(
   outDir: string,
   options: RunOptions
 ): Promise<void> {
+  const quiet = options.quiet || options.silent || options.json;
+  const log = (...args: unknown[]) => {
+    if (!quiet) console.log(...args);
+  };
+
+  const handleError = (msg: string) => {
+    if (options.json) {
+      console.log(JSON.stringify({ success: false, error: msg }, null, 2));
+    } else {
+      console.error(`❌ Error: ${msg}`);
+    }
+    process.exit(1);
+  };
+
   // Resolve format generator and output file extension via format registry
   const { format, extension } = formatRegistry.resolveFormatAndExtension(
     options.format,
@@ -131,35 +162,35 @@ async function run(
   const outputFullPath = path.join(outDir, outputFileName);
 
   if (fs.existsSync(outputFullPath) && !options.force) {
-    console.error(`❌ Error: Output file "${outputFullPath}" already exists.`);
-    console.error(`   Use the --force (-f) flag to overwrite it.`);
-    process.exit(1);
+    handleError(
+      `Output file "${outputFullPath}" already exists. Use the --force (-f) flag to overwrite it.`
+    );
   }
 
   try {
     validateOptions(options);
   } catch (error) {
-    console.error(
-      `❌ Error: ${error instanceof Error ? error.message : error}`
-    );
-    process.exit(1);
+    handleError(error instanceof Error ? error.message : String(error));
+  }
+
+  if (!fs.existsSync(svgPath)) {
+    handleError(`Input SVG file "${svgPath}" does not exist.`);
   }
 
   const svg = fs.readFileSync(svgPath, 'utf-8');
 
   let duration = options.duration;
   if (duration === undefined) {
-    console.log('🔍 Duration not provided, attempting to auto-detect...');
+    log('🔍 Duration not provided, attempting to auto-detect...');
 
     const dom = new JSDOM('');
     duration = analyzeSvgAnimation(svg, dom.window.DOMParser);
     if (duration === undefined) {
-      console.error(
-        '❌ Error: Could not detect duration. Please provide a duration using -d or --duration.'
+      handleError(
+        'Could not detect duration. Please provide a duration using -d or --duration.'
       );
-      process.exit(1);
     }
-    console.log(`✅ Auto-detected duration: ${duration}s`);
+    log(`✅ Auto-detected duration: ${duration}s`);
   }
 
   const puppeteerArgs = (process.env.PUPPETEER_ARGS || '')
@@ -169,18 +200,18 @@ async function run(
   const totalFrames = Math.ceil(fps * duration!);
   const padWidth = Math.floor(Math.log10(totalFrames)) + 1;
 
-  console.log('🚀 Starting conversion:');
-  console.log(`  Source:     ${svgPath}`);
-  console.log(`  Target:     ${path.join(outDir, outputFileName)}`);
+  log('🚀 Starting conversion:');
+  log(`  Source:     ${svgPath}`);
+  log(`  Target:     ${path.join(outDir, outputFileName)}`);
 
-  console.log(
+  log(
     `  Settings:   ${duration}s @ ${fps}fps (Format: ${format}, Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'})`
   );
-  if (puppeteerArgs.length > 0) {
-    console.log(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
+  if (puppeteerArgs.length > 0 && !quiet) {
+    log(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
   }
-  console.log(`  Frames:     ${totalFrames} total`);
-  console.log('---');
+  log(`  Frames:     ${totalFrames} total`);
+  log('---');
 
   fs.mkdirSync(outDir, { recursive: true });
 
@@ -194,7 +225,8 @@ async function run(
     options.resolution,
     options.scale,
     options.transparent,
-    options.bgColor
+    options.bgColor,
+    quiet
   );
 
   convertToOutput(
@@ -205,18 +237,41 @@ async function run(
     options.hold,
     outDir,
     options.transparent,
-    options.metadata
+    options.metadata,
+    quiet,
+    options.json
   );
 
   if (!options.keepFrames) {
-    cleanupFrames(totalFrames, padWidth, outDir);
+    cleanupFrames(totalFrames, padWidth, outDir, quiet);
   }
 
-  console.log(`\n✅ Done! File saved to ${path.join(outDir, outputFileName)}`);
-  console.log(
-    '\x1b[2m%s\x1b[0m',
-    `Love this tool? Star it on GitHub: ${pkg.homepage}`
-  );
+  if (options.json) {
+    console.log(
+      JSON.stringify(
+        {
+          success: true,
+          outputFile: outputFullPath,
+          duration,
+          fps,
+          format,
+          totalFrames,
+          resolution: options.resolution,
+          transparent: options.transparent,
+        },
+        null,
+        2
+      )
+    );
+  } else if (!quiet) {
+    console.log(
+      `\n✅ Done! File saved to ${path.join(outDir, outputFileName)}`
+    );
+    console.log(
+      '\x1b[2m%s\x1b[0m',
+      `Love this tool? Star it on GitHub: ${pkg.homepage}`
+    );
+  }
 }
 
 /**
@@ -232,9 +287,10 @@ async function createFrames(
   resolutionPreset: string,
   scaleFactor: number,
   transparent: boolean,
-  bgColor: string
+  bgColor: string,
+  quiet: boolean
 ): Promise<void> {
-  console.log('📸 Rendering frames with Puppeteer...');
+  if (!quiet) console.log('📸 Rendering frames with Puppeteer...');
 
   let width = 0;
   let height = 0;
@@ -271,9 +327,11 @@ async function createFrames(
     }
 
     if (!width || !height) {
-      console.warn(
-        '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1280x720.'
-      );
+      if (!quiet) {
+        console.warn(
+          '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1280x720.'
+        );
+      }
       width = 1280;
       height = 720;
     }
@@ -286,7 +344,7 @@ async function createFrames(
     );
   }
 
-  console.log('🚀 Preparing Puppeteer browser...');
+  if (!quiet) console.log('🚀 Preparing Puppeteer browser...');
 
   const browser: Browser = await puppeteer.launch({
     headless: true,
@@ -316,9 +374,11 @@ async function createFrames(
     omitBackground: transparent,
   };
 
-  console.log('📸 Rendering frames with Puppeteer...');
+  if (!quiet) console.log('📸 Rendering frames with Puppeteer...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
-    process.stdout.write(`\r📸 Rendering frame ${frame}/${totalFrames}`);
+    if (!quiet) {
+      process.stdout.write(`\r📸 Rendering frame ${frame}/${totalFrames}`);
+    }
     const timeMs = ((frame - 1) / fps) * 1000;
     await page.evaluate(seekAnimations, timeMs);
 
@@ -328,7 +388,7 @@ async function createFrames(
       ...screenshotOptions,
     });
   }
-  console.log('');
+  if (!quiet) console.log('');
 
   await browser.close();
 }
@@ -344,9 +404,11 @@ function convertToOutput(
   hold: number,
   outDir: string,
   transparent: boolean,
-  metadata?: string[]
+  metadata?: string[],
+  quiet?: boolean,
+  isJson?: boolean
 ): void {
-  console.log('📦 Encoding output with FFmpeg...');
+  if (!quiet) console.log('📦 Encoding output with FFmpeg...');
 
   const normalizedFormat = format.toLowerCase();
   const generator = formatRegistry.get(normalizedFormat);
@@ -377,13 +439,27 @@ function convertToOutput(
     const output = child_process.execFileSync('ffmpeg', args, {
       encoding: 'utf8',
     });
-    if (output) console.log(output);
+    if (output && !quiet) console.log(output);
 
     const outputFullPath = path.join(outDir, outputFileName);
     if (generator.postProcess) {
       generator.postProcess(outputFullPath, formatOptions);
     }
   } catch (error) {
+    if (isJson) {
+      console.log(
+        JSON.stringify(
+          {
+            success: false,
+            error: 'FFmpeg execution failed',
+            details: error instanceof Error ? error.message : String(error),
+          },
+          null,
+          2
+        )
+      );
+      process.exit(1);
+    }
     console.error('❌ FFmpeg execution failed:');
     console.error(error);
     process.exit(1);
@@ -396,16 +472,19 @@ function convertToOutput(
 function cleanupFrames(
   totalFrames: number,
   padWidth: number,
-  outDir: string
+  outDir: string,
+  quiet: boolean
 ): void {
-  console.log('🧹 Cleaning up temporary frames...');
+  if (!quiet) console.log('🧹 Cleaning up temporary frames...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
     const filename = path.join(outDir, getFrameFilename(frame, padWidth));
     try {
       fs.unlinkSync(filename);
     } catch (error) {
-      console.error(`❌ Failed to delete frame: ${filename}`);
-      console.error(error);
+      if (!quiet) {
+        console.error(`❌ Failed to delete frame: ${filename}`);
+        console.error(error);
+      }
     }
   }
 }

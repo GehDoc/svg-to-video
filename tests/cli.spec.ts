@@ -32,6 +32,61 @@ describe('CLI Functionality', () => {
     });
   });
 
+  describe('Machine Output (--quiet, --json)', () => {
+    test('should suppress progress logs when --quiet is passed', () => {
+      const { inputFile, outputFile } = getTestPaths('loop-test');
+      const result = spawnSync(
+        'npx',
+        [
+          'tsx',
+          'src/index.ts',
+          inputFile,
+          '24',
+          outputDir,
+          '-d',
+          '1',
+          '--quiet',
+          '--force',
+        ],
+        { encoding: 'utf-8' }
+      );
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+      assert.strictEqual(result.stdout.includes('📸 Rendering frame'), false);
+      assert.strictEqual(
+        result.stdout.includes('🚀 Starting conversion'),
+        false
+      );
+    });
+
+    test('should output clean JSON when --json is passed', () => {
+      const { inputFile, outputFile } = getTestPaths('loop-test');
+      const result = spawnSync(
+        'npx',
+        [
+          'tsx',
+          'src/index.ts',
+          inputFile,
+          '24',
+          outputDir,
+          '-d',
+          '1',
+          '--json',
+          '--force',
+        ],
+        { encoding: 'utf-8' }
+      );
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+
+      const data = JSON.parse(result.stdout.trim());
+      assert.strictEqual(data.success, true);
+      assert.strictEqual(data.duration, 1);
+      assert.strictEqual(data.fps, 24);
+      assert.strictEqual(data.outputFile, outputFile);
+    });
+  });
+
   describe('Duration Auto-Detection', () => {
     test('should auto-detect duration from loop-test.svg', () => {
       const { inputFile, outputFile } = getTestPaths('loop-test');

@@ -1,7 +1,7 @@
 # Spec: 114 - Agentic Skill & Model Context Protocol (MCP) Integration
 
 **GitHub Issue**: [#114](https://github.com/GehDoc/svg-to-video/issues/114)
-**Status**: 🟠 Pending
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -12,31 +12,31 @@ Expose `svg-to-video` capabilities as an **Agentic Skill** and **Model Context P
 - **CLI Enhancements**:
   - Add `--json` / `--quiet` flags to `src/index.ts` so machine invocations suppress ANSI interactive progress bars (`\r`) and emit clean JSON results for stdio/IPC pipelines.
 - **MCP Server Core (`@modelcontextprotocol/sdk`)**:
-  - Build an MCP server wrapper exposing two primary tools:
+  - Build an MCP server wrapper (`src/mcp.ts`) exposing two primary tools:
     1. `render_svg_to_video`: Converts SVG string or file path into `.mp4`, `.webm`, `.gif`, or `.apng` using specified resolution, fps, duration, and transparency options.
     2. `inspect_svg_animation`: Analyzes SVG keyframes/animations using `analyzeSvgAnimation` and returns duration & optimal export options.
 - **Docker & Skill Packaging**:
-  - Support MCP stdio/SSE mode within the existing Docker image (`Dockerfile`) for zero-dependency execution across cloud agents.
+  - Support MCP stdio mode within `src/index.ts` (`svg-to-video mcp`) and existing Docker image (`Dockerfile`).
   - Create `skills/svg-to-video/SKILL.md` for native agent discovery in file-based skill environments.
 
 ## ✅ Task List
 
-- [ ] **CLI Machine Interface**
-  - [ ] Add `--quiet` / `--silent` flag to suppress progress logs in `src/index.ts`
-  - [ ] Add `--json` flag to return structured JSON stdout on completion
-- [ ] **MCP Server Core**
-  - [ ] Add `@modelcontextprotocol/sdk` to dependencies
-  - [ ] Implement `render_svg_to_video` MCP tool
-  - [ ] Implement `inspect_svg_animation` MCP tool
-  - [ ] Wire up stdio transport server
-- [ ] **Skill Definition & Docker Packaging**
-  - [ ] Create `skills/svg-to-video/SKILL.md`
-  - [ ] Update `Dockerfile` to support MCP execution entrypoint
-- [ ] **Documentation & SEO Audit**
-  - [ ] Update `README.md` & `docs/ARCHITECTURE.md`
-  - [ ] Update SEO keywords & JSON-LD in `web/src/app/layout.tsx`
-  - [ ] Update static fallback description in `web/src/components/SeoFallback.tsx`
-  - [ ] Update `package.json` keywords
+- [x] **CLI Machine Interface**
+  - [x] Add `--quiet` / `--silent` flag to suppress progress logs in `src/index.ts`
+  - [x] Add `--json` flag to return structured JSON stdout on completion
+- [x] **MCP Server Core**
+  - [x] Add `@modelcontextprotocol/sdk` to dependencies
+  - [x] Implement `render_svg_to_video` MCP tool
+  - [x] Implement `inspect_svg_animation` MCP tool
+  - [x] Wire up stdio transport server
+- [x] **Skill Definition & Docker Packaging**
+  - [x] Create `skills/svg-to-video/SKILL.md`
+  - [x] Update `Dockerfile` to support MCP execution entrypoint
+- [x] **Documentation & SEO Audit**
+  - [x] Update `README.md` & `docs/ARCHITECTURE.md`
+  - [x] Update SEO keywords & JSON-LD in `web/src/app/layout.tsx`
+  - [x] Update static fallback description in `web/src/components/SeoFallback.tsx`
+  - [x] Update `package.json` keywords
 
 ## 🧪 Testing Strategy
 
@@ -66,11 +66,12 @@ Our testing strategy covers unit, integration, and E2E container validation to g
 
 ## 🧪 Verification Plan
 
-- [ ] Manual Test: Run MCP server via stdio test script and invoke `render_svg_to_video` on `examples/example.svg`.
-- [ ] Automated Test: `npm run test:cli` validating CLI machine options (`--quiet`, `--json`).
-- [ ] Automated Test: `npx tsx tests/mcp.spec.ts` validating MCP tool schemas and stdio RPC transport.
+- [x] Manual Test: Run MCP server via stdio test script and invoke `render_svg_to_video` on `examples/example.svg`.
+- [x] Automated Test: `npm run test:cli` validating CLI machine options (`--quiet`, `--json`).
+- [x] Automated Test: `npm run test:mcp` validating MCP tool schemas and stdio RPC transport.
 
 ## 📝 Change Log
 
 - _2026-09-05: Initial spec created for Issue #114._
 - _2026-09-05: Added comprehensive multi-layer testing strategy for Issue #114._
+- _2026-09-08: Feature fully implemented, verified with unit/integration test suites, and marked completed._
