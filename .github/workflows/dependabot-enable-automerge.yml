@@ -23,6 +23,5 @@ jobs:
         uses: peter-evans/enable-pull-request-automerge@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          # pass the PR number explicitly from the event payload
           pull-request-number: ${{ github.event.pull_request.number }}
           merge-method: squash
