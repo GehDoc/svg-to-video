@@ -1,7 +1,7 @@
 export interface LoggerOptions {
   quiet?: boolean;
   json?: boolean;
-  homepage?: string;
+  homepage: string;
 }
 
 export class Logger {
@@ -9,11 +9,10 @@ export class Logger {
   public readonly isJson: boolean;
   private readonly homepage: string;
 
-  constructor(options: LoggerOptions = {}) {
+  constructor(options: LoggerOptions) {
     this.isJson = !!options.json;
     this.quiet = !!options.quiet || this.isJson;
-    this.homepage =
-      options.homepage || 'https://github.com/GehDoc/svg-to-video';
+    this.homepage = options.homepage;
   }
 
   /**
