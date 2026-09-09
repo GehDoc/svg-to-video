@@ -10,6 +10,9 @@ import {
   getPixelRGBA,
 } from './helpers/e2e.js';
 
+const LOG_STARTING_CONVERSION = '🚀 Starting conversion:';
+const LOG_RENDERING_FRAME = '📸 Rendering frame';
+
 describe('CLI Functionality', () => {
   before(() => {
     if (!fs.existsSync(outputDir)) {
@@ -52,9 +55,9 @@ describe('CLI Functionality', () => {
       );
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
-      assert.strictEqual(result.stdout.includes('📸 Rendering frame'), false);
+      assert.strictEqual(result.stdout.includes(LOG_RENDERING_FRAME), false);
       assert.strictEqual(
-        result.stdout.includes('🚀 Starting conversion'),
+        result.stdout.includes(LOG_STARTING_CONVERSION),
         false
       );
     });
@@ -78,6 +81,11 @@ describe('CLI Functionality', () => {
       );
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
+      assert.strictEqual(result.stdout.includes(LOG_RENDERING_FRAME), false);
+      assert.strictEqual(
+        result.stdout.includes(LOG_STARTING_CONVERSION),
+        false
+      );
 
       const data = JSON.parse(result.stdout.trim());
       assert.strictEqual(data.success, true);
@@ -112,7 +120,7 @@ describe('CLI Functionality', () => {
   });
 
   describe('Rendering', () => {
-    test('should render font-test.svg into a valid mp4 file', () => {
+    test('should render font-test.svg into a valid mp4 file and output standard progress logs', () => {
       const { inputFile, outputFile } = getTestPaths('font-test');
       const result = spawnSync(
         'npx',
@@ -130,6 +138,8 @@ describe('CLI Functionality', () => {
       );
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
+      assert.strictEqual(result.stdout.includes(LOG_STARTING_CONVERSION), true);
+      assert.strictEqual(result.stdout.includes(LOG_RENDERING_FRAME), true);
 
       const data = getProbeMetadata(outputFile);
       assert.strictEqual(data.width, '500');
