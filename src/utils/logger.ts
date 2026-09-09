@@ -4,6 +4,38 @@ export interface LoggerOptions {
   homepage: string;
 }
 
+export interface LoggerJsonSuccessOutput {
+  success: true;
+  outputFile: string;
+  duration: number;
+  fps: number;
+  format: string;
+  totalFrames: number;
+  resolution: string;
+  transparent: boolean;
+}
+
+export interface LoggerJsonErrorOutput {
+  success: false;
+  error: string;
+  details?: string;
+}
+
+export type LoggerJsonOutput = LoggerJsonSuccessOutput | LoggerJsonErrorOutput;
+export type LoggerDoneData = Omit<
+  LoggerJsonSuccessOutput,
+  'success' | 'outputFile'
+>;
+
+export function isLoggerJsonOutput(obj: unknown): obj is LoggerJsonOutput {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'success' in obj &&
+    typeof (obj as { success: unknown }).success === 'boolean'
+  );
+}
+
 export class Logger {
   public readonly quiet: boolean;
   public readonly isJson: boolean;
@@ -55,19 +87,14 @@ export class Logger {
    * Called at successful completion of conversion process.
    * Outputs JSON payload if --json is active, or friendly completion summary if not quiet.
    */
-  public done(outputFile: string, data: Record<string, unknown> = {}): void {
+  public done(outputFile: string, data: LoggerDoneData): void {
     if (this.isJson) {
-      console.log(
-        JSON.stringify(
-          {
-            success: true,
-            outputFile,
-            ...data,
-          },
-          null,
-          2
-        )
-      );
+      const payload: LoggerJsonSuccessOutput = {
+        success: true,
+        outputFile,
+        ...data,
+      };
+      console.log(JSON.stringify(payload, null, 2));
     } else if (!this.quiet) {
       console.log(`\n✅ Done! File saved to ${outputFile}`);
       console.log(
@@ -80,19 +107,14 @@ export class Logger {
   /**
    * Output fatal error (as JSON or stderr string) and terminate execution
    */
-  public fatal(msg: string, details?: unknown): void {
+  public fatal(msg: string, details?: unknown): never {
     if (this.isJson) {
-      console.log(
-        JSON.stringify(
-          {
-            success: false,
-            error: msg,
-            ...(details ? { details: String(details) } : {}),
-          },
-          null,
-          2
-        )
-      );
+      const payload: LoggerJsonErrorOutput = {
+        success: false,
+        error: msg,
+        ...(details ? { details: String(details) } : {}),
+      };
+      console.log(JSON.stringify(payload, null, 2));
     } else {
       console.error(`❌ Error: ${msg}`);
       if (details) console.error(details);

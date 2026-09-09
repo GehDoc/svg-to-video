@@ -12,6 +12,7 @@ import { execFileSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { JSDOM } from 'jsdom';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
+import { isLoggerJsonOutput } from './utils/logger.js';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
@@ -293,23 +294,35 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }
       }
 
-      const result = JSON.parse(rawOutput.trim());
-      if (result.success) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(result, null, 2),
-            },
-          ],
-        };
+      const parsed: unknown = JSON.parse(rawOutput.trim());
+      if (isLoggerJsonOutput(parsed)) {
+        if (parsed.success) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(parsed, null, 2),
+              },
+            ],
+          };
+        } else {
+          return {
+            isError: true,
+            content: [
+              {
+                type: 'text',
+                text: parsed.error || 'Conversion failed',
+              },
+            ],
+          };
+        }
       } else {
         return {
           isError: true,
           content: [
             {
               type: 'text',
-              text: result.error || 'Conversion failed',
+              text: 'CLI returned unexpected output format.',
             },
           ],
         };

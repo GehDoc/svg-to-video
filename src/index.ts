@@ -155,7 +155,7 @@ async function run(
   const outputFullPath = path.join(outDir, outputFileName);
 
   if (fs.existsSync(outputFullPath) && !options.force) {
-    logger.fatal(
+    throw logger.fatal(
       `Output file "${outputFullPath}" already exists. Use the --force (-f) flag to overwrite it.`
     );
   }
@@ -163,11 +163,11 @@ async function run(
   try {
     validateOptions(options);
   } catch (error) {
-    logger.fatal(error instanceof Error ? error.message : String(error));
+    throw logger.fatal(error instanceof Error ? error.message : String(error));
   }
 
   if (!fs.existsSync(svgPath)) {
-    logger.fatal(`Input SVG file "${svgPath}" does not exist.`);
+    throw logger.fatal(`Input SVG file "${svgPath}" does not exist.`);
   }
 
   const svg = fs.readFileSync(svgPath, 'utf-8');
@@ -179,7 +179,7 @@ async function run(
     const dom = new JSDOM('');
     duration = analyzeSvgAnimation(svg, dom.window.DOMParser);
     if (duration === undefined) {
-      logger.fatal(
+      throw logger.fatal(
         'Could not detect duration. Please provide a duration using -d or --duration.'
       );
     }
@@ -190,7 +190,7 @@ async function run(
     .split(' ')
     .filter((arg) => arg.trim().length > 0);
 
-  const totalFrames = Math.ceil(fps * duration!);
+  const totalFrames = Math.ceil(fps * duration);
   const padWidth = Math.floor(Math.log10(totalFrames)) + 1;
 
   logger.info('🚀 Starting conversion:');
@@ -415,7 +415,7 @@ function convertToOutput(
       generator.postProcess(outputFullPath, formatOptions);
     }
   } catch (error) {
-    logger.fatal(
+    throw logger.fatal(
       'FFmpeg execution failed',
       error instanceof Error ? error.message : String(error)
     );
