@@ -1,22 +1,24 @@
 # Model Context Protocol (MCP) & Agent Skill Guide
 
-This document describes how to connect `svg-to-video` to AI Assistants (Claude Desktop, Cursor, Antigravity, AutoGPT, etc.) via the Model Context Protocol (MCP) or native Agent Skills.
+This document describes how to connect `svg-to-video` to AI Assistants (Claude Desktop, Cursor, Antigravity, AutoGPT) via the Model Context Protocol (MCP) or native Agent Skills.
 
 ---
 
 ## 🌟 Overview
 
-AI coding assistants often generate complex animated vector graphics (SVGs with CSS keyframes, SMIL, or Web Animations API). However, running in text/headless contexts, LLMs lack native tools to compile these SVGs into downloadable video or animated image assets (`.mp4`, `.webm`, `.gif`, `.apng`).
+AI coding assistants frequently generate complex animated vector graphics (SVGs with CSS keyframes, SMIL, or Web Animations API). However, running in text/headless contexts, LLMs lack native tools to compile these SVGs into downloadable video or animated image assets (`.mp4`, `.webm`, `.gif`, `.apng`).
 
 `svg-to-video` provides a standard Model Context Protocol (MCP) server and file-based agent skill (`SKILL.md`) that allow AI assistants to render their SVG animations programmatically with high fidelity, background transparency, and auto-detected durations.
 
 ---
 
-## 🚀 Quick Start for Agent Operators
+## 🚀 Quick Start
 
-### 1. Claude Desktop Configuration
+Get from zero to rendering videos with your AI Assistant in 3 steps:
 
-Add the following to your `claude_desktop_config.json`:
+### Step 1: Add MCP Server Config
+
+Add `svg-to-video` to your assistant's MCP configuration file (e.g. `claude_desktop_config.json` or Cursor MCP settings):
 
 ```json
 {
@@ -29,17 +31,40 @@ Add the following to your `claude_desktop_config.json`:
 }
 ```
 
-### 2. Cursor IDE Configuration
+### Step 2: Prompt Your AI Assistant
 
-Add a new MCP server in **Cursor Settings > Features > MCP**:
+Ask your agent to convert an SVG file or generate a new animated vector graphic:
 
-- **Name**: `svg-to-video`
-- **Type**: `command`
-- **Command**: `npx -y svg-to-video mcp`
+> _"Convert `examples/example.svg` into a 60fps transparent WebM video."_
 
-### 3. Dockerized MCP Server (Zero Dependencies)
+### Step 3: Receive Generated Media
 
-If running in cloud environments or sandboxes without local Chromium/FFmpeg:
+The AI assistant invokes `render_svg_to_video` in the background and returns the path to the rendered video file.
+
+---
+
+## ⚙️ Platform Setup Guides
+
+### Claude Desktop
+
+Add the `mcpServers` snippet to `claude_desktop_config.json`:
+
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+### Cursor IDE
+
+Open **Cursor Settings > Features > MCP**:
+
+1. Click **+ Add New MCP Server**.
+2. **Name**: `svg-to-video`
+3. **Type**: `command`
+4. **Command**: `npx -y svg-to-video mcp`
+
+### Dockerized MCP Server (Zero Dependencies)
+
+For cloud agents or sandbox environments without local Chromium or FFmpeg pre-installed:
 
 ```bash
 docker run -i --rm -v $(pwd):/app/data gehdoc/svg-to-video mcp
@@ -80,17 +105,17 @@ Inspects an SVG string or file to estimate animation duration, CSS keyframes, an
 
 ---
 
-## 💬 Prompting Examples for AI Agents
+## 💬 Agent Operator Prompting Guide
 
-Once connected, you can prompt your AI assistant directly:
+Once connected, agent operators can use natural prompts to trigger media rendering:
 
 - **Generate & Convert**:
 
   > _"Create an animated SVG loader icon with glowing circles, then use `render_svg_to_video` to export it as a 60fps transparent WebM video."_
 
-- **GIF Export**:
+- **GIF Export for Documentation**:
 
-  > _"Take `assets/banner.svg` and export it as an optimized 3-second animated GIF with a transparent background."_
+  > _"Take `assets/banner.svg` and export it as an optimized 3-second animated GIF with a transparent background for GitHub documentation."_
 
-- **Inspect Animation**:
+- **Inspect Animation Metadata**:
   > _"Inspect `animation.svg` using `inspect_svg_animation` and tell me its detected duration and resolution."_

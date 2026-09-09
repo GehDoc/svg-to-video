@@ -88,20 +88,21 @@ See [docs/CLI.md](./docs/CLI.md) for full usage, arguments, and options.
 
 ## 🤖 AI Agent & MCP Integration
 
-Connect `svg-to-video` to AI Assistants (Claude Desktop, Cursor, Antigravity, AutoGPT) via the Model Context Protocol:
+Connect `svg-to-video` to AI Assistants (Claude Desktop, Cursor, Antigravity, AutoGPT) via Model Context Protocol:
 
-### Quick Start (`mcpServers`)
-
-```json
-{
-  "mcpServers": {
-    "svg-to-video": {
-      "command": "npx",
-      "args": ["-y", "svg-to-video", "mcp"]
-    }
-  }
-}
-```
+1. **Add to `mcpServers` config**:
+   ```json
+   {
+     "mcpServers": {
+       "svg-to-video": {
+         "command": "npx",
+         "args": ["-y", "svg-to-video", "mcp"]
+       }
+     }
+   }
+   ```
+2. **Prompt your AI Assistant**:
+   > _"Convert `examples/example.svg` into a 60fps transparent WebM video."_
 
 See **[docs/MCP.md](./docs/MCP.md)** for full setup instructions, tool schemas, Docker execution, and agent prompting guides.
 
