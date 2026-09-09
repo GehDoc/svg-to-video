@@ -83,17 +83,20 @@ If working without an agent, follow these steps to keep the project state synchr
 
 ### Project-wide Orchestration (Run from Root)
 
-| Command              | Description                                                        |
-| :------------------- | :----------------------------------------------------------------- |
-| `npm run check`      | Runs all checks (lint, format, type-check, e2e tests).             |
-| `npm run check:fast` | Runs fast checks only (lint, format, type-check).                  |
-| `npm run fix`        | Auto-fixes linting and formatting issues.                          |
-| `npm run lint`       | Checks for linting issues in both CLI and Web Studio code.         |
-| `npm run lint:fix`   | Fixes linting issues in both CLI and Web Studio code.              |
-| `npm run format`     | Checks for formatting issues.                                      |
-| `npm run format:fix` | Fixes formatting issues.                                           |
-| `npm run test`       | Runs all tests (CLI, Web Studio E2E, Unit, Storybook, and Visual). |
-| `npm run type-check` | Validates TypeScript types (includes web workspace).               |
+| Command              | Description                                                             |
+| :------------------- | :---------------------------------------------------------------------- |
+| `npm run check`      | Runs all checks (lint, format, type-check, e2e tests).                  |
+| `npm run check:fast` | Runs fast checks only (lint, format, type-check).                       |
+| `npm run fix`        | Auto-fixes linting and formatting issues.                               |
+| `npm run lint`       | Checks for linting issues in both CLI and Web Studio code.              |
+| `npm run lint:fix`   | Fixes linting issues in both CLI and Web Studio code.                   |
+| `npm run format`     | Checks for formatting issues.                                           |
+| `npm run format:fix` | Fixes formatting issues.                                                |
+| `npm run test`       | Runs all tests (CLI, MCP, Web Studio E2E, Unit, Storybook, and Visual). |
+| `npm run test:cli`   | Runs CLI integration tests.                                             |
+| `npm run test:mcp`   | Runs MCP Server integration tests.                                      |
+| `npm run test:unit`  | Runs unit tests using Vitest and Node test runner.                      |
+| `npm run type-check` | Validates TypeScript types (includes web workspace).                    |
 
 ### Web Studio Development (Run inside `web/` directory)
 
@@ -109,15 +112,7 @@ To work on the Web Studio, navigate to the `web/` directory: `cd web`.
 | `npm run test:storybook`     | Runs Storybook interaction tests using Vitest.        |
 | `npm run test:visual`        | Runs native visual regression tests (pixel matching). |
 | `npm run test:visual:update` | Updates visual regression baseline screenshots.       |
-| `npm run build-storybook`    | Builds the Storybook static site.                     |
-| `npm run test:cli`           | Runs CLI E2E tests.                                   |
-| `npm run test:web`           | Runs Web Studio E2E tests.                            |
-| `npm run test:unit`          | Runs component-level unit tests using Vitest.         |
-| `npm run test:storybook`     | Runs Storybook interaction tests using Vitest.        |
-| `npm run test:visual`        | Runs native visual regression tests (pixel matching). |
-| `npm run test:visual:update` | Updates visual regression baseline screenshots.       |
 | `npm run build-storybook`    | Builds the Storybook static site for deployment.      |
-| `npm run type-check`         | Validates TypeScript types.                           |
 
 ## 🧪 Testing Strategy
 
@@ -129,14 +124,16 @@ Beyond end-to-end testing, we use a multi-tiered strategy for component, accessi
    - **Command**: `npm run test:visual`
 3. **CLI Integration Tests (`tests/cli.spec.ts`)**: Validate full user workflows for the CLI tool.
    - **Command**: `npm run test:cli`
-4. **Web Studio E2E Tests (`web/tests/*.spec.ts`)**: Validate full user workflows for the Web Studio using Playwright.
+4. **MCP Server Integration Tests (`tests/mcp.spec.ts`)**: Validate tool schemas, JSON-RPC stdio transport, and MCP tool execution (`render_svg_to_video`, `inspect_svg_animation`).
+   - **Command**: `npm run test:mcp`
+5. **Web Studio E2E Tests (`web/tests/*.spec.ts`)**: Validate full user workflows for the Web Studio using Playwright.
    - **Command**: Run `npm run test:web -w web` from the root.
    - **Key Coverage**:
      - `rendering-transparency.spec.ts`: Verifies alpha channel support across all formats.
      - `metadata-integrity.spec.ts`: Verifies strictly that Title and Comment metadata are correctly embedded across supporting formats (MP4, WebM, aPNG, GIF).
-5. **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
+6. **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
    - **Command**: Run `npm run test:storybook -w web` from the root, or `npm run test:storybook` from within the `web/` directory.
-6. **Storybook Build**:
+7. **Storybook Build**:
    - **Command**: Run `npm run build-storybook -w web` from the root, or `npm run build-storybook` from within the `web/` directory.
 
 ### 🗂 Test Organization
@@ -287,6 +284,15 @@ Releases are published on GitHub using the tag convention `vX.Y.Z` (e.g., `v0.21
   ```
 - **Web UI Method**:
   Navigate to GitHub Repository → Releases → **Draft a new release**. Select tag `vX.Y.Z`, set the title to `X.Y.Z - [Short Descriptive Title]`, and paste the formatted release notes.
+
+## 🔒 Security & Sandboxing Standards
+
+To preserve architectural safety across pull requests, all contributions must adhere to the security rules documented in **[docs/SECURITY.md](./docs/SECURITY.md)**:
+
+1. **Subprocess Calls**: Always use `execFileSync` or argument arrays. Never concatenate parameters into shell command strings.
+2. **Subprocess Data Validation**: Always validate machine outputs (`--json`) with runtime type guards (e.g. `isLoggerJsonOutput`).
+3. **Temp Cleanup**: Ephemeral directory creation must use `fs.mkdtempSync` and be purged in `finally` blocks.
+4. **Browser Lifecycles**: Ensure Puppeteer pages and browser contexts are closed (`browser.close()`) on all completion or error execution paths.
 
 ## 🔍 Maintaining SEO & Metadata
 

@@ -4,7 +4,7 @@ This document outlines the event tracking strategy for the Web Studio using [Uma
 
 ## Event Schema
 
-Note: All events automatically include the application `version` tag (e.g. `version: "0.21.2"`) added by the centralized `trackEvent` helper.
+Note: All events automatically include the application `version` tag (e.g. `version: "0.22.0"`) added by the centralized `trackEvent` helper.
 
 | Event Name           | Trigger                                               | Properties                                                                                                                                                                  |
 | :------------------- | :---------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

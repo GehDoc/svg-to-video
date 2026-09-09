@@ -21,6 +21,7 @@ Choose the entry point that matches your needs:
 
 - **[Web Studio](https://gehdoc.github.io/svg-to-video/)**: The easiest way to convert SVGs to video, **high-fidelity aPNG, or optimized GIF** in your browser without any installation.
 - **[CLI / Docker Tool](#-cli--docker-tool)**: For batch processing, server-side automation, and CI/CD integration.
+- **[AI Agent & MCP Server](#-ai-agent--mcp-integration)**: For Claude Desktop, Cursor, Antigravity, and autonomous LLM workflows.
 
 ---
 
@@ -29,6 +30,7 @@ Choose the entry point that matches your needs:
 - **Transparent Backgrounds**: Export your animations with a full alpha channel using **WebM or aPNG**, and optimized indexed transparency with **GIF89a**. Perfect for overlays in video editing tools or web use.
 - **Privacy-First**: The Web Studio runs entirely in your browser—your SVG files never leave your computer.
 - **Frame-Accurate**: Our engine scrubs the **Web Animations API**, ensuring every frame is captured exactly as rendered.
+- **AI Agent Native**: Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support to let AI assistants render their generated SVG animations into MP4/GIF automatically.
 - **Universal Animated Formats**: Beyond video, generate lightweight **Animated PNGs (aPNG)** and **GIFs** perfect for documentation, Slack, or GitHub, with full control over background transparency.
 - **Copy to Clipboard**: Instant export to **Base64 Data URL**—copy your video and embed it directly into your HTML, CSS, or JS code without manual downloads. Perfect for rapid prototyping and developers.
 - **Metadata Injection**: Support for custom titles and comments across video (MP4, WebM, MKV, MOV) and animated image (aPNG, GIF) formats.
@@ -81,6 +83,30 @@ docker compose run --rm svg-to-video examples/example.svg 60 ./out-dir -d 5 --fo
 ```
 
 See [docs/CLI.md](./docs/CLI.md) for full usage, arguments, and options.
+
+---
+
+## 🤖 AI Agent & MCP Integration
+
+Connect `svg-to-video` to AI Assistants (Claude Desktop, Cursor, Antigravity, AutoGPT) via Model Context Protocol:
+
+1. **Add to `mcpServers` config**:
+   ```json
+   {
+     "mcpServers": {
+       "svg-to-video": {
+         "command": "npx",
+         "args": ["-y", "svg-to-video", "mcp"]
+       }
+     }
+   }
+   ```
+2. **Prompt your AI Assistant**:
+   > _"Convert `examples/example.svg` into a 60fps transparent WebM video."_
+
+See **[docs/MCP.md](./docs/MCP.md)** for full setup instructions, tool schemas, Docker execution, and agent prompting guides.
+
+---
 
 ## 🤝 Contributing
 

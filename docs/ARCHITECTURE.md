@@ -179,3 +179,25 @@ The `svg-to-video` CI/CD pipeline is designed for high-performance and reliable 
 
 - **`ci.yml`**: Defines the parallel test matrix. The `build-web` job acts as a production-build smoke-test (skipped on `main` to avoid redundant builds during deployment).
 - **`deploy.yml`**: Triggers only on `main` merges. It builds the project from source and deploys the assets only after all CI test jobs have successfully passed.
+
+## 🤖 Model Context Protocol (MCP) & Agent Skill Architecture
+
+The MCP implementation (`src/mcp.ts`) bridges AI coding assistants (Claude Desktop, Cursor, Antigravity, AutoGPT) with the rendering engine.
+
+### Architecture
+
+```
+[ AI Agent / LLM ]
+       │  (stdio JSON-RPC)
+       ▼
+[ src/mcp.ts (MCP Server) ]
+   ├── inspect_svg_animation ──> [ analyzeSvgAnimation (shared) ]
+   └── render_svg_to_video ────> [ src/index.ts CLI (--json --quiet) ]
+                                        │
+                                        ▼
+                                [ Puppeteer + FFmpeg ] ──> Output (.mp4/.gif/.webm)
+```
+
+1. **Stdio Transport**: The MCP server listens over `stdio` using `@modelcontextprotocol/sdk`.
+2. **Machine Isolation**: When `render_svg_to_video` is invoked, the MCP server calls `src/index.ts` with `--json` and `--quiet` flags. This isolates output logs and returns clean JSON results without corrupting the `stdio` RPC stream.
+3. **Containerized Entrypoint**: Docker environments execute the MCP server in a fully configured container with Chrome, FFmpeg, and multi-language fonts pre-installed.

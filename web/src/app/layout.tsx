@@ -28,6 +28,9 @@ export const metadata: Metadata = {
     'cli apng export',
     'web animations api',
     'browser-based converter',
+    'mcp server',
+    'model context protocol',
+    'agent skill',
   ],
   openGraph: {
     title: 'SVG to Video - Animated SVG Converter',
@@ -62,6 +65,7 @@ const jsonLd = {
     'Transparent background support (WebM, aPNG, GIF89a)',
     'Metadata embedding (Title and Comment across video and animated images)',
     'Frame-accurate Web Animations API scrubbing',
+    'Model Context Protocol (MCP) server & Agent Skill support for AI assistants',
     'Serverless browser-based rendering',
   ],
 };

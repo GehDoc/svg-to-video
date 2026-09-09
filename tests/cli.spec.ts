@@ -10,6 +10,9 @@ import {
   getPixelRGBA,
 } from './helpers/e2e.js';
 
+const LOG_STARTING_CONVERSION = '🚀 Starting conversion:';
+const LOG_RENDERING_FRAME = '📸 Rendering frame';
+
 describe('CLI Functionality', () => {
   before(() => {
     if (!fs.existsSync(outputDir)) {
@@ -29,6 +32,66 @@ describe('CLI Functionality', () => {
         encoding: 'utf-8',
       });
       assert.match(result.stdout, /\d+\.\d+\.\d+/);
+    });
+  });
+
+  describe('Machine Output (--quiet, --json)', () => {
+    test('should suppress progress logs when --quiet is passed', () => {
+      const { inputFile, outputFile } = getTestPaths('loop-test');
+      const result = spawnSync(
+        'npx',
+        [
+          'tsx',
+          'src/index.ts',
+          inputFile,
+          '24',
+          outputDir,
+          '-d',
+          '1',
+          '--quiet',
+          '--force',
+        ],
+        { encoding: 'utf-8' }
+      );
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+      assert.strictEqual(result.stdout.includes(LOG_RENDERING_FRAME), false);
+      assert.strictEqual(
+        result.stdout.includes(LOG_STARTING_CONVERSION),
+        false
+      );
+    });
+
+    test('should output clean JSON when --json is passed', () => {
+      const { inputFile, outputFile } = getTestPaths('loop-test');
+      const result = spawnSync(
+        'npx',
+        [
+          'tsx',
+          'src/index.ts',
+          inputFile,
+          '24',
+          outputDir,
+          '-d',
+          '1',
+          '--json',
+          '--force',
+        ],
+        { encoding: 'utf-8' }
+      );
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+      assert.strictEqual(result.stdout.includes(LOG_RENDERING_FRAME), false);
+      assert.strictEqual(
+        result.stdout.includes(LOG_STARTING_CONVERSION),
+        false
+      );
+
+      const data = JSON.parse(result.stdout.trim());
+      assert.strictEqual(data.success, true);
+      assert.strictEqual(data.duration, 1);
+      assert.strictEqual(data.fps, 24);
+      assert.strictEqual(data.outputFile, outputFile);
     });
   });
 
@@ -57,7 +120,7 @@ describe('CLI Functionality', () => {
   });
 
   describe('Rendering', () => {
-    test('should render font-test.svg into a valid mp4 file', () => {
+    test('should render font-test.svg into a valid mp4 file and output standard progress logs', () => {
       const { inputFile, outputFile } = getTestPaths('font-test');
       const result = spawnSync(
         'npx',
@@ -75,6 +138,8 @@ describe('CLI Functionality', () => {
       );
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
+      assert.strictEqual(result.stdout.includes(LOG_STARTING_CONVERSION), true);
+      assert.strictEqual(result.stdout.includes(LOG_RENDERING_FRAME), true);
 
       const data = getProbeMetadata(outputFile);
       assert.strictEqual(data.width, '500');

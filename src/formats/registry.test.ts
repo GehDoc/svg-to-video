@@ -9,9 +9,9 @@ describe('CLIFormatRegistry', () => {
     fps: 30,
     padWidth: 5,
     hold: 0,
-    outDir: './out-test',
+    outDir: './out-dir-test',
     transparent: false,
-    inputPattern: './out-test/%05d.png',
+    inputPattern: './out-dir-test/%05d.png',
     pkgVersion: '1.0.0',
   };
 
