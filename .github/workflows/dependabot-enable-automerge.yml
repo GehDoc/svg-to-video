@@ -1,0 +1,27 @@
+name: Enable auto-merge for Dependabot PRs
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  enable-automerge:
+    runs-on: ubuntu-latest
+    # only run for Dependabot actors
+    if: "github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'"
+    steps:
+      - name: Ensure this run has a pull_request payload
+        if: ${{ github.event.pull_request == null }}
+        run: |
+          echo "No pull_request payload present — skipping enable-automerge"
+          exit 0
+
+      - name: Enable GitHub auto-merge for this PR
+        uses: peter-evans/enable-pull-request-automerge@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash
