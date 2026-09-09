@@ -14,6 +14,7 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
 import { JSDOM } from 'jsdom'; // For duration detection in Node environment
+import { Logger } from './utils/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -137,19 +138,11 @@ async function run(
   outDir: string,
   options: RunOptions
 ): Promise<void> {
-  const quiet = options.quiet || options.silent || options.json;
-  const log = (...args: unknown[]) => {
-    if (!quiet) console.log(...args);
-  };
-
-  const handleError = (msg: string) => {
-    if (options.json) {
-      console.log(JSON.stringify({ success: false, error: msg }, null, 2));
-    } else {
-      console.error(`❌ Error: ${msg}`);
-    }
-    process.exit(1);
-  };
+  const logger = new Logger({
+    quiet: options.quiet || options.silent,
+    json: options.json,
+    homepage: pkg.homepage,
+  });
 
   // Resolve format generator and output file extension via format registry
   const { format, extension } = formatRegistry.resolveFormatAndExtension(
@@ -162,7 +155,7 @@ async function run(
   const outputFullPath = path.join(outDir, outputFileName);
 
   if (fs.existsSync(outputFullPath) && !options.force) {
-    handleError(
+    logger.fatal(
       `Output file "${outputFullPath}" already exists. Use the --force (-f) flag to overwrite it.`
     );
   }
@@ -170,27 +163,27 @@ async function run(
   try {
     validateOptions(options);
   } catch (error) {
-    handleError(error instanceof Error ? error.message : String(error));
+    logger.fatal(error instanceof Error ? error.message : String(error));
   }
 
   if (!fs.existsSync(svgPath)) {
-    handleError(`Input SVG file "${svgPath}" does not exist.`);
+    logger.fatal(`Input SVG file "${svgPath}" does not exist.`);
   }
 
   const svg = fs.readFileSync(svgPath, 'utf-8');
 
   let duration = options.duration;
   if (duration === undefined) {
-    log('🔍 Duration not provided, attempting to auto-detect...');
+    logger.info('🔍 Duration not provided, attempting to auto-detect...');
 
     const dom = new JSDOM('');
     duration = analyzeSvgAnimation(svg, dom.window.DOMParser);
     if (duration === undefined) {
-      handleError(
+      logger.fatal(
         'Could not detect duration. Please provide a duration using -d or --duration.'
       );
     }
-    log(`✅ Auto-detected duration: ${duration}s`);
+    logger.info(`✅ Auto-detected duration: ${duration}s`);
   }
 
   const puppeteerArgs = (process.env.PUPPETEER_ARGS || '')
@@ -200,18 +193,18 @@ async function run(
   const totalFrames = Math.ceil(fps * duration!);
   const padWidth = Math.floor(Math.log10(totalFrames)) + 1;
 
-  log('🚀 Starting conversion:');
-  log(`  Source:     ${svgPath}`);
-  log(`  Target:     ${path.join(outDir, outputFileName)}`);
+  logger.info('🚀 Starting conversion:');
+  logger.info(`  Source:     ${svgPath}`);
+  logger.info(`  Target:     ${path.join(outDir, outputFileName)}`);
 
-  log(
+  logger.info(
     `  Settings:   ${duration}s @ ${fps}fps (Format: ${format}, Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'})`
   );
-  if (puppeteerArgs.length > 0 && !quiet) {
-    log(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
+  if (puppeteerArgs.length > 0) {
+    logger.info(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
   }
-  log(`  Frames:     ${totalFrames} total`);
-  log('---');
+  logger.info(`  Frames:     ${totalFrames} total`);
+  logger.info('---');
 
   fs.mkdirSync(outDir, { recursive: true });
 
@@ -226,7 +219,7 @@ async function run(
     options.scale,
     options.transparent,
     options.bgColor,
-    quiet
+    logger
   );
 
   convertToOutput(
@@ -238,40 +231,21 @@ async function run(
     outDir,
     options.transparent,
     options.metadata,
-    quiet,
-    options.json
+    logger
   );
 
   if (!options.keepFrames) {
-    cleanupFrames(totalFrames, padWidth, outDir, quiet);
+    cleanupFrames(totalFrames, padWidth, outDir, logger);
   }
 
-  if (options.json) {
-    console.log(
-      JSON.stringify(
-        {
-          success: true,
-          outputFile: outputFullPath,
-          duration,
-          fps,
-          format,
-          totalFrames,
-          resolution: options.resolution,
-          transparent: options.transparent,
-        },
-        null,
-        2
-      )
-    );
-  } else if (!quiet) {
-    console.log(
-      `\n✅ Done! File saved to ${path.join(outDir, outputFileName)}`
-    );
-    console.log(
-      '\x1b[2m%s\x1b[0m',
-      `Love this tool? Star it on GitHub: ${pkg.homepage}`
-    );
-  }
+  logger.done(outputFullPath, {
+    duration,
+    fps,
+    format,
+    totalFrames,
+    resolution: options.resolution,
+    transparent: options.transparent,
+  });
 }
 
 /**
@@ -288,9 +262,9 @@ async function createFrames(
   scaleFactor: number,
   transparent: boolean,
   bgColor: string,
-  quiet: boolean
+  logger: Logger
 ): Promise<void> {
-  if (!quiet) console.log('📸 Rendering frames with Puppeteer...');
+  logger.info('📸 Rendering frames with Puppeteer...');
 
   let width = 0;
   let height = 0;
@@ -327,11 +301,9 @@ async function createFrames(
     }
 
     if (!width || !height) {
-      if (!quiet) {
-        console.warn(
-          '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1280x720.'
-        );
-      }
+      logger.warn(
+        '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1280x720.'
+      );
       width = 1280;
       height = 720;
     }
@@ -344,7 +316,7 @@ async function createFrames(
     );
   }
 
-  if (!quiet) console.log('🚀 Preparing Puppeteer browser...');
+  logger.info('🚀 Preparing Puppeteer browser...');
 
   const browser: Browser = await puppeteer.launch({
     headless: true,
@@ -374,11 +346,9 @@ async function createFrames(
     omitBackground: transparent,
   };
 
-  if (!quiet) console.log('📸 Rendering frames with Puppeteer...');
+  logger.info('📸 Rendering frames with Puppeteer...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
-    if (!quiet) {
-      process.stdout.write(`\r📸 Rendering frame ${frame}/${totalFrames}`);
-    }
+    logger.writeProgress(`\r📸 Rendering frame ${frame}/${totalFrames}`);
     const timeMs = ((frame - 1) / fps) * 1000;
     await page.evaluate(seekAnimations, timeMs);
 
@@ -388,7 +358,7 @@ async function createFrames(
       ...screenshotOptions,
     });
   }
-  if (!quiet) console.log('');
+  logger.info('');
 
   await browser.close();
 }
@@ -404,11 +374,10 @@ function convertToOutput(
   hold: number,
   outDir: string,
   transparent: boolean,
-  metadata?: string[],
-  quiet?: boolean,
-  isJson?: boolean
+  metadata: string[] | undefined,
+  logger: Logger
 ): void {
-  if (!quiet) console.log('📦 Encoding output with FFmpeg...');
+  logger.info('📦 Encoding output with FFmpeg...');
 
   const normalizedFormat = format.toLowerCase();
   const generator = formatRegistry.get(normalizedFormat);
@@ -439,30 +408,17 @@ function convertToOutput(
     const output = child_process.execFileSync('ffmpeg', args, {
       encoding: 'utf8',
     });
-    if (output && !quiet) console.log(output);
+    if (output) logger.info(output);
 
     const outputFullPath = path.join(outDir, outputFileName);
     if (generator.postProcess) {
       generator.postProcess(outputFullPath, formatOptions);
     }
   } catch (error) {
-    if (isJson) {
-      console.log(
-        JSON.stringify(
-          {
-            success: false,
-            error: 'FFmpeg execution failed',
-            details: error instanceof Error ? error.message : String(error),
-          },
-          null,
-          2
-        )
-      );
-      process.exit(1);
-    }
-    console.error('❌ FFmpeg execution failed:');
-    console.error(error);
-    process.exit(1);
+    logger.fatal(
+      'FFmpeg execution failed',
+      error instanceof Error ? error.message : String(error)
+    );
   }
 }
 
@@ -473,18 +429,15 @@ function cleanupFrames(
   totalFrames: number,
   padWidth: number,
   outDir: string,
-  quiet: boolean
+  logger: Logger
 ): void {
-  if (!quiet) console.log('🧹 Cleaning up temporary frames...');
+  logger.info('🧹 Cleaning up temporary frames...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
     const filename = path.join(outDir, getFrameFilename(frame, padWidth));
     try {
       fs.unlinkSync(filename);
     } catch (error) {
-      if (!quiet) {
-        console.error(`❌ Failed to delete frame: ${filename}`);
-        console.error(error);
-      }
+      logger.error(`❌ Failed to delete frame: ${filename}`, error);
     }
   }
 }
