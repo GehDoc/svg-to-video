@@ -285,6 +285,15 @@ Releases are published on GitHub using the tag convention `vX.Y.Z` (e.g., `v0.21
 - **Web UI Method**:
   Navigate to GitHub Repository → Releases → **Draft a new release**. Select tag `vX.Y.Z`, set the title to `X.Y.Z - [Short Descriptive Title]`, and paste the formatted release notes.
 
+## 🔒 Security & Sandboxing Standards
+
+To preserve architectural safety across pull requests, all contributions must adhere to the security rules documented in **[docs/SECURITY.md](./docs/SECURITY.md)**:
+
+1. **Subprocess Calls**: Always use `execFileSync` or argument arrays. Never concatenate parameters into shell command strings.
+2. **Subprocess Data Validation**: Always validate machine outputs (`--json`) with runtime type guards (e.g. `isLoggerJsonOutput`).
+3. **Temp Cleanup**: Ephemeral directory creation must use `fs.mkdtempSync` and be purged in `finally` blocks.
+4. **Browser Lifecycles**: Ensure Puppeteer pages and browser contexts are closed (`browser.close()`) on all completion or error execution paths.
+
 ## 🔍 Maintaining SEO & Metadata
 
 When adding new features or core capabilities, ensure all public-facing metadata is updated to maintain discoverability and clarity.

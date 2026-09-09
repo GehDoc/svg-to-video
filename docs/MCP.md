@@ -70,6 +70,10 @@ For cloud agents or sandbox environments without local Chromium or FFmpeg pre-in
 docker run -i --rm -v $(pwd):/app/data gehdoc/svg-to-video mcp
 ```
 
+### 🔒 Security & Sandboxing
+
+The MCP server runs over `stdio` without opening external network ports. For details on Chromium browser isolation, argument sanitization, and containerized sandboxing, see **[docs/SECURITY.md](./SECURITY.md)**.
+
 ---
 
 ## 🛠 Exposed MCP Tools
