@@ -257,6 +257,7 @@ Follow Conventional Commits: `<type>(<scope>): <purpose-driven title>`
 
 ### 2. Content Structure
 
+- **Result-Oriented Focus**: Focus strictly on end-user value, new capabilities, and final system results. Do **NOT** document internal development history, intermediate implementation journeys, or routine refactoring details (e.g. internal function tweaks or guard additions).
 - **Punchline**: A 2-3 sentence summary explaining the most significant user-facing value or impact of the release.
 - **Structured Details**: Use the following headings for clarity:
   - **🚀 New Features**: Significant additions or changes that impact user workflows.
