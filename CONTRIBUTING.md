@@ -286,6 +286,8 @@ Releases are published on GitHub using the tag convention `vX.Y.Z` (e.g., `v0.21
 - **Web UI Method**:
   Navigate to GitHub Repository → Releases → **Draft a new release**. Select tag `vX.Y.Z`, set the title to `X.Y.Z - [Short Descriptive Title]`, and paste the formatted release notes.
 
+> **TODO**: Automation of the release pipeline (npm publish, Docker Hub push, and GitHub Release creation) is tracked under [Issue #124](https://github.com/GehDoc/svg-to-video/issues/124).
+
 ## 🔒 Security & Sandboxing Standards
 
 To preserve architectural safety across pull requests, all contributions must adhere to the security rules documented in **[docs/SECURITY.md](./docs/SECURITY.md)**:
