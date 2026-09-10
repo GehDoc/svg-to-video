@@ -42,6 +42,15 @@
     "agent-skill"
   ],
   "license": "MIT",
+  "files": [
+    "src/",
+    "!src/**/*.test.ts",
+    "shared/",
+    "!shared/**/*.test.ts",
+    "skills/",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
     "commander": "^15.0.0",
