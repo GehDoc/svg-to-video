@@ -16,11 +16,21 @@ import { isLoggerJsonOutput } from './utils/logger.js';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
-const pkg = require('../package.json');
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const cliIndexPath = path.join(__dirname, 'index.ts');
+
+function getPackageJson() {
+  const localPkg = path.join(__dirname, '../package.json');
+  const parentPkg = path.join(__dirname, '../../package.json');
+  if (fs.existsSync(localPkg)) return require(localPkg);
+  if (fs.existsSync(parentPkg)) return require(parentPkg);
+  return require('../package.json');
+}
+const pkg = getPackageJson();
+
+const cliJsPath = path.join(__dirname, 'index.js');
+const cliTsPath = path.join(__dirname, 'index.ts');
+const cliIndexPath = fs.existsSync(cliJsPath) ? cliJsPath : cliTsPath;
 
 const server = new Server(
   {
@@ -245,15 +255,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const outDir = params.outDir || process.cwd();
     const fps = String(params.fps || 60);
 
-    const cliArgs: string[] = [
-      'tsx',
-      cliIndexPath,
-      targetSvgPath,
-      fps,
-      outDir,
-      '--json',
-      '--force',
-    ];
+    const command = cliIndexPath.endsWith('.ts') ? 'npx' : process.execPath;
+    const cliArgs: string[] = cliIndexPath.endsWith('.ts')
+      ? ['tsx', cliIndexPath, targetSvgPath, fps, outDir, '--json', '--force']
+      : [cliIndexPath, targetSvgPath, fps, outDir, '--json', '--force'];
 
     if (params.duration) {
       cliArgs.push('-d', String(params.duration));
@@ -278,7 +283,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     try {
-      const rawOutput = execFileSync('npx', cliArgs, {
+      const rawOutput = execFileSync(command, cliArgs, {
         encoding: 'utf-8',
         cwd: process.cwd(),
       });
@@ -296,7 +301,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       const parsed: unknown = JSON.parse(rawOutput.trim());
       if (isLoggerJsonOutput(parsed)) {
-        if (parsed.success) {
+        if (parsed.success === true) {
           return {
             content: [
               {

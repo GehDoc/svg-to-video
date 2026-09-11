@@ -3,6 +3,7 @@ node_modules/
 web/node_modules/
 
 # Build Output
+dist/
 out-dir/
 web/dist/
 *.mp4

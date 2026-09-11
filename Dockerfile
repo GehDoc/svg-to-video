@@ -42,12 +42,17 @@ WORKDIR /app
 RUN mkdir -p /tmp/chrome-home && chmod 777 /tmp/chrome-home \
     && mkdir -p /app/data && chmod 777 /app/data
 
-# 6. App Dependencies (Only rebuilds if package.json changes)
-COPY package*.json ./
-RUN npm install --omit=dev --ignore-scripts
+# 6. Build App & Production Prune
+COPY package*.json tsconfig*.json ./
+COPY src/ ./src/
+COPY shared/ ./shared/
+COPY skills/ ./skills/
+COPY README.md LICENSE ./
 
-# 7. Application Code (Changes most often)
-COPY . .
+RUN NODE_ENV=development npm install --include=dev --ignore-scripts \
+    && npm run build \
+    && npm prune --omit=dev \
+    && rm -rf src shared tsconfig*.json
 
 USER node
-ENTRYPOINT ["npx", "tsx", "src/index.ts"]
+ENTRYPOINT ["node", "dist/src/index.js"]

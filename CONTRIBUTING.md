@@ -83,20 +83,22 @@ If working without an agent, follow these steps to keep the project state synchr
 
 ### Project-wide Orchestration (Run from Root)
 
-| Command              | Description                                                             |
-| :------------------- | :---------------------------------------------------------------------- |
-| `npm run check`      | Runs all checks (lint, format, type-check, e2e tests).                  |
-| `npm run check:fast` | Runs fast checks only (lint, format, type-check).                       |
-| `npm run fix`        | Auto-fixes linting and formatting issues.                               |
-| `npm run lint`       | Checks for linting issues in both CLI and Web Studio code.              |
-| `npm run lint:fix`   | Fixes linting issues in both CLI and Web Studio code.                   |
-| `npm run format`     | Checks for formatting issues.                                           |
-| `npm run format:fix` | Fixes formatting issues.                                                |
-| `npm run test`       | Runs all tests (CLI, MCP, Web Studio E2E, Unit, Storybook, and Visual). |
-| `npm run test:cli`   | Runs CLI integration tests.                                             |
-| `npm run test:mcp`   | Runs MCP Server integration tests.                                      |
-| `npm run test:unit`  | Runs unit tests using Vitest and Node test runner.                      |
-| `npm run type-check` | Validates TypeScript types (includes web workspace).                    |
+| Command              | Description                                                              |
+| :------------------- | :----------------------------------------------------------------------- |
+| `npm run check`      | Runs all checks (lint, format, type-check, e2e tests).                   |
+| `npm run check:fast` | Runs fast checks only (lint, format, type-check).                        |
+| `npm run build`      | Compiles TypeScript CLI source to ES Modules in `dist/`.                 |
+| `npm run fix`        | Auto-fixes linting and formatting issues.                                |
+| `npm run lint`       | Checks for linting issues in both CLI and Web Studio code.               |
+| `npm run lint:fix`   | Fixes linting issues in both CLI and Web Studio code.                    |
+| `npm run format`     | Checks for formatting issues.                                            |
+| `npm run format:fix` | Fixes formatting issues.                                                 |
+| `npm run test`       | Runs all tests (CLI, MCP, Package Snapshot, Web Studio E2E, Unit, etc.). |
+| `npm run test:cli`   | Runs CLI integration tests.                                              |
+| `npm run test:mcp`   | Runs MCP Server integration tests.                                       |
+| `npm run test:pack`  | Validates npm package file snapshot (`npm pack --dry-run`).              |
+| `npm run test:unit`  | Runs unit tests using Vitest and Node test runner.                       |
+| `npm run type-check` | Validates TypeScript types (includes web workspace).                     |
 
 ### Web Studio Development (Run inside `web/` directory)
 
