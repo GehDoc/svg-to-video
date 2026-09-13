@@ -13,19 +13,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Environment
+        uses: ./.github/actions/setup
         with:
-          node-version: '22'
           registry-url: 'https://registry.npmjs.org'
-
-      - name: Install System Dependencies (FFmpeg & Chromium)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg chromium-browser
-
-      - name: Install Project Dependencies
-        run: npm ci
+          install-ffmpeg: 'true'
+          install-chromium: 'true'
 
       - name: Run Full Validation & Package Snapshot Assertions
         run: npm run check
@@ -64,10 +57,5 @@ jobs:
           tags: |
             gehdoc/svg-to-video:latest
             gehdoc/svg-to-video:${{ steps.meta.outputs.tag }}
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
