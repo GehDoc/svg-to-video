@@ -27,7 +27,7 @@ runs:
   using: 'composite'
   steps:
     - name: Use Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: ${{ inputs.registry-url != '' && inputs.registry-url || undefined }}
@@ -50,7 +50,7 @@ runs:
     - name: Cache Playwright Browsers
       if: inputs.install-playwright == 'true'
       id: playwright-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.cache/ms-playwright
         key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
