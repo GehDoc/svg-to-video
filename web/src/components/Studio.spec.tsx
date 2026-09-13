@@ -6,10 +6,9 @@ import {
   screen,
   fireEvent,
 } from '@testing-library/react';
-import { test, expect, vi, afterEach } from 'vitest';
+import { test, expect, vi, afterEach, beforeEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { Studio } from './Studio';
-import * as fileTracking from '../utils/tracking/fileTracking';
 
 vi.mock('./SvgRenderer', () => ({
   default: ({
@@ -28,6 +27,13 @@ vi.mock('./SvgRenderer', () => ({
     </div>
   ),
 }));
+
+const trackMock = vi.fn();
+
+beforeEach(() => {
+  trackMock.mockClear();
+  vi.stubGlobal('umami', { track: trackMock });
+});
 
 afterEach(cleanup);
 
@@ -55,7 +61,6 @@ test('Studio triggers preview on SvgRenderer when svgContent is set via upload',
 });
 
 test('Studio triggers preview and analytics when svgContent is set via main panel LandingView click/upload', async () => {
-  const trackFileLoadSpy = vi.spyOn(fileTracking, 'trackFileLoad');
   render(<Studio />);
 
   const file = new File(['<svg><circle /></svg>'], 'landing.svg', {
@@ -76,16 +81,13 @@ test('Studio triggers preview and analytics when svgContent is set via main pane
     () => {
       const renderer = screen.getByTestId('mock-svg-renderer');
       expect(renderer).toHaveTextContent('<svg><circle /></svg>');
-      expect(trackFileLoadSpy).toHaveBeenCalledWith(
-        'file-picker',
-        expect.anything(),
-        expect.anything()
+      expect(trackMock).toHaveBeenCalledWith(
+        'file-load',
+        expect.objectContaining({ method: 'file-picker' })
       );
     },
     { timeout: 1500 }
   );
-
-  trackFileLoadSpy.mockRestore();
 });
 
 test('Studio updates preview when backgroundColor changes', async () => {
