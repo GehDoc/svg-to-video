@@ -14,6 +14,18 @@ export const HeaderDropdown = () => {
     .replace(/^git\+/, '')
     .replace(/\.git$/, '');
 
+  const commitSha = process.env.NEXT_PUBLIC_COMMIT_SHA
+    ? process.env.NEXT_PUBLIC_COMMIT_SHA.slice(0, 7)
+    : '';
+
+  const versionLabel = commitSha
+    ? `v${pkg.version} (${commitSha})`
+    : `v${pkg.version}`;
+
+  const versionHref = commitSha
+    ? `${repoUrl}/commit/${process.env.NEXT_PUBLIC_COMMIT_SHA}`
+    : `${repoUrl}/releases`;
+
   const sections = [
     {
       label: 'Help & Feedback',
@@ -61,14 +73,14 @@ export const HeaderDropdown = () => {
       items: [
         {
           label: 'Version',
-          href: `${repoUrl}/releases`,
+          href: versionHref,
           target: '_blank',
           rel: 'noopener noreferrer',
           icon: <FaTag />,
           isMeta: true,
           rightElement: (
             <span className="dropdown-version-tag">
-              v{pkg.version} <span className="dropdown-arrow">↗</span>
+              {versionLabel} <span className="dropdown-arrow">↗</span>
             </span>
           ),
           onClick: () => {},
