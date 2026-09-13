@@ -9,6 +9,7 @@ import {
 import { test, expect, vi, afterEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { Studio } from './Studio';
+import * as fileTracking from '../utils/tracking/fileTracking';
 
 vi.mock('./SvgRenderer', () => ({
   default: ({
@@ -51,6 +52,40 @@ test('Studio triggers preview on SvgRenderer when svgContent is set via upload',
     },
     { timeout: 1500 }
   );
+});
+
+test('Studio triggers preview and analytics when svgContent is set via main panel LandingView click/upload', async () => {
+  const trackFileLoadSpy = vi.spyOn(fileTracking, 'trackFileLoad');
+  render(<Studio />);
+
+  const file = new File(['<svg><circle /></svg>'], 'landing.svg', {
+    type: 'image/svg+xml',
+  });
+
+  const landingDropzone = screen.getByRole('button', {
+    name: /Upload an SVG to begin preview/i,
+  });
+
+  const fileInput = landingDropzone.querySelector(
+    'input[type="file"]'
+  ) as HTMLInputElement;
+
+  fireEvent.change(fileInput, { target: { files: [file] } });
+
+  await waitFor(
+    () => {
+      const renderer = screen.getByTestId('mock-svg-renderer');
+      expect(renderer).toHaveTextContent('<svg><circle /></svg>');
+      expect(trackFileLoadSpy).toHaveBeenCalledWith(
+        'file-picker',
+        expect.anything(),
+        expect.anything()
+      );
+    },
+    { timeout: 1500 }
+  );
+
+  trackFileLoadSpy.mockRestore();
 });
 
 test('Studio updates preview when backgroundColor changes', async () => {

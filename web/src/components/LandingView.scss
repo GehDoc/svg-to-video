@@ -16,10 +16,40 @@
   text-align: center;
   width: 100%;
   flex: 1;
+  cursor: pointer;
+  border: 2px dashed transparent;
+  border-radius: 12px;
+  padding: 2rem;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  user-select: none;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--primary);
+    color: var(--text);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+  }
+
+  &.dragging {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: var(--primary);
+    transform: scale(1.01);
+  }
 }
 
 .upload-placeholder svg {
   margin-bottom: 1rem;
+}
+
+.upload-hint {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
 }
 
 .studio-footer {

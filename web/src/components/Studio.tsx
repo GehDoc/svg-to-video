@@ -1,4 +1,11 @@
-import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
+import {
+  useCallback,
+  useMemo,
+  useState,
+  useRef,
+  useEffect,
+  type ChangeEvent,
+} from 'react';
 import type { RendererHandle } from './SvgRenderer/index';
 import {
   useRenderer,
@@ -59,6 +66,72 @@ export const Studio = () => {
   }, [originalDim, preset, scale]);
 
   const [supportError, setSupportError] = useState<string | null>(null);
+
+  const handleSvgContentChange = useCallback(
+    (
+      content: string,
+      name: string,
+      method: 'file-picker' | 'drag-and-drop'
+    ) => {
+      setSvgContent(content);
+      setFileName(name);
+
+      let dim = { width: 0, height: 0, isDimensionsDetected: false };
+      try {
+        dim = parseSvgDimensions(content);
+        setOriginalDim(dim);
+      } catch {
+        setOriginalDim({
+          width: 0,
+          height: 0,
+          isDimensionsDetected: false,
+        });
+      }
+
+      const detectedDuration = analyzeSvgAnimation(content);
+      if (detectedDuration !== undefined && detectedDuration > 0) {
+        setDuration(detectedDuration);
+      }
+
+      trackFileLoad(method, dim, detectedDuration);
+    },
+    []
+  );
+
+  const processFile = useCallback(
+    (file: File, method: 'file-picker' | 'drag-and-drop') => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const content = event.target?.result as string;
+        const baseName = file.name.replace(/\.svg$/i, '');
+        handleSvgContentChange(content, `${baseName}.mp4`, method);
+      };
+      reader.readAsText(file);
+    },
+    [handleSvgContentChange]
+  );
+
+  const handleFileChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files?.[0]) processFile(e.target.files[0], 'file-picker');
+    },
+    [processFile]
+  );
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragging(false);
+      if (
+        e.dataTransfer.files?.[0] &&
+        e.dataTransfer.files[0].type === 'image/svg+xml'
+      ) {
+        processFile(e.dataTransfer.files[0], 'drag-and-drop');
+      }
+    },
+    [processFile]
+  );
 
   useEffect(() => {
     let ignore = false;
@@ -167,29 +240,7 @@ export const Studio = () => {
       <main className="studio-layout">
         <ConfigPanel
           svgContent={svgContent}
-          onSvgContentChange={(content, name, method) => {
-            setSvgContent(content);
-            setFileName(name);
-
-            let dim = { width: 0, height: 0, isDimensionsDetected: false };
-            try {
-              dim = parseSvgDimensions(content);
-              setOriginalDim(dim);
-            } catch {
-              setOriginalDim({
-                width: 0,
-                height: 0,
-                isDimensionsDetected: false,
-              });
-            }
-
-            const detectedDuration = analyzeSvgAnimation(content);
-            if (detectedDuration !== undefined && detectedDuration > 0) {
-              setDuration(detectedDuration);
-            }
-
-            trackFileLoad(method, dim, detectedDuration);
-          }}
+          onSvgContentChange={handleSvgContentChange}
           fileName={fileName}
           onFileNameChange={setFileName}
           duration={duration}
@@ -237,6 +288,10 @@ export const Studio = () => {
           onClearError={clearError}
           mimeType={mimeType}
           format={format}
+          isDragging={isDragging}
+          onIsDraggingChange={setIsDragging}
+          onFileChange={handleFileChange}
+          onDrop={handleDrop}
         />
       </main>
     </div>
