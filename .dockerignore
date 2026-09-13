@@ -21,7 +21,6 @@ storybook-static/
 .vscode/
 .eslint*
 .prettier*
-tsconfig.json
 
 # Docker files
 Dockerfile

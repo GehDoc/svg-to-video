@@ -49,9 +49,9 @@ COPY shared/ ./shared/
 COPY skills/ ./skills/
 COPY README.md LICENSE ./
 
-RUN NODE_ENV=development npm install --include=dev --ignore-scripts \
+RUN NODE_ENV=development npm install --include=dev --no-workspaces --ignore-scripts \
     && npm run build \
-    && npm prune --omit=dev \
+    && npm prune --omit=dev --no-workspaces \
     && rm -rf src shared tsconfig*.json
 
 USER node
