@@ -14,16 +14,19 @@ export const HeaderDropdown = () => {
     .replace(/^git\+/, '')
     .replace(/\.git$/, '');
 
-  const commitSha = process.env.NEXT_PUBLIC_COMMIT_SHA
-    ? process.env.NEXT_PUBLIC_COMMIT_SHA.slice(0, 7)
-    : '';
+  const rawCommitSha =
+    typeof process !== 'undefined'
+      ? process.env?.NEXT_PUBLIC_COMMIT_SHA
+      : undefined;
+
+  const commitSha = rawCommitSha ? rawCommitSha.slice(0, 7) : '';
 
   const versionLabel = commitSha
     ? `v${pkg.version} (${commitSha})`
     : `v${pkg.version}`;
 
   const versionHref = commitSha
-    ? `${repoUrl}/commit/${process.env.NEXT_PUBLIC_COMMIT_SHA}`
+    ? `${repoUrl}/commit/${rawCommitSha}`
     : `${repoUrl}/releases`;
 
   const sections = [
