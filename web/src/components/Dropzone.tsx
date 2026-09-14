@@ -5,6 +5,7 @@ import {
   type DragEvent,
   type MouseEvent,
 } from 'react';
+import { ErrorView } from './ErrorView';
 import './Dropzone.scss';
 
 interface DropzoneProps {
@@ -87,45 +88,37 @@ export const Dropzone = ({
   };
 
   return (
-    <div
-      className={`dropzone ${isDragging ? 'dragging' : ''} ${svgContent ? 'has-content' : ''} ${disabled ? 'disabled' : ''}`}
-      onClick={handleClick}
-      onDragEnter={handleDrag}
-      onDragOver={handleDrag}
-      onDragLeave={handleDrag}
-      onDrop={handleInternalDrop}
-    >
-      <div className="input-group" style={{ marginBottom: 0 }}>
-        <label htmlFor="svg-upload">
-          {svgContent ? 'Change SVG' : 'Drop SVG here or click to upload'}
-        </label>
-        <div className="file-input-wrapper">
-          <input
-            type="file"
-            id="svg-upload"
-            ref={fileInputRef}
-            accept=".svg,image/svg+xml"
-            onChange={handleInternalFileChange}
-            disabled={disabled}
-          />
+    <>
+      <div
+        className={`dropzone ${isDragging ? 'dragging' : ''} ${svgContent ? 'has-content' : ''} ${disabled ? 'disabled' : ''}`}
+        onClick={handleClick}
+        onDragEnter={handleDrag}
+        onDragOver={handleDrag}
+        onDragLeave={handleDrag}
+        onDrop={handleInternalDrop}
+      >
+        <div className="input-group" style={{ marginBottom: 0 }}>
+          <label htmlFor="svg-upload">
+            {svgContent ? 'Change SVG' : 'Drop SVG here or click to upload'}
+          </label>
+          <div className="file-input-wrapper">
+            <input
+              type="file"
+              id="svg-upload"
+              ref={fileInputRef}
+              accept=".svg,image/svg+xml"
+              onChange={handleInternalFileChange}
+              disabled={disabled}
+            />
+          </div>
         </div>
       </div>
       {errorMessage && (
-        <div className="dropzone-error-toast" role="alert">
-          <span>{errorMessage}</span>
-          <button
-            type="button"
-            className="dropzone-error-close"
-            onClick={(e) => {
-              e.stopPropagation();
-              setErrorMessage(null);
-            }}
-            aria-label="Dismiss error"
-          >
-            ×
-          </button>
-        </div>
+        <ErrorView
+          message={errorMessage}
+          onClose={() => setErrorMessage(null)}
+        />
       )}
-    </div>
+    </>
   );
 };

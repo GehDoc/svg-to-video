@@ -63,7 +63,7 @@ test('Dropzone triggers file input click on container click', () => {
   expect(clickSpy).toHaveBeenCalledTimes(1);
 });
 
-test('Dropzone displays error toast when a non-SVG file is dropped or selected', () => {
+test('Dropzone displays ErrorView popup when a non-SVG file is dropped or selected', () => {
   const mockOnDrop = vi.fn();
   const mockOnFileChange = vi.fn();
 
@@ -88,8 +88,8 @@ test('Dropzone displays error toast when a non-SVG file is dropped or selected',
   expect(mockOnDrop).not.toHaveBeenCalled();
   expect(screen.getByText('Only SVG files are supported.')).toBeInTheDocument();
 
-  // Dismiss toast
-  const closeButton = screen.getByRole('button', { name: /Dismiss error/i });
+  // Close ErrorView modal
+  const closeButton = screen.getByRole('button', { name: /Close/i });
   fireEvent.click(closeButton);
   expect(
     screen.queryByText('Only SVG files are supported.')
