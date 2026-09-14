@@ -4,8 +4,8 @@ on:
     types: [opened, reopened, synchronize]
 
 permissions:
+  contents: write
   pull-requests: write
-  contents: read
 
 jobs:
   enable-automerge:
@@ -13,15 +13,14 @@ jobs:
     # only run for Dependabot actors
     if: "github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'"
     steps:
-      - name: Ensure this run has a pull_request payload
-        if: ${{ github.event.pull_request == null }}
-        run: |
-          echo "No pull_request payload present — skipping enable-automerge"
-          exit 0
-
-      - name: Enable GitHub auto-merge for this PR
-        uses: peter-evans/enable-pull-request-automerge@v2
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ github.event.pull_request.number }}
-          merge-method: squash
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+
+      - name: Enable auto-merge for Dependabot PRs
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
