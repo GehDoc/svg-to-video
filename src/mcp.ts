@@ -13,20 +13,10 @@ import { fileURLToPath } from 'url';
 import { JSDOM } from 'jsdom';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
 import { isLoggerJsonOutput } from './utils/logger.js';
-import { createRequire } from 'module';
-
-const require = createRequire(import.meta.url);
+import { getPackageJson } from './utils/packageInfo.js';
+const pkg = getPackageJson(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-function getPackageJson() {
-  const localPkg = path.join(__dirname, '../package.json');
-  const parentPkg = path.join(__dirname, '../../package.json');
-  if (fs.existsSync(localPkg)) return require(localPkg);
-  if (fs.existsSync(parentPkg)) return require(parentPkg);
-  return require('../package.json');
-}
-const pkg = getPackageJson();
 
 const cliJsPath = path.join(__dirname, 'index.js');
 const cliTsPath = path.join(__dirname, 'index.ts');

@@ -4,26 +4,13 @@ import child_process from 'child_process';
 import { Page, Browser, ScreenshotOptions } from 'puppeteer';
 import { Command } from 'commander';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { seekAnimations } from '../shared/animation-engine.js';
 import { validateOptions } from './utils/validateOptions.js';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
 import { formatRegistry } from './formats/registry.js';
 import { CLIFormatOptions } from './formats/types.js';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-function getPackageJson() {
-  const localPkg = path.join(__dirname, '../package.json');
-  const parentPkg = path.join(__dirname, '../../package.json');
-  if (fs.existsSync(localPkg)) return require(localPkg);
-  if (fs.existsSync(parentPkg)) return require(parentPkg);
-  return require('../package.json');
-}
-const pkg = getPackageJson();
+import { getPackageJson } from './utils/packageInfo.js';
+const pkg = getPackageJson(import.meta.url);
 import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 import { Logger } from './utils/logger.js';
 import { launchBrowser } from './utils/browserLauncher.js';

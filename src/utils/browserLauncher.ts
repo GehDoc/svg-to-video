@@ -1,12 +1,17 @@
 import puppeteer, { Browser } from 'puppeteer';
+import {
+  computeSystemExecutablePath,
+  Browser as PuppeteerBrowser,
+  ChromeReleaseChannel,
+} from '@puppeteer/browsers';
 import fs from 'fs';
 
 type LaunchOptions = Parameters<typeof puppeteer.launch>[0];
 
 /**
- * Common system binary candidates across Linux, macOS, and Windows.
+ * Fallback system binary candidates across Linux, macOS, and Windows.
  */
-const COMMON_BROWSER_PATHS: string[] = [
+const FALLBACK_BROWSER_PATHS: string[] = [
   // Linux
   '/usr/bin/google-chrome-stable',
   '/usr/bin/google-chrome',
@@ -22,7 +27,7 @@ const COMMON_BROWSER_PATHS: string[] = [
 ];
 
 /**
- * Find the first existing system browser executable binary path.
+ * Find the first existing system browser executable binary path using official Puppeteer detectors.
  */
 export function findSystemBrowserExecutable(): string | undefined {
   if (
@@ -32,7 +37,21 @@ export function findSystemBrowserExecutable(): string | undefined {
     return process.env.PUPPETEER_EXECUTABLE_PATH;
   }
 
-  for (const candidate of COMMON_BROWSER_PATHS) {
+  // 1. Try official Puppeteer system executable detector
+  try {
+    const officialPath = computeSystemExecutablePath({
+      browser: PuppeteerBrowser.CHROME,
+      channel: ChromeReleaseChannel.STABLE,
+    });
+    if (officialPath && fs.existsSync(officialPath)) {
+      return officialPath;
+    }
+  } catch {
+    // Ignore and proceed to fallback candidate check
+  }
+
+  // 2. Fallback OS binary candidate paths
+  for (const candidate of FALLBACK_BROWSER_PATHS) {
     if (fs.existsSync(candidate)) {
       return candidate;
     }
