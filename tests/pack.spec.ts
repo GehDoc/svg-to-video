@@ -8,8 +8,8 @@ const REQUIRED_FILES = [
   'package.json',
   'dist/src/index.js',
   'dist/src/mcp.js',
-  'dist/src/utils/browserLauncher.js',
   'dist/src/utils/logger.js',
+  'dist/src/utils/packageInfo.js',
   'skills/svg-to-video/SKILL.md',
 ];
 

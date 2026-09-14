@@ -212,11 +212,9 @@ The CLI and MCP server are compiled into standalone, runnable ES Modules in `dis
 2. **Package Whitelist**: `package.json` specifies `"files": ["dist/", "skills/", "README.md", "LICENSE"]`, ensuring development files (`web/`, `specs/`, `tests/`, `.github/`, source `.ts` files) are excluded from `npm publish`.
 3. **Automated Snapshot Testing**: `tests/pack.spec.ts` verifies `npm pack --dry-run` output in CI, ensuring exact file list match and preventing missing or extra files.
 
-### Resilient Browser Auto-Detection
+### Browser Execution Resolution
 
-The `browserLauncher` utility (`src/utils/browserLauncher.ts`) ensures rendering works reliably across host environments:
+The CLI uses standard `puppeteer.launch` with optional environment configuration:
 
-1. **Default Cache**: Attempts standard Puppeteer browser launch.
-2. **Environment Override**: Respects `process.env.PUPPETEER_EXECUTABLE_PATH`.
-3. **System Binary Auto-Detection**: Searches common system Chrome/Chromium paths (`/usr/bin/google-chrome`, `/usr/bin/chromium`, `/Applications/Google Chrome.app/...`, Windows paths).
-4. **Actionable Diagnostics**: Displays clear setup instructions if no Chrome binary or OS libraries are found.
+1. **Default**: Launches Puppeteer's Chrome instance.
+2. **Environment Variable**: Respects `process.env.PUPPETEER_EXECUTABLE_PATH` if provided (e.g. for custom system Chromium binaries in CI/Docker environments).
