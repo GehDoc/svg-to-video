@@ -3,7 +3,6 @@ import {
   useState,
   type ChangeEvent,
   type DragEvent,
-  type KeyboardEvent,
   type MouseEvent,
 } from 'react';
 import './Dropzone.scss';
@@ -47,17 +46,14 @@ export const Dropzone = ({
 
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     if (disabled) return;
-    // Prevent double trigger if clicking directly on the file input element
-    if (e.target === fileInputRef.current) return;
-    fileInputRef.current?.click();
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (disabled) return;
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      fileInputRef.current?.click();
+    // Prevent double trigger if clicking directly on label or file input element
+    if (
+      e.target === fileInputRef.current ||
+      (e.target as HTMLElement).tagName === 'LABEL'
+    ) {
+      return;
     }
+    fileInputRef.current?.click();
   };
 
   const handleInternalFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -94,15 +90,10 @@ export const Dropzone = ({
     <div
       className={`dropzone ${isDragging ? 'dragging' : ''} ${svgContent ? 'has-content' : ''} ${disabled ? 'disabled' : ''}`}
       onClick={handleClick}
-      onKeyDown={handleKeyDown}
       onDragEnter={handleDrag}
       onDragOver={handleDrag}
       onDragLeave={handleDrag}
       onDrop={handleInternalDrop}
-      role="button"
-      tabIndex={disabled ? -1 : 0}
-      aria-label="Upload SVG dropzone"
-      aria-disabled={disabled}
     >
       <div className="input-group" style={{ marginBottom: 0 }}>
         <label htmlFor="svg-upload">
@@ -116,7 +107,6 @@ export const Dropzone = ({
             accept=".svg,image/svg+xml"
             onChange={handleInternalFileChange}
             disabled={disabled}
-            aria-hidden="true"
           />
         </div>
       </div>

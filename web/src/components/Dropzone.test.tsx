@@ -23,7 +23,8 @@ test('Dropzone handles file drop and drag states for valid SVG file', () => {
     />
   );
 
-  const dropzone = screen.getByRole('button', { name: /Upload SVG dropzone/i });
+  const dropzoneLabel = screen.getByText(/Drop SVG here or click to upload/i);
+  const dropzone = dropzoneLabel.closest('.dropzone') as HTMLElement;
 
   fireEvent.dragEnter(dropzone);
   expect(mockSetIsDragging).toHaveBeenCalledWith(true);
@@ -40,7 +41,7 @@ test('Dropzone handles file drop and drag states for valid SVG file', () => {
   expect(mockOnDrop).toHaveBeenCalled();
 });
 
-test('Dropzone triggers file input click on container click or keydown', () => {
+test('Dropzone triggers file input click on container click', () => {
   render(
     <Dropzone
       svgContent={null}
@@ -51,7 +52,8 @@ test('Dropzone triggers file input click on container click or keydown', () => {
     />
   );
 
-  const dropzone = screen.getByRole('button', { name: /Upload SVG dropzone/i });
+  const dropzoneLabel = screen.getByText(/Drop SVG here or click to upload/i);
+  const dropzone = dropzoneLabel.closest('.dropzone') as HTMLElement;
   const fileInput = dropzone.querySelector(
     'input[type="file"]'
   ) as HTMLInputElement;
@@ -59,12 +61,6 @@ test('Dropzone triggers file input click on container click or keydown', () => {
 
   fireEvent.click(dropzone);
   expect(clickSpy).toHaveBeenCalledTimes(1);
-
-  fireEvent.keyDown(dropzone, { key: 'Enter' });
-  expect(clickSpy).toHaveBeenCalledTimes(2);
-
-  fireEvent.keyDown(dropzone, { key: ' ' });
-  expect(clickSpy).toHaveBeenCalledTimes(3);
 });
 
 test('Dropzone displays error toast when a non-SVG file is dropped or selected', () => {
@@ -81,7 +77,8 @@ test('Dropzone displays error toast when a non-SVG file is dropped or selected',
     />
   );
 
-  const dropzone = screen.getByRole('button', { name: /Upload SVG dropzone/i });
+  const dropzoneLabel = screen.getByText(/Drop SVG here or click to upload/i);
+  const dropzone = dropzoneLabel.closest('.dropzone') as HTMLElement;
   const pngFile = new File(['png data'], 'test.png', { type: 'image/png' });
 
   // Test non-SVG file drop
