@@ -4,20 +4,15 @@ import child_process from 'child_process';
 import puppeteer, { Page, Browser, ScreenshotOptions } from 'puppeteer';
 import { Command } from 'commander';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { seekAnimations } from '../shared/animation-engine.js';
 import { validateOptions } from './utils/validateOptions.js';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
 import { formatRegistry } from './formats/registry.js';
 import { CLIFormatOptions } from './formats/types.js';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const pkg = require('../package.json');
+import { getPackageJson } from './utils/packageInfo.js';
+const pkg = getPackageJson(import.meta.url);
 import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 import { Logger } from './utils/logger.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 type FrameFileExtension = 'png';
 const frameFileExtension: FrameFileExtension = 'png';
@@ -318,10 +313,16 @@ async function createFrames(
 
   logger.info('🚀 Preparing Puppeteer browser...');
 
-  const browser: Browser = await puppeteer.launch({
+  const launchOptions: Parameters<typeof puppeteer.launch>[0] = {
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox', ...puppeteerArgs],
-  });
+  };
+
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+  }
+
+  const browser: Browser = await puppeteer.launch(launchOptions);
 
   const page: Page = await browser.newPage();
   await page.setViewport({ width, height });

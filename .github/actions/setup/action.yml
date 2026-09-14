@@ -6,12 +6,20 @@ inputs:
     description: 'Node.js version to use'
     required: false
     default: '24'
+  registry-url:
+    description: 'npm registry URL (e.g. https://registry.npmjs.org)'
+    required: false
+    default: ''
   install-playwright:
     description: 'Whether to install Playwright browsers'
     required: false
     default: 'false'
   install-ffmpeg:
     description: 'Whether to install FFmpeg'
+    required: false
+    default: 'false'
+  install-chromium:
+    description: 'Whether to install Chromium browser'
     required: false
     default: 'false'
 
@@ -22,15 +30,21 @@ runs:
       uses: actions/setup-node@v6
       with:
         node-version: ${{ inputs.node-version }}
+        registry-url: ${{ inputs.registry-url }}
         cache: 'npm'
 
     - name: Install dependencies
       run: npm ci
       shell: bash
 
-    - name: Install FFmpeg
-      if: inputs.install-ffmpeg == 'true'
-      run: sudo apt-get update && sudo apt-get install -y ffmpeg
+    - name: Install FFmpeg & Chromium
+      if: inputs.install-ffmpeg == 'true' || inputs.install-chromium == 'true'
+      run: |
+        sudo apt-get update
+        DEPS=""
+        if [ "${{ inputs.install-ffmpeg }}" = "true" ]; then DEPS="$DEPS ffmpeg"; fi
+        if [ "${{ inputs.install-chromium }}" = "true" ]; then DEPS="$DEPS chromium-browser"; fi
+        sudo apt-get install -y $DEPS
       shell: bash
 
     - name: Cache Playwright Browsers

@@ -1,7 +1,8 @@
 # Dependencies
 node_modules/
 
-# Generated Video Files
+# Build Output
+dist/
 out-dir/
 *.mp4
 out-dir-test/

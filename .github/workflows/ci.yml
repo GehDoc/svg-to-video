@@ -135,6 +135,8 @@ jobs:
 
       - name: Build Web Studio
         run: npm run build -w web
+        env:
+          NEXT_PUBLIC_COMMIT_SHA: ${{ github.sha }}
 
       - name: Build Storybook
         run: npm run build-storybook -w web

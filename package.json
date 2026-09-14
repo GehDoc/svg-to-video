@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
   "imports": {
-    "@shared/*": "./shared/*"
+    "#shared/*": "./dist/shared/*"
   },
   "author": "GehDoc",
   "repository": {
@@ -42,6 +42,12 @@
     "agent-skill"
   ],
   "license": "MIT",
+  "files": [
+    "dist/",
+    "skills/",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
     "commander": "^15.0.0",
@@ -70,6 +76,8 @@
     "vitest": "4.1.11"
   },
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepack": "npm run build",
     "lint": "eslint . && npm run lint -w web",
     "lint:fix": "eslint . --fix && npm run lint:fix -w web",
     "format": "prettier --check .",
@@ -77,8 +85,9 @@
     "mcp": "tsx src/mcp.ts",
     "test:cli": "tsx --test tests/cli.spec.ts",
     "test:mcp": "tsx --test tests/mcp.spec.ts",
+    "test:pack": "tsx --test tests/pack.spec.ts",
     "test:unit": "tsx --test src/**/*.test.ts tests/**/*.test.ts && vitest run shared/*.test.ts && npm run test:unit -w web",
-    "test": "npm run test:cli && npm run test:mcp && npm run test:unit && npm run test:web -w web && npm run test:storybook -w web && npm run test:visual -w web",
+    "test": "npm run test:cli && npm run test:mcp && npm run test:pack && npm run test:unit && npm run test:web -w web && npm run test:storybook -w web && npm run test:visual -w web",
     "type-check": "tsc -p tsconfig.json --noEmit && npm run type-check -w web",
     "check": "npm run lint && npm run format && npm run type-check && npm run test",
     "check:fast": "npm run lint && npm run format && npm run type-check",
@@ -92,10 +101,10 @@
     "tests/**/*.ts": "eslint --fix",
     "web/**/*.{ts,tsx,js}": "npm run lint --workspace=web -- --fix"
   },
-  "main": "src/index.ts",
+  "main": "dist/src/index.js",
   "bin": {
-    "svg-to-video": "src/index.ts",
-    "svg-to-video-mcp": "src/mcp.ts"
+    "svg-to-video": "dist/src/index.js",
+    "svg-to-video-mcp": "dist/src/mcp.js"
   },
   "workspaces": [
     "web"
