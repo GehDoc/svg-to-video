@@ -6,7 +6,7 @@ import {
   screen,
   fireEvent,
 } from '@testing-library/react';
-import { test, expect, vi, afterEach, beforeEach } from 'vitest';
+import { test, expect, vi, afterEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { Studio } from './Studio';
 
@@ -28,13 +28,6 @@ vi.mock('./SvgRenderer', () => ({
   ),
 }));
 
-const trackMock = vi.fn();
-
-beforeEach(() => {
-  trackMock.mockClear();
-  vi.stubGlobal('umami', { track: trackMock });
-});
-
 afterEach(cleanup);
 
 test('Studio triggers preview on SvgRenderer when svgContent is set via upload', async () => {
@@ -55,36 +48,6 @@ test('Studio triggers preview on SvgRenderer when svgContent is set via upload',
       expect(renderer).toHaveTextContent('<svg><rect /></svg>');
       expect(renderer).toHaveTextContent('1920x1080'); // Default for unknown dimensions
       expect(renderer).toHaveTextContent('#ffffff');
-    },
-    { timeout: 1500 }
-  );
-});
-
-test('Studio triggers preview and analytics when svgContent is set via main panel LandingView click/upload', async () => {
-  render(<Studio />);
-
-  const file = new File(['<svg><circle /></svg>'], 'landing.svg', {
-    type: 'image/svg+xml',
-  });
-
-  const landingDropzone = screen.getByRole('button', {
-    name: /Upload an SVG to begin preview/i,
-  });
-
-  const fileInput = landingDropzone.querySelector(
-    'input[type="file"]'
-  ) as HTMLInputElement;
-
-  fireEvent.change(fileInput, { target: { files: [file] } });
-
-  await waitFor(
-    () => {
-      const renderer = screen.getByTestId('mock-svg-renderer');
-      expect(renderer).toHaveTextContent('<svg><circle /></svg>');
-      expect(trackMock).toHaveBeenCalledWith(
-        'file-load',
-        expect.objectContaining({ method: 'file-picker' })
-      );
     },
     { timeout: 1500 }
   );

@@ -1,4 +1,3 @@
-import { type ChangeEvent, type DragEvent } from 'react';
 import { type RendererHandle } from './SvgRenderer';
 import { SuccessView } from './SuccessView';
 import { RenderingView } from './RenderingView';
@@ -23,10 +22,6 @@ interface MonitorPanelProps {
   isTransparent: boolean;
   onCancel: () => void;
   onClearError: () => void;
-  isDragging?: boolean;
-  onIsDraggingChange?: (dragging: boolean) => void;
-  onFileChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  onDrop?: (e: DragEvent) => void;
 }
 
 export const MonitorPanel = ({
@@ -46,10 +41,6 @@ export const MonitorPanel = ({
   isTransparent,
   onCancel,
   onClearError,
-  isDragging,
-  onIsDraggingChange,
-  onFileChange,
-  onDrop,
 }: MonitorPanelProps) => {
   return (
     <section className="monitor-panel">
@@ -77,12 +68,7 @@ export const MonitorPanel = ({
           onClearError={onClearError}
         />
       ) : (
-        <LandingView
-          isDragging={isDragging}
-          onIsDraggingChange={onIsDraggingChange}
-          onFileChange={onFileChange}
-          onDrop={onDrop}
-        />
+        <LandingView />
       )}
     </section>
   );
