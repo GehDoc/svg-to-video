@@ -6,6 +6,7 @@ import {
   type MouseEvent,
 } from 'react';
 import { ErrorView } from './ErrorView';
+import { isSvgFile } from '../utils/isSvgFile';
 import './Dropzone.scss';
 
 interface DropzoneProps {
@@ -27,12 +28,6 @@ export const Dropzone = ({
 }: DropzoneProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const isSvgFile = (file: File): boolean => {
-    return (
-      file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg')
-    );
-  };
 
   const handleDrag = (e: DragEvent) => {
     if (disabled) return;
