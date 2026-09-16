@@ -421,5 +421,5 @@ When adding new features or core capabilities, systematically update public-faci
      ```bash
      gh repo edit \
        --description "High-fidelity CSS/SVG animation converter to MP4, WebM, GIF & aPNG with transparent background support" \
-       --add-topic "svg" --add-topic "video" --add-topic "converter" --add-topic "apng" --add-topic "gif" --add-topic "webm" --add-topic "mp4" --add-topic "mcp"
+       --add-topic "svg,video,converter,apng,gif,webm,mp4,mcp"
      ```
