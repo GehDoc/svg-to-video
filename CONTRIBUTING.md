@@ -4,7 +4,7 @@ Welcome! This repository uses **Spec-Driven Development (SDD)** to maintain a cl
 
 ---
 
-## 🧭 1. Project Navigation
+## 🧭 Project Navigation
 
 - **User Instructions**: See [README.md](./README.md).
 - **AI Agent Protocol**: See [AGENTS.md](./AGENTS.md).
@@ -14,7 +14,7 @@ Welcome! This repository uses **Spec-Driven Development (SDD)** to maintain a cl
 
 ---
 
-## 🔒 2. Coding & Security Standards
+## 🔒 Coding & Security Standards
 
 ### 🎨 Style Guidelines
 
@@ -31,7 +31,7 @@ To preserve architectural safety across pull requests, all contributions must ad
 
 ---
 
-## 🔄 3. Development Workflows
+## 🔄 Development Workflows
 
 ### 🚦 Type Safety & Commit Hooks
 
@@ -61,7 +61,7 @@ If working without an agent, follow these steps to keep the project state synchr
 3. **Implement & Trace**: Write code, keeping the spec's **Task List** `[x]` updated. Update the **Technical Strategy** if the approach deviates from the plan.
 4. **Verify & SEO Audit**:
    - Ensure all tasks in the spec are marked as complete.
-   - Audit public-facing metadata according to the [Maintaining SEO & Metadata](#-9-maintaining-seo--metadata) checklist (`layout.tsx`, `SeoFallback.tsx`, `README.md`, `package.json`).
+   - Audit public-facing metadata according to the [Maintaining SEO & Metadata](#-maintaining-seo--metadata) checklist (`layout.tsx`, `SeoFallback.tsx`, `README.md`, `package.json`).
    - Run the full verification suite: `npm run check`.
    - Document the successful verification in the spec's **Change Log**.
 5. **Archive**: Update the **Status** to `🟢 Completed`, move the spec to `specs/completed/`, and merge your branch.
@@ -83,7 +83,7 @@ This project requires strict version alignment between **Storybook** and **Vites
 
 ---
 
-## 🛠 4. Commands & Testing Strategy
+## 🛠 Commands & Testing Strategy
 
 ### 📜 CLI & Web Development Commands
 
@@ -172,7 +172,7 @@ The project uses GitHub Actions for automated verification (`.github/workflows/c
 
 ---
 
-## 🐳 5. Docker & Hardening
+## 🐳 Docker & Hardening
 
 - **Security**: The application runs as the non-root `node` user inside Docker containers.
 - **Renderer Isolation**: The `SvgRenderer` iframe runs in a unique, isolated origin (`null`) by using the `sandbox="allow-scripts"` attribute. This prevents script-based sandbox escapes. Communication is strictly enforced via `postMessage` with origin validation on both the parent and renderer sides.
@@ -180,7 +180,7 @@ The project uses GitHub Actions for automated verification (`.github/workflows/c
 
 ---
 
-## 🌐 6. Web Studio Deployment & Telemetry
+## 🌐 Web Studio Deployment & Telemetry
 
 ### 🚀 GitHub Pages Deployment
 
@@ -206,7 +206,7 @@ The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tra
 
 ---
 
-## 🔀 7. Pull Request & Code Guidelines
+## 🔀 Pull Request & Code Guidelines
 
 ### 🎯 Purpose-Driven Principle ("Why & What", not "How")
 
@@ -227,7 +227,7 @@ Follow Conventional Commits: `<type>(<scope>): <purpose-driven title>`
 
 ---
 
-## 🚀 8. Release Management & Publishing
+## 🚀 Release Management & Publishing
 
 ### 🏷 Versioning Policy
 
@@ -275,7 +275,7 @@ Publishing the release tag `vX.Y.Z` automatically triggers `.github/workflows/re
 
 ---
 
-## 🔍 9. Maintaining SEO & Metadata
+## 🔍 Maintaining SEO & Metadata
 
 When adding new features or core capabilities, ensure public-facing metadata is updated to maintain discoverability.
 
