@@ -231,60 +231,6 @@
   background-color: var(--border);
   color: var(--text);
 }
-/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/Dropzone.scss ***!
-  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
-.dropzone {
-  border: 2px dashed var(--border);
-  border-radius: 8px;
-  padding: 1.5rem;
-  text-align: center;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--text-muted);
-}
-@media (max-width: 1024px) {
-  .dropzone {
-    padding: 1rem;
-  }
-}
-.dropzone:hover:not(.disabled) {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--primary);
-  color: var(--text);
-}
-.dropzone.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  border-style: solid;
-  background: var(--panel);
-}
-.dropzone.disabled label,
-.dropzone.disabled input {
-  cursor: not-allowed;
-}
-.dropzone.dragging:not(.disabled) {
-  background: rgba(99, 102, 241, 0.1);
-  border-color: var(--primary);
-  transform: scale(1.02);
-}
-.dropzone.has-content:not(.disabled) {
-  border-style: solid;
-  border-color: var(--primary);
-  background: var(--panel);
-}
-.dropzone label {
-  cursor: pointer;
-  font-size: 0.95rem;
-  color: var(--text);
-}
-.dropzone input[type=file] {
-  margin-top: 0.5rem;
-  width: 100%;
-  font-size: 0.95rem;
-  color: var(--text-muted);
-}
 /*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/Button/Button.scss ***!
   \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
@@ -340,6 +286,102 @@
   color: white;
   padding: 0.4rem 0.8rem;
   font-size: 0.75rem;
+}
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/ErrorView.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.error-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.8);
+  -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
+  z-index: 100;
+  padding: 1rem;
+}
+
+.error-card {
+  background: var(--panel);
+  padding: 2.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--error);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+.error-card h3 {
+  margin: 0 0 0.5rem;
+  color: var(--error);
+  font-size: 1.5rem;
+}
+.error-card .error-message {
+  margin: 0 0 1.5rem;
+  color: var(--text);
+}
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/Dropzone.scss ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.dropzone {
+  position: relative;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-muted);
+  -webkit-user-select: none;
+          user-select: none;
+}
+@media (max-width: 1024px) {
+  .dropzone {
+    padding: 1rem;
+  }
+}
+.dropzone:hover:not(.disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary);
+  color: var(--text);
+}
+.dropzone:focus-visible:not(.disabled) {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+.dropzone.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-style: solid;
+  background: var(--panel);
+}
+.dropzone.disabled label,
+.dropzone.disabled input {
+  cursor: not-allowed;
+}
+.dropzone.dragging:not(.disabled) {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--primary);
+  transform: scale(1.02);
+}
+.dropzone.has-content:not(.disabled) {
+  border-style: solid;
+  border-color: var(--primary);
+  background: var(--panel);
+}
+.dropzone label {
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.dropzone input[type=file] {
+  margin-top: 0.5rem;
+  width: 100%;
+  font-size: 0.95rem;
+  color: var(--text-muted);
 }
 /*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/ConfigPanel.scss ***!
@@ -832,41 +874,6 @@
   color: var(--text);
   font-size: 0.75rem;
   margin-right: 0.25rem;
-}
-/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/ErrorView.scss ***!
-  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
-.error-container {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(15, 23, 42, 0.8);
-  -webkit-backdrop-filter: blur(4px);
-          backdrop-filter: blur(4px);
-  z-index: 100;
-  padding: 1rem;
-}
-
-.error-card {
-  background: var(--panel);
-  padding: 2.5rem;
-  border-radius: 16px;
-  border: 1px solid var(--error);
-  text-align: center;
-  max-width: 400px;
-  width: 100%;
-  box-shadow: var(--shadow);
-}
-.error-card h3 {
-  margin: 0 0 0.5rem;
-  color: var(--error);
-  font-size: 1.5rem;
-}
-.error-card .error-message {
-  margin: 0 0 1.5rem;
-  color: var(--text);
 }
 /*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[2]!../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[15].oneOf[11].use[3]!../node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[15].oneOf[11].use[4]!../node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[15].oneOf[11].use[5]!./src/components/RenderingView.scss ***!
