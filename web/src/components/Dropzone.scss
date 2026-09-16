@@ -1,6 +1,7 @@
 @use '../styles/breakpoints' as *;
 
 .dropzone {
+  position: relative;
   border: 2px dashed var(--border);
   border-radius: 8px;
   padding: 1.5rem;
@@ -9,14 +10,21 @@
   cursor: pointer;
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-muted);
+  user-select: none;
 
   @media (max-width: $mobile-breakpoint) {
     padding: 1rem;
   }
+
   &:hover:not(.disabled) {
     background: rgba(255, 255, 255, 0.08);
     border-color: var(--primary);
     color: var(--text);
+  }
+
+  &:focus-visible:not(.disabled) {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
   }
 
   &.disabled {
