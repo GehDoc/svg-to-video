@@ -1,6 +1,6 @@
 {
   "name": "@svg-to-video/web",
-  "version": "0.22.1",
+  "version": "0.22.0",
   "description": "Professional CSS-animated SVG to Video (MP4, WebM, MKV, MOV) and Animated Image (aPNG, GIF) Studio: frame-accurate rendering, alpha-channel transparency, and serverless WebCodecs.",
   "author": "GehDoc",
   "repository": {
@@ -39,7 +39,7 @@
     "mediabunny": "^1.39.2",
     "next": "^16.3.3",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4",
+    "react-dom": "^19.3.0",
     "react-icons": "^5.6.0"
   },
   "devDependencies": {
@@ -56,7 +56,7 @@
     "@testing-library/react": "^16.3.2",
     "@types/node": "^24.12.0",
     "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
+    "@types/react-dom": "^19.3.0",
     "@types/umami": "^2.10.1",
     "@types/upng-js": "^2.1.5",
     "@vitejs/plugin-react": "^6.1.1",
