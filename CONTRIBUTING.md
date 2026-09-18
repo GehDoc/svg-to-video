@@ -26,6 +26,7 @@ Key project documentation and resources:
 
 <a id="coding--security-standards"></a>
 <a id="security--sandboxing-standards"></a>
+<a id="-security--sandboxing-standards"></a>
 
 ### 🎨 Style Guidelines
 
@@ -330,7 +331,9 @@ Introduces high-fidelity aPNG and optimized GIF export capabilities to the CLI t
 
 <a id="release-management--publishing"></a>
 <a id="versioning-policy"></a>
+<a id="-versioning-policy"></a>
 <a id="release-note-best-practices"></a>
+<a id="-release-note-best-practices"></a>
 
 ### 🏷 Versioning Policy
 
@@ -369,6 +372,65 @@ Releases strictly adhere to the **Purpose-Driven Principle** and **Result-Orient
 > ### 🛠 Improvements
 >
 > - Streamlined Puppeteer browser launch configuration for headless environments.
+
+### 🧪 Local Release & Staging Verification
+
+Before triggering a production release tag `vX.Y.Z`, verify the npm package and Docker image locally or in staging environments.
+
+#### 1. npm Package Dry-Run & Local Tarball Staging
+
+- **Package Snapshot Assertion**:
+
+  ```bash
+  npm run test:pack
+  ```
+
+  Validates that all required runtime files (`dist/`, `skills/`, `README.md`, `LICENSE`, `package.json`) are included and source/test directories are excluded.
+
+- **Dry-Run Publishing Simulation**:
+
+  ```bash
+  npm publish --dry-run
+  ```
+
+  Simulates publishing to the official npm registry, outputting the complete package file list, tarball size, and manifest metadata without uploading anything.
+
+- **Local Tarball Installation Testing**:
+
+  ```bash
+  # 1. Build TypeScript CLI source and package local tarball
+  npm run build
+  npm pack # Generates svg-to-video-X.Y.Z.tgz
+
+  # 2. Test execution using npx in a temporary directory
+  npx --package ./svg-to-video-X.Y.Z.tgz svg-to-video --help
+  npx --package ./svg-to-video-X.Y.Z.tgz svg-to-video-mcp
+  ```
+
+- **Staging / Beta Tag Publication (Optional)**:
+  To publish a staging release to npm under a non-`latest` dist-tag (such as `beta` or `next`):
+  ```bash
+  npm publish --tag beta
+  ```
+
+#### 2. Docker Local & Staging Verification
+
+- **Local Image Build & Test**:
+
+  ```bash
+  # Build Docker image locally
+  docker build -t gehdoc/svg-to-video:test .
+
+  # Test container CLI conversion
+  docker run --rm -v $(pwd):/data gehdoc/svg-to-video:test input.svg 60 /data/output --format webm
+  ```
+
+- **Staging Tag & Push (Optional)**:
+  To push a staging or candidate image tag to Docker Hub without updating the `latest` tag:
+  ```bash
+  docker tag gehdoc/svg-to-video:test gehdoc/svg-to-video:beta
+  docker push gehdoc/svg-to-video:beta
+  ```
 
 ### ⚙️ Automated Release Pipeline
 

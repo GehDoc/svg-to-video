@@ -322,7 +322,20 @@ async function createFrames(
     launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
   }
 
-  const browser: Browser = await puppeteer.launch(launchOptions);
+  let browser: Browser;
+  try {
+    browser = await puppeteer.launch(launchOptions);
+  } catch (initialError) {
+    if (launchOptions.executablePath) {
+      throw initialError;
+    }
+    logger.info('🔍 Bundled Chrome not found, attempting system Chrome...');
+    try {
+      browser = await puppeteer.launch({ ...launchOptions, channel: 'chrome' });
+    } catch {
+      throw initialError;
+    }
+  }
 
   const page: Page = await browser.newPage();
   await page.setViewport({ width, height });
