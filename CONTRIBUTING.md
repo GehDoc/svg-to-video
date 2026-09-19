@@ -486,3 +486,5 @@ When adding new features or core capabilities, systematically update public-faci
        --description "High-fidelity CSS/SVG animation converter to MP4, WebM, GIF & aPNG with transparent background support" \
        --add-topic "svg,video,converter,apng,gif,webm,mp4,mcp"
      ```
+5. **Docker Hub Overview Metadata**:
+   - Manually update the repository **Overview** text and **Short Description** on Docker Hub ([hub.docker.com/r/gehdoc/svg-to-video](https://hub.docker.com/r/gehdoc/svg-to-video)) via the web UI whenever releasing new features or updating documentation.
