@@ -3,6 +3,7 @@ node_modules/
 web/node_modules/
 
 # Build Output
+dist/
 out-dir/
 web/dist/
 *.mp4
@@ -20,7 +21,6 @@ storybook-static/
 .vscode/
 .eslint*
 .prettier*
-tsconfig.json
 
 # Docker files
 Dockerfile

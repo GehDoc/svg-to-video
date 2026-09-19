@@ -201,3 +201,20 @@ The MCP implementation (`src/mcp.ts`) bridges AI coding assistants (Claude Deskt
 1. **Stdio Transport**: The MCP server listens over `stdio` using `@modelcontextprotocol/sdk`.
 2. **Machine Isolation**: When `render_svg_to_video` is invoked, the MCP server calls `src/index.ts` with `--json` and `--quiet` flags. This isolates output logs and returns clean JSON results without corrupting the `stdio` RPC stream.
 3. **Containerized Entrypoint**: Docker environments execute the MCP server in a fully configured container with Chrome, FFmpeg, and multi-language fonts pre-installed.
+
+## 📦 CLI Build Engine & Resilient Browser Launcher
+
+The CLI and MCP server are compiled into standalone, runnable ES Modules in `dist/` (`dist/src/index.js`, `dist/src/mcp.js`) using `tsconfig.build.json`.
+
+### Build Engine & Package Isolation
+
+1. **Compilation**: `npm run build` compiles `src/` and `shared/` TypeScript sources into `dist/`.
+2. **Package Whitelist**: `package.json` specifies `"files": ["dist/", "skills/", "README.md", "LICENSE"]`, ensuring development files (`web/`, `specs/`, `tests/`, `.github/`, source `.ts` files) are excluded from `npm publish`.
+3. **Automated Snapshot Testing**: `tests/pack.spec.ts` verifies `npm pack --dry-run` output in CI, ensuring exact file list match and preventing missing or extra files.
+
+### Browser Execution Resolution
+
+The CLI uses standard `puppeteer.launch` with optional environment configuration:
+
+1. **Default**: Launches Puppeteer's Chrome instance.
+2. **Environment Variable**: Respects `process.env.PUPPETEER_EXECUTABLE_PATH` if provided (e.g. for custom system Chromium binaries in CI/Docker environments).
