@@ -8,8 +8,6 @@
 [![GitHub Release](https://img.shields.io/github/v/release/GehDoc/svg-to-video?color=blue)](https://github.com/GehDoc/svg-to-video/releases)
 [![npm version](https://img.shields.io/npm/v/@gehdoc/svg-to-video.svg?color=cb3837)](https://www.npmjs.com/package/@gehdoc/svg-to-video)
 [![Docker Image Version](https://img.shields.io/docker/v/gehdoc/svg-to-video?sort=semver&color=2496ed)](https://hub.docker.com/r/gehdoc/svg-to-video)
-[![Docker Pulls](https://img.shields.io/docker/pulls/gehdoc/svg-to-video?color=2496ed)](https://hub.docker.com/r/gehdoc/svg-to-video)
-[![Web Studio](https://img.shields.io/github/deployments/GehDoc/svg-to-video/github-pages?label=Web%20Studio&logo=github)](https://gehdoc.github.io/svg-to-video/)
 [![Last Commit](https://img.shields.io/github/last-commit/GehDoc/svg-to-video)](https://gehdoc.github.io/svg-to-video/commits/main)
 
 A high-fidelity tool to transform your CSS-animated SVGs into high-quality videos (MP4, WebM, MKV, MOV) or lightweight animated formats (aPNG, GIF) with perfect alpha-channel transparency directly in your browser or via CLI/MCP server.
