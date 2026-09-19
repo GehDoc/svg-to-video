@@ -1,4 +1,4 @@
-FROM node:26-slim
+FROM node:24-slim
 
 # 1. Setup Environment
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
@@ -7,7 +7,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     HOME=/tmp/chrome-home
 
 # 2. Heavy Layer: Chrome & Core Dependencies (Rarely changes)
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     wget \
     gnupg \
     ca-certificates \
