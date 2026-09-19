@@ -72,16 +72,16 @@ Ensure [Node.js](https://nodejs.org/) and [FFmpeg](https://ffmpeg.org/) are inst
 
 ```bash
 # Node.js (auto-detected duration)
-npx svg-to-video input.svg 60 ./out-dir
+npx @gehdoc/svg-to-video input.svg 60 ./out-dir
 
 # Node.js (explicit duration & GIF output)
-npx svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent
+npx @gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent
 
 # Node.js (animated PNG output)
-npx svg-to-video input.svg 60 ./out-dir -d 5 --format apng
+npx @gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format apng
 
-# Docker (zero local dependencies)
-docker run --rm -v $(pwd):/data gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format gif
+# Docker (zero local dependencies; add :Z to -v for SELinux / Fedora)
+docker run --rm -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif
 ```
 
 See [docs/CLI.md](./docs/CLI.md) for full usage, arguments, and options.
@@ -98,7 +98,7 @@ Connect `svg-to-video` to AI Assistants (Claude Desktop, Cursor, Antigravity, Au
      "mcpServers": {
        "svg-to-video": {
          "command": "npx",
-         "args": ["-y", "svg-to-video", "mcp"]
+         "args": ["-y", "@gehdoc/svg-to-video", "mcp"]
        }
      }
    }
@@ -114,10 +114,10 @@ See **[docs/MCP.md](./docs/MCP.md)** for full setup instructions, tool schemas, 
 
 ```bash
 # Run on-demand via npx (no global installation required)
-npx svg-to-video input.svg 60 ./out-dir
+npx @gehdoc/svg-to-video input.svg 60 ./out-dir
 
 # Install globally via npm
-npm install -g svg-to-video
+npm install -g @gehdoc/svg-to-video
 
 # Pull official Docker image
 docker pull gehdoc/svg-to-video:latest

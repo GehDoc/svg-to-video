@@ -233,16 +233,17 @@ The application provides an official Docker image (`gehdoc/svg-to-video`) for ze
 # Build Docker image locally
 docker build -t gehdoc/svg-to-video .
 
-# Convert SVG to WebM video using Docker
-docker run --rm -v $(pwd):/data gehdoc/svg-to-video input.svg 60 /data/output --format webm
+# Convert SVG to WebM video using Docker (add :Z to -v for SELinux / Fedora)
+docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/output --format webm
 
 # Convert SVG to transparent GIF using Docker
-docker run --rm -v $(pwd):/data gehdoc/svg-to-video input.svg 60 /data/output --format gif --transparent
+docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/output --format gif --transparent
 ```
 
 ### Security & Hardening Architecture
 
 - **Non-Root Execution**: Container runs under the unprivileged `node` user (UID 1000).
+- **SELinux & User Permissions**: On SELinux-enabled Linux distributions (Fedora, RHEL, CentOS), mount volumes with `:Z` (e.g. `-v $(pwd):/data:Z`) and pass `--user $(id -u):$(id -g)` to grant the container process access to local host files.
 - **Renderer Sandboxing**: The Web Studio rendering engine isolates untrusted SVGs in an iframe using `sandbox="allow-scripts"` with a unique origin (`null`). Communication between parent and renderer uses strict `postMessage` origin checking.
 - **Minimal Image Footprint**: Development tools (`specs/`, `AGENTS.md`, `CONTRIBUTING.md`) are excluded via `.dockerignore`.
 
@@ -422,7 +423,7 @@ Before triggering a production release tag `vX.Y.Z`, verify the npm package and 
   docker build -t gehdoc/svg-to-video:test .
 
   # Test container CLI conversion
-  docker run --rm -v $(pwd):/data gehdoc/svg-to-video:test input.svg 60 /data/output --format webm
+  docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video:test /data/input.svg 60 /data/output --format webm
   ```
 
 - **Staging Tag & Push (Optional)**:
