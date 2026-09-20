@@ -2,6 +2,9 @@
 
 The tool is built to run in a headless environment, making it perfect for CI/CD pipelines or server-side automation.
 
+- 📦 **npm Package**: [`@gehdoc/svg-to-video`](https://www.npmjs.com/package/@gehdoc/svg-to-video)
+- 🐳 **Docker Hub Image**: [`gehdoc/svg-to-video`](https://hub.docker.com/r/gehdoc/svg-to-video)
+
 ```bash
 # Published package usage (no global install required)
 npx @gehdoc/svg-to-video <svgPath> <fps> <outDir> [options]

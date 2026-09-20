@@ -112,7 +112,15 @@ See **[docs/MCP.md](./docs/MCP.md)** for full setup instructions, tool schemas, 
 
 ---
 
-## 📦 Installation Options
+## 🔗 Official Package Distributions
+
+- 📦 **npm Package**: [`@gehdoc/svg-to-video`](https://www.npmjs.com/package/@gehdoc/svg-to-video)
+- 🐳 **Docker Hub Image**: [`gehdoc/svg-to-video`](https://hub.docker.com/r/gehdoc/svg-to-video)
+- 🌐 **Web Studio**: [`gehdoc.github.io/svg-to-video/`](https://gehdoc.github.io/svg-to-video/)
+
+---
+
+## 📦 Quick Installation & Execution
 
 ```bash
 # Run on-demand via npx (no global installation required)
@@ -121,7 +129,7 @@ npx @gehdoc/svg-to-video input.svg 60 ./out-dir
 # Install globally via npm
 npm install -g @gehdoc/svg-to-video
 
-# Pull official Docker image
+# Pull official Docker image from Docker Hub
 docker pull gehdoc/svg-to-video:latest
 ```
 
