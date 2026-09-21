@@ -41,16 +41,40 @@ describe('npm pack file-list verification', () => {
       encoding: 'utf-8',
     });
 
-    const jsonMatch = rawOutput.match(/\[\s*\{[\s\S]*\}\s*\]/);
+    const jsonStart = rawOutput.search(/[{[]/);
     assert.ok(
-      jsonMatch,
-      `Could not find JSON array in npm pack output:\n${rawOutput}`
+      jsonStart !== -1,
+      `Could not find JSON start in npm pack output:\n${rawOutput}`
     );
-    const parsed: unknown = JSON.parse(jsonMatch[0]);
-    const items = Array.isArray(parsed) ? parsed : [parsed];
-    const shippedPaths = items
-      .map((f: Record<string, unknown>) => f.path)
-      .filter((p: unknown): p is string => typeof p === 'string')
+    const parsed: unknown = JSON.parse(rawOutput.slice(jsonStart));
+
+    const fileList: Array<{ path?: unknown }> = [];
+    if (Array.isArray(parsed)) {
+      for (const entry of parsed) {
+        if (entry && typeof entry === 'object') {
+          if ('files' in entry && Array.isArray(entry.files)) {
+            fileList.push(...entry.files);
+          } else if ('path' in entry) {
+            fileList.push(entry);
+          }
+        }
+      }
+    } else if (parsed && typeof parsed === 'object') {
+      for (const value of Object.values(parsed)) {
+        if (
+          value &&
+          typeof value === 'object' &&
+          'files' in value &&
+          Array.isArray(value.files)
+        ) {
+          fileList.push(...(value.files as Array<{ path?: unknown }>));
+        }
+      }
+    }
+
+    const shippedPaths = fileList
+      .map((f) => f.path)
+      .filter((p): p is string => typeof p === 'string')
       .sort();
 
     // 1. Assert all required files are present

@@ -4,11 +4,11 @@
 
 # SVG to Video
 
-[![CI](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml/badge.svg)](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml)
-[![GitHub Release](https://img.shields.io/github/v/release/GehDoc/svg-to-video?color=blue)](https://github.com/GehDoc/svg-to-video/releases)
-[![npm version](https://img.shields.io/npm/v/@gehdoc/svg-to-video.svg?color=cb3837)](https://www.npmjs.com/package/@gehdoc/svg-to-video)
-[![Docker Image Version](https://img.shields.io/docker/v/gehdoc/svg-to-video?sort=semver&color=2496ed)](https://hub.docker.com/r/gehdoc/svg-to-video)
-[![Last Commit](https://img.shields.io/github/last-commit/GehDoc/svg-to-video)](https://gehdoc.github.io/svg-to-video/commits/main)
+[![CI](https://img.shields.io/github/actions/workflow/status/GehDoc/svg-to-video/ci.yml?branch=main&logo=githubactions&logoColor=white&label=CI)](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/GehDoc/svg-to-video?logo=github&logoColor=white&label=release&color=2b3137)](https://github.com/GehDoc/svg-to-video/releases)
+[![npm Version](https://img.shields.io/npm/v/@gehdoc/svg-to-video?logo=npm&logoColor=white&label=npm&color=CB3837)](https://www.npmjs.com/package/@gehdoc/svg-to-video)
+[![Docker Image](https://img.shields.io/docker/v/gehdoc/svg-to-video?label=docker&logo=docker&logoColor=white&sort=semver&color=2496ed)](https://hub.docker.com/r/gehdoc/svg-to-video)
+[![Last Commit](https://img.shields.io/github/last-commit/GehDoc/svg-to-video?logo=github&logoColor=white)](https://github.com/GehDoc/svg-to-video/commits/main)
 
 A high-fidelity tool to transform your CSS-animated SVGs into high-quality videos (MP4, WebM, MKV, MOV) or lightweight animated formats (aPNG, GIF) with perfect alpha-channel transparency directly in your browser or via CLI/MCP server.
 
