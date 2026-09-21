@@ -160,10 +160,6 @@ npm run test:storybook -w web
 To validate accessibility across both Light and Dark modes (like the CI does), set the `STORYBOOK_THEME` environment variable:
 
 ```bash
-# 1. Start Storybook first
-npm run storybook -w web
-
-# 2. In another terminal, run tests for a specific theme
 STORYBOOK_THEME=dark npm run test:storybook -w web
 ```
 
