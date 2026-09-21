@@ -1,28 +1,15 @@
-FROM node:26-slim
+FROM node:24-slim
 
 # 1. Setup Environment
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
     NODE_ENV=production \
     HOME=/tmp/chrome-home
 
-# 2. Heavy Layer: Chrome & Core Dependencies (Rarely changes)
-RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    ca-certificates \
+# 2. Heavy Layer: Chromium, FFmpeg, Fonts & OS Security Patches
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+    chromium \
     ffmpeg \
-    libxss1 \
-    --no-install-recommends \
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
-    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
-
-# 3. Font Layer: Split this out so you can edit it quickly
-# This layer is cached separately. Adding a font here won't trigger step 2!
-RUN apt-get update && apt-get install -y \
     fontconfig \
     fonts-freefont-ttf \
     fonts-liberation \
@@ -37,17 +24,22 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# 4. Create a directory for Chrome's user data and set permissions for allowing non-root users to write to it.
-# 5. Create a directory for output data and set permissions for allowing non-root users to write to it.
+# 3. Create a directory for Chrome's user data and set permissions for allowing non-root users to write to it.
+# 4. Create a directory for output data and set permissions for allowing non-root users to write to it.
 RUN mkdir -p /tmp/chrome-home && chmod 777 /tmp/chrome-home \
     && mkdir -p /app/data && chmod 777 /app/data
 
-# 6. App Dependencies (Only rebuilds if package.json changes)
-COPY package*.json ./
-RUN npm install --omit=dev --ignore-scripts
+# 5. Build App & Production Prune
+COPY package*.json tsconfig*.json ./
+COPY src/ ./src/
+COPY shared/ ./shared/
+COPY skills/ ./skills/
+COPY README.md LICENSE ./
 
-# 7. Application Code (Changes most often)
-COPY . .
+RUN npm install --include=dev --no-workspaces --ignore-scripts \
+    && npm run build \
+    && npm prune --omit=dev --no-workspaces \
+    && rm -rf src shared tsconfig*.json
 
 USER node
-ENTRYPOINT ["npx", "tsx", "src/index.ts"]
+ENTRYPOINT ["node", "dist/src/index.js"]

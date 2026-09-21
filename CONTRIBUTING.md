@@ -1,240 +1,304 @@
 # Contributing Guide
 
-Welcome! This repository uses **Spec-Driven Development (SDD)** to maintain a clear roadmap and assist AI agents in understanding project state.
+Welcome! This repository uses **Spec-Driven Development (SDD)** to maintain a clear roadmap and assist human developers and AI agents in understanding project state.
+
+---
 
 ## 🧭 Project Navigation
 
-- **User Instructions**: See [README.md](./README.md).
-- **AI Agent Protocol**: See [AGENTS.md](./AGENTS.md).
-- **Architecture**: See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
-- **Active Roadmap**: Check [specs/pending/](./specs/pending/).
+<a id="project-navigation"></a>
 
-## 💻 Coding Standards
+Key project documentation and resources:
 
-- **No Inline Styles**: To ensure maintainability and style consistency, inline styles (`style={{ ... }}`) are prohibited in production components. Use CSS modules or SASS files instead. Inline styles are only permissible in Storybook decorators for layout previewing.
+- **[README.md](./README.md)**: User instructions, installation options, CLI quick start, and Web Studio overview.
+- **[AGENTS.md](./AGENTS.md)**: AI Agent protocols, Spec-Driven Development instructions, branching mandates, and checklist discipline.
+- **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)**: Technical architecture deep-dive, WebCodecs engine details, and the "Bake & Clean" frame rendering algorithm.
+- **[docs/SECURITY.md](./docs/SECURITY.md)**: Security and sandboxing standards, subprocess rules, temp file handling, and type guard validation.
+- **[docs/CLI.md](./docs/CLI.md)**: Detailed CLI options, arguments, input formats, and batch automation examples.
+- **[docs/MCP.md](./docs/MCP.md)**: Model Context Protocol setup, LLM configuration, and JSON-RPC tool schemas.
+- **[docs/ANALYTICS.md](./docs/ANALYTICS.md)**: Umami Telemetry event tracking schema and domain helpers.
+- **[specs/pending/](./specs/pending/)**: Active feature specifications and roadmap task lists.
+- **[specs/completed/](./specs/completed/)**: Historical record of completed features and architectural decisions.
 
-## 🔄 Workflow & Automation
+---
+
+## 🔒 Coding & Security Standards
+
+<a id="coding--security-standards"></a>
+<a id="security--sandboxing-standards"></a>
+<a id="-security--sandboxing-standards"></a>
+
+### 🎨 Style Guidelines
+
+- **No Inline Styles**: Inline styles (`style={{ ... }}`) are prohibited in production components to maintain design consistency and maintainability. Always use CSS modules (`*.module.scss` or `*.scss`). Inline styles are only permitted in Storybook decorators for layout previewing.
+- **SASS Breakpoints & Theme Variables**: Use pre-defined design tokens in `web/src/styles/` for colors, typography, and responsive media queries.
+
+### 🛡️ Security & Sandboxing Standards
+
+To preserve architectural safety across pull requests, all contributions must adhere strictly to the security rules in **[docs/SECURITY.md](./docs/SECURITY.md)**:
+
+1. **Subprocess Invocations**: Always use `execFileSync` with argument arrays. Never concatenate user input or file parameters into shell command strings.
+   ```typescript
+   // ✅ Good: Safe array invocation
+   execFileSync('ffmpeg', ['-i', inputPath, outputPath]);
+
+   // ❌ Bad: Shell string concatenation (command injection risk)
+   execSync(`ffmpeg -i ${inputPath} ${outputPath}`);
+   ```
+2. **Subprocess Data Validation**: Always validate machine outputs (e.g. `--json` CLI flags) using explicit runtime type guards before dereferencing properties.
+   ```typescript
+   if (!isLoggerJsonOutput(parsedData)) {
+     throw new Error('Invalid subprocess JSON schema output');
+   }
+   ```
+3. **Temp Directory Cleanup**: Ephemeral temp directories must be created using `fs.mkdtempSync` and purged inside a `finally` block to prevent leftover artifacts.
+   ```typescript
+   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'svg-to-video-'));
+   try {
+     // Operations...
+   } finally {
+     fs.rmSync(tmpDir, { recursive: true, force: true });
+   }
+   ```
+4. **Browser & Context Lifecycles**: Ensure Puppeteer browser instances and page contexts are explicitly closed (`browser.close()`) across all success, error, and early-exit execution paths.
+
+---
+
+## 🔄 Development Workflows
+
+<a id="development-workflows"></a>
 
 ### 🚦 Type Safety & Commit Hooks
 
-To prevent the introduction of breaking changes, the project uses **Husky** to enforce type safety:
+To prevent breaking changes, the project uses **Husky** and **lint-staged** to enforce type safety and formatting:
 
-- **Pre-commit**: The `.husky/pre-commit` hook automatically runs `npm run type-check` (which orchestrates root and web workspace checks) alongside linting and formatting. Commits will fail if `tsc` detects any errors.
-- **Manual Check**: You can always run `npm run check:fast` to validate types, linting, and formatting locally.
+- **Pre-commit Hook**: The `.husky/pre-commit` hook automatically executes `npm run type-check` (checking root TypeScript and web workspace) alongside linting and formatting. Commits will fail if `tsc` detects any errors.
+- **Manual Verification**: Run `npm run check:fast` to validate types, linting, and formatting locally before staging files.
 
-### 🎥 Automated Demo Generation
+### 🤖 Starting with an AI Agent (Recommended)
 
-The project features an automated demo generation tool that records a video of the Web Studio in action. This ensures the demo in the README always reflects the current UI.
+To initiate a new feature or fix using an AI agent (such as Antigravity, Claude, or Cursor):
 
-- **How it works**: A dedicated Playwright script (`web/tests/demo.spec.ts`) uses **Driver.js** to guide a "spotlight" through the interface, performing a realistic user scenario (importing an SVG, configuring settings, and exporting).
-- **CI/CD Integration**: The demo is automatically regenerated and redeployed to GitHub Pages whenever a push is made to the `main` branch. This process is orchestrated by the `build-and-deploy` job in `.github/workflows/ci.yml`.
-- **Local Testing**:
-  - **Standard Run**: `npm run test:web -w web -- tests/demo.spec.ts` runs the script without video recording to ensure no regressions.
-  - **Record Demo**: `npm run test:demo -w web` records the `video.webm` file in `web/test-results/`.
-- **Verify CI Demo**: When you push to a PR or `main`, the CI pipeline generates the demo video. You can download it as a build artifact:
-  1. Go to the **Actions** tab on GitHub.
-  2. Select the specific workflow run.
-  3. Scroll down to the **Artifacts** section at the bottom of the summary page.
-  4. Click `demo-assets` to download the `.gif` and `.webm` files.
+> _"Read AGENTS.md and start a plan for GitHub Issue #XX"_
+
+**Automated Workflow:**
+
+1. Branch creation: `feat/XX-description` (or `feat/description` if unlinked).
+2. Spec initialization in `specs/pending/XX-description.md` from template.
+3. Commit initial spec and create PR immediately for human review.
+
+### 🧑‍💻 Manual SDD Workflow
+
+If developing manually, follow these steps:
+
+1. **Branching**: Create a feature branch from `main`:
+   - Linked to issue `#XX`: `git checkout -b feat/XX-short-description`
+   - Unlinked: `git checkout -b feat/short-description`
+2. **Spec-First**: Create a specification file in `specs/pending/` copied from `specs/template.md`.
+3. **Implement & Trace**: Implement feature while checking off tasks `[x]` in the spec. Update the **Technical Strategy** if implementation details evolve.
+4. **Pre-flight Audit & Verification**:
+   - Verify all spec tasks are checked off.
+   - Audit documentation and SEO metadata per [Maintaining SEO & Metadata](#-maintaining-seo--metadata).
+   - Run full project verification: `npm run check`.
+   - Record verification results in the spec's **Change Log**.
+5. **Archive & Merge**: Update spec status to `🟢 Completed`, move file to `specs/completed/`, and merge branch via PR.
 
 ### 📦 Dependency Management (Vitest & Storybook)
 
 This project requires strict version alignment between **Storybook** and **Vitest** to avoid `Mock` type mismatches.
 
-- **The Problem**: Storybook's `composeStories` often pulls in an internal version of `@vitest/spy` that can conflict with the project's direct Vitest dependency, leading to "Type 'Mock' is not assignable" errors in tests.
-- **The Solution**: We use the `overrides` field in the root `package.json` to force a unified version for all Vitest-related packages:
+- **The Problem**: Storybook's `composeStories` often pulls in an internal version of `@vitest/spy` that can conflict with the project's direct Vitest dependency, causing `"Type 'Mock' is not assignable"` compiler errors.
+- **The Solution**: We enforce unified package versions using root `package.json` `overrides`:
   ```json
   "overrides": {
-    "vitest": "4.1.4",
-    "@vitest/spy": "4.1.4",
-    "@vitest/expect": "4.1.4",
-    ...
+    "vitest": "$vitest",
+    "@vitest/spy": "$vitest",
+    "@vitest/expect": "$vitest"
   }
   ```
-- **Future Upgrades**: When upgrading Storybook or Vitest, ensure all `@vitest/*` packages in the `overrides` section are updated to the same version. Run `rm -rf node_modules package-lock.json && npm install` to ensure the dependency tree is correctly rebuilt.
+- **Upgrades**: When updating Storybook or Vitest, ensure all `@vitest/*` override entries match. Run `rm -rf node_modules package-lock.json && npm install` to reset lockfile resolution.
 
-### 🤖 Starting with an AI Agent (Recommended)
+---
 
-To initiate a new feature, simply provide the following command to your AI collaborator:
+## 🛠 Commands & Testing Strategy
 
-> "Read AGENTS.md and start a plan for GitHub Issue #XX"
+<a id="commands--testing-strategy"></a>
 
-**The Agent will automatically:**
+### 📜 CLI & Web Development Commands
 
-1. Create a new branch: `feat/XX-short-description`.
-2. Initialize the spec file in `specs/pending/` from the template.
-3. Commit the initial spec to the branch and wait for your approval.
+#### Project-wide Orchestration (Run from Root)
 
-### 🧑‍💻 Manual Workflow
+| Command              | Description                                                                |
+| :------------------- | :------------------------------------------------------------------------- |
+| `npm run check`      | Runs full verification suite (lint, format, type-check, unit & e2e tests). |
+| `npm run check:fast` | Runs fast validation checks only (lint, format, type-check).               |
+| `npm run build`      | Compiles CLI TypeScript source into ES Modules in `dist/`.                 |
+| `npm run fix`        | Auto-fixes linting and formatting issues across all packages.              |
+| `npm run lint`       | Lints CLI and Web Studio code.                                             |
+| `npm run lint:fix`   | Fixes linting errors across CLI and Web Studio.                            |
+| `npm run format`     | Checks formatting compliance using Prettier.                               |
+| `npm run format:fix` | Formats files with Prettier.                                               |
+| `npm run test`       | Runs all unit, integration, visual regression, and package snapshot tests. |
+| `npm run test:cli`   | Runs CLI integration test suite (`tests/cli.spec.ts`).                     |
+| `npm run test:mcp`   | Runs MCP Server integration test suite (`tests/mcp.spec.ts`).              |
+| `npm run test:pack`  | Validates npm tarball file snapshot (`npm pack --dry-run`).                |
+| `npm run test:unit`  | Runs unit tests with Vitest and Node test runner.                          |
+| `npm run type-check` | Performs TypeScript type checking across root CLI and Web workspace.       |
 
-If working without an agent, follow these steps to keep the project state synchronized:
+#### CLI Local Verification Commands
 
-1.  **Branching**: Create a feature branch from `main`: `git checkout -b feat/XX-description` (or `feat/description` if not linked to an issue).
-2.  **Spec-First**: Create a Spec file in `specs/pending/` using the [specs/template.md](./specs/template.md).
-3.  **Implement & Trace**: Write code, keeping the spec's **Task List** `[x]` updated. Update the **Technical Strategy** if the approach deviates from the plan.
-4.  **Verify & SEO Audit**:
-    - Ensure all tasks in the spec are marked as complete.
-    - Audit public-facing metadata according to the [Maintaining SEO & Metadata](#-maintaining-seo--metadata) checklist (`layout.tsx`, `SeoFallback.tsx`, `README.md`, `package.json`).
-    - Run the full verification suite: `npm run check`.
-    - Document the successful verification in the spec's **Change Log**.
-5.  **Archive**: Update the **Status** to `🟢 Completed`, move the spec to `specs/completed/`, and merge your branch.
+After running `npm run build`, you can test local CLI and MCP execution directly:
 
-## 🛠 Development Commands
+```bash
+# Test local CLI executable help output
+node dist/src/index.js --help
 
-### Project-wide Orchestration (Run from Root)
+# Convert test SVG to GIF via local CLI build
+node dist/src/index.js tests/fixtures/demo-fixture.svg 60 ./out --format gif
 
-| Command              | Description                                                             |
-| :------------------- | :---------------------------------------------------------------------- |
-| `npm run check`      | Runs all checks (lint, format, type-check, e2e tests).                  |
-| `npm run check:fast` | Runs fast checks only (lint, format, type-check).                       |
-| `npm run fix`        | Auto-fixes linting and formatting issues.                               |
-| `npm run lint`       | Checks for linting issues in both CLI and Web Studio code.              |
-| `npm run lint:fix`   | Fixes linting issues in both CLI and Web Studio code.                   |
-| `npm run format`     | Checks for formatting issues.                                           |
-| `npm run format:fix` | Fixes formatting issues.                                                |
-| `npm run test`       | Runs all tests (CLI, MCP, Web Studio E2E, Unit, Storybook, and Visual). |
-| `npm run test:cli`   | Runs CLI integration tests.                                             |
-| `npm run test:mcp`   | Runs MCP Server integration tests.                                      |
-| `npm run test:unit`  | Runs unit tests using Vitest and Node test runner.                      |
-| `npm run type-check` | Validates TypeScript types (includes web workspace).                    |
+# Test MCP server stdio interface
+node dist/src/mcp.js
+```
 
-### Web Studio Development (Run inside `web/` directory)
+#### Web Studio Development (Run inside `web/` directory)
 
-To work on the Web Studio, navigate to the `web/` directory: `cd web`.
+Navigate to `web/` (`cd web`) to run studio commands:
 
-| Command                      | Description                                           |
-| :--------------------------- | :---------------------------------------------------- |
-| `npm run dev`                | Launches the Web Studio development server.           |
-| `npm run build`              | Builds the Web Studio for production.                 |
-| `npm run start`              | Previews the production build of the Web Studio.      |
-| `npm run test:demo`          | Records the automated demo video.                     |
-| `npm run test:web`           | Runs Web Studio E2E tests.                            |
-| `npm run test:storybook`     | Runs Storybook interaction tests using Vitest.        |
-| `npm run test:visual`        | Runs native visual regression tests (pixel matching). |
-| `npm run test:visual:update` | Updates visual regression baseline screenshots.       |
-| `npm run build-storybook`    | Builds the Storybook static site for deployment.      |
+| Command                      | Description                                                  |
+| :--------------------------- | :----------------------------------------------------------- |
+| `npm run dev`                | Starts Web Studio Next.js development server.                |
+| `npm run build`              | Builds Web Studio for static production export (`web/out/`). |
+| `npm run start`              | Serves production web build locally.                         |
+| `npm run storybook`          | Starts interactive Storybook component workbench.            |
+| `npm run build-storybook`    | Builds static Storybook site for GitHub Pages deployment.    |
+| `npm run test:demo`          | Records automated demo video using Playwright & Driver.js.   |
+| `npm run test:web`           | Runs Web Studio E2E Playwright test suite.                   |
+| `npm run test:storybook`     | Runs Storybook component interaction tests via Vitest.       |
+| `npm run test:visual`        | Runs visual regression tests (pixel snapshot matching).      |
+| `npm run test:visual:update` | Updates baseline visual regression screenshot snapshots.     |
 
-## 🧪 Testing Strategy
+### 🧪 Multi-Tiered Testing Strategy
 
-Beyond end-to-end testing, we use a multi-tiered strategy for component, accessibility, and visual validation:
+We employ a comprehensive multi-tiered testing strategy:
 
-1. **Unit Tests (`*.test.[ts|tsx]`)**: Validate logic, utilities, and basic component interaction using Vitest and JSDOM. These are fast and do not require a browser.
+1. **Unit Tests (`*.test.[ts|tsx]`)**: Test standalone utility functions, encoders, and isolated component state logic using Vitest & JSDOM.
    - **Command**: `npm run test:unit`
-2. **Visual Regression Tests (`*.spec.[ts|tsx]`)**: Validate component-level rendering and pixel-perfect consistency in a real browser (Chromium) using Vitest and Playwright.
+2. **Visual Regression Tests (`*.spec.[ts|tsx]`)**: Validate component-level rendering and pixel-perfect output against baseline images (`web/src/components/**/__screenshots__/`) in real headless Chromium.
    - **Command**: `npm run test:visual`
-3. **CLI Integration Tests (`tests/cli.spec.ts`)**: Validate full user workflows for the CLI tool.
+   - **Baseline Updates**: Run `npm run test:visual:update -w web` to refresh baseline snapshots after approved UI changes.
+3. **CLI Integration Tests (`tests/cli.spec.ts`)**: Test CLI options (`--format`, `--transparent`, `--duration`, `--fps`), file output creation, and FFmpeg pipeline processing.
    - **Command**: `npm run test:cli`
-4. **MCP Server Integration Tests (`tests/mcp.spec.ts`)**: Validate tool schemas, JSON-RPC stdio transport, and MCP tool execution (`render_svg_to_video`, `inspect_svg_animation`).
+4. **MCP Server Integration Tests (`tests/mcp.spec.ts`)**: Validate Model Context Protocol JSON-RPC stdio transport, tool definitions (`render_svg_to_video`, `inspect_svg_animation`), and LLM invocation schemas.
    - **Command**: `npm run test:mcp`
-5. **Web Studio E2E Tests (`web/tests/*.spec.ts`)**: Validate full user workflows for the Web Studio using Playwright.
-   - **Command**: Run `npm run test:web -w web` from the root.
-   - **Key Coverage**:
-     - `rendering-transparency.spec.ts`: Verifies alpha channel support across all formats.
-     - `metadata-integrity.spec.ts`: Verifies strictly that Title and Comment metadata are correctly embedded across supporting formats (MP4, WebM, aPNG, GIF).
-6. **Storybook Interaction & A11y Tests**: Validate visual/accessibility compliance (e.g., color contrast) and component interactions in isolation.
-   - **Command**: Run `npm run test:storybook -w web` from the root, or `npm run test:storybook` from within the `web/` directory.
-7. **Storybook Build**:
-   - **Command**: Run `npm run build-storybook -w web` from the root, or `npm run build-storybook` from within the `web/` directory.
+5. **Web Studio E2E Tests (`web/tests/*.spec.ts`)**: End-to-end verification of browser workflows:
+   - `rendering-transparency.spec.ts`: Validates alpha channel transparency across WebM, aPNG, and GIF exports.
+   - `metadata-integrity.spec.ts`: Validates Title and Comment metadata injection into exported media.
+   - **Command**: `npm run test:web -w web`
+6. **Storybook Interaction & Accessibility Tests**: Test UI components in isolation across Light and Dark themes:
+   ```bash
+   # Terminal 1: Start Storybook
+   npm run storybook -w web
 
-### 🗂 Test Organization
+   # Terminal 2: Run accessibility and interaction suite
+   STORYBOOK_THEME=dark npm run test:storybook -w web
+   ```
 
-- **Unit Tests**: Co-located with components/utilities in `web/src/`.
-- **Visual Regression Tests**: Co-located with components in `web/src/`.
-- **CLI Integration Tests**: Located in `tests/cli.spec.ts`.
-- **Web Studio E2E Tests**: Located in `web/tests/*.spec.ts`.
-- **Storybook Tests**: Located in `web/src/**/*.stories.tsx` (validated by `test-storybook`).
+### 🎥 Automated Demo Generation
 
-### Accessibility Audits
+The project features an automated demo recorder that captures the Web Studio UI in action:
 
-We use `addon-a11y` within Storybook. To ensure consistent results:
-
-- **Manual Audit**: Use the "Accessibility" panel in the Storybook UI.
-- **Automated Audit**: Run the Storybook interaction test suite via the official `@storybook/test-runner`.
-
-```bash
-# Run real-browser accessibility and interaction tests
-npm run test:storybook -w web
-```
-
-**Testing specific themes locally**:
-To validate accessibility across both Light and Dark modes (like the CI does), set the `STORYBOOK_THEME` environment variable:
-
-```bash
-# 1. Start Storybook first
-npm run storybook -w web
-
-# 2. In another terminal, run tests for a specific theme
-STORYBOOK_THEME=dark npm run test:storybook -w web
-```
-
-_Note: Avoid using `jest-axe` in JSDOM unit tests, as it cannot calculate computed styles and will miss contrast violations._
+- **Script**: `web/tests/demo.spec.ts` uses **Driver.js** to highlight UI elements and perform realistic SVG uploads, parameter tweaks, and video exports.
+- **CI/CD Integration**: Automatically runs during GitHub Actions deployment (`.github/workflows/ci.yml`) to keep the top README demo GIF up to date.
+- **Local Run**: `npm run test:demo -w web` generates `video.webm` in `web/test-results/`.
 
 ### ⚙️ Continuous Integration (CI)
 
-The project uses GitHub Actions for automated verification. Key pipeline steps include:
+GitHub Actions automatically executes verification pipelines (`.github/workflows/ci.yml`) on every Pull Request and merge to `main`:
 
-- **Build Verification**: Every PR is built in a production-like environment (`npm run build -w web`) to ensure asset resolution stability.
-- **Fast Checks**: Linting, formatting, and type-checking via `npm run check:fast`.
-- **E2E/Visual Tests**: Full CLI and Web Studio test suites (including Storybook interactions and pixel-matching visual regressions).
+- **Build Verification**: Builds Next.js static export (`npm run build -w web`) to verify asset resolution and base path stability (`/svg-to-video/`).
+- **Fast Checks**: Validates linting, Prettier formatting, and TypeScript compilation via `npm run check:fast`.
+- **E2E & Snapshot Tests**: Executes full CLI integration, MCP tests, visual regression checks, and package snapshot validation (`npm run test:pack`).
+
+---
 
 ## 🐳 Docker & Hardening
 
-- **Security**: The application runs as the non-root `node` user.
-- **Renderer Isolation**: The `SvgRenderer` iframe runs in a unique, isolated origin (`null`) by using the `sandbox="allow-scripts"` attribute. This prevents script-based sandbox escapes. Communication is strictly enforced via `postMessage` with origin validation on both the parent and renderer sides.
-- **Exclusions**: Development-only files like `specs/`, `AGENTS.md`, and `CONTRIBUTING.md` are excluded from the image via `.dockerignore`.
+<a id="docker--hardening"></a>
 
-## 🌐 Web Studio Deployment
+The application provides an official Docker image (`gehdoc/svg-to-video`) for zero-dependency local execution and headless CI environments.
 
-The Web Studio and Storybook Gallery are configured to deploy automatically to **GitHub Pages** via GitHub Actions.
+### Local Docker Commands
+
+```bash
+# Build Docker image locally
+docker build -t gehdoc/svg-to-video .
+
+# Convert SVG to WebM video using Docker (add :Z to -v for SELinux / Fedora)
+docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/output --format webm
+
+# Convert SVG to transparent GIF using Docker
+docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/output --format gif --transparent
+```
+
+### Security & Hardening Architecture
+
+- **Non-Root Execution**: Container runs under the unprivileged `node` user (UID 1000).
+- **SELinux & User Permissions**: On SELinux-enabled Linux distributions (Fedora, RHEL, CentOS), mount volumes with `:Z` (e.g. `-v $(pwd):/data:Z`) and pass `--user $(id -u):$(id -g)` to grant the container process access to local host files.
+- **Renderer Sandboxing**: The Web Studio rendering engine isolates untrusted SVGs in an iframe using `sandbox="allow-scripts"` with a unique origin (`null`). Communication between parent and renderer uses strict `postMessage` origin checking.
+- **Minimal Image Footprint**: Development tools (`specs/`, `AGENTS.md`, `CONTRIBUTING.md`) are excluded via `.dockerignore`.
+
+---
+
+## 🌐 Web Studio Deployment & Telemetry
+
+<a id="web-studio-deployment--telemetry"></a>
+
+### 🚀 GitHub Pages Deployment
+
+The Web Studio and Storybook Gallery deploy automatically to **GitHub Pages** on merges to `main`:
 
 - **Web Studio**: [https://gehdoc.github.io/svg-to-video/](https://gehdoc.github.io/svg-to-video/)
 - **Storybook Gallery**: [https://gehdoc.github.io/svg-to-video/storybook/](https://gehdoc.github.io/svg-to-video/storybook/)
-- **Asset Pathing**: The project uses an environment-aware `base` path (`/svg-to-video/`) in `web/next.config.js`. This ensures all assets load correctly when deployed as a GitHub Project Site.
-- **CI Pipeline**: Deployment is triggered automatically on pushes to the `main` branch via `.github/workflows/ci.yml`.
+- **Asset Pathing**: Next.js uses an environment-aware `basePath: '/svg-to-video'` in `web/next.config.js`.
 
-### 📊 Analytics (Umami)
+### 📊 Analytics (Umami Telemetry)
 
-The Web Studio uses [Umami Analytics](https://umami.is/) for anonymous usage tracking. Detailed information about tracked events can be found in [docs/ANALYTICS.md](./docs/ANALYTICS.md).
+The Web Studio uses cookie-less [Umami Analytics](https://umami.is/) for privacy-friendly telemetry. See **[docs/ANALYTICS.md](./docs/ANALYTICS.md)** for full event definitions.
 
 > [!IMPORTANT]
-> **Tracking Mandate**: When adding new primary Call-to-Action (CTA) buttons or important navigation links, you **must** implement Umami event tracking. This helps us understand which features are most used and where users might be struggling.
+> **Tracking Mandate**: Any new primary call-to-action button, export trigger, or major navigation flow **must** include telemetry events using domain helpers.
 
-- **Implementation**: The tracker is self-hosted at `web/public/assets/3rd-party/analytics.js` and injected via `next/script` in `web/src/app/layout.tsx`.
-- **Programmatic Tracking**: Use the `trackEvent` helper function from `web/src/utils/analytics.ts`:
-
+- **Programmatic Tracking**:
   ```typescript
+  // Generic tracking helper (web/src/utils/analytics.ts)
   import { trackEvent } from '../utils/analytics';
+  trackEvent('my-custom-event', { property: 'value' });
 
-  trackEvent('my-event-name', { property: 'value' });
+  // Domain tracking helpers (web/src/utils/tracking/)
+  import { trackFileLoaded } from '../utils/tracking/fileTracking';
+  import {
+    trackConversionSuccess,
+    trackExportStarted,
+  } from '../utils/tracking/rendererTracking';
+
+  trackFileLoaded({ fileSizeBytes: 1024, isDrop: true });
+  trackExportStarted({ format: 'webm', fps: 60, durationSeconds: 5 });
+  trackConversionSuccess({ format: 'webm', renderTimeMs: 1200 });
   ```
+- **Telemetry Safeguards**: The tracker script is disabled on `localhost`, under automated webdrivers (`window.navigator.webdriver`), or on unapproved hostnames.
 
-  `trackEvent` automatically performs the `typeof umami !== 'undefined'` safety check and appends the application `version` tag from `package.json` to every event payload.
+---
 
-- **Environment Safeguards**: To prevent polluting production data, the Umami script **will not load** if:
-  1. The hostname is `localhost`, `127.0.0.1`, or a local network IP.
-  2. `window.navigator.webdriver` is true (e.g., in Playwright, Puppeteer, or CI environments).
-  3. The hostname does not match the `data-domains` attribute.
+## 🔀 Pull Request & Code Guidelines
 
-- **Configuration**: The `data-website-id` and `data-domains` are hardcoded in `web/src/app/layout.tsx`. For local forks, update these values to point to your own Umami instance.
-- **Types**: We use `@types/umami` for full TypeScript support.
-
-## 🏷 Versioning Policy
-
-To maintain synchronization across the project, every release or version bump must update the version number in the following locations:
-
-1. **Root `package.json`**: The `version` field.
-2. **Web `package.json`**: The `version` field.
-3. **Root `package-lock.json`**: Synchronized by running `npm install` (or `npm install --package-lock-only`).
-
-Use `npm version [patch|minor|major]` or update manually in `package.json` files, then run `npm install` to synchronize `package-lock.json` before committing. The repository README version badge updates automatically.
-
-## 🏷 Title & Naming Standards (PRs & Releases)
-
-All Pull Request titles, git commit messages, and GitHub Release titles must follow the **Purpose-Driven Principle**:
+<a id="pull-request--code-guidelines"></a>
+<a id="title--naming-standards-prs--releases"></a>
 
 ### 🎯 Purpose-Driven Principle ("Why & What", not "How")
 
-- **Focus on Purpose**: Titles must express the high-level user value, feature capability, or core objective of the ticket. Avoid listing internal implementation details or refactor steps ("archeology").
+All Pull Request titles, git commit messages, and GitHub Release titles must follow the **Purpose-Driven Principle**:
+
+- **Focus on Purpose**: Titles must express the high-level user value, feature capability, or core objective. Avoid internal implementation details or refactor steps ("archeology").
 - ✅ **Good (Purpose-Driven)**: `feat(analytics): standardize Umami event tracking & conversion telemetry across Web Studio`
 - ❌ **Bad (Implementation Detail)**: `feat(analytics): centralize tracking helper, versioning payload, and domain helpers`
 
@@ -242,76 +306,185 @@ All Pull Request titles, git commit messages, and GitHub Release titles must fol
 
 Follow Conventional Commits: `<type>(<scope>): <purpose-driven title>`
 
-- **Examples**:
-  - `feat(cli): add animated GIF and aPNG export support`
-  - `fix(renderer): resolve WebCodecs frame drops during high-FPS captures`
-  - `docs(analytics): document Umami telemetry schema and domain helpers`
+| Type       | Description                                                         | Example                                                                 |
+| :--------- | :------------------------------------------------------------------ | :---------------------------------------------------------------------- |
+| `feat`     | New user-facing capability or format support.                       | `feat(cli): add animated GIF and aPNG export support`                   |
+| `fix`      | Bug fix or correction of unexpected behavior.                       | `fix(renderer): resolve WebCodecs frame drops during high-FPS captures` |
+| `docs`     | Documentation, SEO, or specification updates.                       | `docs(analytics): document Umami telemetry schema and domain helpers`   |
+| `refactor` | Code structural changes without altering user-facing functionality. | `refactor(encoders): streamline WebM muxer initialization`              |
+| `test`     | Adding or updating test suites and baseline visual snapshots.       | `test(e2e): add alpha channel transparency assertions`                  |
+| `chore`    | Maintenance tasks, dependency updates, or build pipeline tweaks.    | `chore(deps): update Vitest and Storybook override dependencies`        |
 
-### 🏷 Release Title Format
+### 💻 GitHub CLI PR Creation Workflow
 
-- **Format**: `[Version] - [Purpose-Driven Title]` (e.g., `0.21.0 - CLI GIF & aPNG Animated Image Support`).
-- **Rules**:
-  - Start with the raw version string `X.Y.Z - `.
-  - Do **NOT** prefix release titles with `"Release "` (e.g., avoid `Release 0.21.0 - ...`).
-  - Prerequisite: Ensure the version has been bumped across project files per our [Versioning Policy](#-versioning-policy) before publishing.
+Create Pull Requests directly from the command line:
 
-### 2. Content Structure
+```bash
+gh pr create \
+  --title "feat(cli): add animated GIF and aPNG export support" \
+  --body "## Summary
+Introduces high-fidelity aPNG and optimized GIF export capabilities to the CLI tool."
+```
 
-- **Punchline**: A 2-3 sentence summary explaining the most significant user-facing value or impact of the release.
-- **Structured Details**: Use the following headings for clarity:
-  - **🚀 New Features**: Significant additions or changes that impact user workflows.
-  - **🛠 Improvements**: Refactors, performance optimizations, or UI/UX tweaks.
-  - **🧪 Testing & Quality**: Summary of test coverage additions or improvements.
-  - **📝 Documentation & SEO**: Any changes to docs, metadata, or SEO.
+---
 
-### Example
+## 🚀 Release Management & Publishing
 
-> **0.9.1 - Extended Format Support & Web Studio Enhancements**
+<a id="release-management--publishing"></a>
+<a id="versioning-policy"></a>
+<a id="-versioning-policy"></a>
+<a id="release-note-best-practices"></a>
+<a id="-release-note-best-practices"></a>
+
+### 🏷 Versioning Policy
+
+To maintain project synchronization, every release or version bump must update the version number in all 3 required files:
+
+1. **Root `package.json`**: The `version` field.
+2. **Web `package.json`**: The `version` field (`web/package.json`).
+3. **Root `package-lock.json`**: Synchronized by running `npm install`.
+
+Use `npm version [patch|minor|major]` or update `package.json` files manually, then run `npm install` to update `package-lock.json` before committing.
+
+### 📝 Release Title & Note Guidelines
+
+Releases strictly adhere to the **Purpose-Driven Principle** and **Result-Oriented Focus**:
+
+- **Release Title Format**: `X.Y.Z - [Purpose-Driven Title]` (e.g., `0.22.0 - Standalone CLI Package & Automated Release Pipeline`). Do **NOT** prefix titles with `"Release "`.
+- **Result-Oriented Focus**: Focus strictly on end-user value, new capabilities, and final system results. Do **NOT** list internal development commits or refactor steps.
+- **Release Note Structure**:
+  - **Punchline**: A 2-3 sentence summary explaining the primary user value.
+  - **Structured Categories**:
+    - **🚀 New Features**
+    - **🛠 Improvements**
+    - **🧪 Testing & Quality**
+    - **📝 Documentation & SEO**
+
+> **Example Release Note:**
 >
-> This release introduces dynamic video format discovery and significant improvements to the Web Studio's export capabilities, documentation, and overall user experience.
+> **0.22.0 - Standalone CLI Package & Automated Release Pipeline**
+>
+> This release decouples the CLI tool into a lightweight standalone package and establishes an automated release pipeline for npm and Docker Hub.
 >
 > ### 🚀 New Features
 >
-> - ...
+> - Added dedicated `svg-to-video` CLI executable distribution on npm.
+>
+> ### 🛠 Improvements
+>
+> - Streamlined Puppeteer browser launch configuration for headless environments.
 
-### 3. Publishing GitHub Releases
+### 🧪 Local Release & Staging Verification
 
-Releases are published on GitHub using the tag convention `vX.Y.Z` (e.g., `v0.21.0`). Release notes should **never** be committed as `.md` files in the repository.
+Before triggering a production release tag `vX.Y.Z`, verify the npm package and Docker image locally or in staging environments.
 
-- **CLI Method** (pass notes directly or use an ephemeral file outside git):
+#### 1. npm Package Dry-Run & Local Tarball Staging
+
+- **Package Snapshot Assertion**:
+
   ```bash
-  gh release create v0.21.0 --title "0.21.0 - CLI GIF & aPNG Animated Image Support" --notes "..."
+  npm run test:pack
   ```
-- **Web UI Method**:
-  Navigate to GitHub Repository → Releases → **Draft a new release**. Select tag `vX.Y.Z`, set the title to `X.Y.Z - [Short Descriptive Title]`, and paste the formatted release notes.
 
-## 🔒 Security & Sandboxing Standards
+  Validates that all required runtime files (`dist/`, `skills/`, `README.md`, `LICENSE`, `package.json`) are included and source/test directories are excluded.
 
-To preserve architectural safety across pull requests, all contributions must adhere to the security rules documented in **[docs/SECURITY.md](./docs/SECURITY.md)**:
+- **Dry-Run Publishing Simulation**:
 
-1. **Subprocess Calls**: Always use `execFileSync` or argument arrays. Never concatenate parameters into shell command strings.
-2. **Subprocess Data Validation**: Always validate machine outputs (`--json`) with runtime type guards (e.g. `isLoggerJsonOutput`).
-3. **Temp Cleanup**: Ephemeral directory creation must use `fs.mkdtempSync` and be purged in `finally` blocks.
-4. **Browser Lifecycles**: Ensure Puppeteer pages and browser contexts are closed (`browser.close()`) on all completion or error execution paths.
+  ```bash
+  npm publish --dry-run
+  ```
+
+  Simulates publishing to the official npm registry, outputting the complete package file list, tarball size, and manifest metadata without uploading anything.
+
+- **Local Tarball Installation Testing**:
+
+  ```bash
+  # 1. Build TypeScript CLI source and package local tarball
+  npm run build
+  npm pack # Generates svg-to-video-X.Y.Z.tgz
+
+  # 2. Test execution using npx in a temporary directory
+  npx --package ./svg-to-video-X.Y.Z.tgz svg-to-video --help
+  npx --package ./svg-to-video-X.Y.Z.tgz svg-to-video-mcp
+  ```
+
+- **Staging / Beta Tag Publication (Optional)**:
+  To publish a staging release to npm under a non-`latest` dist-tag (such as `beta` or `next`):
+  ```bash
+  npm publish --tag beta
+  ```
+
+#### 2. Docker Local & Staging Verification
+
+- **Local Image Build & Test**:
+
+  ```bash
+  # Build Docker image locally
+  docker build -t gehdoc/svg-to-video:test .
+
+  # Test container CLI conversion
+  docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video:test /data/input.svg 60 /data/output --format webm
+  ```
+
+- **Staging Tag & Push (Optional)**:
+  To push a staging or candidate image tag to Docker Hub without updating the `latest` tag:
+  ```bash
+  docker tag gehdoc/svg-to-video:test gehdoc/svg-to-video:beta
+  docker push gehdoc/svg-to-video:beta
+  ```
+
+### ⚙️ Automated Release Pipeline
+
+Releases are triggered by pushing a version tag `vX.Y.Z` on the `main` branch. Release notes should **never** be committed as `.md` files in git.
+
+#### Publishing Methods
+
+- **GitHub CLI Method**:
+  ```bash
+  gh release create v0.22.0 \
+    --title "0.22.0 - Standalone CLI Package & Automated Release Pipeline" \
+    --notes "..."
+  ```
+- **GitHub Web UI Method**:
+  Navigate to GitHub Repository → Releases → **Draft a new release**. Set tag to `vX.Y.Z`, set title to `X.Y.Z - [Purpose-Driven Title]`, paste notes, and publish.
+
+#### Automated Pipeline Execution
+
+Publishing the release tag `vX.Y.Z` automatically triggers `.github/workflows/release.yml`:
+
+1. Verifies tag ancestry against `main` (`git merge-base --is-ancestor`).
+2. Runs full validation and package snapshot assertions (`npm run check`).
+3. Compiles JS ES Modules (`npm run build`).
+4. Publishes package to official npm registry (`npm publish`).
+5. Builds and pushes multi-arch Docker image to Docker Hub (`gehdoc/svg-to-video:latest` and `gehdoc/svg-to-video:X.Y.Z`).
+
+---
 
 ## 🔍 Maintaining SEO & Metadata
 
-When adding new features or core capabilities, ensure all public-facing metadata is updated to maintain discoverability and clarity.
+<a id="maintaining-seo--metadata"></a>
 
-### SEO Checklist
+When adding new features or core capabilities, systematically update public-facing metadata for maximum discoverability:
 
-1.  **`web/src/app/layout.tsx`** and **`web/src/components/SeoFallback.tsx`**:
-    - Update `layout.tsx` metadata object (title, description, Open Graph/Twitter tags).
-    - Enrich the **JSON-LD** data in `layout.tsx` (including the `featureList`).
-    - Update the **`SeoFallback.tsx`** component to reflect core features and keywords for static SEO indexing.
-    - Ensure `sitemap.ts` and `robots.ts` are updated to reflect the site structure.
-2.  **`package.json` (Root & Web)**:
-    - Update the `description` field to reflect the expanded toolset.
-    - Add relevant keywords to the `keywords` array in the root `package.json`.
-3.  **`README.md`**:
-    - Update the introduction and **🌟 Why SVG to Video?** sections.
-    - Add new features to the **🛠 Features** list.
-    - Update the **Technical Details** or **Quick Start** if user workflows have changed.
-4.  **GitHub Repository**:
-    - Update the repository **Description** in the "About" section.
-    - Review and add new **Topics** (tags) to match the updated keywords.
+### 📋 SEO & Metadata Audit Checklist
+
+1. **`web/src/app/layout.tsx`** & **`web/src/components/SeoFallback.tsx`**:
+   - Update `layout.tsx` metadata object (title, description, Open Graph / Twitter cards).
+   - Update structured **JSON-LD** data in `layout.tsx` (enrich `featureList` array).
+   - Update **`SeoFallback.tsx`** static fallback text for search engine indexing.
+   - Verify `sitemap.ts` and `robots.ts` reflect dynamic site routes.
+2. **`package.json` (Root & Web)**:
+   - Update `description` fields to highlight new capabilities.
+   - Add new relevant search tags to the `keywords` array in root `package.json`.
+3. **`README.md`**:
+   - Update feature summaries, installation options, and CLI/web quick start usage blocks.
+4. **GitHub Repository Metadata**:
+   - Update repository **Description** in GitHub repository settings.
+   - Update repository **Topics** (tags) via GitHub Web UI or GitHub CLI:
+     ```bash
+     gh repo edit \
+       --description "High-fidelity CSS/SVG animation converter to MP4, WebM, GIF & aPNG with transparent background support" \
+       --add-topic "svg,video,converter,apng,gif,webm,mp4,mcp"
+     ```
+5. **Docker Hub Overview Metadata**:
+   - Manually update the repository **Overview** text and **Short Description** on Docker Hub ([hub.docker.com/r/gehdoc/svg-to-video](https://hub.docker.com/r/gehdoc/svg-to-video)) via the web UI whenever releasing new features or updating documentation.

@@ -25,7 +25,7 @@ Add `svg-to-video` to your assistant's MCP configuration file (e.g. `claude_desk
   "mcpServers": {
     "svg-to-video": {
       "command": "npx",
-      "args": ["-y", "svg-to-video", "mcp"]
+      "args": ["-y", "@gehdoc/svg-to-video", "mcp"]
     }
   }
 }
@@ -60,14 +60,14 @@ Open **Cursor Settings > Features > MCP**:
 1. Click **+ Add New MCP Server**.
 2. **Name**: `svg-to-video`
 3. **Type**: `command`
-4. **Command**: `npx -y svg-to-video mcp`
+4. **Command**: `npx -y @gehdoc/svg-to-video mcp`
 
 ### Dockerized MCP Server (Zero Dependencies)
 
 For cloud agents or sandbox environments without local Chromium or FFmpeg pre-installed:
 
 ```bash
-docker run -i --rm -v $(pwd):/app/data gehdoc/svg-to-video mcp
+docker run -i --rm --user $(id -u):$(id -g) -v $(pwd):/app/data:Z gehdoc/svg-to-video mcp
 ```
 
 ### 🔒 Security & Sandboxing
