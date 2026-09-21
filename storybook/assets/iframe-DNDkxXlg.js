@@ -1,1 +1,0 @@
-import{t as e}from"./iframe-CwP18ARZ.js";e();

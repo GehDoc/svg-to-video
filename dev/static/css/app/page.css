@@ -64,7 +64,7 @@
   position: absolute;
   top: 100%;
   margin-top: 0.5rem;
-  width: 240px;
+  width: 270px;
   background-color: var(--bg);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -141,6 +141,7 @@
   color: var(--text);
   text-decoration: none;
   border-radius: 6px;
+  white-space: nowrap;
   transition: background-color 0.2s ease, color 0.2s ease;
   cursor: pointer;
 }
@@ -165,6 +166,10 @@
   padding: 0.1rem 0.4rem;
   border-radius: 4px;
   font-size: 0.7rem;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
 }
 
 .dropdown-arrow {
