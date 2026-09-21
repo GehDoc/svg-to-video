@@ -11,7 +11,7 @@ export interface PackageJson {
   funding: { url: string };
   bugs: { url: string };
   repository: { url: string };
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export function getPackageJson(importMetaUrl: string): PackageJson {
