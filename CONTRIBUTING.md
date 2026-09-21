@@ -142,14 +142,14 @@ Beyond end-to-end testing, we use a multi-tiered strategy for component, accessi
 - **Visual Regression Tests**: Co-located with components in `web/src/`.
 - **CLI Integration Tests**: Located in `tests/cli.spec.ts`.
 - **Web Studio E2E Tests**: Located in `web/tests/*.spec.ts`.
-- **Storybook Tests**: Located in `web/src/**/*.stories.tsx` (validated by `test-storybook`).
+- **Storybook Tests**: Located in `web/src/**/*.stories.tsx` (validated by `@storybook/addon-vitest`).
 
 ### Accessibility Audits
 
 We use `addon-a11y` within Storybook. To ensure consistent results:
 
 - **Manual Audit**: Use the "Accessibility" panel in the Storybook UI.
-- **Automated Audit**: Run the Storybook interaction test suite via the official `@storybook/test-runner`.
+- **Automated Audit**: Run the Storybook interaction test suite via `@storybook/addon-vitest`.
 
 ```bash
 # Run real-browser accessibility and interaction tests
