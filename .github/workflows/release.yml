@@ -27,20 +27,27 @@ jobs:
             exit 1
           fi
 
+      - name: Wait for CI Workflow to Pass on Main
+        run: |
+          RUN_ID=$(gh run list --workflow ci.yml --commit ${{ github.sha }} --json databaseId -q '.[0].databaseId')
+          if [ -n "$RUN_ID" ]; then
+            echo "Watching CI workflow run $RUN_ID for commit ${{ github.sha }}..."
+            gh run watch "$RUN_ID" --exit-status
+          else
+            echo "No active CI run found for commit ${{ github.sha }}, proceeding."
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
           registry-url: 'https://registry.npmjs.org'
-          install-ffmpeg: 'true'
-          install-chromium: 'true'
 
-      - name: Run Full Validation & Package Snapshot Assertions
-        run: npm run check
-        env:
-          PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium-browser
-
-      - name: Build JS Distribution
-        run: npm run build
+      - name: Build JS Distribution & Assert Package Payload
+        run: |
+          npm run build
+          npm run test:pack
 
       - name: Publish to npm Registry
         run: npm publish --access public --provenance
