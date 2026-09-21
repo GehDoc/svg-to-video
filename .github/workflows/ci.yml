@@ -113,7 +113,7 @@ jobs:
         run: npm run test:visual -w web
 
   build-and-deploy:
-    name: 'Build and Deploy'
+    name: 'Deploy UX Demo & GH Pages'
     runs-on: ubuntu-latest
     permissions:
       contents: write
