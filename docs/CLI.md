@@ -2,8 +2,18 @@
 
 The tool is built to run in a headless environment, making it perfect for CI/CD pipelines or server-side automation.
 
+- 📦 **npm Package**: [`@gehdoc/svg-to-video`](https://www.npmjs.com/package/@gehdoc/svg-to-video)
+- 🐳 **Docker Hub Image**: [`gehdoc/svg-to-video`](https://hub.docker.com/r/gehdoc/svg-to-video)
+
 ```bash
-npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
+# Published package usage (no global install required)
+npx @gehdoc/svg-to-video <svgPath> <fps> <outDir> [options]
+
+# Development mode (from source)
+npm run build && node dist/src/index.js <svgPath> <fps> <outDir> [options]
+
+# Docker (zero local dependencies; add :Z for SELinux / Fedora)
+docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/<svgPath> <fps> /data/<outDir> [options]
 ```
 
 ## Arguments
@@ -31,9 +41,10 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 
 ## Environment Variables
 
-| Variable         | Scope   | Description                                                                                                                                       |
-| ---------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PUPPETEER_ARGS` | Runtime | Additional arguments passed directly to the Puppeteer `launch` method. Useful for custom browser flags (e.g., `--proxy-server`, `--disable-gpu`). |
+| Variable                    | Scope   | Description                                                                                                                                       |
+| --------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PUPPETEER_EXECUTABLE_PATH` | Runtime | Explicit path to host Chrome or Chromium binary executable for rendering fallback.                                                                |
+| `PUPPETEER_ARGS`            | Runtime | Additional arguments passed directly to the Puppeteer `launch` method. Useful for custom browser flags (e.g., `--proxy-server`, `--disable-gpu`). |
 
 ## Output Handling
 

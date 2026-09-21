@@ -35,6 +35,9 @@ updates:
       interval: weekly
       day: thursday
       time: '06:30'
+    ignore:
+      - dependency-name: 'node'
+        versions: ['26.x', '25.x']
     open-pull-requests-limit: 3
     rebase-strategy: auto
     labels:
