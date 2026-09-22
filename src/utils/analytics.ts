@@ -71,9 +71,7 @@ export async function sendEvent<K extends AnalyticsEventName>(
     const response = await umami.track({
       website: UMAMI_WEBSITE_ID,
       hostname: UMAMI_WEBSITE_HOSTNAME,
-      language: Intl.DateTimeFormat().resolvedOptions().locale,
       url: `/${resolvedInterface}`,
-      title: resolvedInterface,
       name: eventName,
       data: {
         ...properties,
