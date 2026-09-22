@@ -24,7 +24,12 @@ export default defineConfig({
     browser: {
       enabled: true,
       headless: true,
-      provider: playwright({}),
+      provider: playwright({
+        contextOptions: {
+          colorScheme:
+            (process.env.STORYBOOK_THEME as 'light' | 'dark') || 'light',
+        },
+      }),
       instances: [{ browser: 'chromium' }],
     },
   },

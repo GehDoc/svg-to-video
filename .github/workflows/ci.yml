@@ -94,10 +94,7 @@ jobs:
         with:
           install-playwright: 'true'
       - name: Run Storybook Tests
-        run: |
-          npm run storybook -w web &
-          npx wait-on http://localhost:6006
-          STORYBOOK_THEME=${{ matrix.theme }} npm run test:storybook -w web
+        run: STORYBOOK_THEME=${{ matrix.theme }} npm run test:storybook -w web
 
   visual-tests:
     name: 'Visual Regression Tests'
