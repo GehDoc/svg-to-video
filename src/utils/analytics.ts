@@ -1,10 +1,11 @@
-import { getPackageJson } from './packageInfo.js';
+import { pkg } from './packageInfo.js';
 import type {
   AnalyticsEventMap,
   AnalyticsEventName,
 } from '../../shared/analytics-schema.js';
 
-export const UMAMI_ENDPOINT = 'https://cloud.umami.is/api/send';
+const UMAMI_ENDPOINT = 'https://cloud.umami.is/api/send';
+export const UMAMI_WEBSITE_HOSTNAME = 'gehdoc.github.io';
 export const UMAMI_WEBSITE_ID = '4489aba4-cf29-439e-9491-e36f2a531a63';
 
 export type InterfaceType = 'cli' | 'mcp';
@@ -62,12 +63,11 @@ export async function sendEvent<K extends AnalyticsEventName>(
   const timeoutId = setTimeout(() => controller.abort(), 3000);
 
   try {
-    const pkg = getPackageJson(import.meta.url);
     const payload = {
       type: 'event',
       payload: {
         website: UMAMI_WEBSITE_ID,
-        hostname: resolvedInterface,
+        hostname: UMAMI_WEBSITE_HOSTNAME,
         url: `/${resolvedInterface}`,
         name: eventName,
         data: {
@@ -81,7 +81,8 @@ export async function sendEvent<K extends AnalyticsEventName>(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': `svg-to-video/${pkg.version} (${resolvedInterface.toUpperCase()}; node ${process.version})`,
+        'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       },
       body: JSON.stringify(payload),
       signal: controller.signal,

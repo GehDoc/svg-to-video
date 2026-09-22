@@ -13,9 +13,8 @@ import { fileURLToPath } from 'url';
 import { JSDOM } from 'jsdom';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
 import { isLoggerJsonOutput } from './utils/logger.js';
-import { getPackageJson } from './utils/packageInfo.js';
 import { trackEvent } from './utils/analytics.js';
-const pkg = getPackageJson(import.meta.url);
+import { pkg } from './utils/packageInfo.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

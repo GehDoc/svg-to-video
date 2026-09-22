@@ -9,8 +9,7 @@ import { validateOptions } from './utils/validateOptions.js';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
 import { formatRegistry } from './formats/registry.js';
 import { CLIFormatOptions } from './formats/types.js';
-import { getPackageJson } from './utils/packageInfo.js';
-const pkg = getPackageJson(import.meta.url);
+import { pkg } from './utils/packageInfo.js';
 import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 import { Logger } from './utils/logger.js';
 import { trackEvent } from './utils/analytics.js';

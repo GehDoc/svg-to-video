@@ -1,6 +1,11 @@
 import { test, describe, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert';
-import { isOptedOut, sendEvent, UMAMI_WEBSITE_ID } from './analytics.js';
+import {
+  isOptedOut,
+  sendEvent,
+  UMAMI_WEBSITE_ID,
+  UMAMI_WEBSITE_HOSTNAME,
+} from './analytics.js';
 
 describe('analytics', () => {
   const originalEnv = process.env.DO_NOT_TRACK;
@@ -120,12 +125,12 @@ describe('analytics', () => {
 
       const headers = requestOptions.headers as Record<string, string>;
       assert.strictEqual(headers['Content-Type'], 'application/json');
-      assert.ok(headers['User-Agent'].includes('CLI'));
+      assert.ok(headers['User-Agent'].includes('Mozilla/5.0'));
 
       const body = JSON.parse(requestOptions.body as string);
       assert.strictEqual(body.type, 'event');
       assert.strictEqual(body.payload.website, UMAMI_WEBSITE_ID);
-      assert.strictEqual(body.payload.hostname, 'cli');
+      assert.strictEqual(body.payload.hostname, UMAMI_WEBSITE_HOSTNAME);
       assert.strictEqual(body.payload.url, '/cli');
       assert.strictEqual(body.payload.name, 'file-load');
       assert.strictEqual(body.payload.data.detectedDuration, 5);

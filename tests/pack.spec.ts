@@ -9,7 +9,6 @@ const REQUIRED_FILES = [
   'dist/src/index.js',
   'dist/src/mcp.js',
   'dist/src/utils/logger.js',
-  'dist/src/utils/packageInfo.js',
   'skills/svg-to-video/SKILL.md',
 ];
 
