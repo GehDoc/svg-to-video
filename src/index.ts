@@ -183,10 +183,11 @@ async function run(
   }
 
   trackEvent('file-load', {
-    detectedDuration: duration,
-    hasAnimation: duration !== undefined && duration > 0,
+    // TODO : Add actual values for these properties based on the SVG (not options)
+    detectedDuration: 0,
+    hasAnimation: false,
     aspectRatio: 'unknown',
-    isDimensionsDetected: true,
+    isDimensionsDetected: false,
   });
 
   const puppeteerArgs = (process.env.PUPPETEER_ARGS || '')
