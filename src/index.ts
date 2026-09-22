@@ -14,6 +14,7 @@ const pkg = getPackageJson(import.meta.url);
 import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 import { Logger } from './utils/logger.js';
 import { trackEvent } from './utils/analytics.js';
+import { ConversionTracker } from '../shared/rendererTracking.js';
 
 type FrameFileExtension = 'png';
 const frameFileExtension: FrameFileExtension = 'png';
@@ -209,14 +210,17 @@ async function run(
   logger.info(`  Frames:     ${totalFrames} total`);
   logger.info('---');
 
-  const startTime = Date.now();
-  trackEvent('conversion-start', {
-    format,
-    isTransparent: options.transparent,
-    captureMethod: 'puppeteer',
-    fps,
-    videoDurationSec: duration,
-  });
+  const tracker = new ConversionTracker(
+    {
+      format,
+      isTransparent: options.transparent,
+      captureMethod: 'puppeteer',
+      fps,
+      videoDurationSec: duration,
+    },
+    trackEvent
+  );
+  tracker.start();
 
   try {
     fs.mkdirSync(outDir, { recursive: true });
@@ -251,16 +255,7 @@ async function run(
       cleanupFrames(totalFrames, padWidth, outDir, logger);
     }
 
-    const processDurationSec = Math.round((Date.now() - startTime) / 1000);
-    trackEvent('conversion-success', {
-      format,
-      isTransparent: options.transparent,
-      captureMethod: 'puppeteer',
-      fps,
-      videoDurationSec: duration,
-      totalFrames,
-      processDurationSec,
-    });
+    tracker.success(totalFrames);
 
     logger.done(outputFullPath, {
       duration,
@@ -271,14 +266,7 @@ async function run(
       transparent: options.transparent,
     });
   } catch (error) {
-    const processDurationSec = Math.round((Date.now() - startTime) / 1000);
-    trackEvent('conversion-failed', {
-      error: error instanceof Error ? error.message : String(error),
-      format,
-      isTransparent: options.transparent,
-      captureMethod: 'puppeteer',
-      processDurationSec,
-    });
+    tracker.failed(error instanceof Error ? error : String(error));
     throw error;
   }
 }

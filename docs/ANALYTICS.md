@@ -42,12 +42,40 @@ This guarantees that:
 - Event names are checked against `keyof AnalyticsEventMap` at compile time.
 - Payload properties strictly match the event schema (e.g. `FileLoadEventProperties`, `ConversionStartEventProperties`), preventing invalid property keys or missing fields across call sites.
 
+## Shared `ConversionTracker` Class
+
+Conversion rendering lifecycle events (`conversion-start`, `conversion-success`, `conversion-failed`, `conversion-cancel`) are managed by a shared `ConversionTracker` class in [`shared/rendererTracking.ts`](../shared/rendererTracking.ts):
+
+```typescript
+import { ConversionTracker } from '#shared/rendererTracking';
+
+const tracker = new ConversionTracker(
+  {
+    format: 'webm',
+    isTransparent: true,
+    captureMethod: 'puppeteer', // or 'webcodecs'
+    fps: 60,
+    videoDurationSec: 5,
+  },
+  trackEvent
+);
+
+tracker.start();
+// Operations...
+tracker.success(totalFrames); // Automatically measures elapsed processDurationSec
+// Or on failure/cancel:
+// tracker.failed(error);
+// tracker.cancel();
+```
+
+This pattern encapsulates timing measurement (`performance.now()` / `Date.now()`) and avoids timing calculation duplication across Web Studio hooks and CLI render pipelines.
+
 ## Implementation Architecture
 
 ### 🌐 Web Studio
 
 - **Client**: Standard Umami browser script tag loaded asynchronously.
-- **Helper**: `web/src/utils/analytics.ts`.
+- **Helper**: `web/src/utils/analytics.ts` and `shared/rendererTracking.ts`.
 
 ### 💻 CLI & 🤖 MCP Server
 
@@ -55,7 +83,7 @@ This guarantees that:
 - **Paths & Hostnames**: Requests set `url` to `/cli` or `/mcp` and `hostname` to `cli` or `mcp`.
 - **User-Agent Header**: Sets `svg-to-video/<version> (CLI; node <version>)` or `(MCP; node <version>)`, allowing Umami to compute sessions server-side automatically.
 - **Fail-Safe Isolation**: All network calls are non-blocking with 3-second timeouts and silent exception handling. Failures never affect CLI exit codes or MCP `stdio` communication streams.
-- **Helper**: `src/utils/analytics.ts`.
+- **Helper**: `src/utils/analytics.ts` and `shared/rendererTracking.ts`.
 
 ## Privacy & Opt-Out
 

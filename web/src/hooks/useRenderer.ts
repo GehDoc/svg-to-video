@@ -2,12 +2,8 @@ import { useState, useCallback, useRef } from 'react';
 import type { RendererHandle } from '../components/SvgRenderer';
 import { formatRegistry } from '../utils/encoders/Registry';
 import type { VideoMetadata } from '@shared/metadata';
-import {
-  trackConversionStart,
-  trackConversionSuccess,
-  trackConversionFailed,
-  trackConversionCancel,
-} from '../utils/tracking/rendererTracking';
+import { ConversionTracker } from '@shared/rendererTracking';
+import { trackEvent } from '../utils/analytics';
 
 export type ResolutionPreset = 'original' | '720p' | '1080p';
 export type CaptureMethod = 'optimal' | 'high-fidelity';
@@ -108,8 +104,7 @@ export const useRenderer = (
 
   const cancelRef = useRef(false);
   const activeEncoderRef = useRef<VideoEncoder | null>(null);
-  const settingsRef = useRef<RenderSettings | null>(null);
-  const renderStartTimeRef = useRef<number | null>(null);
+  const activeTrackerRef = useRef<ConversionTracker | null>(null);
 
   const render = useCallback(
     async (svgContent: string, settings: RenderSettings) => {
@@ -119,16 +114,25 @@ export const useRenderer = (
       if (!format) throw new Error(`Unknown format: ${settings.format}`);
 
       cancelRef.current = false;
-      settingsRef.current = settings;
-      renderStartTimeRef.current = performance.now();
       const videoDurationSec = settings.duration + settings.hold;
       const totalAnimationFrames = Math.ceil(settings.duration * settings.fps);
       const totalHoldFrames = Math.ceil(settings.hold * settings.fps);
       const totalFrames = totalAnimationFrames + totalHoldFrames;
 
-      setState({ isRendering: true, progress: 0, status: 'Initializing...' });
+      const tracker = new ConversionTracker(
+        {
+          format: settings.format,
+          isTransparent: settings.isTransparent,
+          captureMethod: settings.captureMethod,
+          fps: settings.fps,
+          videoDurationSec,
+        },
+        trackEvent
+      );
+      activeTrackerRef.current = tracker;
+      tracker.start();
 
-      trackConversionStart(settings, videoDurationSec);
+      setState({ isRendering: true, progress: 0, status: 'Initializing...' });
 
       try {
         const { width: origWidth, height: origHeight } =
@@ -196,6 +200,7 @@ export const useRenderer = (
         for (let frame = 1; frame <= totalAnimationFrames; frame++) {
           if (cancelRef.current) {
             encoder.cancel();
+            tracker.cancel();
             setState({ isRendering: false, progress: 0, status: 'Cancelled' });
             return;
           }
@@ -249,6 +254,7 @@ export const useRenderer = (
           for (let frame = 1; frame <= totalHoldFrames; frame++) {
             if (cancelRef.current) {
               encoder.cancel();
+              tracker.cancel();
               setState({
                 isRendering: false,
                 progress: 0,
@@ -304,12 +310,7 @@ export const useRenderer = (
         const url = URL.createObjectURL(blob);
         setState({ isRendering: false, progress: 100, status: 'Done!' });
 
-        trackConversionSuccess(
-          settings,
-          videoDurationSec,
-          totalFrames,
-          renderStartTimeRef.current
-        );
+        tracker.success(totalFrames);
 
         return url;
       } catch (err) {
@@ -320,7 +321,7 @@ export const useRenderer = (
           status: `Error: ${error.message}`,
         });
 
-        trackConversionFailed(settings, error, renderStartTimeRef.current);
+        tracker.failed(error);
 
         throw error;
       }
@@ -333,9 +334,10 @@ export const useRenderer = (
     if (activeEncoderRef.current) {
       activeEncoderRef.current.cancel();
     }
+    if (activeTrackerRef.current) {
+      activeTrackerRef.current.cancel();
+    }
     setState({ isRendering: false, progress: 0, status: 'Ready' });
-
-    trackConversionCancel(settingsRef.current, renderStartTimeRef.current);
   }, []);
 
   const clearError = useCallback(() => {
