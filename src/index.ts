@@ -13,6 +13,7 @@ import { getPackageJson } from './utils/packageInfo.js';
 const pkg = getPackageJson(import.meta.url);
 import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 import { Logger } from './utils/logger.js';
+import { trackEvent } from './utils/analytics.js';
 
 type FrameFileExtension = 'png';
 const frameFileExtension: FrameFileExtension = 'png';
@@ -181,6 +182,13 @@ async function run(
     logger.info(`✅ Auto-detected duration: ${duration}s`);
   }
 
+  trackEvent('file-load', {
+    detectedDuration: duration,
+    hasAnimation: duration !== undefined && duration > 0,
+    aspectRatio: 'unknown',
+    isDimensionsDetected: true,
+  });
+
   const puppeteerArgs = (process.env.PUPPETEER_ARGS || '')
     .split(' ')
     .filter((arg) => arg.trim().length > 0);
@@ -201,46 +209,78 @@ async function run(
   logger.info(`  Frames:     ${totalFrames} total`);
   logger.info('---');
 
-  fs.mkdirSync(outDir, { recursive: true });
-
-  await createFrames(
-    svg,
-    fps,
-    totalFrames,
-    padWidth,
-    outDir,
-    puppeteerArgs,
-    options.resolution,
-    options.scale,
-    options.transparent,
-    options.bgColor,
-    logger
-  );
-
-  convertToOutput(
-    outputFileName,
+  const startTime = Date.now();
+  trackEvent('conversion-start', {
     format,
+    isTransparent: options.transparent,
+    captureMethod: 'puppeteer',
     fps,
-    padWidth,
-    options.hold,
-    outDir,
-    options.transparent,
-    options.metadata,
-    logger
-  );
-
-  if (!options.keepFrames) {
-    cleanupFrames(totalFrames, padWidth, outDir, logger);
-  }
-
-  logger.done(outputFullPath, {
-    duration,
-    fps,
-    format,
-    totalFrames,
-    resolution: options.resolution,
-    transparent: options.transparent,
+    videoDurationSec: duration,
   });
+
+  try {
+    fs.mkdirSync(outDir, { recursive: true });
+
+    await createFrames(
+      svg,
+      fps,
+      totalFrames,
+      padWidth,
+      outDir,
+      puppeteerArgs,
+      options.resolution,
+      options.scale,
+      options.transparent,
+      options.bgColor,
+      logger
+    );
+
+    convertToOutput(
+      outputFileName,
+      format,
+      fps,
+      padWidth,
+      options.hold,
+      outDir,
+      options.transparent,
+      options.metadata,
+      logger
+    );
+
+    if (!options.keepFrames) {
+      cleanupFrames(totalFrames, padWidth, outDir, logger);
+    }
+
+    const processDurationSec = Math.round((Date.now() - startTime) / 1000);
+    trackEvent('conversion-success', {
+      format,
+      isTransparent: options.transparent,
+      captureMethod: 'puppeteer',
+      fps,
+      videoDurationSec: duration,
+      totalFrames,
+      processDurationSec,
+    });
+
+    logger.done(outputFullPath, {
+      duration,
+      fps,
+      format,
+      totalFrames,
+      resolution: options.resolution,
+      transparent: options.transparent,
+    });
+  } catch (error) {
+    const processDurationSec = Math.round((Date.now() - startTime) / 1000);
+    trackEvent('conversion-failed', {
+      error: error instanceof Error ? error.message : String(error),
+      format,
+      isTransparent: options.transparent,
+      captureMethod: 'puppeteer',
+      processDurationSec,
+    });
+    throw error;
+  }
 }
 
 /**
