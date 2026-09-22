@@ -447,10 +447,21 @@ function convertToOutput(
   const args = generator.buildFfmpegArgs(formatOptions);
 
   try {
-    const output = child_process.execFileSync('ffmpeg', args, {
+    const result = child_process.spawnSync('ffmpeg', args, {
       encoding: 'utf8',
+      // Capture stderr so it never leaks into the parent process's stdio.
+      // In MCP mode the parent stdio is the JSON transport — any stray line
+      // (e.g. FFmpeg's "[Parsed_palettegen_1 …]" warning) would corrupt it.
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
-    if (output) logger.info(output);
+
+    if (result.stdout) logger.info(result.stdout);
+    if (result.stderr) logger.info(result.stderr);
+
+    if (result.status !== 0) {
+      const detail = result.stderr || result.error?.message || 'unknown error';
+      throw new Error(detail);
+    }
 
     const outputFullPath = path.join(outDir, outputFileName);
     if (generator.postProcess) {
