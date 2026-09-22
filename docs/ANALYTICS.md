@@ -79,9 +79,10 @@ This pattern encapsulates timing measurement (`performance.now()` / `Date.now()`
 
 ### 💻 CLI & 🤖 MCP Server
 
-- **Transport**: Asynchronous, fire-and-forget HTTP POST requests to `https://cloud.umami.is/api/send`.
-- **Paths & Hostnames**: Requests set `url` to `/cli` or `/mcp` and `hostname` to `cli` or `mcp`.
-- **User-Agent Header**: Sets `svg-to-video/<version> (CLI; node <version>)` or `(MCP; node <version>)`, allowing Umami to compute sessions server-side automatically.
+- **Transport**: Asynchronous, fire-and-forget HTTP POST requests via the [`@umami/node`](https://github.com/umami-software/node) SDK.
+- **Paths & Hostname**: Requests set `url` to `/cli` or `/mcp` (distinguishing the interface) and `hostname` to `gehdoc.github.io` (same as the Web Studio, allowing unified session tracking in the Umami dashboard).
+- **User-Agent Header**: `Mozilla/5.0 Umami/<node-version>` (SDK default — accepted by Umami's server).
+- **Shared Constants**: `UMAMI_HOST_URL`, `UMAMI_WEBSITE_ID`, and `UMAMI_WEBSITE_HOSTNAME` are declared once in [`shared/analytics-schema.ts`](../shared/analytics-schema.ts) and imported by both the CLI/MCP analytics module and the Web Studio layout.
 - **Fail-Safe Isolation**: All network calls are non-blocking with 3-second timeouts and silent exception handling. Failures never affect CLI exit codes or MCP `stdio` communication streams.
 - **Helper**: `src/utils/analytics.ts` and `shared/rendererTracking.ts`.
 
