@@ -50,7 +50,7 @@ Our **Web Studio** is a serverless, client-side rendering tool. It runs entirely
 
 > **Automated Demo**: The demo video at the top of this README is automatically generated and updated by our CI/CD pipeline using Playwright and Driver.js, ensuring it always reflects the latest UI changes.
 
-> **Privacy Note**: We use [Umami Analytics](https://umami.is/) to collect anonymous usage data across our Web Studio, CLI, and MCP server interfaces (e.g., number of conversions and format usage) to help us improve the tool. This tracking is cookie-less, respects standard "Do Not Track" settings (`DO_NOT_TRACK=1`), and never collects personal information or SVG contents. See **[docs/ANALYTICS.md](./docs/ANALYTICS.md)** for details.
+> **Privacy Note**: We use [Umami Analytics](https://umami.is/) to collect anonymous usage data across our Web Studio, CLI, and MCP server interfaces (e.g., number of conversions and format usage) to help us improve the tool. This tracking is cookie-less, respects standard "Do Not Track" settings (set the `DO_NOT_TRACK=1` environment variable to opt out), and never collects personal information or SVG contents. See **[docs/ANALYTICS.md](./docs/ANALYTICS.md)** for details.
 
 Explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video/storybook/)** to see how the engine handles complex CSS and fonts.
 

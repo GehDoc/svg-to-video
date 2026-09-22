@@ -88,6 +88,6 @@ This pattern encapsulates timing measurement (`performance.now()` / `Date.now()`
 
 ## Privacy & Opt-Out
 
-- **Do Not Track (`DO_NOT_TRACK`)**: All interfaces respect standard privacy signals. Setting `DO_NOT_TRACK=1` or `DO_NOT_TRACK=true` completely disables telemetry collection.
+- **Do Not Track (`DO_NOT_TRACK`)**: All interfaces respect standard privacy signals. Setting the `DO_NOT_TRACK` environment variable to `1` or `true` (e.g. `DO_NOT_TRACK=1 svg-to-video ...`) completely disables telemetry collection.
 - **CI/CD & Test Automation**: Telemetry is automatically disabled when running in CI pipelines (`process.env.CI`) or test runners (`process.env.NODE_ENV === 'test'`).
 - **No PII**: Tracking is cookie-less and never collects SVG file contents, file paths, file names, or personally identifiable information (PII).
