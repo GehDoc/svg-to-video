@@ -125,7 +125,7 @@ describe('analytics', () => {
 
       const headers = requestOptions.headers as Record<string, string>;
       assert.strictEqual(headers['Content-Type'], 'application/json');
-      assert.ok(headers['User-Agent'].includes('Mozilla/5.0'));
+      assert.ok(headers['User-Agent'].startsWith('Mozilla/5.0 Umami/'));
 
       const body = JSON.parse(requestOptions.body as string);
       assert.strictEqual(body.type, 'event');
