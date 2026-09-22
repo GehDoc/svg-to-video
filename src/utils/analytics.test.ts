@@ -67,6 +67,13 @@ describe('analytics', () => {
   });
 
   describe('sendEvent', () => {
+    const dummyFileLoad = {
+      detectedDuration: 5,
+      hasAnimation: true,
+      aspectRatio: 'landscape' as const,
+      isDimensionsDetected: true,
+    };
+
     test('should skip HTTP POST when opted out via DO_NOT_TRACK', async () => {
       process.env.DO_NOT_TRACK = '1';
       let fetchCalled = false;
@@ -75,7 +82,7 @@ describe('analytics', () => {
         return new Response(null, { status: 200 });
       }) as typeof fetch;
 
-      const result = await sendEvent('file-load', { detectedDuration: 5 });
+      const result = await sendEvent('file-load', dummyFileLoad);
       assert.strictEqual(result, false);
       assert.strictEqual(fetchCalled, false);
     });
@@ -88,7 +95,7 @@ describe('analytics', () => {
         return new Response(null, { status: 200 });
       }) as typeof fetch;
 
-      const result = await sendEvent('file-load', { detectedDuration: 5 });
+      const result = await sendEvent('file-load', dummyFileLoad);
       assert.strictEqual(result, false);
       assert.strictEqual(fetchCalled, false);
     });
@@ -106,11 +113,7 @@ describe('analytics', () => {
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }) as typeof fetch;
 
-      const success = await sendEvent(
-        'file-load',
-        { detectedDuration: 5, hasAnimation: true },
-        'cli'
-      );
+      const success = await sendEvent('file-load', dummyFileLoad, 'cli');
 
       assert.strictEqual(success, true);
       assert.strictEqual(requestUrl, 'https://cloud.umami.is/api/send');
@@ -135,7 +138,13 @@ describe('analytics', () => {
         throw new Error('Network error');
       }) as typeof fetch;
 
-      const result = await sendEvent('conversion-failed', { error: 'Failed' });
+      const result = await sendEvent('conversion-failed', {
+        error: 'Failed',
+        format: 'webm',
+        isTransparent: false,
+        captureMethod: 'puppeteer',
+        processDurationSec: 2,
+      });
       assert.strictEqual(result, false);
     });
   });

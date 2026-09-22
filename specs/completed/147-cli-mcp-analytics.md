@@ -5,12 +5,13 @@
 
 ## 🎯 Objective
 
-Implement non-blocking, privacy-respecting Umami telemetry tracking across CLI and MCP interfaces, sharing a unified schema (`file-load`, `conversion-start`, `conversion-success`, `conversion-failed`) with Web Studio analytics while ensuring zero risk to stdio streams or process execution.
+Implement non-blocking, privacy-respecting Umami telemetry tracking across CLI and MCP interfaces, sharing a strongly typed TypeScript schema (`file-load`, `conversion-start`, `conversion-success`, `conversion-failed`) with Web Studio analytics while ensuring zero risk to stdio streams or process execution.
 
 ## 🛠 Technical Strategy
 
-- **Core Technologies**: Umami HTTP API (`/api/send`), Node.js `fetch`
+- **Core Technologies**: Umami HTTP API (`/api/send`), Node.js `fetch`, TypeScript generics & interfaces
 - **Architecture**:
+  - Strongly typed shared event contract interface in `shared/analytics-schema.ts` (`AnalyticsEventMap`).
   - Asynchronous, fire-and-forget background analytics HTTP POST client in CLI/MCP runtime (`src/utils/analytics.ts`).
   - Fail-safe error handling (catching all network and parser errors silently) to ensure network failures or offline environments never affect CLI exit codes or MCP stdio stream format.
   - Respect `DO_NOT_TRACK` environment variable (`DO_NOT_TRACK=1` or `DO_NOT_TRACK=true`).
@@ -28,7 +29,9 @@ Implement non-blocking, privacy-respecting Umami telemetry tracking across CLI a
 ## ✅ Task List
 
 - [x] **Infrastructure & Utilities**
-  - [x] Create `src/utils/analytics.ts` for Node.js CLI & MCP interfaces.
+  - [x] Create `shared/analytics-schema.ts` defining `AnalyticsEventMap` contract across Web Studio, CLI, and MCP.
+  - [x] Create `src/utils/analytics.ts` for Node.js CLI & MCP interfaces enforcing `AnalyticsEventMap`.
+  - [x] Update `web/src/utils/analytics.ts` to enforce `AnalyticsEventMap` type safety.
   - [x] Implement `DO_NOT_TRACK`, `CI`, and `NODE_ENV === 'test'` check and opt-out logic.
   - [x] Build silent, non-blocking HTTP POST sender to Umami `/api/send` with custom `User-Agent`.
 - [x] **CLI & MCP Telemetry Integration**
@@ -39,17 +42,19 @@ Implement non-blocking, privacy-respecting Umami telemetry tracking across CLI a
   - [x] Add unit tests for CLI/MCP analytics helper (verifying payload structure, `DO_NOT_TRACK` honor, and error isolation).
   - [x] Add integration tests in CLI & MCP test suites.
 - [x] **Documentation & SEO**
-  - [x] Update `docs/ANALYTICS.md` with CLI and MCP tracking schema and privacy flags.
+  - [x] Update `docs/ANALYTICS.md` with CLI/MCP tracking schema, TypeScript contract, and privacy flags.
   - [x] Update `README.md` & `docs/CLI.md` & `docs/MCP.md` regarding telemetry and opt-out instructions (`DO_NOT_TRACK=1`).
 
 ## 🧪 Verification Plan
 
 - [x] Unit Test: `npx tsx --test src/utils/analytics.test.ts` verifying `src/utils/analytics.ts` opt-out, fire-and-forget handling, and payload creation.
 - [x] Integration Test: `npm run test:cli` and `npm run test:mcp` passing with analytics active and disabled via `DO_NOT_TRACK=1`.
+- [x] Type check verification: `npm run type-check`
 - [x] Fast project verification: `npm run check:fast`
 
 ## 📝 Change Log
 
 - 2026-09-22: Initial spec created for Issue #147.
 - 2026-09-22: Updated spec to align `file-load` event naming with Web Studio UI, added User-Agent header for server-side Umami session generation, and refined payload schema.
-- 2026-09-22: Completed implementation of CLI and MCP analytics tracking, added unit and integration tests, updated documentation, and verified full suite. Status set to Completed.
+- 2026-09-22: Added shared TypeScript contract `shared/analytics-schema.ts` (`AnalyticsEventMap`) for compile-time event payload verification across call sites in response to PR review feedback.
+- 2026-09-22: Completed implementation of CLI, MCP, and Web Studio analytics tracking with TypeScript type safety, added unit and integration tests, updated documentation, and verified full suite. Status set to Completed.

@@ -9,7 +9,7 @@ Note: All events automatically include the application `version` tag (e.g. `vers
 | Event Name           | Trigger                                | Properties                                                                                                                                                                  | Interfaces           |
 | :------------------- | :------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------- |
 | `file-load`          | User/Agent loads or inspects an SVG    | `method` (`file-picker` \| `drag-and-drop`), `aspectRatio` (`square` \| `landscape` \| `portrait` \| `unknown`), `hasAnimation`, `detectedDuration`, `isDimensionsDetected` | Web Studio, CLI, MCP |
-| `conversion-start`   | Render process begins                  | `format`, `isTransparent`, `captureMethod` (`puppeteer` \| `webcodecs`), `fps`, `videoDurationSec`                                                                          | Web Studio, CLI, MCP |
+| `conversion-start`   | Render process begins                  | `format`, `isTransparent`, `captureMethod` (`puppeteer` \| `webcodecs` \| `optimal` \| `canvas`), `fps`, `videoDurationSec`                                                 | Web Studio, CLI, MCP |
 | `conversion-success` | Render process completes               | `format`, `isTransparent`, `captureMethod`, `fps`, `videoDurationSec`, `totalFrames`, `processDurationSec`                                                                  | Web Studio, CLI, MCP |
 | `conversion-failed`  | Render process errors out              | `error`, `format`, `isTransparent`, `captureMethod`, `processDurationSec`                                                                                                   | Web Studio, CLI, MCP |
 | `conversion-cancel`  | User cancels the render                | `format`, `isTransparent`, `captureMethod`, `processDurationSec`                                                                                                            | Web Studio           |
@@ -20,11 +20,33 @@ Note: All events automatically include the application `version` tag (e.g. `vers
 | `click-issue-report` | User clicks "Report an Issue" in menu  | N/A                                                                                                                                                                         | Web Studio           |
 | `click-source-code`  | User clicks "View Source Code" in menu | N/A                                                                                                                                                                         | Web Studio           |
 
+## TypeScript Type Safety & Contract
+
+All analytics event payloads are strictly type-checked at compile time using a shared TypeScript contract interface in [`shared/analytics-schema.ts`](../shared/analytics-schema.ts):
+
+```typescript
+import type {
+  AnalyticsEventMap,
+  AnalyticsEventName,
+} from '#shared/analytics-schema';
+
+// Centralized generic trackEvent signature across CLI, MCP, and Web Studio
+export function trackEvent<K extends AnalyticsEventName>(
+  eventName: K,
+  properties?: AnalyticsEventMap[K]
+): void;
+```
+
+This guarantees that:
+
+- Event names are checked against `keyof AnalyticsEventMap` at compile time.
+- Payload properties strictly match the event schema (e.g. `FileLoadEventProperties`, `ConversionStartEventProperties`), preventing invalid property keys or missing fields across call sites.
+
 ## Implementation Architecture
 
 ### 🌐 Web Studio
 
-- **Client**: standard Umami browser script tag loaded asynchronously.
+- **Client**: Standard Umami browser script tag loaded asynchronously.
 - **Helper**: `web/src/utils/analytics.ts`.
 
 ### 💻 CLI & 🤖 MCP Server

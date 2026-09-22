@@ -1,4 +1,8 @@
 import { getPackageJson } from './packageInfo.js';
+import type {
+  AnalyticsEventMap,
+  AnalyticsEventName,
+} from '../../shared/analytics-schema.js';
 
 export const UMAMI_ENDPOINT = 'https://cloud.umami.is/api/send';
 export const UMAMI_WEBSITE_ID = '4489aba4-cf29-439e-9491-e36f2a531a63';
@@ -30,9 +34,9 @@ export function resolveInterfaceType(
   return defaultType;
 }
 
-export function trackEvent(
-  eventName: string,
-  properties?: Record<string, unknown>,
+export function trackEvent<K extends AnalyticsEventName>(
+  eventName: K,
+  properties?: AnalyticsEventMap[K],
   interfaceType?: InterfaceType
 ): void {
   if (isOptedOut()) {
@@ -44,9 +48,9 @@ export function trackEvent(
   });
 }
 
-export async function sendEvent(
-  eventName: string,
-  properties?: Record<string, unknown>,
+export async function sendEvent<K extends AnalyticsEventName>(
+  eventName: K,
+  properties?: AnalyticsEventMap[K],
   interfaceType?: InterfaceType
 ): Promise<boolean> {
   if (isOptedOut()) {
