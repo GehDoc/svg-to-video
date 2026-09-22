@@ -1,11 +1,10 @@
 import { test, describe, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert';
+import { isOptedOut, sendEvent } from './analytics.js';
 import {
-  isOptedOut,
-  sendEvent,
   UMAMI_WEBSITE_ID,
   UMAMI_WEBSITE_HOSTNAME,
-} from './analytics.js';
+} from '../../shared/analytics-schema.js';
 
 describe('analytics', () => {
   const originalEnv = process.env.DO_NOT_TRACK;

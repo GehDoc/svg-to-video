@@ -4,14 +4,16 @@ import type {
   AnalyticsEventMap,
   AnalyticsEventName,
 } from '../../shared/analytics-schema.js';
-
-export const UMAMI_WEBSITE_HOSTNAME = 'gehdoc.github.io';
-export const UMAMI_WEBSITE_ID = '4489aba4-cf29-439e-9491-e36f2a531a63';
+import {
+  UMAMI_HOST_URL,
+  UMAMI_WEBSITE_HOSTNAME,
+  UMAMI_WEBSITE_ID,
+} from '../../shared/analytics-schema.js';
 
 export type InterfaceType = 'cli' | 'mcp';
 
 const umami = new Umami({
-  hostUrl: 'https://cloud.umami.is',
+  hostUrl: UMAMI_HOST_URL,
   websiteId: UMAMI_WEBSITE_ID,
 });
 

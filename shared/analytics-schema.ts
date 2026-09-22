@@ -3,6 +3,10 @@
  * Shared contract between Web Studio, CLI, and MCP Server.
  */
 
+export const UMAMI_HOST_URL = 'https://cloud.umami.is';
+export const UMAMI_WEBSITE_HOSTNAME = 'gehdoc.github.io';
+export const UMAMI_WEBSITE_ID = '4489aba4-cf29-439e-9491-e36f2a531a63';
+
 export type CaptureMethodType =
   'puppeteer' | 'webcodecs' | 'optimal' | 'canvas' | (string & {});
 
