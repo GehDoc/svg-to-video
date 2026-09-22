@@ -13,8 +13,8 @@ import { fileURLToPath } from 'url';
 import { JSDOM } from 'jsdom';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
 import { isLoggerJsonOutput } from './utils/logger.js';
-import { getPackageJson } from './utils/packageInfo.js';
-const pkg = getPackageJson(import.meta.url);
+import { trackEvent } from './utils/analytics.js';
+import { pkg } from './utils/packageInfo.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -186,6 +186,24 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
     }
 
+    trackEvent(
+      'file-load',
+      {
+        detectedDuration: duration,
+        hasAnimation: duration !== undefined && duration > 0,
+        aspectRatio:
+          width && height
+            ? width === height
+              ? 'square'
+              : width > height
+                ? 'landscape'
+                : 'portrait'
+            : 'unknown',
+        isDimensionsDetected: !!(width && height),
+      },
+      'mcp'
+    );
+
     return {
       content: [
         {
@@ -276,6 +294,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const rawOutput = execFileSync(command, cliArgs, {
         encoding: 'utf-8',
         cwd: process.cwd(),
+        env: {
+          ...process.env,
+          SVG_TO_VIDEO_INTERFACE: 'mcp',
+        },
       });
 
       if (tempSvgFile && targetSvgPath) {

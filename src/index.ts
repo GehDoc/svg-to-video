@@ -9,10 +9,11 @@ import { validateOptions } from './utils/validateOptions.js';
 import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
 import { formatRegistry } from './formats/registry.js';
 import { CLIFormatOptions } from './formats/types.js';
-import { getPackageJson } from './utils/packageInfo.js';
-const pkg = getPackageJson(import.meta.url);
+import { pkg } from './utils/packageInfo.js';
 import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 import { Logger } from './utils/logger.js';
+import { trackEvent } from './utils/analytics.js';
+import { ConversionTracker } from '../shared/rendererTracking.js';
 
 type FrameFileExtension = 'png';
 const frameFileExtension: FrameFileExtension = 'png';
@@ -181,6 +182,14 @@ async function run(
     logger.info(`✅ Auto-detected duration: ${duration}s`);
   }
 
+  trackEvent('file-load', {
+    // TODO : Add actual values for these properties based on the SVG (not options)
+    detectedDuration: 0,
+    hasAnimation: false,
+    aspectRatio: 'unknown',
+    isDimensionsDetected: false,
+  });
+
   const puppeteerArgs = (process.env.PUPPETEER_ARGS || '')
     .split(' ')
     .filter((arg) => arg.trim().length > 0);
@@ -201,46 +210,65 @@ async function run(
   logger.info(`  Frames:     ${totalFrames} total`);
   logger.info('---');
 
-  fs.mkdirSync(outDir, { recursive: true });
-
-  await createFrames(
-    svg,
-    fps,
-    totalFrames,
-    padWidth,
-    outDir,
-    puppeteerArgs,
-    options.resolution,
-    options.scale,
-    options.transparent,
-    options.bgColor,
-    logger
+  const tracker = new ConversionTracker(
+    {
+      format,
+      isTransparent: options.transparent,
+      captureMethod: 'puppeteer',
+      fps,
+      videoDurationSec: duration,
+    },
+    trackEvent
   );
+  tracker.start();
 
-  convertToOutput(
-    outputFileName,
-    format,
-    fps,
-    padWidth,
-    options.hold,
-    outDir,
-    options.transparent,
-    options.metadata,
-    logger
-  );
+  try {
+    fs.mkdirSync(outDir, { recursive: true });
 
-  if (!options.keepFrames) {
-    cleanupFrames(totalFrames, padWidth, outDir, logger);
+    await createFrames(
+      svg,
+      fps,
+      totalFrames,
+      padWidth,
+      outDir,
+      puppeteerArgs,
+      options.resolution,
+      options.scale,
+      options.transparent,
+      options.bgColor,
+      logger
+    );
+
+    convertToOutput(
+      outputFileName,
+      format,
+      fps,
+      padWidth,
+      options.hold,
+      outDir,
+      options.transparent,
+      options.metadata,
+      logger
+    );
+
+    if (!options.keepFrames) {
+      cleanupFrames(totalFrames, padWidth, outDir, logger);
+    }
+
+    tracker.success(totalFrames);
+
+    logger.done(outputFullPath, {
+      duration,
+      fps,
+      format,
+      totalFrames,
+      resolution: options.resolution,
+      transparent: options.transparent,
+    });
+  } catch (error) {
+    tracker.failed(error instanceof Error ? error : String(error));
+    throw error;
   }
-
-  logger.done(outputFullPath, {
-    duration,
-    fps,
-    format,
-    totalFrames,
-    resolution: options.resolution,
-    transparent: options.transparent,
-  });
 }
 
 /**

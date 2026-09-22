@@ -1,6 +1,6 @@
 {
   "name": "@gehdoc/svg-to-video",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "type": "module",
   "description": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
   "imports": {
@@ -53,6 +53,7 @@
   ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
+    "@umami/node": "^0.4.0",
     "commander": "^15.0.0",
     "jsdom": "^29.1.1",
     "puppeteer": "^25.8.0",
