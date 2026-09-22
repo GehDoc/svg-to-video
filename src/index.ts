@@ -6,7 +6,10 @@ import { Command } from 'commander';
 import path from 'path';
 import { seekAnimations } from '../shared/animation-engine.js';
 import { validateOptions } from './utils/validateOptions.js';
-import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
+import {
+  analyzeSvgAnimation,
+  parseSvgDimensions,
+} from '../shared/analyzeSvgAnimation.js';
 import { formatRegistry } from './formats/registry.js';
 import { CLIFormatOptions } from './formats/types.js';
 import { pkg } from './utils/packageInfo.js';
@@ -168,12 +171,15 @@ async function run(
 
   const svg = fs.readFileSync(svgPath, 'utf-8');
 
+  const dom = new JSDOM('');
+  const parsedDim = parseSvgDimensions(svg, dom.window.DOMParser);
+  const detectedDuration = analyzeSvgAnimation(svg, dom.window.DOMParser);
+
   let duration = options.duration;
   if (duration === undefined) {
     logger.info('🔍 Duration not provided, attempting to auto-detect...');
 
-    const dom = new JSDOM('');
-    duration = analyzeSvgAnimation(svg, dom.window.DOMParser);
+    duration = detectedDuration;
     if (duration === undefined) {
       throw logger.fatal(
         'Could not detect duration. Please provide a duration using -d or --duration.'
@@ -182,12 +188,22 @@ async function run(
     logger.info(`✅ Auto-detected duration: ${duration}s`);
   }
 
+  let aspectRatio: 'square' | 'landscape' | 'portrait' | 'unknown' = 'unknown';
+  if (parsedDim.isDimensionsDetected) {
+    if (parsedDim.width === parsedDim.height) {
+      aspectRatio = 'square';
+    } else if (parsedDim.width > parsedDim.height) {
+      aspectRatio = 'landscape';
+    } else {
+      aspectRatio = 'portrait';
+    }
+  }
+
   trackEvent('file-load', {
-    // TODO : Add actual values for these properties based on the SVG (not options)
-    detectedDuration: 0,
-    hasAnimation: false,
-    aspectRatio: 'unknown',
-    isDimensionsDetected: false,
+    detectedDuration: detectedDuration ?? 0,
+    hasAnimation: detectedDuration !== undefined && detectedDuration > 0,
+    aspectRatio,
+    isDimensionsDetected: parsedDim.isDimensionsDetected,
   });
 
   const puppeteerArgs = (process.env.PUPPETEER_ARGS || '')
@@ -299,40 +315,17 @@ async function createFrames(
     width = 1280;
     height = 720;
   } else if (resolutionPreset === 'original') {
-    const dom = new JSDOM(svg);
-    const svgEl = dom.window.document.querySelector('svg');
+    const dom = new JSDOM('');
+    const parsed = parseSvgDimensions(svg, dom.window.DOMParser);
 
-    if (!svgEl) {
-      throw new Error('Invalid SVG: No <svg> root element found.');
-    }
-
-    const viewBox = svgEl.getAttribute('viewBox');
-    const widthAttr = svgEl.getAttribute('width');
-    const heightAttr = svgEl.getAttribute('height');
-
-    if (viewBox) {
-      const parts = viewBox.trim().split(/[\s,]+/);
-      if (parts.length === 4) {
-        width = parseFloat(parts[2]);
-        height = parseFloat(parts[3]);
-      }
-    }
-
-    if ((!width || !height) && widthAttr && heightAttr) {
-      width = parseFloat(widthAttr);
-      height = parseFloat(heightAttr);
-    }
-
-    if (!width || !height) {
+    if (!parsed.isDimensionsDetected) {
       logger.warn(
-        '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1280x720.'
+        '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1920x1080.'
       );
-      width = 1280;
-      height = 720;
     }
 
-    width = Math.round(width * scaleFactor);
-    height = Math.round(height * scaleFactor);
+    width = Math.round(parsed.width * scaleFactor);
+    height = Math.round(parsed.height * scaleFactor);
   } else {
     throw new Error(
       `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', or 'original'.`

@@ -246,3 +246,58 @@ export const analyzeSvgAnimation = (
 
   return undefined;
 };
+
+export interface ParsedSvgDimensions {
+  width: number;
+  height: number;
+  isDimensionsDetected: boolean;
+}
+
+/**
+ * Parses SVG content to extract width and height from width/height attributes or viewBox.
+ * Accepts an optional DOMParser override for non-browser environments.
+ */
+export const parseSvgDimensions = (
+  svgContent: string,
+  parserOverride?: typeof DOMParser
+): ParsedSvgDimensions => {
+  const Parser =
+    parserOverride ||
+    (typeof DOMParser !== 'undefined' ? DOMParser : undefined);
+  if (!Parser) {
+    throw new Error(
+      'DOMParser is not available. Provide it via parserOverride.'
+    );
+  }
+  const parser = new Parser();
+  const doc = parser.parseFromString(svgContent, 'image/svg+xml');
+  const svg = doc.querySelector('svg');
+
+  if (!svg) throw new Error('Invalid SVG content');
+
+  let width = parseFloat(svg.getAttribute('width') || '');
+  let height = parseFloat(svg.getAttribute('height') || '');
+  const viewBox = svg.getAttribute('viewBox');
+
+  let isDimensionsDetected = !(isNaN(width) || isNaN(height));
+
+  if (!isDimensionsDetected && viewBox) {
+    const parts = viewBox
+      .trim()
+      .split(/[\s,]+/)
+      .map(parseFloat);
+    if (parts.length === 4 && !isNaN(parts[2]) && !isNaN(parts[3])) {
+      width = parts[2];
+      height = parts[3];
+      isDimensionsDetected = true;
+    }
+  }
+
+  if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
+    width = 1920;
+    height = 1080;
+    isDimensionsDetected = false;
+  }
+
+  return { width, height, isDimensionsDetected };
+};

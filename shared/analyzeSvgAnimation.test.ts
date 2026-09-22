@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   analyzeSvgAnimation,
+  parseSvgDimensions,
   parseClockValue,
   gcd,
   lcm,
@@ -242,5 +243,57 @@ describe('analyzeSvgAnimation', () => {
       </svg>
     `;
     expect(analyzeSvgAnimation(svg)).toBe(3.5);
+  });
+});
+
+describe('parseSvgDimensions', () => {
+  it('should parse width and height from attributes', () => {
+    const svg = '<svg width="800" height="600"><rect/></svg>';
+    expect(parseSvgDimensions(svg)).toEqual({
+      width: 800,
+      height: 600,
+      isDimensionsDetected: true,
+    });
+  });
+
+  it('should parse width and height from space-separated viewBox', () => {
+    const svg = '<svg viewBox="0 0 1024 768"><rect/></svg>';
+    expect(parseSvgDimensions(svg)).toEqual({
+      width: 1024,
+      height: 768,
+      isDimensionsDetected: true,
+    });
+  });
+
+  it('should parse width and height from comma-separated viewBox', () => {
+    const svg = '<svg viewBox="0, 0, 500, 300"><rect/></svg>';
+    expect(parseSvgDimensions(svg)).toEqual({
+      width: 500,
+      height: 300,
+      isDimensionsDetected: true,
+    });
+  });
+
+  it('should fallback to 1920x1080 when dimensions are missing or invalid', () => {
+    const svg = '<svg><rect/></svg>';
+    expect(parseSvgDimensions(svg)).toEqual({
+      width: 1920,
+      height: 1080,
+      isDimensionsDetected: false,
+    });
+  });
+
+  it('should accept parserOverride', () => {
+    const svg = '<svg width="400" height="400"><rect/></svg>';
+    expect(parseSvgDimensions(svg, DOMParser)).toEqual({
+      width: 400,
+      height: 400,
+      isDimensionsDetected: true,
+    });
+  });
+
+  it('should throw error on invalid SVG without svg root element', () => {
+    const svg = '<div>not an svg</div>';
+    expect(() => parseSvgDimensions(svg)).toThrow('Invalid SVG content');
   });
 });
