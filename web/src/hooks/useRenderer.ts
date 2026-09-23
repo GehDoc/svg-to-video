@@ -4,6 +4,9 @@ import { formatRegistry } from '../utils/encoders/Registry';
 import type { VideoMetadata } from '@shared/metadata';
 import { ConversionTracker } from '@shared/rendererTracking';
 import { trackEvent } from '../utils/analytics';
+import { parseSvgDimensions } from '@shared/analyzeSvgAnimation.js';
+
+export { parseSvgDimensions };
 
 export type ResolutionPreset = 'original' | '720p' | '1080p';
 export type CaptureMethod = 'optimal' | 'high-fidelity';
@@ -32,37 +35,6 @@ export interface RenderState {
     eta: number; // in seconds
   };
 }
-
-export const parseSvgDimensions = (svgContent: string) => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(svgContent, 'image/svg+xml');
-  const svg = doc.querySelector('svg');
-
-  if (!svg) throw new Error('Invalid SVG content');
-
-  let width = parseFloat(svg.getAttribute('width') || '');
-  let height = parseFloat(svg.getAttribute('height') || '');
-  const viewBox = svg.getAttribute('viewBox');
-
-  let isDimensionsDetected = !(isNaN(width) || isNaN(height));
-
-  if (!isDimensionsDetected && viewBox) {
-    const parts = viewBox.trim().split(/\s+/).map(parseFloat);
-    if (parts.length === 4) {
-      width = parts[2];
-      height = parts[3];
-      isDimensionsDetected = true;
-    }
-  }
-
-  if (isNaN(width) || isNaN(height)) {
-    width = 1920;
-    height = 1080;
-    isDimensionsDetected = false;
-  }
-
-  return { width, height, isDimensionsDetected };
-};
 
 export const calculateFinalDimensions = (
   origWidth: number,
