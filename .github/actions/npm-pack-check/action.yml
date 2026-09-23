@@ -1,5 +1,5 @@
-name: 'NPM Pack & Publish Check'
-description: 'Builds JS distribution, asserts package payload, and performs an npm publish dry-run'
+name: 'NPM Pack Check'
+description: 'Builds JS distribution, performs an npm pack dry-run, and asserts package payload'
 
 runs:
   using: 'composite'
@@ -8,10 +8,10 @@ runs:
       run: npm run build
       shell: bash
 
-    - name: Assert Package Payload
-      run: npm run test:pack
+    - name: NPM Pack Dry Run
+      run: npm pack --dry-run
       shell: bash
 
-    - name: NPM Publish Dry Run
-      run: npm publish --dry-run
+    - name: Assert Package Payload
+      run: npm run test:pack
       shell: bash

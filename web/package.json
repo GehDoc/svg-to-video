@@ -1,6 +1,6 @@
 {
   "name": "@svg-to-video/web",
-  "version": "0.25.1",
+  "version": "0.26.0",
   "description": "Professional CSS-animated SVG to Video (MP4, WebM, MKV, MOV) and Animated Image (aPNG, GIF) Studio: frame-accurate rendering, alpha-channel transparency, and serverless WebCodecs.",
   "author": "GehDoc",
   "repository": {
@@ -27,7 +27,7 @@
     "test:demo": "GENERATE_DEMO=true playwright test tests/demo.spec.ts",
     "test:web": "playwright test --reporter=list",
     "test:unit": "vitest run",
-    "test:storybook": "test-storybook",
+    "test:storybook": "vitest run -c vitest.storybook.ts",
     "test:visual": "vitest run -c vitest.visual.config.ts",
     "test:visual:update": "vitest run -c vitest.visual.config.ts -u",
     "storybook": "storybook dev -p 6006",
@@ -50,7 +50,6 @@
     "@storybook/addon-vitest": "^10.3.5",
     "@storybook/react": "^10.3.5",
     "@storybook/react-vite": "^10.3.5",
-    "@storybook/test-runner": "^0.24.4",
     "@svgr/webpack": "^8.1.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",
