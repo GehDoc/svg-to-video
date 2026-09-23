@@ -1,6 +1,7 @@
 {
   "name": "@gehdoc/svg-to-video",
-  "version": "0.26.0",
+  "mcpName": "io.github.gehdoc/svg-to-video",
+  "version": "0.27.0",
   "type": "module",
   "description": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
   "imports": {
