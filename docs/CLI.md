@@ -43,6 +43,7 @@ docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc
 
 | Variable                    | Scope   | Description                                                                                                                                       |
 | --------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DO_NOT_TRACK`              | Runtime | Set to `1` or `true` to opt out of anonymous Umami telemetry event tracking.                                                                      |
 | `PUPPETEER_EXECUTABLE_PATH` | Runtime | Explicit path to host Chrome or Chromium binary executable for rendering fallback.                                                                |
 | `PUPPETEER_ARGS`            | Runtime | Additional arguments passed directly to the Puppeteer `launch` method. Useful for custom browser flags (e.g., `--proxy-server`, `--disable-gpu`). |
 

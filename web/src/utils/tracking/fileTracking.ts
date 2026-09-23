@@ -1,4 +1,5 @@
 import { trackEvent } from '../analytics';
+import { calculateAspectRatio } from '@shared/analyzeSvgAnimation.js';
 
 export type IngestionMethod = 'file-picker' | 'drag-and-drop';
 
@@ -17,17 +18,11 @@ export function trackFileLoad(
   dim: SvgDimensionInfo,
   detectedDuration?: number
 ): void {
-  let aspectRatio: 'square' | 'landscape' | 'portrait' | 'unknown' = 'unknown';
-
-  if (dim.isDimensionsDetected && dim.width > 0 && dim.height > 0) {
-    if (dim.width === dim.height) {
-      aspectRatio = 'square';
-    } else if (dim.width > dim.height) {
-      aspectRatio = 'landscape';
-    } else {
-      aspectRatio = 'portrait';
-    }
-  }
+  const aspectRatio = calculateAspectRatio(
+    dim.width,
+    dim.height,
+    dim.isDimensionsDetected
+  );
 
   const hasAnimation = detectedDuration !== undefined && detectedDuration > 0;
 
