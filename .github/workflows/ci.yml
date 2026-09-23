@@ -25,7 +25,7 @@ jobs:
         run: npm run check:fast
 
   npm-package:
-    name: 'NPM Package & Dry-Run Publish'
+    name: 'NPM Package & Pack Check'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
