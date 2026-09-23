@@ -1,0 +1,15 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schema/server.json",
+  "name": "io.github.gehdoc/svg-to-video",
+  "description": "MCP server to render animated SVGs into MP4/WebM videos via Puppeteer and FFmpeg.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gehdoc/svg-to-video"
+  },
+  "packages": [
+    {
+      "type": "docker",
+      "image": "gehdoc/svg-to-video:latest"
+    }
+  ]
+}

@@ -473,8 +473,9 @@ When adding new features or core capabilities, systematically update public-faci
    - Update structured **JSON-LD** data in `layout.tsx` (enrich `featureList` array).
    - Update **`SeoFallback.tsx`** static fallback text for search engine indexing.
    - Verify `sitemap.ts` and `robots.ts` reflect dynamic site routes.
-2. **`package.json` (Root & Web)**:
+2. **`package.json` (Root & Web) & `mcp.json`**:
    - Update `description` fields to highlight new capabilities.
+   - Update `mcp.json` manifest description when MCP capabilities or project descriptions change.
    - Add new relevant search tags to the `keywords` array in root `package.json`.
 3. **`README.md`**:
    - Update feature summaries, installation options, and CLI/web quick start usage blocks.
