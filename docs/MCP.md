@@ -10,8 +10,6 @@ AI coding assistants frequently generate complex animated vector graphics (SVGs 
 
 `svg-to-video` provides a standard Model Context Protocol (MCP) server and file-based agent skill (`SKILL.md`) that allow AI assistants to render their SVG animations programmatically with high fidelity, background transparency, and auto-detected durations.
 
-Official package metadata is published to the [Model Context Protocol Registry](https://registry.modelcontextprotocol.io/) via `mcp.json`.
-
 ---
 
 ## 🚀 Quick Start
