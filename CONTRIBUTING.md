@@ -338,13 +338,14 @@ Introduces high-fidelity aPNG and optimized GIF export capabilities to the CLI t
 
 ### 🏷 Versioning Policy
 
-To maintain project synchronization, every release or version bump must update the version number in all 3 required files:
+To maintain project synchronization, every release or version bump must update the version number in all required files:
 
 1. **Root `package.json`**: The `version` field.
 2. **Web `package.json`**: The `version` field (`web/package.json`).
-3. **Root `package-lock.json`**: Synchronized by running `npm install`.
+3. **MCP Registry Manifest (`mcp.json`)**: The `version` field and `packages[].version` field for published npm package entries.
+4. **Root `package-lock.json`**: Synchronized by running `npm install`.
 
-Use `npm version [patch|minor|major]` or update `package.json` files manually, then run `npm install` to update `package-lock.json` before committing.
+Use `npm version [patch|minor|major]` or update `package.json` and `mcp.json` files manually, then run `npm install` to update `package-lock.json` before committing.
 
 ### 📝 Release Title & Note Guidelines
 
@@ -473,13 +474,16 @@ When adding new features or core capabilities, systematically update public-faci
    - Update structured **JSON-LD** data in `layout.tsx` (enrich `featureList` array).
    - Update **`SeoFallback.tsx`** static fallback text for search engine indexing.
    - Verify `sitemap.ts` and `robots.ts` reflect dynamic site routes.
-2. **`package.json` (Root & Web) & `mcp.json`**:
+2. **`package.json` (Root & Web)**:
    - Update `description` fields to highlight new capabilities.
-   - Update `mcp.json` manifest description when MCP capabilities or project descriptions change.
    - Add new relevant search tags to the `keywords` array in root `package.json`.
-3. **`README.md`**:
+3. **`mcp.json` (MCP Registry Manifest)**:
+   - Update `description` field when project capabilities or MCP tool features change.
+   - Synchronize `version` and `packages[].version` fields during version bumps.
+   - Ensure `packages` identifiers, transport configurations, and runtime hints reflect published package distributions.
+4. **`README.md`**:
    - Update feature summaries, installation options, and CLI/web quick start usage blocks.
-4. **GitHub Repository Metadata**:
+5. **GitHub Repository Metadata**:
    - Update repository **Description** in GitHub repository settings.
    - Update repository **Topics** (tags) via GitHub Web UI or GitHub CLI:
      ```bash
@@ -487,5 +491,5 @@ When adding new features or core capabilities, systematically update public-faci
        --description "High-fidelity CSS/SVG animation converter to MP4, WebM, GIF & aPNG with transparent background support" \
        --add-topic "svg,video,converter,apng,gif,webm,mp4,mcp"
      ```
-5. **Docker Hub Overview Metadata**:
+6. **Docker Hub Overview Metadata**:
    - Manually update the repository **Overview** text and **Short Description** on Docker Hub ([hub.docker.com/r/gehdoc/svg-to-video](https://hub.docker.com/r/gehdoc/svg-to-video)) via the web UI whenever releasing new features or updating documentation.

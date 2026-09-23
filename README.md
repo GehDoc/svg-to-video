@@ -24,7 +24,7 @@ A high-fidelity tool to transform your CSS-animated SVGs into high-quality video
 - **Transparent Backgrounds**: Export your animations with a full alpha channel using **WebM or aPNG**, and optimized indexed transparency with **GIF89a**. Perfect for overlays in video editing tools or web use.
 - **Privacy-First**: The Web Studio runs entirely in your browser—your SVG files never leave your computer.
 - **Frame-Accurate**: Our engine scrubs the **Web Animations API**, ensuring every frame is captured exactly as rendered.
-- **AI Agent Native**: Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support indexed on the official MCP Registry (`mcp.json`) to let AI assistants render their generated SVG animations into MP4/GIF automatically.
+- **AI Agent Native**: Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support indexed on the official [MCP Registry](https://registry.modelcontextprotocol.io/) (`mcp.json`) to let AI assistants render their generated SVG animations into MP4/GIF automatically.
 - **Universal Animated Formats**: Beyond video, generate lightweight **Animated PNGs (aPNG)** and **GIFs** perfect for documentation, Slack, or GitHub, with full control over background transparency.
 - **Copy to Clipboard**: Instant export to **Base64 Data URL**—copy your video and embed it directly into your HTML, CSS, or JS code without manual downloads. Perfect for rapid prototyping and developers.
 - **Metadata Injection**: Support for custom titles and comments across video (MP4, WebM, MKV, MOV) and animated image (aPNG, GIF) formats.
