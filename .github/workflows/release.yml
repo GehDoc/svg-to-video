@@ -78,8 +78,3 @@ jobs:
             gehdoc/svg-to-video:${{ steps.meta.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Publish to MCP Registry
-        uses: modelcontextprotocol/registry-action@v1
-        with:
-          manifest-path: 'mcp.json'
