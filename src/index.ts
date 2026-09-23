@@ -10,6 +10,7 @@ import {
   analyzeSvgAnimation,
   parseSvgDimensions,
   calculateAspectRatio,
+  ParsedSvgDimensions,
 } from '@shared/analyzeSvgAnimation.js';
 import { formatRegistry } from './formats/registry.js';
 import { CLIFormatOptions } from './formats/types.js';
@@ -239,6 +240,7 @@ async function run(
 
     await createFrames(
       svg,
+      parsedDim,
       fps,
       totalFrames,
       padWidth,
@@ -288,6 +290,7 @@ async function run(
  */
 async function createFrames(
   svg: string,
+  parsedDim: ParsedSvgDimensions,
   fps: number,
   totalFrames: number,
   padWidth: number,
@@ -311,17 +314,14 @@ async function createFrames(
     width = 1280;
     height = 720;
   } else if (resolutionPreset === 'original') {
-    const dom = new JSDOM('');
-    const parsed = parseSvgDimensions(svg, dom.window.DOMParser);
-
-    if (!parsed.isDimensionsDetected) {
+    if (!parsedDim.isDimensionsDetected) {
       logger.warn(
         '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1920x1080.'
       );
     }
 
-    width = Math.round(parsed.width * scaleFactor);
-    height = Math.round(parsed.height * scaleFactor);
+    width = Math.round(parsedDim.width * scaleFactor);
+    height = Math.round(parsedDim.height * scaleFactor);
   } else {
     throw new Error(
       `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', or 'original'.`

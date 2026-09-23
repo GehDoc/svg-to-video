@@ -45,7 +45,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Build JS Distribution & Assert Package Payload
-        uses: ./.github/actions/npm-pack-check
+        run: |
+          npm run build
+          npm run test:pack
 
       - name: Publish to npm Registry
         run: npm publish --access public --provenance
