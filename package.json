@@ -4,7 +4,8 @@
   "type": "module",
   "description": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
   "imports": {
-    "#shared/*": "./dist/shared/*"
+    "#shared/*": "./dist/shared/*",
+    "@shared/*": "./dist/shared/*"
   },
   "author": "GehDoc",
   "repository": {

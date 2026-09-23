@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import {
   analyzeSvgAnimation,
   parseSvgDimensions,
+  calculateAspectRatio,
   parseClockValue,
   gcd,
   lcm,
@@ -295,5 +296,29 @@ describe('parseSvgDimensions', () => {
   it('should throw error on invalid SVG without svg root element', () => {
     const svg = '<div>not an svg</div>';
     expect(() => parseSvgDimensions(svg)).toThrow('Invalid SVG content');
+  });
+});
+
+describe('calculateAspectRatio', () => {
+  it('should calculate square aspect ratio', () => {
+    expect(calculateAspectRatio(500, 500, true)).toBe('square');
+  });
+
+  it('should calculate landscape aspect ratio', () => {
+    expect(calculateAspectRatio(1920, 1080, true)).toBe('landscape');
+  });
+
+  it('should calculate portrait aspect ratio', () => {
+    expect(calculateAspectRatio(1080, 1920, true)).toBe('portrait');
+  });
+
+  it('should return unknown if isDimensionsDetected is false', () => {
+    expect(calculateAspectRatio(1920, 1080, false)).toBe('unknown');
+  });
+
+  it('should return unknown for invalid or non-positive dimensions', () => {
+    expect(calculateAspectRatio(0, 100, true)).toBe('unknown');
+    expect(calculateAspectRatio(100, -50, true)).toBe('unknown');
+    expect(calculateAspectRatio(NaN, 100, true)).toBe('unknown');
   });
 });

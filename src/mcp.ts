@@ -14,7 +14,8 @@ import { JSDOM } from 'jsdom';
 import {
   analyzeSvgAnimation,
   parseSvgDimensions,
-} from '../shared/analyzeSvgAnimation.js';
+  calculateAspectRatio,
+} from '@shared/analyzeSvgAnimation.js';
 import { isLoggerJsonOutput } from './utils/logger.js';
 import { trackEvent } from './utils/analytics.js';
 import { pkg } from './utils/packageInfo.js';
@@ -172,17 +173,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const duration = analyzeSvgAnimation(svgContent, dom.window.DOMParser);
     const parsedDim = parseSvgDimensions(svgContent, dom.window.DOMParser);
 
-    let aspectRatio: 'square' | 'landscape' | 'portrait' | 'unknown' =
-      'unknown';
-    if (parsedDim.isDimensionsDetected) {
-      if (parsedDim.width === parsedDim.height) {
-        aspectRatio = 'square';
-      } else if (parsedDim.width > parsedDim.height) {
-        aspectRatio = 'landscape';
-      } else {
-        aspectRatio = 'portrait';
-      }
-    }
+    const aspectRatio = calculateAspectRatio(
+      parsedDim.width,
+      parsedDim.height,
+      parsedDim.isDimensionsDetected
+    );
 
     trackEvent(
       'file-load',

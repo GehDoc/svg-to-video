@@ -301,3 +301,27 @@ export const parseSvgDimensions = (
 
   return { width, height, isDimensionsDetected };
 };
+
+export type AspectRatio = 'square' | 'landscape' | 'portrait' | 'unknown';
+
+/**
+ * Calculates aspect ratio category ('square', 'landscape', 'portrait', or 'unknown').
+ */
+export function calculateAspectRatio(
+  width: number,
+  height: number,
+  isDimensionsDetected: boolean = true
+): AspectRatio {
+  if (
+    !isDimensionsDetected ||
+    isNaN(width) ||
+    isNaN(height) ||
+    width <= 0 ||
+    height <= 0
+  ) {
+    return 'unknown';
+  }
+  if (width === height) return 'square';
+  if (width > height) return 'landscape';
+  return 'portrait';
+}
