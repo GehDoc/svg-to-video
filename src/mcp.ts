@@ -11,14 +11,10 @@ import os from 'os';
 import { execFileSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { JSDOM } from 'jsdom';
-import {
-  analyzeSvgAnimation,
-  parseSvgDimensions,
-  calculateAspectRatio,
-} from '@shared/analyzeSvgAnimation.js';
+import { analyzeSvgAnimation } from '../shared/analyzeSvgAnimation.js';
 import { isLoggerJsonOutput } from './utils/logger.js';
-import { trackEvent } from './utils/analytics.js';
-import { pkg } from './utils/packageInfo.js';
+import { getPackageJson } from './utils/packageInfo.js';
+const pkg = getPackageJson(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -169,26 +165,26 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
     }
 
-    const dom = new JSDOM('');
+    const dom = new JSDOM(svgContent);
     const duration = analyzeSvgAnimation(svgContent, dom.window.DOMParser);
-    const parsedDim = parseSvgDimensions(svgContent, dom.window.DOMParser);
+    const svgEl = dom.window.document.querySelector('svg');
 
-    const aspectRatio = calculateAspectRatio(
-      parsedDim.width,
-      parsedDim.height,
-      parsedDim.isDimensionsDetected
-    );
-
-    trackEvent(
-      'file-load',
-      {
-        detectedDuration: duration ?? 0,
-        hasAnimation: duration !== undefined && duration > 0,
-        aspectRatio,
-        isDimensionsDetected: parsedDim.isDimensionsDetected,
-      },
-      'mcp'
-    );
+    let width: number | undefined;
+    let height: number | undefined;
+    if (svgEl) {
+      const viewBox = svgEl.getAttribute('viewBox');
+      if (viewBox) {
+        const parts = viewBox.trim().split(/[\s,]+/);
+        if (parts.length === 4) {
+          width = parseFloat(parts[2]);
+          height = parseFloat(parts[3]);
+        }
+      }
+      if (!width || !height) {
+        width = parseFloat(svgEl.getAttribute('width') || '');
+        height = parseFloat(svgEl.getAttribute('height') || '');
+      }
+    }
 
     return {
       content: [
@@ -198,9 +194,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             {
               hasAnimation: duration !== undefined && duration > 0,
               estimatedDurationSeconds: duration ?? null,
-              dimensions: parsedDim.isDimensionsDetected
-                ? { width: parsedDim.width, height: parsedDim.height }
-                : null,
+              dimensions: width && height ? { width, height } : null,
               hasStyles: svgContent.includes('<style>'),
             },
             null,
@@ -282,10 +276,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const rawOutput = execFileSync(command, cliArgs, {
         encoding: 'utf-8',
         cwd: process.cwd(),
-        env: {
-          ...process.env,
-          SVG_TO_VIDEO_INTERFACE: 'mcp',
-        },
       });
 
       if (tempSvgFile && targetSvgPath) {

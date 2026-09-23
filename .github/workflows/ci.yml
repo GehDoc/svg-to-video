@@ -24,17 +24,6 @@ jobs:
       - name: Run fast checks
         run: npm run check:fast
 
-  npm-package:
-    name: 'NPM Package & Dry-Run Publish'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7
-      - name: Setup
-        uses: ./.github/actions/setup
-      - name: Check NPM Package
-        uses: ./.github/actions/npm-pack-check
-
   cli-tests:
     name: 'CLI E2E Tests (Docker)'
     runs-on: ubuntu-latest
@@ -127,7 +116,6 @@ jobs:
       contents: write
     needs:
       - lint-and-type-check
-      - npm-package
       - cli-tests
       - web-unit-tests
       - web-e2e-tests

@@ -2,11 +2,6 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 import '../index.scss';
 import pkg from '../../package.json';
-import {
-  UMAMI_HOST_URL,
-  UMAMI_WEBSITE_HOSTNAME,
-  UMAMI_WEBSITE_ID,
-} from '@shared/analytics-schema';
 
 const siteName = 'SVG to Video';
 const description =
@@ -92,9 +87,9 @@ export default function RootLayout({
         {process.env.NODE_ENV === 'production' && (
           <Script
             src="./assets/3rd-party/analytics.js"
-            data-website-id={UMAMI_WEBSITE_ID}
-            data-domains={UMAMI_WEBSITE_HOSTNAME}
-            data-host-url={UMAMI_HOST_URL}
+            data-website-id="4489aba4-cf29-439e-9491-e36f2a531a63"
+            data-domains="gehdoc.github.io"
+            data-host-url="https://cloud.umami.is"
             strategy="afterInteractive"
           />
         )}

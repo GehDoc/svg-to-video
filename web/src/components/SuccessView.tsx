@@ -83,6 +83,7 @@ export const SuccessView = ({
             controls
             autoPlay
             loop
+            preload="none"
             data-testid="video-preview"
           >
             <track kind="captions" srcLang="en" label="English" default />

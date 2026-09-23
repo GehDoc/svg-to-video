@@ -8,7 +8,8 @@ const meta: Meta<typeof SuccessView> = {
   args: {
     fileName: 'animation.mp4',
     fileSize: '2.5 MB',
-    renderedUrl: 'https://example.com/video.mp4',
+    renderedUrl:
+      'data:video/mp4;base64,AAAAIGZ0eXBpc29tAAAAAG1wNDJpc29tAAAAAG1kYXQ=',
     mimeType: 'video/mp4',
     onDownload: fn(),
     onBack: fn(),
@@ -55,7 +56,8 @@ export const APNG: Story = {
   args: {
     fileName: 'animation.png',
     mimeType: 'image/png',
-    renderedUrl: 'https://gehdoc.github.io/svg-to-video/assets/demo.gif', // Using gif as placeholder for image preview
+    renderedUrl:
+      'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
   },
 };
 
@@ -63,6 +65,7 @@ export const GIF: Story = {
   args: {
     fileName: 'animation.gif',
     mimeType: 'image/gif',
-    renderedUrl: 'https://gehdoc.github.io/svg-to-video/assets/demo.gif',
+    renderedUrl:
+      'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
   },
 };

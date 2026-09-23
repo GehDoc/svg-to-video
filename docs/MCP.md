@@ -70,10 +70,9 @@ For cloud agents or sandbox environments without local Chromium or FFmpeg pre-in
 docker run -i --rm --user $(id -u):$(id -g) -v $(pwd):/app/data:Z gehdoc/svg-to-video mcp
 ```
 
-### 🔒 Security, Telemetry & Privacy
+### 🔒 Security & Sandboxing
 
-- **Stdio Communication**: The MCP server runs over `stdio` without opening external network ports. For details on Chromium browser isolation, argument sanitization, and containerized sandboxing, see **[docs/SECURITY.md](./SECURITY.md)**.
-- **Anonymous Telemetry**: Standard usage events (`file-load`, `conversion-start`, `conversion-success`) are reported anonymously to Umami for feature improvement without collecting file contents or PII. To opt out, set `DO_NOT_TRACK=1` in your environment. See **[docs/ANALYTICS.md](./ANALYTICS.md)** for full event schemas and opt-out details.
+The MCP server runs over `stdio` without opening external network ports. For details on Chromium browser isolation, argument sanitization, and containerized sandboxing, see **[docs/SECURITY.md](./SECURITY.md)**.
 
 ---
 

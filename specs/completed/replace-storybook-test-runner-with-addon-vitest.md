@@ -14,6 +14,9 @@ Migrate Storybook component testing from `@storybook/test-runner` to `@storybook
   - Remove `@storybook/test-runner` from `web/package.json` to eliminate legacy `uuid` package.
   - Delete `web/.storybook/test-runner.ts`.
   - Update `.github/workflows/ci.yml` so Storybook tests run directly via Vitest without spinning up a separate Storybook web server.
+  - Opt-out of Storybook telemetry (`core.disableTelemetry: true`).
+  - Fix pattern warnings by removing nonexistent `.mdx` story glob pattern.
+  - Eliminate video asset preload timeout warnings in `SuccessView.stories.tsx` / `SuccessView.tsx`.
 
 ## ✅ Task List
 
@@ -23,10 +26,13 @@ Migrate Storybook component testing from `@storybook/test-runner` to `@storybook
   - [x] Delete `web/.storybook/test-runner.ts`.
   - [x] Configure `web/vitest.storybook.ts` for theme emulation context options.
   - [x] Update `.github/workflows/ci.yml` `storybook-tests` step.
+  - [x] Add telemetry opt-out in `.storybook/main.ts`.
+  - [x] Fix non-matching `.mdx` story file pattern warning.
+  - [x] Fix asset preload timeout errors in `SuccessView` component/stories.
 - [x] **Verification & Security**
   - [x] Run `npm install` to update `package-lock.json` and remove `uuid@8.3.2`.
   - [x] Verify `npm ls uuid` shows no remaining `uuid` dependency.
-  - [x] Verify `npm run test:storybook -w web` passes cleanly.
+  - [x] Verify `npm run test:storybook -w web` passes cleanly without warnings or errors.
   - [x] Verify `npm run check:fast` passes.
 
 ## 🧪 Verification Plan
@@ -37,4 +43,4 @@ Migrate Storybook component testing from `@storybook/test-runner` to `@storybook
 
 ## 📝 Change Log
 
-- 2025-02-26: Initial spec created for replacing storybook test-runner with addon-vitest. Completed implementation and verification.
+- 2025-02-26: Initial spec created for replacing storybook test-runner with addon-vitest. Completed implementation, PR feedback items, and verification.

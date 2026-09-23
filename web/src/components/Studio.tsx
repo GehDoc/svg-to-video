@@ -2,15 +2,13 @@ import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import type { RendererHandle } from './SvgRenderer/index';
 import {
   useRenderer,
+  parseSvgDimensions,
   calculateFinalDimensions,
   type ResolutionPreset,
   type RenderSettings,
 } from '../hooks/useRenderer';
 import { getMimeTypeById } from '../utils/discoverFormats';
-import {
-  analyzeSvgAnimation,
-  parseSvgDimensions,
-} from '@shared/analyzeSvgAnimation.js';
+import { analyzeSvgAnimation } from '@shared/analyzeSvgAnimation.js';
 import type { VideoMetadata } from '@shared/metadata';
 import { formatRegistry } from '../utils/encoders/Registry';
 import { Header } from './Header';
