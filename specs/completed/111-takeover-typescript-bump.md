@@ -1,4 +1,4 @@
-# Spec: Takeover Dependabot PR #111 (TypeScript 7.0.2 Upgrade)
+# Spec: Takeover Dependabot PR #111 (TypeScript Upgrade)
 
 - **Issue / PR**: https://github.com/GehDoc/svg-to-video/pull/111
 - **Status**: 🟢 Completed
@@ -7,25 +7,25 @@
 ## 🎯 Objective
 
 Take over Dependabot PR #111 (`build(deps-dev): bump typescript from 5.9.3 to 7.0.2`).
-Evaluate the TypeScript 7.0.2 upgrade across the repository, resolve conflict issues, and document findings per Spec-Driven Development guidelines.
+Retarget the upgrade to TypeScript 6.0.3 (the latest TypeScript 6.x release compatible with `@typescript-eslint` v8) across root and web workspaces.
 
 ## 📐 Technical Strategy & Analysis
 
 1. **Dependabot PR Analysis**:
    - Dependabot created PR #111 attempting to upgrade `typescript` from `5.9.3` to `7.0.2`.
-   - The PR branch had merge conflicts with `main` after recent refactoring and package updates.
-2. **Compatibility Assessment**:
-   - Upgrading `typescript` to `7.0.2` triggers breaking failures in `@typescript-eslint` v8:
-     `typescript-eslint does not support TS 7.0.`
-   - `typescript-eslint@8.69.0` (and latest v8) specifies peer dependency constraint `typescript@">=4.8.4 <6.1.0"`.
-   - Running ESLint with TypeScript 7.0.2 causes `npm run check:fast` to fail with `Error: Failed to load plugin '@typescript-eslint'`.
-3. **Conclusion & Recommendation**:
-   - Upgrading to TypeScript 7.0.2 cannot be completed until `typescript-eslint` adds support for TypeScript 7+.
-   - PR #111 should be closed/superseded by this takeover branch, keeping the repository on stable TypeScript 5.x / 6.x supported tooling until ecosystem compatibility is established.
+   - Upgrading to `7.0.2` fails because `@typescript-eslint` v8 has a peer dependency requirement of `typescript <6.1.0`.
+2. **Retargeting Upgrade**:
+   - Upgraded `typescript` to `^6.0.3` in root `package.json` and `~6.0.3` in `web/package.json`.
+   - Added `"ignoreDeprecations": "6.0"` to `tsconfig.json` to suppress the TS6 `baseUrl` deprecation warning.
+   - Ran `npm install` to update `package-lock.json`.
+3. **Verification**:
+   - Ran `npm run check:fast` to ensure `eslint`, `prettier`, and `tsc` pass cleanly across root and web workspaces.
+   - Ran `npm run test:unit -w web` to ensure unit tests pass.
 
 ## 📋 Task List
 
 - [x] Take over ownership of PR #111 from Dependabot.
-- [x] Analyze build, linting, and typecheck behavior on TypeScript 7.0.2 upgrade.
-- [x] Verify workspace stability on stable TypeScript configuration.
+- [x] Bump TypeScript to 6.0.3 in `package.json`, `web/package.json`, and lockfile.
+- [x] Resolve `baseUrl` TS6 deprecation in `tsconfig.json`.
+- [x] Verify linting, type-checking, and tests pass.
 - [x] Document technical evaluation in SDD specification.
