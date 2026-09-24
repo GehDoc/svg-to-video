@@ -4,8 +4,7 @@
   "type": "module",
   "description": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
   "imports": {
-    "#shared/*": "./dist/shared/*",
-    "@shared/*": "./dist/shared/*"
+    "#shared/*": "./dist/shared/*"
   },
   "author": "GehDoc",
   "repository": {
@@ -61,6 +60,7 @@
     "tsx": "^4.23.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@types/commander": "^2.12.0",
     "@types/ffprobe-static": "^2.0.3",
     "@types/jsdom": "^28.0.3",
@@ -68,9 +68,10 @@
     "@types/pngjs": "^6.0.5",
     "@vitest/browser-playwright": "4.1.11",
     "@vitest/coverage-v8": "4.1.11",
-    "eslint": "^8.0.0",
+    "eslint": "^9.39.4",
     "ffprobe": "^1.1.2",
     "ffprobe-static": "^3.1.0",
+    "globals": "^17.4.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.3.2",
     "pngjs": "^7.0.0",

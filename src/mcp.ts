@@ -15,7 +15,7 @@ import {
   analyzeSvgAnimation,
   parseSvgDimensions,
   calculateAspectRatio,
-} from '@shared/analyzeSvgAnimation.js';
+} from '#shared/analyzeSvgAnimation.js';
 import { isLoggerJsonOutput } from './utils/logger.js';
 import { trackEvent } from './utils/analytics.js';
 import { pkg } from './utils/packageInfo.js';

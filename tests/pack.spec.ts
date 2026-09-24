@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { execSync } from 'node:child_process';
+import { execSync, spawnSync } from 'node:child_process';
 
 const REQUIRED_FILES = [
   'LICENSE',
@@ -31,7 +31,7 @@ const FORBIDDEN_EXACT_FILES = [
   '.prettierrc.json',
 ];
 
-describe('npm pack file-list verification', () => {
+describe('npm pack & compiled dist smoke verification', () => {
   it('published npm package contains all required runtime files and zero extra files', () => {
     // Ensure build is up to date
     execSync('npm run build', { encoding: 'utf-8' });
@@ -106,6 +106,43 @@ describe('npm pack file-list verification', () => {
       shippedPaths.length,
       27,
       `Expected exactly 27 files in npm package, found ${shippedPaths.length}: ${JSON.stringify(shippedPaths)}`
+    );
+  });
+
+  it('compiled CLI artifact (dist/src/index.js) executes cleanly without ESM module errors', () => {
+    execSync('npm run build', { encoding: 'utf-8' });
+
+    const result = spawnSync('node', ['dist/src/index.js', '--version'], {
+      encoding: 'utf-8',
+    });
+
+    assert.strictEqual(
+      result.status,
+      0,
+      `CLI execution failed with stderr: ${result.stderr}`
+    );
+    assert.match(result.stdout, /\d+\.\d+\.\d+/);
+  });
+
+  it('compiled MCP server artifact (dist/src/mcp.js) starts cleanly without ESM module errors', () => {
+    execSync('npm run build', { encoding: 'utf-8' });
+
+    const proc = spawnSync('node', ['dist/src/mcp.js'], {
+      encoding: 'utf-8',
+      input: '',
+      timeout: 2000,
+    });
+
+    // Node process for MCP server listens on stdio and exits 0 when stdin closes
+    assert.ok(
+      proc.status === 0 ||
+        (proc.error as { code?: string } | undefined)?.code === 'ETIMEDOUT',
+      `MCP server failed to start: ${proc.stderr}`
+    );
+    assert.strictEqual(
+      proc.stderr.includes('ERR_MODULE_NOT_FOUND'),
+      false,
+      `ERR_MODULE_NOT_FOUND thrown by dist/src/mcp.js: ${proc.stderr}`
     );
   });
 });

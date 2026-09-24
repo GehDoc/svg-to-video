@@ -57,6 +57,9 @@ jobs:
         run: |
           echo "UID=$(id -u)" >> $GITHUB_ENV
           echo "GID=$(id -g)" >> $GITHUB_ENV
+      - name: Verify Docker default entrypoint
+        run: |
+          docker run --rm svg-to-video:latest --version
       - name: Run E2E tests in Docker
         run: >
           docker compose run

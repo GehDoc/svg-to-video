@@ -145,19 +145,40 @@ This project requires strict version alignment between **Storybook** and **Vites
 | `npm run test:unit`  | Runs unit tests with Vitest and Node test runner.                          |
 | `npm run type-check` | Performs TypeScript type checking across root CLI and Web workspace.       |
 
-#### CLI Local Verification Commands
+#### Remote vs. Local CLI & MCP Execution
 
-After running `npm run build`, you can test local CLI and MCP execution directly:
+Contributors must distinguish between testing published remote artifacts and building/verifying local code changes:
+
+##### 1. Remote / Published Execution (User Perspective)
 
 ```bash
-# Test local CLI executable help output
-node dist/src/index.js --help
+# Test on-demand remote package execution via npx (npmjs registry)
+npx @gehdoc/svg-to-video input.svg 60 ./out-dir
 
-# Convert test SVG to GIF via local CLI build
-node dist/src/index.js tests/fixtures/demo-fixture.svg 60 ./out --format gif
+# Test published Docker Hub container execution
+docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir --format webm
+```
 
-# Test MCP server stdio interface
-node dist/src/mcp.js
+##### 2. Local Source & Compiled Execution (Contributor Perspective)
+
+```bash
+# 1. Build ES Modules and test local compiled CLI executable
+npm run build
+node dist/src/index.js tests/fixtures/demo-fixture.svg 60 ./out --format webm
+
+# 2. Fast dev iteration directly from TypeScript source
+npx tsx src/index.ts tests/fixtures/demo-fixture.svg 60 ./out --format webm
+
+# 3. Test local compiled MCP server stdio interface
+npm run build && node dist/src/mcp.js
+
+# 4. Build and test local Docker image with default entrypoint
+docker build -t gehdoc/svg-to-video:local .
+docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video:local /data/input.svg 60 /data/out --format gif
+
+# 5. Staging tarball npx execution
+npm pack
+npx --package ./gehdoc-svg-to-video-0.26.0.tgz svg-to-video --version
 ```
 
 #### Web Studio Development (Run inside `web/` directory)

@@ -5,16 +5,27 @@ The tool is built to run in a headless environment, making it perfect for CI/CD 
 - 📦 **npm Package**: [`@gehdoc/svg-to-video`](https://www.npmjs.com/package/@gehdoc/svg-to-video)
 - 🐳 **Docker Hub Image**: [`gehdoc/svg-to-video`](https://hub.docker.com/r/gehdoc/svg-to-video)
 
+### 🌐 Remote / Published Usage (Users)
+
 ```bash
-# Published package usage (no global install required)
+# Run on-demand via npx from npmjs registry
 npx @gehdoc/svg-to-video <svgPath> <fps> <outDir> [options]
 
-# Development mode (from source)
-npm run build && node dist/src/index.js <svgPath> <fps> <outDir> [options]
-
-# Docker (zero local dependencies; add :Z for SELinux / Fedora)
+# Run official Docker image from Docker Hub
 docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/<svgPath> <fps> /data/<outDir> [options]
 ```
+
+### 🛠 Local Development & Building (Contributors)
+
+```bash
+# Build TypeScript CLI source and run compiled ES module locally
+npm run build && node dist/src/index.js <svgPath> <fps> <outDir> [options]
+
+# Fast development execution directly from TypeScript source
+npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
+```
+
+> **Contributor Note**: For detailed local building, testing, Docker image creation, and tarball verification instructions, please see **[CONTRIBUTING.md](../CONTRIBUTING.md#commands--testing-strategy)**.
 
 ## Arguments
 
