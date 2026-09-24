@@ -86,7 +86,7 @@ npx @gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format apng
 docker run --rm -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif
 ```
 
-See [docs/CLI.md](./docs/CLI.md) for full usage, arguments, and options.
+See [docs/CLI.md](./docs/CLI.md) for full usage, arguments, and options. For local building and source execution, see [CONTRIBUTING.md](./CONTRIBUTING.md#commands--testing-strategy).
 
 ---
 

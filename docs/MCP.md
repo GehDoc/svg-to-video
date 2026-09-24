@@ -72,6 +72,23 @@ For cloud agents or sandbox environments without local Chromium or FFmpeg pre-in
 docker run -i --rm --user $(id -u):$(id -g) -v $(pwd):/app/data:Z gehdoc/svg-to-video mcp
 ```
 
+### 🛠 Local Development & Building (Contributors)
+
+To test a local checkout of the repository as an MCP server:
+
+```json
+{
+  "mcpServers": {
+    "svg-to-video-local": {
+      "command": "node",
+      "args": ["/absolute/path/to/svg-to-video/dist/src/mcp.js"]
+    }
+  }
+}
+```
+
+> **Contributor Note**: Always run `npm run build` before launching local compiled MCP servers, or use `npx tsx src/mcp.ts` during active development. See **[CONTRIBUTING.md](../CONTRIBUTING.md#commands--testing-strategy)** for complete instructions.
+
 ### 🔒 Security, Telemetry & Privacy
 
 - **Stdio Communication**: The MCP server runs over `stdio` without opening external network ports. For details on Chromium browser isolation, argument sanitization, and containerized sandboxing, see **[docs/SECURITY.md](./SECURITY.md)**.

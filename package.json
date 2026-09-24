@@ -5,8 +5,7 @@
   "type": "module",
   "description": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, and a serverless Web Studio.",
   "imports": {
-    "#shared/*": "./dist/shared/*",
-    "@shared/*": "./dist/shared/*"
+    "#shared/*": "./dist/shared/*"
   },
   "author": "GehDoc",
   "repository": {
@@ -62,6 +61,7 @@
     "tsx": "^4.23.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@types/commander": "^2.12.0",
     "@types/ffprobe-static": "^2.0.3",
     "@types/jsdom": "^28.0.3",
@@ -69,15 +69,16 @@
     "@types/pngjs": "^6.0.5",
     "@vitest/browser-playwright": "4.1.11",
     "@vitest/coverage-v8": "4.1.11",
-    "eslint": "^8.0.0",
+    "eslint": "^9.39.4",
     "ffprobe": "^1.1.2",
     "ffprobe-static": "^3.1.0",
+    "globals": "^17.4.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.3.2",
     "pngjs": "^7.0.0",
     "prettier": "^3.8.1",
     "prettier-plugin-sh": "^0.19.0",
-    "typescript": "^5.0.0",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.69.0",
     "vitest": "4.1.11"
   },
@@ -91,7 +92,7 @@
     "mcp": "tsx src/mcp.ts",
     "test:cli": "tsx --test tests/cli.spec.ts",
     "test:mcp": "tsx --test tests/mcp.spec.ts",
-    "test:pack": "tsx --test tests/pack.spec.ts",
+    "test:pack": "npm run build && tsx --test tests/pack.spec.ts",
     "test:unit": "tsx --test src/**/*.test.ts tests/**/*.test.ts && vitest run shared/*.test.ts && npm run test:unit -w web",
     "test": "npm run test:cli && npm run test:mcp && npm run test:pack && npm run test:unit && npm run test:web -w web && npm run test:storybook -w web && npm run test:visual -w web",
     "type-check": "tsc -p tsconfig.json --noEmit && npm run type-check -w web",
