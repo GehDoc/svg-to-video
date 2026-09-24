@@ -33,9 +33,6 @@ const FORBIDDEN_EXACT_FILES = [
 
 describe('npm pack & compiled dist smoke verification', () => {
   it('published npm package contains all required runtime files and zero extra files', () => {
-    // Ensure build is up to date
-    execSync('npm run build', { encoding: 'utf-8' });
-
     const rawOutput = execSync('npm pack --dry-run --json', {
       encoding: 'utf-8',
     });
@@ -110,8 +107,6 @@ describe('npm pack & compiled dist smoke verification', () => {
   });
 
   it('compiled CLI artifact (dist/src/index.js) executes cleanly without ESM module errors', () => {
-    execSync('npm run build', { encoding: 'utf-8' });
-
     const result = spawnSync('node', ['dist/src/index.js', '--version'], {
       encoding: 'utf-8',
     });
@@ -125,8 +120,6 @@ describe('npm pack & compiled dist smoke verification', () => {
   });
 
   it('compiled MCP server artifact (dist/src/mcp.js) starts cleanly without ESM module errors', () => {
-    execSync('npm run build', { encoding: 'utf-8' });
-
     const proc = spawnSync('node', ['dist/src/mcp.js'], {
       encoding: 'utf-8',
       input: '',
