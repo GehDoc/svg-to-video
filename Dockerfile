@@ -42,4 +42,4 @@ RUN npm install --include=dev --no-workspaces --ignore-scripts \
     && rm -rf src shared tsconfig*.json
 
 USER node
-ENTRYPOINT ["node", "dist/src/index.js"]
+ENTRYPOINT ["node", "/app/dist/src/index.js"]

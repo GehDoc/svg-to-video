@@ -4,21 +4,21 @@ import child_process from 'child_process';
 import puppeteer, { Page, Browser, ScreenshotOptions } from 'puppeteer';
 import { Command } from 'commander';
 import path from 'path';
-import { seekAnimations } from '@shared/animation-engine.js';
+import { seekAnimations } from '#shared/animation-engine.js';
 import { validateOptions } from './utils/validateOptions.js';
 import {
   analyzeSvgAnimation,
   parseSvgDimensions,
   calculateAspectRatio,
   ParsedSvgDimensions,
-} from '@shared/analyzeSvgAnimation.js';
+} from '#shared/analyzeSvgAnimation.js';
 import { formatRegistry } from './formats/registry.js';
 import { CLIFormatOptions } from './formats/types.js';
 import { pkg } from './utils/packageInfo.js';
 import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 import { Logger } from './utils/logger.js';
 import { trackEvent } from './utils/analytics.js';
-import { ConversionTracker } from '@shared/rendererTracking.js';
+import { ConversionTracker } from '#shared/rendererTracking.js';
 
 type FrameFileExtension = 'png';
 const frameFileExtension: FrameFileExtension = 'png';
