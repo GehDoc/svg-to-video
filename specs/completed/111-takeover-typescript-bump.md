@@ -7,7 +7,7 @@
 ## 🎯 Objective
 
 Take over Dependabot PR #111 (`build(deps-dev): bump typescript from 5.9.3 to 7.0.2`).
-Retarget the upgrade to TypeScript 6.0.3 (the latest TypeScript 6.x release compatible with `@typescript-eslint` v8) across root and web workspaces.
+Retarget the upgrade to TypeScript 6.0.3 (the latest TypeScript 6.x release compatible with `@typescript-eslint` v8) across root and web workspaces without relying on deprecation suppressions.
 
 ## 📐 Technical Strategy & Analysis
 
@@ -16,7 +16,7 @@ Retarget the upgrade to TypeScript 6.0.3 (the latest TypeScript 6.x release comp
    - Upgrading to `7.0.2` fails because `@typescript-eslint` v8 has a peer dependency requirement of `typescript <6.1.0`.
 2. **Retargeting Upgrade**:
    - Upgraded `typescript` to `^6.0.3` in root `package.json` and `~6.0.3` in `web/package.json`.
-   - Added `"ignoreDeprecations": "6.0"` to `tsconfig.json` to suppress the TS6 `baseUrl` deprecation warning.
+   - Removed deprecated `baseUrl` setting from `tsconfig.json` so no deprecation suppression flags are needed.
    - Ran `npm install` to update `package-lock.json`.
 3. **Verification**:
    - Ran `npm run check:fast` to ensure `eslint`, `prettier`, and `tsc` pass cleanly across root and web workspaces.
@@ -26,6 +26,6 @@ Retarget the upgrade to TypeScript 6.0.3 (the latest TypeScript 6.x release comp
 
 - [x] Take over ownership of PR #111 from Dependabot.
 - [x] Bump TypeScript to 6.0.3 in `package.json`, `web/package.json`, and lockfile.
-- [x] Resolve `baseUrl` TS6 deprecation in `tsconfig.json`.
+- [x] Remove deprecated `baseUrl` in `tsconfig.json`.
 - [x] Verify linting, type-checking, and tests pass.
 - [x] Document technical evaluation in SDD specification.
