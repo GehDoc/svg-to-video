@@ -1,7 +1,7 @@
 FROM node:24-slim
 
 # 1. Setup Environment & MCP Metadata
-LABEL io.modelcontextprotocol.server.name="io.github.gehdoc/svg-to-video"
+LABEL io.modelcontextprotocol.server.name="io.github.GehDoc/svg-to-video"
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \

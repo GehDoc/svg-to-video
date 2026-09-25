@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.gehdoc/svg-to-video",
+  "name": "io.github.GehDoc/svg-to-video",
   "title": "SVG to Video",
   "description": "Animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter",
-  "version": "0.27.1",
+  "version": "0.27.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/GehDoc/svg-to-video",
@@ -13,7 +13,7 @@
     {
       "registryType": "npm",
       "identifier": "@gehdoc/svg-to-video",
-      "version": "0.27.1",
+      "version": "0.27.2",
       "runtimeHint": "npx",
       "runtimeArguments": [
         {
