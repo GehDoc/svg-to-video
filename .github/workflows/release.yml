@@ -87,4 +87,25 @@ jobs:
         run: ./mcp-publisher login github-oidc
 
       - name: Publish server to MCP Registry
-        run: ./mcp-publisher publish mcp.json
+        run: |
+          echo "Waiting 30 seconds for npm package and Docker image propagation..."
+          sleep 30
+
+          MAX_RETRIES=5
+          RETRY_DELAY=30
+
+          for attempt in $(seq 1 $MAX_RETRIES); do
+            echo "Attempt $attempt of $MAX_RETRIES: Publishing server to MCP Registry..."
+            if ./mcp-publisher publish mcp.json; then
+              echo "Successfully published server to MCP Registry!"
+              exit 0
+            fi
+
+            if [ $attempt -lt $MAX_RETRIES ]; then
+              echo "Publish failed. Waiting ${RETRY_DELAY}s for propagation before retrying..."
+              sleep $RETRY_DELAY
+            fi
+          done
+
+          echo "Error: Failed to publish server to MCP Registry after $MAX_RETRIES attempts."
+          exit 1
