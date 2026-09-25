@@ -91,3 +91,173 @@ describe('MCP Server Integration', () => {
     assert.ok(fs.existsSync(data.outputFile));
   });
 });
+
+describe('mcp.json Manifest Contract Verification', () => {
+  const mcpPath = path.resolve('mcp.json');
+  const pkgPath = path.resolve('package.json');
+
+  test('mcp.json should exist and be valid JSON compliant with MCP registry contract', () => {
+    assert.ok(fs.existsSync(mcpPath), 'mcp.json manifest file must exist');
+    assert.ok(fs.existsSync(pkgPath), 'package.json file must exist');
+
+    const mcpContent = fs.readFileSync(mcpPath, 'utf-8');
+    const pkgContent = fs.readFileSync(pkgPath, 'utf-8');
+
+    const mcp = JSON.parse(mcpContent);
+    const pkg = JSON.parse(pkgContent);
+
+    // 1. Schema & Name
+    assert.ok(
+      typeof mcp.$schema === 'string' && mcp.$schema.startsWith('https://'),
+      '$schema must be a valid HTTPS URI'
+    );
+    assert.strictEqual(
+      mcp.name,
+      pkg.mcpName,
+      'mcp.json name must match package.json mcpName'
+    );
+    assert.match(
+      mcp.name,
+      /^[a-zA-Z0-9.-]+\/[a-zA-Z0-9._-]+$/,
+      'mcp.json name must be in reverse-DNS format'
+    );
+
+    // 2. Title & Description
+    assert.ok(
+      typeof mcp.title === 'string' && mcp.title.length > 0,
+      'title must be a non-empty string'
+    );
+    assert.ok(
+      typeof mcp.description === 'string' && mcp.description.length > 0,
+      'description must be a non-empty string'
+    );
+    assert.ok(
+      mcp.description.length <= 100,
+      `description must be strictly <= 100 characters according to MCP registry rules (current: ${mcp.description.length})`
+    );
+
+    // 3. Versioning sync
+    assert.strictEqual(
+      mcp.version,
+      pkg.version,
+      'mcp.version must match root package.json version'
+    );
+
+    // 4. Website & Repository Metadata
+    assert.strictEqual(
+      mcp.websiteUrl,
+      pkg.homepage,
+      'mcp.websiteUrl must match package.json homepage'
+    );
+    assert.ok(
+      mcp.repository && typeof mcp.repository === 'object',
+      'repository metadata object is required'
+    );
+    assert.strictEqual(mcp.repository.type, 'git');
+    assert.strictEqual(mcp.repository.source, 'github');
+    assert.ok(
+      typeof mcp.repository.id === 'string' && mcp.repository.id.length > 0,
+      'repository.id must be a non-empty string'
+    );
+
+    // 5. Icons configuration
+    assert.ok(
+      Array.isArray(mcp.icons) && mcp.icons.length > 0,
+      'icons array must contain at least one icon'
+    );
+    const allowedMimeTypes = [
+      'image/png',
+      'image/jpeg',
+      'image/jpg',
+      'image/svg+xml',
+      'image/webp',
+    ];
+    for (const icon of mcp.icons) {
+      assert.ok(
+        typeof icon.src === 'string' && icon.src.startsWith('https://'),
+        'icon src must be an HTTPS URL'
+      );
+      assert.ok(
+        allowedMimeTypes.includes(icon.mimeType),
+        `icon mimeType must be one of: ${allowedMimeTypes.join(', ')}`
+      );
+      assert.ok(Array.isArray(icon.sizes), 'icon sizes must be an array');
+      for (const size of icon.sizes) {
+        assert.match(
+          size,
+          /^(\d+x\d+|any)$/,
+          'icon size must follow WxH or "any" format'
+        );
+      }
+    }
+
+    // 6. Package entries & Environment Variables
+    assert.ok(
+      Array.isArray(mcp.packages) && mcp.packages.length >= 2,
+      'packages must define npm and OCI distributions'
+    );
+
+    const npmPkg = mcp.packages.find(
+      (p: { registryType: string }) => p.registryType === 'npm'
+    );
+    assert.ok(npmPkg, 'npm package entry must be present');
+    assert.strictEqual(npmPkg.identifier, pkg.name);
+    assert.strictEqual(
+      npmPkg.version,
+      pkg.version,
+      'npm package version must match package.json version'
+    );
+    assert.strictEqual(npmPkg.registryBaseUrl, 'https://registry.npmjs.org');
+    assert.strictEqual(npmPkg.transport?.type, 'stdio');
+    assert.strictEqual(npmPkg.runtimeHint, 'npx');
+
+    const ociPkg = mcp.packages.find(
+      (p: { registryType: string }) => p.registryType === 'oci'
+    );
+    assert.ok(ociPkg, 'oci package entry must be present');
+    assert.strictEqual(ociPkg.registryBaseUrl, 'https://docker.io');
+    assert.strictEqual(ociPkg.transport?.type, 'stdio');
+    assert.strictEqual(ociPkg.runtimeHint, 'docker');
+
+    // Environment variables checks
+    const expectedEnvs = [
+      'DO_NOT_TRACK',
+      'PUPPETEER_EXECUTABLE_PATH',
+      'PUPPETEER_ARGS',
+    ];
+    for (const packageEntry of [npmPkg, ociPkg]) {
+      assert.ok(
+        Array.isArray(packageEntry.environmentVariables),
+        'environmentVariables array must be present'
+      );
+      const envNames = packageEntry.environmentVariables.map(
+        (e: { name: string }) => e.name
+      );
+      for (const expectedEnv of expectedEnvs) {
+        assert.ok(
+          envNames.includes(expectedEnv),
+          `Package must document environment variable ${expectedEnv}`
+        );
+      }
+      for (const envObj of packageEntry.environmentVariables) {
+        assert.ok(
+          typeof envObj.name === 'string',
+          'env var name must be string'
+        );
+        assert.ok(
+          typeof envObj.description === 'string' &&
+            envObj.description.length > 0,
+          'env var description must be non-empty'
+        );
+        assert.ok(
+          typeof envObj.isRequired === 'boolean',
+          'env var isRequired must be boolean'
+        );
+        assert.ok(
+          ['string', 'number', 'boolean', 'filepath'].includes(envObj.format),
+          'env var format must be valid enum'
+        );
+      }
+    }
+  });
+});

@@ -94,6 +94,16 @@ To test a local checkout of the repository as an MCP server:
 - **Stdio Communication**: The MCP server runs over `stdio` without opening external network ports. For details on Chromium browser isolation, argument sanitization, and containerized sandboxing, see **[docs/SECURITY.md](./SECURITY.md)**.
 - **Anonymous Telemetry**: Standard usage events (`file-load`, `conversion-start`, `conversion-success`) are reported anonymously to Umami for feature improvement without collecting file contents or PII. To opt out, set `DO_NOT_TRACK=1` in your environment. See **[docs/ANALYTICS.md](./ANALYTICS.md)** for full event schemas and opt-out details.
 
+### 🌿 Environment Variables
+
+The MCP server respects the following environment variables (defined in `mcp.json`):
+
+| Environment Variable        | Format     | Description                                                                         | Default |
+| :-------------------------- | :--------- | :---------------------------------------------------------------------------------- | :------ |
+| `DO_NOT_TRACK`              | `string`   | Set to `1` or `true` to opt out of anonymous telemetry collection.                  | `0`     |
+| `PUPPETEER_EXECUTABLE_PATH` | `filepath` | Custom file path to a system Chromium or Chrome binary.                             | —       |
+| `PUPPETEER_ARGS`            | `string`   | Additional command-line flags to pass to Puppeteer Chromium (e.g., `--no-sandbox`). | —       |
+
 ---
 
 ## 🛠 Exposed MCP Tools

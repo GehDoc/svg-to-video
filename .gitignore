@@ -5,7 +5,7 @@ node_modules/
 dist/
 out-dir/
 *.mp4
-out-dir-test/
+out-dir-*/
 
 # Playwright Reports/Results
 web/playwright-report/
