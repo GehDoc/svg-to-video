@@ -499,7 +499,7 @@ When adding new features or core capabilities, systematically update public-faci
    - Update `description` fields to highlight new capabilities.
    - Add new relevant search tags to the `keywords` array in root `package.json`.
 3. **`mcp.json` (MCP Registry Manifest)**:
-   - Update `description` field when project capabilities or MCP tool features change.
+   - Update `description` field when project capabilities or MCP tool features change. Ensure the description is strictly under 100 characters and focuses exclusively on describing the features of the MCP server (not the Web Studio or other elements provided by the package) so as not to exceed this limit.
    - Synchronize `version` and `packages[].version` fields during version bumps.
    - Ensure `packages` identifiers, transport configurations, and runtime hints reflect published package distributions.
 4. **`README.md`**:
