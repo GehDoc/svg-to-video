@@ -208,7 +208,7 @@ describe('mcp.json Manifest Contract Verification', () => {
       pkg.version,
       'npm package version must match package.json version'
     );
-    assert.strictEqual(npmPkg.registryBaseUrl, 'https://registry.npmjs.org');
+    assert.strictEqual(npmPkg.registryBaseUrl, undefined);
     assert.strictEqual(npmPkg.transport?.type, 'stdio');
     assert.strictEqual(npmPkg.runtimeHint, 'npx');
 
@@ -216,7 +216,7 @@ describe('mcp.json Manifest Contract Verification', () => {
       (p: { registryType: string }) => p.registryType === 'oci'
     );
     assert.ok(ociPkg, 'oci package entry must be present');
-    assert.strictEqual(ociPkg.registryBaseUrl, 'https://docker.io');
+    assert.strictEqual(ociPkg.registryBaseUrl, undefined);
     assert.strictEqual(ociPkg.transport?.type, 'stdio');
     assert.strictEqual(ociPkg.runtimeHint, 'docker');
 
