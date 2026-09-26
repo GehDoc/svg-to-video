@@ -3,7 +3,7 @@
   "name": "io.github.GehDoc/svg-to-video",
   "title": "SVG to Video",
   "description": "Animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter",
-  "version": "0.27.3",
+  "version": "0.27.4",
   "websiteUrl": "https://gehdoc.github.io/svg-to-video/",
   "icons": [
     {
@@ -22,7 +22,7 @@
     {
       "registryType": "npm",
       "identifier": "@gehdoc/svg-to-video",
-      "version": "0.27.3",
+      "version": "0.27.4",
       "registryBaseUrl": "https://registry.npmjs.org",
       "runtimeHint": "npx",
       "runtimeArguments": [
