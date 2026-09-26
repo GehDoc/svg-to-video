@@ -4,8 +4,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { OUTPUT_DIR_RELATIVE } from './helpers/e2e.js';
 
-const outputDir = path.resolve('out-dir-mcp-test');
+const outputDir = path.resolve(OUTPUT_DIR_RELATIVE, 'mcp');
 const exampleSvg = path.resolve('examples/example.svg');
 
 describe('MCP Server Integration', () => {
