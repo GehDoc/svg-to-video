@@ -7,3 +7,4 @@ web/.next
 .next
 web/playwright-report
 web/test-results
+web/next-env.d.ts

@@ -3,22 +3,53 @@
   "name": "io.github.GehDoc/svg-to-video",
   "title": "SVG to Video",
   "description": "Animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter",
-  "version": "0.27.3",
+  "version": "0.27.4",
+  "websiteUrl": "https://gehdoc.github.io/svg-to-video/",
+  "icons": [
+    {
+      "src": "https://gehdoc.github.io/svg-to-video/favicon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": ["any"]
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/GehDoc/svg-to-video",
-    "source": "github"
+    "source": "github",
+    "id": "1178356431"
   },
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@gehdoc/svg-to-video",
-      "version": "0.27.3",
+      "version": "0.27.4",
+      "registryBaseUrl": "https://registry.npmjs.org",
       "runtimeHint": "npx",
       "runtimeArguments": [
         {
           "type": "positional",
           "value": "mcp"
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "DO_NOT_TRACK",
+          "description": "Set to '1' or 'true' to disable anonymous usage telemetry.",
+          "default": "0",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "PUPPETEER_EXECUTABLE_PATH",
+          "description": "Custom file path to a system Chromium or Chrome binary.",
+          "isRequired": false,
+          "format": "filepath"
+        },
+        {
+          "name": "PUPPETEER_ARGS",
+          "description": "Additional command-line flags to pass to the Puppeteer Chromium instance.",
+          "isRequired": false,
+          "format": "string"
         }
       ],
       "transport": {
@@ -28,6 +59,35 @@
     {
       "registryType": "oci",
       "identifier": "docker.io/gehdoc/svg-to-video:latest",
+      "registryBaseUrl": "https://docker.io",
+      "runtimeHint": "docker",
+      "packageArguments": [
+        {
+          "type": "positional",
+          "value": "mcp"
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "DO_NOT_TRACK",
+          "description": "Set to '1' or 'true' to disable anonymous usage telemetry.",
+          "default": "0",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "PUPPETEER_EXECUTABLE_PATH",
+          "description": "Custom file path to a system Chromium or Chrome binary.",
+          "isRequired": false,
+          "format": "filepath"
+        },
+        {
+          "name": "PUPPETEER_ARGS",
+          "description": "Additional command-line flags to pass to the Puppeteer Chromium instance.",
+          "isRequired": false,
+          "format": "string"
+        }
+      ],
       "transport": {
         "type": "stdio"
       }

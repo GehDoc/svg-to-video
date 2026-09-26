@@ -500,8 +500,11 @@ When adding new features or core capabilities, systematically update public-faci
    - Add new relevant search tags to the `keywords` array in root `package.json`.
 3. **`mcp.json` (MCP Registry Manifest)**:
    - Update `description` field when project capabilities or MCP tool features change. Ensure the description is strictly under 100 characters and focuses exclusively on describing the features of the MCP server (not the Web Studio or other elements provided by the package) so as not to exceed this limit.
-   - Synchronize `version` and `packages[].version` fields during version bumps.
-   - Ensure `packages` identifiers, transport configurations, and runtime hints reflect published package distributions.
+   - Synchronize `version` and `packages[].version` fields during version bumps with root `package.json`.
+   - Maintain `websiteUrl` (`https://gehdoc.github.io/svg-to-video/`), `icons` assets (`https://gehdoc.github.io/svg-to-video/favicon.svg`), and `repository.id` (`1178356431`).
+   - Keep `packages[].environmentVariables` updated whenever new runtime flags or environment variables are introduced (`DO_NOT_TRACK`, `PUPPETEER_EXECUTABLE_PATH`, `PUPPETEER_ARGS`). If adding a CLI parameter or environment variable that affects MCP execution, contributors **must** update the corresponding package definitions in `mcp.json`.
+   - Ensure `packages` identifiers, transport configurations, registry base URLs (`https://registry.npmjs.org`, `https://docker.io`), and runtime hints reflect published package distributions.
+   - Verify changes using `npm run test:mcp`, which enforces automated contract assertions on `mcp.json` schema compliance.
 4. **`README.md`**:
    - Update feature summaries, installation options, and CLI/web quick start usage blocks.
 5. **GitHub Repository Metadata**:
