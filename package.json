@@ -67,7 +67,6 @@
     "@types/jsdom": "^28.0.3",
     "@types/node": "^25.4.0",
     "@types/pngjs": "^6.0.5",
-    "@vitest/browser-playwright": "4.1.11",
     "@vitest/coverage-v8": "4.1.11",
     "eslint": "^9.39.4",
     "ffprobe": "^1.1.2",
@@ -117,7 +116,6 @@
     "web"
   ],
   "overrides": {
-    "playwright": "^1.63.0",
     "vitest": "$vitest",
     "@vitest/spy": "$vitest",
     "@vitest/expect": "$vitest",
