@@ -63,11 +63,20 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: siteName,
+  alternateName: 'SVG to Video Converter',
   description,
   url,
   applicationCategory: 'MultimediaApplication',
-  operatingSystem: 'Any',
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  operatingSystem: 'All',
+  browserRequirements:
+    'Requires JavaScript and HTML5 Canvas / Web Animations API support',
+  image: imageUrl,
+  author: {
+    '@type': 'Person',
+    name: pkg.author,
+    url: `https://github.com/${pkg.author}`,
+  },
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
   featureList: [
     'High-fidelity SVG to video conversion',
     'Optimized animated image export (aPNG, GIF)',
