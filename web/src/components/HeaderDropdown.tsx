@@ -6,13 +6,12 @@ import {
   FaBalanceScale,
 } from 'react-icons/fa';
 import { trackEvent } from '../utils/analytics';
+import { ECOSYSTEM_LINKS } from '../utils/constants';
 import pkg from '../../package.json';
 import { Dropdown } from './Dropdown/Dropdown';
 
 export const HeaderDropdown = () => {
-  const repoUrl = pkg.repository.url
-    .replace(/^git\+/, '')
-    .replace(/\.git$/, '');
+  const repoUrl = ECOSYSTEM_LINKS.github;
 
   const rawCommitSha =
     typeof process !== 'undefined'
@@ -90,7 +89,7 @@ export const HeaderDropdown = () => {
         },
         {
           label: 'License',
-          href: `${repoUrl}/blob/main/LICENSE`,
+          href: ECOSYSTEM_LINKS.license,
           target: '_blank',
           rel: 'noopener noreferrer',
           icon: <FaBalanceScale />,

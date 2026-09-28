@@ -8,15 +8,17 @@ import {
   UMAMI_WEBSITE_ID,
 } from '@shared/analytics-schema';
 
+import { ECOSYSTEM_LINKS } from '../utils/constants';
+
 const siteName = 'SVG to Video';
-const description =
-  'High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) and optimized animated image converter (aPNG, GIF) with perfect alpha-channel transparency.';
-const url = 'https://gehdoc.github.io/svg-to-video/';
-const imageUrl =
-  'https://gehdoc.github.io/svg-to-video/assets/social-preview.svg';
+const title =
+  'SVG to Video Converter (MP4, WebM, GIF, aPNG) – Free Online Studio';
+const description = pkg.description;
+const url = pkg.homepage;
+const imageUrl = `${url}assets/social-preview.svg`;
 
 export const metadata: Metadata = {
-  title: 'SVG to Video - Convert Animated SVG to MP4, WebM, aPNG & GIF',
+  title,
   description,
   keywords: [
     'animated svg',
@@ -37,8 +39,11 @@ export const metadata: Metadata = {
     'model context protocol',
     'agent skill',
   ],
+  alternates: {
+    canonical: url,
+  },
   openGraph: {
-    title: 'SVG to Video - Animated SVG Converter',
+    title,
     description,
     url,
     siteName,
@@ -48,7 +53,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SVG to Video - Animated SVG Converter',
+    title,
     description,
     images: [imageUrl],
   },
@@ -59,19 +64,30 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: siteName,
+  alternateName: ['SVG to Video Converter', '@gehdoc/svg-to-video'],
   description,
   url,
   applicationCategory: 'MultimediaApplication',
-  operatingSystem: 'Any',
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  operatingSystem: 'All',
+  browserRequirements:
+    'Requires JavaScript and HTML5 Canvas / Web Animations API support',
+  image: imageUrl,
+  author: {
+    '@type': 'Person',
+    name: pkg.author,
+    url: `https://github.com/${pkg.author}`,
+  },
+  sameAs: [ECOSYSTEM_LINKS.github, ECOSYSTEM_LINKS.npm, ECOSYSTEM_LINKS.docker],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
   featureList: [
-    'High-fidelity SVG to video conversion',
+    'High-fidelity SVG to video conversion (MP4, WebM, MKV, MOV)',
     'Optimized animated image export (aPNG, GIF)',
     'Transparent background support (WebM, aPNG, GIF89a)',
-    'Metadata embedding (Title and Comment across video and animated images)',
+    'Metadata embedding across video and animated images',
     'Frame-accurate Web Animations API scrubbing',
-    'Model Context Protocol (MCP) server & Agent Skill support for AI assistants',
-    'Serverless browser-based rendering',
+    'Model Context Protocol (MCP) server & Agent Skill support',
+    '100% Client-side serverless browser rendering',
+    'CLI & Docker automation support',
   ],
 };
 

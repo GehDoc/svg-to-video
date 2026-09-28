@@ -490,13 +490,16 @@ When adding new features or core capabilities, systematically update public-faci
 
 ### 📋 SEO & Metadata Audit Checklist
 
-1. **`web/src/app/layout.tsx`** & **`web/src/components/SeoFallback.tsx`**:
-   - Update `layout.tsx` metadata object (title, description, Open Graph / Twitter cards).
-   - Update structured **JSON-LD** data in `layout.tsx` (enrich `featureList` array).
-   - Update **`SeoFallback.tsx`** static fallback text for search engine indexing.
-   - Verify `sitemap.ts` and `robots.ts` reflect dynamic site routes.
+1. **`web/src/app/layout.tsx`**, **`web/src/components/SeoFallback.tsx`**, & **`web/src/utils/constants.ts`**:
+   - Centralize all public ecosystem URLs (GitHub, npm, Docker Hub, MCP docs, License) in `web/src/utils/constants.ts` (`ECOSYSTEM_LINKS`), consuming `pkg.repository.url` as the single source of truth.
+   - Update `layout.tsx` metadata object using unified DRY constants (`title`, `description`) across standard metadata, Open Graph, and Twitter cards. Import `description` directly from `web/package.json` (`pkg.description`), derive `url` from `package.json` (`pkg.homepage`), and configure `alternates.canonical` to establish the canonical URL for search engines and avoid duplicate indexing (e.g., via `index.html`).
+   - Update structured **JSON-LD** data in `layout.tsx` (enrich `featureList`, `alternateName`, `browserRequirements`, DRY `sameAs` array, and DRY `author` URL derived from `package.json`).
+   - Update **`SeoFallback.tsx`** static fallback text and footer links (`ECOSYSTEM_LINKS`) for search engine indexing.
+   - Maintain standard AI model context file `web/public/llms.txt` and verify `sitemap.ts` and `robots.txt` reflect dynamic site routes.
 2. **`package.json` (Root & Web)**:
-   - Update `description` fields to highlight new capabilities.
+   - Maintain the product description strategy:
+     - **Root `package.json`**: Broad ecosystem description referencing all core tools (Web Studio, CLI automation, and Model Context Protocol (MCP) server integration).
+     - **Web Workspace `web/package.json`**: Focused Web Studio description, harmonized with and consumed directly by `web/src/app/layout.tsx`.
    - Add new relevant search tags to the `keywords` array in root `package.json`.
 3. **`mcp.json` (MCP Registry Manifest)**:
    - Update `description` field when project capabilities or MCP tool features change. Ensure the description is strictly under 100 characters and focuses exclusively on describing the features of the MCP server (not the Web Studio or other elements provided by the package) so as not to exceed this limit.

@@ -1,0 +1,24 @@
+# SVG to Video Studio
+
+> High-fidelity, browser-based SVG to video Studio and CLI converter. Transforms CSS-animated SVGs into MP4, WebM, GIF, and aPNG with alpha-channel transparency.
+
+## Core Resources
+
+- [Web Studio](https://gehdoc.github.io/svg-to-video/): Interactive in-browser converter interface.
+- [GitHub Repository](https://github.com/GehDoc/svg-to-video): Source code, issue tracker, and main documentation.
+- [npm Package](https://www.npmjs.com/package/@gehdoc/svg-to-video): CLI tool and programmatic Node.js API.
+- [Docker Image](https://hub.docker.com/r/gehdoc/svg-to-video): Headless containerized rendering environment.
+- [MCP Server Registry](https://registry.modelcontextprotocol.io/v0/servers/io.github.GehDoc%2Fsvg-to-video/versions/latest): Official Model Context Protocol registration for AI agents.
+
+## Documentation & Guides
+
+- [README Documentation](https://raw.githubusercontent.com/GehDoc/svg-to-video/main/README.md): Complete usage guide, CLI arguments, and options.
+- [MCP Integration Guide](https://github.com/GehDoc/svg-to-video#model-context-protocol-mcp-server): How to connect the agent skill to Claude Desktop or Cursor.
+
+## Key Capabilities
+
+- Supports MP4, WebM, MKV, MOV, aPNG, and GIF exports.
+- Full alpha-channel transparency support for WebM, aPNG, and GIF.
+- Frame-accurate Web Animations API scrubbing.
+- Metadata injection (Title and Comment) into exported video files.
+- 100% serverless, client-side rendering privacy in the browser.

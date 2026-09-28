@@ -8,6 +8,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/GehDoc/svg-to-video?logo=github&logoColor=white&label=release&color=2b3137)](https://github.com/GehDoc/svg-to-video/releases)
 [![npm Version](https://img.shields.io/npm/v/@gehdoc/svg-to-video?logo=npm&logoColor=white&label=npm&color=CB3837)](https://www.npmjs.com/package/@gehdoc/svg-to-video)
 [![MCP Registry](https://img.shields.io/badge/MCP-io.github.GehDoc%2Fsvg--to--video-purple?logo=modelcontextprotocol&logoColor=white)](https://registry.modelcontextprotocol.io/v0/servers/io.github.GehDoc%2Fsvg-to-video/versions/latest)
+[![llms.txt](https://img.shields.io/badge/llms.txt-available-blue)](https://gehdoc.github.io/svg-to-video/llms.txt)
 [![Docker Image](https://img.shields.io/docker/v/gehdoc/svg-to-video?label=docker&logo=docker&logoColor=white&sort=semver&color=2496ed)](https://hub.docker.com/r/gehdoc/svg-to-video)
 [![Last Commit](https://img.shields.io/github/last-commit/GehDoc/svg-to-video?logo=github&logoColor=white)](https://github.com/GehDoc/svg-to-video/commits/main)
 
