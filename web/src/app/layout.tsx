@@ -11,8 +11,7 @@ import {
 const siteName = 'SVG to Video';
 const title =
   'SVG to Video Converter (MP4, WebM, GIF, aPNG) – Free Online Studio';
-const description =
-  'High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) and optimized animated image converter (aPNG, GIF) with perfect alpha-channel transparency.';
+const description = pkg.description;
 const url = pkg.homepage;
 const imageUrl = `${url}assets/social-preview.svg`;
 
