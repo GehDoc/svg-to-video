@@ -5,7 +5,7 @@
   "author": "GehDoc",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GehDoc/svg-to-video.git",
+    "url": "https://github.com/GehDoc/svg-to-video",
     "directory": "web"
   },
   "bugs": {

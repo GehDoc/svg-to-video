@@ -1,4 +1,5 @@
 import Logo from '../assets/logo.svg?react';
+import { ECOSYSTEM_LINKS } from '../utils/constants';
 import './SeoFallback.scss';
 
 interface SeoFallbackProps {
@@ -29,7 +30,7 @@ export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
 
         <div className="splash-links">
           <a
-            href="https://github.com/GehDoc/svg-to-video"
+            href={ECOSYSTEM_LINKS.github}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -37,7 +38,31 @@ export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
           </a>
           <span className="separator">•</span>
           <a
-            href="https://github.com/GehDoc/svg-to-video/blob/main/LICENSE"
+            href={ECOSYSTEM_LINKS.npm}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            npm Package
+          </a>
+          <span className="separator">•</span>
+          <a
+            href={ECOSYSTEM_LINKS.docker}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Docker Hub
+          </a>
+          <span className="separator">•</span>
+          <a
+            href={ECOSYSTEM_LINKS.mcpDocs}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            MCP Registry Server
+          </a>
+          <span className="separator">•</span>
+          <a
+            href={ECOSYSTEM_LINKS.license}
             target="_blank"
             rel="noopener noreferrer"
           >

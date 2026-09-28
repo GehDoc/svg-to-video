@@ -8,6 +8,8 @@ import {
   UMAMI_WEBSITE_ID,
 } from '@shared/analytics-schema';
 
+import { ECOSYSTEM_LINKS } from '../utils/constants';
+
 const siteName = 'SVG to Video';
 const title =
   'SVG to Video Converter (MP4, WebM, GIF, aPNG) – Free Online Studio';
@@ -62,7 +64,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: siteName,
-  alternateName: 'SVG to Video Converter',
+  alternateName: ['SVG to Video Converter', '@gehdoc/svg-to-video'],
   description,
   url,
   applicationCategory: 'MultimediaApplication',
@@ -75,6 +77,7 @@ const jsonLd = {
     name: pkg.author,
     url: `https://github.com/${pkg.author}`,
   },
+  sameAs: [ECOSYSTEM_LINKS.github, ECOSYSTEM_LINKS.npm, ECOSYSTEM_LINKS.docker],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
   featureList: [
     'High-fidelity SVG to video conversion (MP4, WebM, MKV, MOV)',
@@ -84,6 +87,7 @@ const jsonLd = {
     'Frame-accurate Web Animations API scrubbing',
     'Model Context Protocol (MCP) server & Agent Skill support',
     '100% Client-side serverless browser rendering',
+    'CLI & Docker automation support',
   ],
 };
 
