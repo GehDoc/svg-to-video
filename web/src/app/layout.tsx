@@ -77,13 +77,13 @@ const jsonLd = {
   },
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
   featureList: [
-    'High-fidelity SVG to video conversion',
+    'High-fidelity SVG to video conversion (MP4, WebM, MKV, MOV)',
     'Optimized animated image export (aPNG, GIF)',
     'Transparent background support (WebM, aPNG, GIF89a)',
-    'Metadata embedding (Title and Comment across video and animated images)',
+    'Metadata embedding across video and animated images',
     'Frame-accurate Web Animations API scrubbing',
-    'Model Context Protocol (MCP) server & Agent Skill support for AI assistants',
-    'Serverless browser-based rendering',
+    'Model Context Protocol (MCP) server & Agent Skill support',
+    '100% Client-side serverless browser rendering',
   ],
 };
 
