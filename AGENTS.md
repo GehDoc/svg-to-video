@@ -25,7 +25,7 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - `README.md` (features & capabilities)
    - `docs/ARCHITECTURE.md` (if design or format strategies changed)
    - `docs/SECURITY.md` (audit subprocess calls, temp file cleanup, and type guards per [CONTRIBUTING.md](./CONTRIBUTING.md#-security--sandboxing-standards))
-   - `web/src/app/layout.tsx` (`title`, `keywords` & `jsonLd.featureList`)
+   - `web/src/app/layout.tsx` (`title`, `canonical URL`, `keywords` & `jsonLd.featureList`)
    - `web/src/components/SeoFallback.tsx` (static fallback description)
    - `package.json` (`keywords` & version synchronization per [CONTRIBUTING.md](./CONTRIBUTING.md#-versioning-policy))
    - `mcp.json` (MCP server registry manifest description and metadata)

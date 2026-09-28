@@ -491,7 +491,7 @@ When adding new features or core capabilities, systematically update public-faci
 ### 📋 SEO & Metadata Audit Checklist
 
 1. **`web/src/app/layout.tsx`** & **`web/src/components/SeoFallback.tsx`**:
-   - Update `layout.tsx` metadata object using unified DRY constants (`title`, `description`) across standard metadata, Open Graph, and Twitter cards to ensure consistency and maximize keyword relevance across search engines and social previews.
+   - Update `layout.tsx` metadata object using unified DRY constants (`title`, `description`) across standard metadata, Open Graph, and Twitter cards. Derive `url` from `package.json` (`homepage`) and configure `alternates.canonical` to establish the canonical URL for search engines and avoid duplicate indexing (e.g., via `index.html`).
    - Update structured **JSON-LD** data in `layout.tsx` (enrich `featureList` array).
    - Update **`SeoFallback.tsx`** static fallback text for search engine indexing.
    - Verify `sitemap.ts` and `robots.ts` reflect dynamic site routes.

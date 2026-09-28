@@ -13,9 +13,8 @@ const title =
   'SVG to Video Converter (MP4, WebM, GIF, aPNG) – Free Online Studio';
 const description =
   'High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) and optimized animated image converter (aPNG, GIF) with perfect alpha-channel transparency.';
-const url = 'https://gehdoc.github.io/svg-to-video/';
-const imageUrl =
-  'https://gehdoc.github.io/svg-to-video/assets/social-preview.svg';
+const url = pkg.homepage;
+const imageUrl = `${url}assets/social-preview.svg`;
 
 export const metadata: Metadata = {
   title,
@@ -39,6 +38,9 @@ export const metadata: Metadata = {
     'model context protocol',
     'agent skill',
   ],
+  alternates: {
+    canonical: url,
+  },
   openGraph: {
     title,
     description,
