@@ -9,6 +9,8 @@ import {
 } from '@shared/analytics-schema';
 
 const siteName = 'SVG to Video';
+const title =
+  'SVG to Video Converter (MP4, WebM, GIF, aPNG) – Free Online Studio';
 const description =
   'High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) and optimized animated image converter (aPNG, GIF) with perfect alpha-channel transparency.';
 const url = 'https://gehdoc.github.io/svg-to-video/';
@@ -16,7 +18,7 @@ const imageUrl =
   'https://gehdoc.github.io/svg-to-video/assets/social-preview.svg';
 
 export const metadata: Metadata = {
-  title: 'SVG to Video - Convert Animated SVG to MP4, WebM, aPNG & GIF',
+  title,
   description,
   keywords: [
     'animated svg',
@@ -38,7 +40,7 @@ export const metadata: Metadata = {
     'agent skill',
   ],
   openGraph: {
-    title: 'SVG to Video - Animated SVG Converter',
+    title,
     description,
     url,
     siteName,
@@ -48,7 +50,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SVG to Video - Animated SVG Converter',
+    title,
     description,
     images: [imageUrl],
   },
