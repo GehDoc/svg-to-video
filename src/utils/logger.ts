@@ -1,3 +1,5 @@
+import { flushAnalytics } from './analytics.js';
+
 export interface LoggerOptions {
   quiet?: boolean;
   json?: boolean;
@@ -119,6 +121,25 @@ export class Logger {
       console.error(`❌ Error: ${msg}`);
       if (details) console.error(details);
     }
+    process.exit(1);
+  }
+
+  /**
+   * Output fatal error (as JSON or stderr string), await pending analytics, and terminate execution
+   */
+  public async fatalAsync(msg: string, details?: unknown): Promise<never> {
+    if (this.isJson) {
+      const payload: LoggerJsonErrorOutput = {
+        success: false,
+        error: msg,
+        ...(details ? { details: String(details) } : {}),
+      };
+      console.log(JSON.stringify(payload, null, 2));
+    } else {
+      console.error(`❌ Error: ${msg}`);
+      if (details) console.error(details);
+    }
+    await flushAnalytics();
     process.exit(1);
   }
 }
