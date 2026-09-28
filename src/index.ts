@@ -156,7 +156,7 @@ async function run(
   const outputFullPath = path.join(outDir, outputFileName);
 
   if (fs.existsSync(outputFullPath) && !options.force) {
-    await logger.fatalAsync(
+    await logger.fatal(
       `Output file "${outputFullPath}" already exists. Use the --force (-f) flag to overwrite it.`
     );
     return;
@@ -165,14 +165,12 @@ async function run(
   try {
     validateOptions(options);
   } catch (error) {
-    await logger.fatalAsync(
-      error instanceof Error ? error.message : String(error)
-    );
+    await logger.fatal(error instanceof Error ? error.message : String(error));
     return;
   }
 
   if (!fs.existsSync(svgPath)) {
-    await logger.fatalAsync(`Input SVG file "${svgPath}" does not exist.`);
+    await logger.fatal(`Input SVG file "${svgPath}" does not exist.`);
     return;
   }
 
@@ -188,7 +186,7 @@ async function run(
 
     duration = detectedDuration;
     if (duration === undefined) {
-      await logger.fatalAsync(
+      await logger.fatal(
         'Could not detect duration. Please provide a duration using -d or --duration.'
       );
       return;
@@ -316,7 +314,7 @@ async function run(
         }
       }
       await flushAnalytics();
-      await logger.fatalAsync(
+      await logger.fatal(
         'Conversion failed',
         error instanceof Error ? error.message : String(error)
       );
