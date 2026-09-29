@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.GehDoc/svg-to-video",
   "title": "SVG to Video",
-  "description": "Animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter",
+  "description": "Convert animated SVG code/files to video (MP4/WebM) or image (GIF/aPNG) with in-band delivery.",
   "version": "0.27.8",
   "websiteUrl": "https://gehdoc.github.io/svg-to-video/",
   "icons": [
@@ -39,6 +39,13 @@
           "format": "string"
         },
         {
+          "name": "MCP_HOSTED",
+          "description": "Set to 'true' or '1' to enforce security sandboxing against path traversal by forbidding local file path arguments.",
+          "default": "false",
+          "isRequired": false,
+          "format": "boolean"
+        },
+        {
           "name": "PUPPETEER_EXECUTABLE_PATH",
           "description": "Custom file path to a system Chromium or Chrome binary.",
           "isRequired": false,
@@ -72,6 +79,13 @@
           "default": "0",
           "isRequired": false,
           "format": "string"
+        },
+        {
+          "name": "MCP_HOSTED",
+          "description": "Set to 'true' or '1' to enforce security sandboxing against path traversal by forbidding local file path arguments.",
+          "default": "false",
+          "isRequired": false,
+          "format": "boolean"
         },
         {
           "name": "PUPPETEER_EXECUTABLE_PATH",

@@ -1,6 +1,8 @@
 #!/usr/bin/env node
+import http from 'http';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
@@ -26,6 +28,32 @@ const cliJsPath = path.join(__dirname, 'index.js');
 const cliTsPath = path.join(__dirname, 'index.ts');
 const cliIndexPath = fs.existsSync(cliJsPath) ? cliJsPath : cliTsPath;
 
+const isHosted =
+  process.env.MCP_HOSTED === 'true' ||
+  process.env.MCP_HOSTED === '1' ||
+  process.argv.includes('--hosted');
+
+function getMimeType(formatStr: string): string {
+  const fmt = formatStr.toLowerCase();
+  switch (fmt) {
+    case 'gif':
+      return 'image/gif';
+    case 'apng':
+    case 'png':
+      return 'image/png';
+    case 'mp4':
+      return 'video/mp4';
+    case 'webm':
+      return 'video/webm';
+    case 'mkv':
+      return 'video/x-matroska';
+    case 'mov':
+      return 'video/quicktime';
+    default:
+      return 'application/octet-stream';
+  }
+}
+
 const server = new Server(
   {
     name: 'svg-to-video',
@@ -44,23 +72,24 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'render_svg_to_video',
         description:
-          'Render an animated SVG (from file path or raw SVG code) into a high-quality video (MP4, WebM, MKV, MOV) or animated image (aPNG, GIF) with optional background transparency.',
+          'Render an animated SVG (from raw SVG code or file path) into a high-quality video (MP4, WebM, MKV, MOV) or animated image (aPNG, GIF) with in-band Base64 media delivery. Use this tool when you need to convert animated SVG graphics into video or image files. First use inspect_svg_animation to detect duration and dimensions if unknown. Specify svgContent for raw XML input or svgFilePath for local files. Pass transparent: true for WebM/GIF/aPNG transparency.',
         inputSchema: {
           type: 'object',
           properties: {
             svgFilePath: {
               type: 'string',
-              description: 'Absolute or relative path to the input .svg file.',
+              description:
+                'Absolute or relative path to the input .svg file (forbidden in hosted sandboxed mode).',
             },
             svgContent: {
               type: 'string',
               description:
-                'Raw SVG string content to render (if svgFilePath is not provided).',
+                'Raw SVG string content to render (required if svgFilePath is not provided).',
             },
             outDir: {
               type: 'string',
               description:
-                'Output directory for the generated media file. Defaults to current working directory.',
+                'Output directory to preserve generated file locally. Omit to deliver purely in-band via ephemeral storage (forbidden in hosted sandboxed mode).',
             },
             fps: {
               type: 'number',
@@ -113,13 +142,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'inspect_svg_animation',
         description:
-          'Analyze an SVG file or raw SVG content to detect CSS keyframe animations, estimate duration, and extract viewBox dimensions.',
+          'Analyze an SVG file or raw SVG content to detect CSS keyframe animations, estimate duration, and extract viewBox dimensions. Call this tool first before rendering to discover animation parameters and calculate optimal resolution.',
         inputSchema: {
           type: 'object',
           properties: {
             svgFilePath: {
               type: 'string',
-              description: 'Path to the .svg file to inspect.',
+              description:
+                'Path to the .svg file to inspect (forbidden in hosted sandboxed mode).',
             },
             svgContent: {
               type: 'string',
@@ -140,6 +170,30 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       svgFilePath?: string;
       svgContent?: string;
     };
+
+    if (isHosted && params.svgFilePath) {
+      trackEvent(
+        'file-load',
+        {
+          aspectRatio: 'unknown',
+          hasAnimation: false,
+          isDimensionsDetected: false,
+          rejectionReason: 'path-traversal-blocked',
+          isHosted: true,
+        },
+        'mcp'
+      );
+      return {
+        isError: true,
+        content: [
+          {
+            type: 'text',
+            text: 'Access to svgFilePath is forbidden when MCP_HOSTED security sandboxing is enabled. Please provide raw svgContent instead.',
+          },
+        ],
+      };
+    }
+
     let svgContent = params.svgContent;
 
     if (!svgContent && params.svgFilePath) {
@@ -226,59 +280,99 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       hold?: number;
     };
 
-    let targetSvgPath = params.svgFilePath;
-    let tempSvgFile = false;
-
-    if (!targetSvgPath && params.svgContent) {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'svg2vid-mcp-'));
-      targetSvgPath = path.join(tempDir, 'input.svg');
-      fs.writeFileSync(targetSvgPath, params.svgContent, 'utf-8');
-      tempSvgFile = true;
-    }
-
-    if (!targetSvgPath || !fs.existsSync(targetSvgPath)) {
+    if (isHosted && (params.svgFilePath || params.outDir)) {
+      trackEvent(
+        'file-load',
+        {
+          aspectRatio: 'unknown',
+          hasAnimation: false,
+          isDimensionsDetected: false,
+          rejectionReason: 'path-traversal-blocked',
+          isHosted: true,
+        },
+        'mcp'
+      );
       return {
         isError: true,
         content: [
           {
             type: 'text',
-            text: `Input SVG not found or not provided: ${targetSvgPath || 'N/A'}`,
+            text: 'Providing svgFilePath or custom outDir is forbidden when MCP_HOSTED security sandboxing is enabled. Use raw svgContent and rely on in-band media delivery.',
           },
         ],
       };
     }
 
-    const outDir = params.outDir || process.cwd();
-    const fps = String(params.fps || 60);
-
-    const command = cliIndexPath.endsWith('.ts') ? 'npx' : process.execPath;
-    const cliArgs: string[] = cliIndexPath.endsWith('.ts')
-      ? ['tsx', cliIndexPath, targetSvgPath, fps, outDir, '--json', '--force']
-      : [cliIndexPath, targetSvgPath, fps, outDir, '--json', '--force'];
-
-    if (params.duration) {
-      cliArgs.push('-d', String(params.duration));
-    }
-    if (params.format) {
-      cliArgs.push('--format', params.format);
-    }
-    if (params.transparent) {
-      cliArgs.push('--transparent');
-    }
-    if (params.resolution) {
-      cliArgs.push('--resolution', params.resolution);
-    }
-    if (params.scale) {
-      cliArgs.push('--scale', String(params.scale));
-    }
-    if (params.bgColor) {
-      cliArgs.push('--bg-color', params.bgColor);
-    }
-    if (params.hold) {
-      cliArgs.push('-h', String(params.hold));
-    }
+    let tempWorkDir: string | null = null;
+    let targetSvgPath = params.svgFilePath;
 
     try {
+      if (!targetSvgPath && params.svgContent) {
+        tempWorkDir = fs.mkdtempSync(path.join(os.tmpdir(), 'svg2vid-mcp-'));
+        targetSvgPath = path.join(tempWorkDir, 'input.svg');
+        fs.writeFileSync(targetSvgPath, params.svgContent, 'utf-8');
+      }
+
+      if (!targetSvgPath || !fs.existsSync(targetSvgPath)) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: 'text',
+              text: `Input SVG not found or not provided: ${targetSvgPath || 'N/A'}`,
+            },
+          ],
+        };
+      }
+
+      const isExplicitOutDir = Boolean(params.outDir);
+      let renderOutDir: string;
+      if (isExplicitOutDir && params.outDir) {
+        renderOutDir = params.outDir;
+      } else {
+        if (!tempWorkDir) {
+          tempWorkDir = fs.mkdtempSync(path.join(os.tmpdir(), 'svg2vid-mcp-'));
+        }
+        renderOutDir = tempWorkDir;
+      }
+
+      const fps = String(params.fps || 60);
+
+      const command = cliIndexPath.endsWith('.ts') ? 'npx' : process.execPath;
+      const cliArgs: string[] = cliIndexPath.endsWith('.ts')
+        ? [
+            'tsx',
+            cliIndexPath,
+            targetSvgPath,
+            fps,
+            renderOutDir,
+            '--json',
+            '--force',
+          ]
+        : [cliIndexPath, targetSvgPath, fps, renderOutDir, '--json', '--force'];
+
+      if (params.duration) {
+        cliArgs.push('-d', String(params.duration));
+      }
+      if (params.format) {
+        cliArgs.push('--format', params.format);
+      }
+      if (params.transparent) {
+        cliArgs.push('--transparent');
+      }
+      if (params.resolution) {
+        cliArgs.push('--resolution', params.resolution);
+      }
+      if (params.scale) {
+        cliArgs.push('--scale', String(params.scale));
+      }
+      if (params.bgColor) {
+        cliArgs.push('--bg-color', params.bgColor);
+      }
+      if (params.hold) {
+        cliArgs.push('-h', String(params.hold));
+      }
+
       const rawOutput = execFileSync(command, cliArgs, {
         encoding: 'utf-8',
         cwd: process.cwd(),
@@ -288,35 +382,66 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         },
       });
 
-      if (tempSvgFile && targetSvgPath) {
-        try {
-          fs.rmSync(path.dirname(targetSvgPath), {
-            recursive: true,
-            force: true,
-          });
-        } catch {
-          // ignore cleanup error
-        }
-      }
-
       const parsed: unknown = JSON.parse(rawOutput.trim());
       if (isLoggerJsonOutput(parsed)) {
-        if (parsed.success === true) {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(parsed, null, 2),
+        if (parsed.success === true && parsed.outputFile) {
+          const generatedFilePath = parsed.outputFile;
+          const mediaBuffer = fs.readFileSync(generatedFilePath);
+          const base64Data = mediaBuffer.toString('base64');
+          const resolvedFormat = parsed.format || params.format || 'webm';
+          const mimeType = getMimeType(resolvedFormat);
+
+          const responseTextObject: Record<string, unknown> = { ...parsed };
+          if (!isExplicitOutDir) {
+            delete responseTextObject['outputFile'];
+          }
+
+          const responseContentList: Array<
+            | { type: 'text'; text: string }
+            | { type: 'image'; data: string; mimeType: string }
+            | {
+                type: 'resource';
+                resource: { uri: string; mimeType: string; blob: string };
+              }
+          > = [
+            {
+              type: 'text',
+              text: JSON.stringify(responseTextObject, null, 2),
+            },
+          ];
+
+          if (resolvedFormat === 'gif' || resolvedFormat === 'apng') {
+            responseContentList.push({
+              type: 'image',
+              data: base64Data,
+              mimeType,
+            });
+          } else {
+            const fileName = path.basename(generatedFilePath);
+            responseContentList.push({
+              type: 'resource',
+              resource: {
+                uri: `file:///${fileName}`,
+                mimeType,
+                blob: base64Data,
               },
-            ],
+            });
+          }
+
+          return {
+            content: responseContentList,
           };
         } else {
+          const errorMsg =
+            'error' in parsed && typeof parsed.error === 'string'
+              ? parsed.error
+              : 'Conversion failed';
           return {
             isError: true,
             content: [
               {
                 type: 'text',
-                text: parsed.error || 'Conversion failed',
+                text: errorMsg,
               },
             ],
           };
@@ -333,17 +458,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
     } catch (error) {
-      if (tempSvgFile && targetSvgPath) {
-        try {
-          fs.rmSync(path.dirname(targetSvgPath), {
-            recursive: true,
-            force: true,
-          });
-        } catch {
-          // ignore cleanup error
-        }
-      }
-
       return {
         isError: true,
         content: [
@@ -353,6 +467,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           },
         ],
       };
+    } finally {
+      if (tempWorkDir) {
+        try {
+          fs.rmSync(tempWorkDir, { recursive: true, force: true });
+        } catch {
+          // ignore cleanup error
+        }
+      }
     }
   }
 
@@ -368,8 +490,46 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 async function runMcp(): Promise<void> {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
+  const isSse =
+    process.argv.includes('--sse') ||
+    process.env.MCP_TRANSPORT === 'sse' ||
+    Boolean(process.env.PORT);
+
+  if (isSse) {
+    const port = Number(process.env.PORT) || 8080;
+    let sseTransport: SSEServerTransport | null = null;
+
+    const httpServer = http.createServer(async (req, res) => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+      if (req.method === 'OPTIONS') {
+        res.writeHead(204).end();
+        return;
+      }
+
+      if (req.url === '/sse' || req.url === '/') {
+        sseTransport = new SSEServerTransport('/message', res);
+        await server.connect(sseTransport);
+      } else if (req.url === '/message' && req.method === 'POST') {
+        if (sseTransport) {
+          await sseTransport.handlePostMessage(req, res);
+        } else {
+          res.writeHead(400).end('SSE connection not initialized.');
+        }
+      } else {
+        res.writeHead(404).end('Not Found');
+      }
+    });
+
+    httpServer.listen(port, () => {
+      console.error(`MCP SSE Server listening on port ${port}`);
+    });
+  } else {
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+  }
 }
 
 runMcp().catch((err) => {
