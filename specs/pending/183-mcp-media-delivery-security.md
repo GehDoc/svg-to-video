@@ -22,9 +22,10 @@ Enhance the MCP server by delivering in-band binary/Base64 media responses, isol
 
 - [ ] **Security Sandboxing (`MCP_HOSTED=true`)**
   - [ ] Support `MCP_HOSTED=true` environment variable and `--hosted` CLI flag in `src/mcp.ts`.
+  - [ ] Support containerized HTTP/SSE mode (`MCP_HOSTED=true` / `mcp --sse`) wrapping `mcp.ts` with `mcp-proxy` on port 8080 for hosted cloud deployments.
   - [ ] Automatically reject `svgFilePath` and forbid arbitrary `outDir` when `MCP_HOSTED=true` is set.
   - [ ] Report security path rejection errors under `file-load` Umami telemetry event.
-  - [ ] Update `mcp.json` schema to document `MCP_HOSTED` environment variable.
+  - [ ] Update `mcp.json` schema to document `MCP_HOSTED` environment variable and port 8080 SSE transport options.
 
 - [ ] **Infrastructure & Dependencies**
   - [ ] Update `Dockerfile` base image from `node:24-slim` to `node:24-trixie-slim`.
