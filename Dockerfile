@@ -6,8 +6,7 @@ LABEL io.modelcontextprotocol.server.name="io.github.GehDoc/svg-to-video"
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
     NODE_ENV=production \
-    HOME=/tmp/chrome-home \
-    PORT=3000
+    HOME=/tmp/chrome-home
 
 EXPOSE 3000
 
