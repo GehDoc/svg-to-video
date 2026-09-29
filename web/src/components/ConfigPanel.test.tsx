@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { render, screen, cleanup, fireEvent, act } from '@testing-library/react';
+import {
+  render,
+  screen,
+  cleanup,
+  fireEvent,
+  act,
+} from '@testing-library/react';
 import { test, expect, afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { ConfigPanel } from './ConfigPanel';
