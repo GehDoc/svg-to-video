@@ -21,6 +21,10 @@ describe('MCP Server Integration', () => {
     transport = new StdioClientTransport({
       command: 'npx',
       args: ['tsx', 'src/mcp.ts'],
+      env: {
+        ...process.env,
+        NODE_ENV: 'test',
+      },
     });
 
     client = new Client(
