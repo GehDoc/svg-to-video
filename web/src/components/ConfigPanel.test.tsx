@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen, cleanup, fireEvent } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent, act } from '@testing-library/react';
 import { test, expect, afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { ConfigPanel } from './ConfigPanel';
@@ -51,7 +51,7 @@ const defaultProps = {
   onMetadataChange: vi.fn(),
 };
 
-test('ConfigPanel: GIF with transparent background enables background color selector', () => {
+test('ConfigPanel: GIF with transparent background enables background color selector', async () => {
   vi.mocked(discoverFormats.getFormatById).mockReturnValue({
     id: 'gif',
     label: 'GIF',
@@ -65,76 +65,86 @@ test('ConfigPanel: GIF with transparent background enables background color sele
     true
   );
 
-  render(
-    <ConfigPanel
-      {...defaultProps}
-      svgContent="<svg></svg>"
-      format="gif"
-      isTransparent={true}
-    />
-  );
+  await act(async () => {
+    render(
+      <ConfigPanel
+        {...defaultProps}
+        svgContent="<svg></svg>"
+        format="gif"
+        isTransparent={true}
+      />
+    );
+  });
 
   const bgColorInput = screen.getByLabelText(/Background color hex code/i);
   expect(bgColorInput).not.toBeDisabled();
 });
 
-test('ConfigPanel dependency: MP4 disables transparency toggle', () => {
+test('ConfigPanel dependency: MP4 disables transparency toggle', async () => {
   vi.mocked(isTransparencySupported.isTransparencySupported).mockReturnValue(
     false
   );
-  render(
-    <ConfigPanel
-      {...defaultProps}
-      svgContent="<svg></svg>"
-      format="mp4"
-      isTransparent={false}
-    />
-  );
+  await act(async () => {
+    render(
+      <ConfigPanel
+        {...defaultProps}
+        svgContent="<svg></svg>"
+        format="mp4"
+        isTransparent={false}
+      />
+    );
+  });
 
   const checkbox = screen.getByLabelText(/Transparent Background/i);
   expect(checkbox).toBeDisabled();
 });
 
-test('ConfigPanel dependency: WebM enables transparency toggle', () => {
+test('ConfigPanel dependency: WebM enables transparency toggle', async () => {
   vi.mocked(isTransparencySupported.isTransparencySupported).mockReturnValue(
     true
   );
-  render(
-    <ConfigPanel
-      {...defaultProps}
-      svgContent="<svg></svg>"
-      format="webm"
-      isTransparent={false}
-    />
-  );
+  await act(async () => {
+    render(
+      <ConfigPanel
+        {...defaultProps}
+        svgContent="<svg></svg>"
+        format="webm"
+        isTransparent={false}
+      />
+    );
+  });
 
   const checkbox = screen.getByLabelText(/Transparent Background/i);
   expect(checkbox).not.toBeDisabled();
 });
 
-test('ConfigPanel: displays validation error and disables export button', () => {
-  render(
-    <ConfigPanel
-      {...defaultProps}
-      svgContent="<svg></svg>"
-      validationError="Format not supported"
-    />
-  );
+test('ConfigPanel: displays validation error and disables export button', async () => {
+  await act(async () => {
+    render(
+      <ConfigPanel
+        {...defaultProps}
+        svgContent="<svg></svg>"
+        validationError="Format not supported"
+      />
+    );
+  });
 
   expect(screen.getByText('Format not supported')).toBeInTheDocument();
   const exportButton = screen.getByRole('button', { name: /Export MP4/i });
   expect(exportButton).toBeDisabled();
 });
 
-test('ConfigPanel: duration input handles empty/invalid values by calling onDurationChange with 0', () => {
+test('ConfigPanel: duration input handles empty/invalid values by calling onDurationChange with 0', async () => {
   const onDurationChange = vi.fn();
-  render(
-    <ConfigPanel
-      {...defaultProps}
-      svgContent="<svg></svg>"
-      onDurationChange={onDurationChange}
-    />
-  );
+  await act(async () => {
+    render(
+      <ConfigPanel
+        {...defaultProps}
+        svgContent="<svg></svg>"
+        onDurationChange={onDurationChange}
+      />
+    );
+  });
 
   const durationInput = screen.getByLabelText(/Dur. \(s\)/i);
 
@@ -142,41 +152,49 @@ test('ConfigPanel: duration input handles empty/invalid values by calling onDura
   expect(onDurationChange).toHaveBeenCalledWith(0);
 });
 
-test('ConfigPanel: displays calculated target resolution when svgContent and detected dimensions are provided', () => {
-  render(
-    <ConfigPanel
-      {...defaultProps}
-      svgContent="<svg></svg>"
-      originalDim={{ width: 1920, height: 1080, isDimensionsDetected: true }}
-      targetDim={{ width: 1920, height: 1080 }}
-    />
-  );
+test('ConfigPanel: displays calculated target resolution when svgContent and detected dimensions are provided', async () => {
+  await act(async () => {
+    render(
+      <ConfigPanel
+        {...defaultProps}
+        svgContent="<svg></svg>"
+        originalDim={{ width: 1920, height: 1080, isDimensionsDetected: true }}
+        targetDim={{ width: 1920, height: 1080 }}
+      />
+    );
+  });
 
   expect(
     screen.getByText(/Target resolution: 1920 x 1080 px/i)
   ).toBeInTheDocument();
 });
 
-test('ConfigPanel: displays Capture Method helper text for Optimal and High Fidelity', () => {
-  const { rerender } = render(
-    <ConfigPanel
-      {...defaultProps}
-      svgContent="<svg></svg>"
-      captureMethod="optimal"
-    />
-  );
+test('ConfigPanel: displays Capture Method helper text for Optimal and High Fidelity', async () => {
+  let rerenderFn: (ui: React.ReactNode) => void;
+  await act(async () => {
+    const { rerender } = render(
+      <ConfigPanel
+        {...defaultProps}
+        svgContent="<svg></svg>"
+        captureMethod="optimal"
+      />
+    );
+    rerenderFn = rerender;
+  });
 
   expect(
     screen.getByText(/Optimal \(Fast\): Captures canvas stream in real-time/i)
   ).toBeInTheDocument();
 
-  rerender(
-    <ConfigPanel
-      {...defaultProps}
-      svgContent="<svg></svg>"
-      captureMethod="high-fidelity"
-    />
-  );
+  await act(async () => {
+    rerenderFn(
+      <ConfigPanel
+        {...defaultProps}
+        svgContent="<svg></svg>"
+        captureMethod="high-fidelity"
+      />
+    );
+  });
 
   expect(
     screen.getByText(
