@@ -377,11 +377,17 @@ export function createMcpServer(): Server {
   return server;
 }
 
-export interface McpConfigOptions {
-  transport: 'stdio' | 'http' | 'streamable-http' | 'sse';
-  port: number;
-  host: string;
-}
+export type McpConfigOptions =
+  | {
+      transport: 'stdio';
+      port?: undefined;
+      host?: undefined;
+    }
+  | {
+      transport: 'http' | 'streamable-http' | 'sse';
+      port: number;
+      host: string;
+    };
 
 export function parseMcpOptions(
   args: string[] = process.argv.slice(2)
@@ -393,8 +399,8 @@ export function parseMcpOptions(
     transport = envTransport as 'http' | 'streamable-http' | 'sse';
   }
 
-  let port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
-  let host = process.env.HOST || '0.0.0.0';
+  let parsedPort = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  let parsedHost = process.env.HOST || '0.0.0.0';
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -410,21 +416,25 @@ export function parseMcpOptions(
         transport = val as 'stdio' | 'http' | 'streamable-http' | 'sse';
       }
     } else if (arg === '--port' && args[i + 1]) {
-      port = parseInt(args[i + 1], 10);
+      parsedPort = parseInt(args[i + 1], 10);
       i++;
     } else if (arg.startsWith('--port=')) {
-      port = parseInt(arg.split('=')[1], 10);
+      parsedPort = parseInt(arg.split('=')[1], 10);
     } else if (arg === '--host' && args[i + 1]) {
-      host = args[i + 1];
+      parsedHost = args[i + 1];
       i++;
     } else if (arg.startsWith('--host=')) {
-      host = arg.split('=')[1];
+      parsedHost = arg.split('=')[1];
     }
   }
 
-  if (isNaN(port)) port = 3000;
+  if (transport === 'stdio') {
+    return { transport: 'stdio' };
+  }
 
-  return { transport, port, host };
+  if (isNaN(parsedPort)) parsedPort = 3000;
+
+  return { transport, port: parsedPort, host: parsedHost };
 }
 
 async function startHttpServer(port: number, host: string): Promise<void> {

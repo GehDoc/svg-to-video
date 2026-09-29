@@ -60,14 +60,12 @@
         {
           "name": "PORT",
           "description": "HTTP server listening port when using HTTP / streamable-http / sse transport.",
-          "default": "3000",
           "isRequired": false,
           "format": "number"
         },
         {
           "name": "HOST",
           "description": "HTTP server host address when using HTTP / streamable-http / sse transport.",
-          "default": "0.0.0.0",
           "isRequired": false,
           "format": "string"
         }
@@ -116,14 +114,12 @@
         {
           "name": "PORT",
           "description": "HTTP server listening port when using HTTP / streamable-http / sse transport.",
-          "default": "3000",
           "isRequired": false,
           "format": "number"
         },
         {
           "name": "HOST",
           "description": "HTTP server host address when using HTTP / streamable-http / sse transport.",
-          "default": "0.0.0.0",
           "isRequired": false,
           "format": "string"
         }
