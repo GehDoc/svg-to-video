@@ -474,7 +474,7 @@ async function startHttpServer(port: number, host: string): Promise<void> {
     const sessionId = req.query.sessionId as string;
     const transport = sseTransports.get(sessionId);
     if (!transport) {
-      res.status(400).send(`Session not found: ${sessionId}`);
+      res.status(400).json({ error: 'Session not found' });
       return;
     }
     await transport.handlePostMessage(req, res, req.body);
