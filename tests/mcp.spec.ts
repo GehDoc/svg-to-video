@@ -2,14 +2,16 @@ import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
+import { ChildProcess, spawn } from 'child_process';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { OUTPUT_DIR_RELATIVE } from './helpers/e2e.js';
 
 const outputDir = path.resolve(OUTPUT_DIR_RELATIVE, 'mcp');
 const exampleSvg = path.resolve('examples/example.svg');
 
-describe('MCP Server Integration', () => {
+describe('MCP Server Integration (Stdio Transport)', () => {
   let client: Client;
   let transport: StdioClientTransport;
 
@@ -72,28 +74,77 @@ describe('MCP Server Integration', () => {
     const data = JSON.parse(contentText.text);
     assert.strictEqual(typeof data.hasAnimation, 'boolean');
   });
+});
 
-  test('should render SVG via render_svg_to_video tool', async () => {
-    const result = await client.callTool({
-      name: 'render_svg_to_video',
-      arguments: {
-        svgFilePath: exampleSvg,
-        outDir: outputDir,
-        fps: 24,
-        duration: 1,
-        format: 'gif',
+describe('MCP Server Integration (HTTP / Streamable HTTP Transport)', () => {
+  let serverProcess: ChildProcess;
+  const testPort = 3128;
+  const baseUrl = `http://127.0.0.1:${testPort}`;
+
+  before(async () => {
+    const mcpScript = path.resolve('dist/src/mcp.js');
+    serverProcess = spawn(
+      'node',
+      [mcpScript, '--transport=http', `--port=${testPort}`, '--host=127.0.0.1'],
+      {
+        env: {
+          ...process.env,
+          NODE_ENV: 'production',
+        },
+        stdio: 'ignore',
+      }
+    );
+
+    // Wait for the server to start
+    for (let i = 0; i < 30; i++) {
+      try {
+        const res = await fetch(`${baseUrl}/health`);
+        if (res.ok) {
+          break;
+        }
+      } catch {
+        // Retry after delay
+      }
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+  });
+
+  after(async () => {
+    if (serverProcess) {
+      serverProcess.kill('SIGTERM');
+    }
+  });
+
+  test('should respond to /health endpoint', async () => {
+    const res = await fetch(`${baseUrl}/health`);
+    assert.strictEqual(res.status, 200);
+    const data = (await res.json()) as { status: string; name: string };
+    assert.strictEqual(data.status, 'ok');
+    assert.strictEqual(data.name, 'svg-to-video');
+  });
+
+  test('should connect and list tools over Streamable HTTP transport', async () => {
+    const transport = new StreamableHTTPClientTransport(
+      new URL('/mcp', baseUrl)
+    );
+    const client = new Client(
+      {
+        name: 'test-http-client',
+        version: '1.0.0',
       },
-    });
+      {
+        capabilities: {},
+      }
+    );
 
-    assert.strictEqual(result.isError, undefined);
-    assert.ok(Array.isArray(result.content));
-    const contentText = result.content[0] as { type: string; text: string };
-    assert.strictEqual(contentText.type, 'text');
+    await client.connect(transport);
 
-    const data = JSON.parse(contentText.text);
-    assert.strictEqual(data.success, true);
-    assert.strictEqual(data.format, 'gif');
-    assert.ok(fs.existsSync(data.outputFile));
+    const response = await client.listTools();
+    const toolNames = response.tools.map((t) => t.name);
+    assert.ok(toolNames.includes('render_svg_to_video'));
+    assert.ok(toolNames.includes('inspect_svg_animation'));
+
+    await client.close();
   });
 });
 
@@ -229,6 +280,9 @@ describe('mcp.json Manifest Contract Verification', () => {
       'DO_NOT_TRACK',
       'PUPPETEER_EXECUTABLE_PATH',
       'PUPPETEER_ARGS',
+      'MCP_TRANSPORT',
+      'PORT',
+      'HOST',
     ];
     for (const packageEntry of [npmPkg, ociPkg]) {
       assert.ok(

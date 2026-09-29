@@ -49,6 +49,27 @@
           "description": "Additional command-line flags to pass to the Puppeteer Chromium instance.",
           "isRequired": false,
           "format": "string"
+        },
+        {
+          "name": "MCP_TRANSPORT",
+          "description": "Server transport protocol: stdio, http, streamable-http, or sse.",
+          "default": "stdio",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "PORT",
+          "description": "HTTP server listening port when using HTTP / streamable-http / sse transport.",
+          "default": "3000",
+          "isRequired": false,
+          "format": "number"
+        },
+        {
+          "name": "HOST",
+          "description": "HTTP server host address when using HTTP / streamable-http / sse transport.",
+          "default": "0.0.0.0",
+          "isRequired": false,
+          "format": "string"
         }
       ],
       "transport": {
@@ -82,6 +103,27 @@
         {
           "name": "PUPPETEER_ARGS",
           "description": "Additional command-line flags to pass to the Puppeteer Chromium instance.",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "MCP_TRANSPORT",
+          "description": "Server transport protocol: stdio, http, streamable-http, or sse.",
+          "default": "stdio",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "PORT",
+          "description": "HTTP server listening port when using HTTP / streamable-http / sse transport.",
+          "default": "3000",
+          "isRequired": false,
+          "format": "number"
+        },
+        {
+          "name": "HOST",
+          "description": "HTTP server host address when using HTTP / streamable-http / sse transport.",
+          "default": "0.0.0.0",
           "isRequired": false,
           "format": "string"
         }

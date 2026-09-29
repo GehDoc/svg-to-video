@@ -6,7 +6,10 @@ LABEL io.modelcontextprotocol.server.name="io.github.GehDoc/svg-to-video"
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
     NODE_ENV=production \
-    HOME=/tmp/chrome-home
+    HOME=/tmp/chrome-home \
+    PORT=3000
+
+EXPOSE 3000
 
 # 2. Heavy Layer: Chromium, FFmpeg, Fonts & OS Security Patches
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
