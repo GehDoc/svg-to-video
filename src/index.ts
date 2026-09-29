@@ -37,6 +37,9 @@ interface RunOptions {
   quiet: boolean;
   silent: boolean;
   json: boolean;
+  bitrate?: string;
+  crf?: number;
+  quality?: number;
 }
 
 async function main(): Promise<void> {
@@ -110,6 +113,17 @@ Resources:
     .option(
       '--format <format>',
       `output format: ${formatRegistry.getSupportedFormatNames().join(', ')}`
+    )
+    .option('--bitrate <rate>', 'video bitrate target (e.g. 5M, 2000k)')
+    .option(
+      '--crf <number>',
+      'constant rate factor (0-51) for video formats',
+      (v) => parseFloat(v)
+    )
+    .option(
+      '--quality <number>',
+      'quality level (1-100) for animated image exports',
+      (v) => parseFloat(v)
     )
     .option('-q, --quiet', 'suppress interactive progress output', false)
     .option('--silent', 'alias for --quiet', false)
@@ -285,6 +299,9 @@ async function run(
       outDir,
       options.transparent,
       options.metadata,
+      options.bitrate,
+      options.crf,
+      options.quality,
       logger
     );
 
@@ -446,6 +463,9 @@ function convertToOutput(
   outDir: string,
   transparent: boolean,
   metadata: string[] | undefined,
+  bitrate: string | undefined,
+  crf: number | undefined,
+  quality: number | undefined,
   logger: Logger
 ): void {
   logger.info('📦 Encoding output with FFmpeg...');
@@ -471,6 +491,9 @@ function convertToOutput(
     metadata,
     inputPattern,
     pkgVersion: pkg.version,
+    bitrate,
+    crf,
+    quality,
   };
 
   const args = generator.buildFfmpegArgs(formatOptions);

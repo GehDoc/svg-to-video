@@ -43,6 +43,72 @@ describe('validateOptions', () => {
     );
   });
 
+  test('should throw error when crf is out of bounds or NaN', () => {
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          bgColor: '#ffffff',
+          crf: -1,
+        }),
+      /CRF value must be a number between 0 and 63/
+    );
+
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          bgColor: '#ffffff',
+          crf: 64,
+        }),
+      /CRF value must be a number between 0 and 63/
+    );
+  });
+
+  test('should throw error when quality is out of bounds or NaN', () => {
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          bgColor: '#ffffff',
+          quality: 0,
+        }),
+      /Quality value must be a number between 1 and 100/
+    );
+
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          bgColor: '#ffffff',
+          quality: 101,
+        }),
+      /Quality value must be a number between 1 and 100/
+    );
+  });
+
+  test('should throw error when bitrate is invalid', () => {
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          bgColor: '#ffffff',
+          bitrate: 'invalid_bitrate',
+        }),
+      /Invalid bitrate format/
+    );
+  });
+
   test('should pass with valid options', () => {
     assert.doesNotThrow(() =>
       validateOptions({
@@ -51,6 +117,9 @@ describe('validateOptions', () => {
         transparent: false,
         bgColor: '#ffffff',
         format: 'gif',
+        crf: 20,
+        bitrate: '5M',
+        quality: 80,
       })
     );
   });

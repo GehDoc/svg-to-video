@@ -50,13 +50,22 @@ export class Mp4FormatGenerator implements CLIFormatGenerator {
       args.push('-vf', filters.join(','));
     }
 
+    const crfValue = options.crf !== undefined ? String(options.crf) : '20';
+
     args.push(
       '-metadata',
       `comment=${finalComment}`,
       '-c:v',
       'libx264',
       '-crf',
-      '20',
+      crfValue
+    );
+
+    if (options.bitrate) {
+      args.push('-b:v', options.bitrate);
+    }
+
+    args.push(
       '-preset',
       'slow',
       '-pix_fmt',
