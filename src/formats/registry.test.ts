@@ -114,6 +114,23 @@ describe('CLIFormatRegistry', () => {
     assert.ok(args[filterIdx].includes('reserve_transparent=1'));
   });
 
+  test('should build correct FFmpeg args for aPNG with transparency and quality', () => {
+    const apngGen = formatRegistry.get('apng')!;
+    const args = apngGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.apng',
+      transparent: true,
+      quality: 90,
+    });
+    assert.ok(args.includes('-f'));
+    assert.ok(args.includes('apng'));
+    assert.ok(args.includes('-pix_fmt'));
+    assert.ok(args.includes('rgba'));
+    assert.ok(args.includes('-compression_level'));
+    const compIdx = args.indexOf('-compression_level') + 1;
+    assert.strictEqual(args[compIdx], '8');
+  });
+
   test('should build correct FFmpeg args for aPNG with transparency', () => {
     const apngGen = formatRegistry.get('apng')!;
     const args = apngGen.buildFfmpegArgs({

@@ -60,6 +60,15 @@ export class ApngFormatGenerator implements CLIFormatGenerator {
       args.push('-pix_fmt', 'rgb24');
     }
 
+    if (options.quality !== undefined) {
+      // Map quality (1-100) to zlib compression_level (1-9)
+      const compressionLevel = Math.max(
+        1,
+        Math.min(9, Math.round((options.quality / 100) * 9))
+      );
+      args.push('-compression_level', String(compressionLevel));
+    }
+
     args.push('-metadata', `comment=${finalComment}`);
 
     const outputFullPath = path.join(outDir, outputFileName);
