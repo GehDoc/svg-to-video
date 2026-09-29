@@ -141,3 +141,46 @@ test('ConfigPanel: duration input handles empty/invalid values by calling onDura
   fireEvent.change(durationInput, { target: { value: '' } });
   expect(onDurationChange).toHaveBeenCalledWith(0);
 });
+
+test('ConfigPanel: displays calculated target resolution when svgContent and detected dimensions are provided', () => {
+  render(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      originalDim={{ width: 1920, height: 1080, isDimensionsDetected: true }}
+      targetDim={{ width: 1920, height: 1080 }}
+    />
+  );
+
+  expect(
+    screen.getByText(/Target resolution: 1920 x 1080 px/i)
+  ).toBeInTheDocument();
+});
+
+test('ConfigPanel: displays Capture Method helper text for Optimal and High Fidelity', () => {
+  const { rerender } = render(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      captureMethod="optimal"
+    />
+  );
+
+  expect(
+    screen.getByText(/Optimal \(Fast\): Captures canvas stream in real-time/i)
+  ).toBeInTheDocument();
+
+  rerender(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      captureMethod="high-fidelity"
+    />
+  );
+
+  expect(
+    screen.getByText(
+      /High Fidelity \(Slow\): Scrubs Web Animations API frame-by-frame/i
+    )
+  ).toBeInTheDocument();
+});
