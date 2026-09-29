@@ -86,8 +86,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             resolution: {
               type: 'string',
-              enum: ['original', '1080p', '720p'],
-              description: 'Resolution preset. Default: original.',
+              description:
+                'Resolution preset (original, 1080p, 720p) or formatted string (e.g. 1080x1080, 1080x1920). Default: original.',
               default: 'original',
             },
             scale: {
@@ -95,6 +95,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description:
                 'Scale factor (1-4) when using original resolution. Default: 1.',
               default: 1,
+            },
+            width: {
+              type: 'number',
+              description: 'Custom output video width in pixels.',
+            },
+            height: {
+              type: 'number',
+              description: 'Custom output video height in pixels.',
             },
             bgColor: {
               type: 'string',
@@ -222,6 +230,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       transparent?: boolean;
       resolution?: string;
       scale?: number;
+      width?: number;
+      height?: number;
       bgColor?: string;
       hold?: number;
     };
@@ -270,6 +280,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
     if (params.scale) {
       cliArgs.push('--scale', String(params.scale));
+    }
+    if (params.width) {
+      cliArgs.push('--width', String(params.width));
+    }
+    if (params.height) {
+      cliArgs.push('--height', String(params.height));
     }
     if (params.bgColor) {
       cliArgs.push('--bg-color', params.bgColor);

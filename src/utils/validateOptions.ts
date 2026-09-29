@@ -10,6 +10,8 @@ export interface ValidateOptionsParams {
   transparent: boolean;
   bgColor: string;
   format?: string;
+  width?: number;
+  height?: number;
 }
 
 export function validateOptions(options: ValidateOptionsParams): void {
@@ -17,7 +19,42 @@ export function validateOptions(options: ValidateOptionsParams): void {
     throw new Error('Duration must be a positive number.');
   }
 
-  if (options.scale !== 1 && options.resolution !== 'original') {
+  if (
+    options.width !== undefined &&
+    (isNaN(options.width) || options.width <= 0)
+  ) {
+    throw new Error('Width must be a positive number.');
+  }
+
+  if (
+    options.height !== undefined &&
+    (isNaN(options.height) || options.height <= 0)
+  ) {
+    throw new Error('Height must be a positive number.');
+  }
+
+  const isPreset = ['original', '1080p', '720p'].includes(options.resolution);
+  const resMatch = /^(\d+)x(\d+)$/i.exec(options.resolution);
+
+  if (!isPreset) {
+    if (!resMatch) {
+      throw new Error(
+        `Invalid resolution option "${options.resolution}". Expected 'original', '1080p', '720p', or a custom dimension string like '1080x1080'.`
+      );
+    }
+    const resW = parseInt(resMatch[1], 10);
+    const resH = parseInt(resMatch[2], 10);
+    if (resW <= 0 || resH <= 0) {
+      throw new Error('Custom resolution dimensions must be positive numbers.');
+    }
+  }
+
+  if (
+    options.scale !== 1 &&
+    (options.resolution !== 'original' ||
+      options.width !== undefined ||
+      options.height !== undefined)
+  ) {
     throw new Error('--scale can only be used with --resolution original.');
   }
 

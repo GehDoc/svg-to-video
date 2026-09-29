@@ -37,7 +37,7 @@ Add `svg-to-video` to your assistant's MCP configuration file (e.g. `claude_desk
 
 Ask your agent to convert an SVG file or generate a new animated vector graphic:
 
-> _"Convert `examples/example.svg` into a 60fps transparent WebM video."_
+> _"Convert `examples/example.svg` into a 60fps transparent WebM video with custom resolution 1080x1920."_
 
 ### Step 3: Receive Generated Media
 
@@ -114,19 +114,21 @@ The MCP server (`src/mcp.ts`) exposes two primary tools over `stdio`:
 
 Converts raw SVG content or an SVG file path into a video or animated image file.
 
-| Parameter     | Type      | Default         | Description                                                 |
-| :------------ | :-------- | :-------------- | :---------------------------------------------------------- |
-| `svgFilePath` | `string`  | —               | Path to the input `.svg` file.                              |
-| `svgContent`  | `string`  | —               | Raw SVG XML string (if `svgFilePath` is not provided).      |
-| `outDir`      | `string`  | current dir     | Directory to save output file.                              |
-| `fps`         | `number`  | `60`            | Frames per second.                                          |
-| `duration`    | `number`  | _auto-detected_ | Desired animation duration in seconds.                      |
-| `format`      | `string`  | `mp4` / `webm`  | Output format (`mp4`, `webm`, `gif`, `apng`, `mkv`, `mov`). |
-| `transparent` | `boolean` | `false`         | Enable full alpha-channel background transparency.          |
-| `resolution`  | `string`  | `original`      | Resolution preset (`original`, `1080p`, `720p`).            |
-| `scale`       | `number`  | `1`             | Scale factor (1-4) for original resolution.                 |
-| `bgColor`     | `string`  | `#ffffff`       | Background hex color (cannot be used with `transparent`).   |
-| `hold`        | `number`  | `0`             | Seconds to freeze the final frame.                          |
+| Parameter     | Type      | Default         | Description                                                                                                 |
+| :------------ | :-------- | :-------------- | :---------------------------------------------------------------------------------------------------------- |
+| `svgFilePath` | `string`  | —               | Path to the input `.svg` file.                                                                              |
+| `svgContent`  | `string`  | —               | Raw SVG XML string (if `svgFilePath` is not provided).                                                      |
+| `outDir`      | `string`  | current dir     | Directory to save output file.                                                                              |
+| `fps`         | `number`  | `60`            | Frames per second.                                                                                          |
+| `duration`    | `number`  | _auto-detected_ | Desired animation duration in seconds.                                                                      |
+| `format`      | `string`  | `mp4` / `webm`  | Output format (`mp4`, `webm`, `gif`, `apng`, `mkv`, `mov`).                                                 |
+| `transparent` | `boolean` | `false`         | Enable full alpha-channel background transparency.                                                          |
+| `resolution`  | `string`  | `original`      | Resolution preset (`original`, `1080p`, `720p`) or custom formatted string (e.g. `1080x1080`, `1080x1920`). |
+| `scale`       | `number`  | `1`             | Scale factor (1-4) for original resolution.                                                                 |
+| `width`       | `number`  | —               | Custom output video width in pixels.                                                                        |
+| `height`      | `number`  | —               | Custom output video height in pixels.                                                                       |
+| `bgColor`     | `string`  | `#ffffff`       | Background hex color (cannot be used with `transparent`).                                                   |
+| `hold`        | `number`  | `0`             | Seconds to freeze the final frame.                                                                          |
 
 ### 2. `inspect_svg_animation`
 
@@ -143,13 +145,13 @@ Inspects an SVG string or file to estimate animation duration, CSS keyframes, an
 
 Once connected, agent operators can use natural prompts to trigger media rendering:
 
-- **Generate & Convert**:
+- **Generate & Convert with Custom Dimensions**:
 
-  > _"Create an animated SVG loader icon with glowing circles, then use `render_svg_to_video` to export it as a 60fps transparent WebM video."_
+  > _"Create an animated SVG loader icon with glowing circles, then use `render_svg_to_video` to export it as a 60fps transparent WebM video with 1080x1920 vertical resolution."_
 
 - **GIF Export for Documentation**:
 
-  > _"Take `assets/banner.svg` and export it as an optimized 3-second animated GIF with a transparent background for GitHub documentation."_
+  > _"Take `assets/banner.svg` and export it as an optimized 3-second animated GIF with a transparent background and 1200x630 banner dimensions for GitHub documentation."_
 
 - **Inspect Animation Metadata**:
   > _"Inspect `animation.svg` using `inspect_svg_animation` and tell me its detected duration and resolution."_

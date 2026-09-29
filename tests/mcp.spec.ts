@@ -91,6 +91,31 @@ describe('MCP Server Integration', () => {
     assert.strictEqual(data.format, 'gif');
     assert.ok(fs.existsSync(data.outputFile));
   });
+
+  test('should render SVG via render_svg_to_video tool with custom width and height', async () => {
+    const result = await client.callTool({
+      name: 'render_svg_to_video',
+      arguments: {
+        svgFilePath: exampleSvg,
+        outDir: outputDir,
+        fps: 24,
+        duration: 1,
+        format: 'mp4',
+        width: 1080,
+        height: 1080,
+      },
+    });
+
+    assert.strictEqual(result.isError, undefined);
+    assert.ok(Array.isArray(result.content));
+    const contentText = result.content[0] as { type: string; text: string };
+    assert.strictEqual(contentText.type, 'text');
+
+    const data = JSON.parse(contentText.text);
+    assert.strictEqual(data.success, true);
+    assert.strictEqual(data.format, 'mp4');
+    assert.ok(fs.existsSync(data.outputFile));
+  });
 });
 
 describe('mcp.json Manifest Contract Verification', () => {

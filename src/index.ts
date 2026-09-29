@@ -30,6 +30,8 @@ interface RunOptions {
   force: boolean;
   resolution: string;
   scale: number;
+  width?: number;
+  height?: number;
   transparent: boolean;
   bgColor: string;
   metadata?: string[];
@@ -88,7 +90,7 @@ Resources:
     )
     .option(
       '--resolution <preset>',
-      'resolution preset: 720p, 1080p, or original',
+      'resolution preset (720p, 1080p, original) or custom dimensions (e.g. 1080x1080)',
       'original'
     )
     .option(
@@ -96,6 +98,12 @@ Resources:
       'scale factor for original resolution (1-4)',
       (v) => parseFloat(v),
       1
+    )
+    .option('-w, --width <pixels>', 'custom width in pixels', (v) =>
+      parseInt(v, 10)
+    )
+    .option('--height <pixels>', 'custom height in pixels', (v) =>
+      parseInt(v, 10)
     )
     .option('--transparent', 'render with a transparent background', false)
     .option(
@@ -248,6 +256,8 @@ async function run(
       puppeteerArgs,
       options.resolution,
       options.scale,
+      options.width,
+      options.height,
       options.transparent,
       options.bgColor,
       logger
@@ -280,7 +290,7 @@ async function run(
       transparent: options.transparent,
     });
   } catch (error) {
-    tracker.failed(error instanceof Error ? error : String(error));
+    tracker.failed(error instanceof Error ? error.message : String(error));
     throw error;
   }
 }
@@ -298,6 +308,8 @@ async function createFrames(
   puppeteerArgs: string[],
   resolutionPreset: string,
   scaleFactor: number,
+  customWidth: number | undefined,
+  customHeight: number | undefined,
   transparent: boolean,
   bgColor: string,
   logger: Logger
@@ -307,7 +319,25 @@ async function createFrames(
   let width = 0;
   let height = 0;
 
-  if (resolutionPreset === '1080p') {
+  const svgAspect =
+    parsedDim.height > 0 ? parsedDim.width / parsedDim.height : 16 / 9;
+
+  if (customWidth !== undefined || customHeight !== undefined) {
+    if (customWidth !== undefined && customHeight !== undefined) {
+      width = customWidth;
+      height = customHeight;
+    } else if (customWidth !== undefined) {
+      width = customWidth;
+      height = Math.round(customWidth / svgAspect);
+    } else if (customHeight !== undefined) {
+      height = customHeight;
+      width = Math.round(customHeight * svgAspect);
+    }
+  } else if (/^\d+x\d+$/i.test(resolutionPreset)) {
+    const [wStr, hStr] = resolutionPreset.toLowerCase().split('x');
+    width = parseInt(wStr, 10);
+    height = parseInt(hStr, 10);
+  } else if (resolutionPreset === '1080p') {
     width = 1920;
     height = 1080;
   } else if (resolutionPreset === '720p') {
@@ -324,10 +354,11 @@ async function createFrames(
     height = Math.round(parsedDim.height * scaleFactor);
   } else {
     throw new Error(
-      `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', or 'original'.`
+      `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', 'original', or custom dimensions.`
     );
   }
 
+  logger.info(`  Viewport:   ${width}x${height}`);
   logger.info('🚀 Preparing Puppeteer browser...');
 
   const launchOptions: Parameters<typeof puppeteer.launch>[0] = {
