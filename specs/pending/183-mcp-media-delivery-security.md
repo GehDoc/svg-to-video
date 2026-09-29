@@ -35,7 +35,8 @@ Enhance the MCP server by delivering in-band binary/Base64 media responses, isol
 
 - [ ] **Documentation, SEO & Badges**
   - [ ] Add Glama MCP server score badge and rationalize badge layout in `README.md`.
-  - [ ] Update `docs/MCP.md` with audited MCP Inspector debugging instructions (local node vs docker `--shm-size=2gb`).
+  - [ ] Update `docs/MCP.md` with audited MCP Inspector debugging instructions (local node vs docker with `--shm-size=2gb` and `-e PUPPETEER_ARGS="--no-sandbox"` flags).
+  - [ ] Document Docker memory requirement (`--shm-size=2gb`) and sandbox rules (`PUPPETEER_ARGS="--no-sandbox"`) in `docs/MCP.md` and `README.md`.
   - [ ] Add pointers in `docs/MCP.md` to Glama page and MCP Registry published JSON manifest.
   - [ ] Update `docs/SECURITY.md` with `MCP_HOSTED=true` security sandboxing guarantees.
 
