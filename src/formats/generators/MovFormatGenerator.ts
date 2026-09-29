@@ -56,16 +56,12 @@ export class MovFormatGenerator implements CLIFormatGenerator {
     if (transparent) {
       args.push('-c:v', 'png', '-pix_fmt', 'rgba');
     } else {
-      args.push(
-        '-c:v',
-        'libx264',
-        '-crf',
-        '20',
-        '-preset',
-        'slow',
-        '-pix_fmt',
-        'yuv420p'
-      );
+      const crfValue = options.crf !== undefined ? String(options.crf) : '20';
+      args.push('-c:v', 'libx264', '-crf', crfValue);
+      if (options.bitrate) {
+        args.push('-b:v', options.bitrate);
+      }
+      args.push('-preset', 'slow', '-pix_fmt', 'yuv420p');
     }
 
     const outputFullPath = path.join(outDir, outputFileName);

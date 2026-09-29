@@ -8,6 +8,9 @@ export interface CLIFormatOptions {
   metadata?: string[];
   inputPattern: string;
   pkgVersion: string;
+  bitrate?: string;
+  crf?: number;
+  quality?: number;
 }
 
 export interface CLIFormatGenerator {

@@ -107,6 +107,21 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                 'Seconds to freeze the last frame at the end of the video.',
               default: 0,
             },
+            bitrate: {
+              type: 'string',
+              description:
+                'Target video bitrate for video formats (e.g. "5M", "2000k").',
+            },
+            crf: {
+              type: 'number',
+              description:
+                'Constant Rate Factor (0-51) for video formats (e.g. 18-28).',
+            },
+            quality: {
+              type: 'number',
+              description:
+                'Quality level (1-100) for animated image exports (e.g. GIF palette generation).',
+            },
           },
         },
       },
@@ -224,6 +239,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       scale?: number;
       bgColor?: string;
       hold?: number;
+      bitrate?: string;
+      crf?: number;
+      quality?: number;
     };
 
     let targetSvgPath = params.svgFilePath;
@@ -276,6 +294,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
     if (params.hold) {
       cliArgs.push('-h', String(params.hold));
+    }
+    if (params.bitrate) {
+      cliArgs.push('--bitrate', params.bitrate);
+    }
+    if (params.crf !== undefined) {
+      cliArgs.push('--crf', String(params.crf));
+    }
+    if (params.quality !== undefined) {
+      cliArgs.push('--quality', String(params.quality));
     }
 
     try {

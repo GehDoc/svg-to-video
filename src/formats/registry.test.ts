@@ -56,10 +56,50 @@ describe('CLIFormatRegistry', () => {
     const args = mp4Gen.buildFfmpegArgs({
       ...baseOptions,
       outputFileName: 'test.mp4',
+      crf: 18,
+      bitrate: '5M',
     });
     assert.ok(args.includes('-c:v'));
     assert.ok(args.includes('libx264'));
+    assert.ok(args.includes('-crf'));
+    const crfIdx = args.indexOf('-crf') + 1;
+    assert.strictEqual(args[crfIdx], '18');
+    assert.ok(args.includes('-b:v'));
+    const bitrateIdx = args.indexOf('-b:v') + 1;
+    assert.strictEqual(args[bitrateIdx], '5M');
     assert.ok(args[args.length - 1].includes('test.mp4'));
+  });
+
+  test('should build correct FFmpeg args for WebM with CRF and Bitrate', () => {
+    const webmGen = formatRegistry.get('webm')!;
+    const args = webmGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.webm',
+      crf: 24,
+      bitrate: '2000k',
+    });
+    assert.ok(args.includes('-c:v'));
+    assert.ok(args.includes('libvpx-vp9'));
+    assert.ok(args.includes('-crf'));
+    const crfIdx = args.indexOf('-crf') + 1;
+    assert.strictEqual(args[crfIdx], '24');
+    assert.ok(args.includes('-b:v'));
+    const bitrateIdx = args.indexOf('-b:v') + 1;
+    assert.strictEqual(args[bitrateIdx], '2000k');
+  });
+
+  test('should build correct FFmpeg args for GIF with transparency and quality', () => {
+    const gifGen = formatRegistry.get('gif')!;
+    const args = gifGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.gif',
+      transparent: true,
+      quality: 50,
+    });
+    assert.ok(args.includes('-filter_complex'));
+    const filterIdx = args.indexOf('-filter_complex') + 1;
+    assert.ok(args[filterIdx].includes('reserve_transparent=1'));
+    assert.ok(args[filterIdx].includes('max_colors=128'));
   });
 
   test('should build correct FFmpeg args for GIF with transparency', () => {

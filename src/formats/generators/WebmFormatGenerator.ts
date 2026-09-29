@@ -54,7 +54,20 @@ export class WebmFormatGenerator implements CLIFormatGenerator {
     args.push('-metadata', `comment=${finalComment}`);
 
     const pixFmt = transparent ? 'yuva420p' : 'yuv420p';
-    args.push('-c:v', 'libvpx-vp9', '-pix_fmt', pixFmt, '-f', 'webm');
+    args.push('-c:v', 'libvpx-vp9');
+
+    if (options.crf !== undefined) {
+      args.push('-crf', String(options.crf));
+      if (!options.bitrate) {
+        args.push('-b:v', '0');
+      }
+    }
+
+    if (options.bitrate) {
+      args.push('-b:v', options.bitrate);
+    }
+
+    args.push('-pix_fmt', pixFmt, '-f', 'webm');
 
     const outputFullPath = path.join(outDir, outputFileName);
     args.push(outputFullPath);

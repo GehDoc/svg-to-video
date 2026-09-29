@@ -55,11 +55,21 @@ export class GifFormatGenerator implements CLIFormatGenerator {
     }
 
     const reserveTrans = transparent ? 1 : 0;
+    let maxColors = '';
+    if (options.quality !== undefined) {
+      // Map quality (1-100) to max_colors palette size (e.g. 16 to 256)
+      const colors = Math.max(
+        16,
+        Math.min(256, Math.round((options.quality / 100) * 256))
+      );
+      maxColors = `:max_colors=${colors}`;
+    }
+
     let filterComplex: string;
     if (filters.length > 0) {
-      filterComplex = `${filters.join(',')},split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}[p];[b][p]paletteuse`;
+      filterComplex = `${filters.join(',')},split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}${maxColors}[p];[b][p]paletteuse`;
     } else {
-      filterComplex = `split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}[p];[b][p]paletteuse`;
+      filterComplex = `split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}${maxColors}[p];[b][p]paletteuse`;
     }
 
     args.push('-filter_complex', filterComplex);

@@ -84,6 +84,9 @@ npx @gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent
 # Node.js (animated PNG output)
 npx @gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format apng
 
+# Node.js (custom bitrate, CRF, and quality)
+npx @gehdoc/svg-to-video input.svg 60 ./out-dir --bitrate 5M --crf 18 --quality 80
+
 # Docker (zero local dependencies; add :Z to -v for SELinux / Fedora)
 docker run --rm -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif
 ```
