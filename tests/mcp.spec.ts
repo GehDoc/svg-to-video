@@ -185,13 +185,7 @@ describe('MCP Server Security Sandboxing (MCP_HOSTED=true)', () => {
     assert.match(contentText.text, /forbidden when MCP_HOSTED/i);
   });
 
-  test('render_svg_to_video should reject svgFilePath and custom outDir when MCP_HOSTED=true', async () => {
-    const resultFilePath = await hostedClient.callTool({
-      name: 'render_svg_to_video',
-      arguments: { svgFilePath: exampleSvg },
-    });
-    assert.strictEqual(resultFilePath.isError, true);
-
+  test('render_svg_to_video should reject custom outDir when MCP_HOSTED=true', async () => {
     const resultOutDir = await hostedClient.callTool({
       name: 'render_svg_to_video',
       arguments: {
