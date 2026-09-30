@@ -69,9 +69,6 @@ Open **Cursor Settings > Features > MCP**:
 For cloud agents or sandbox environments without local Chromium or FFmpeg pre-installed:
 
 ```bash
-# Stdio MCP mode
-docker run -i --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" --user $(id -u):$(id -g) -v $(pwd):/app/data:Z gehdoc/svg-to-video mcp
-
 # Containerized SSE MCP Server mode
 docker run --rm -p 8080:8080 --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp
 ```
@@ -116,7 +113,7 @@ The MCP server respects the following environment variables (defined in `mcp.jso
 
 ## 🛠 Exposed MCP Tools
 
-The MCP server (`src/mcp.ts`) exposes two primary tools over `stdio`:
+The MCP server (`src/mcp.ts`) exposes two primary tools over `stdio` (or SSE via `mcp-proxy`):
 
 ### 1. `render_svg_to_video`
 
@@ -160,8 +157,16 @@ npx -y @modelcontextprotocol/inspector node dist/src/mcp.js
 ### Dockerized MCP Inspector Test
 
 ```bash
-npx -y @modelcontextprotocol/inspector docker run -i --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video mcp
+docker run --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp &
+npx -y @modelcontextprotocol/inspector
 ```
+
+In this writable interface:
+
+1. Click + Add Server (or edit the server card).
+2. Choose SSE as the transport type.
+3. Set the URL to http://localhost:8080/sse.
+4. Click Connect!
 
 ---
 

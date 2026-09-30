@@ -120,6 +120,8 @@ See **[docs/MCP.md](./docs/MCP.md)** for full setup instructions, tool schemas, 
 - 📦 **npm Package**: [`@gehdoc/svg-to-video`](https://www.npmjs.com/package/@gehdoc/svg-to-video)
 - 🐳 **Docker Hub Image**: [`gehdoc/svg-to-video`](https://hub.docker.com/r/gehdoc/svg-to-video)
 - 🌐 **Web Studio**: [`gehdoc.github.io/svg-to-video/`](https://gehdoc.github.io/svg-to-video/)
+- 🤖 **MCP Registry**: [`io.github.GehDoc/svg-to-video`](https://registry.modelcontextprotocol.io/v0/servers/io.github.GehDoc%2Fsvg-to-video/versions/latest)
+- ⭐ **Glama MCP**: [`glama.ai/mcp/servers/GehDoc/svg-to-video`](https://glama.ai/mcp/servers/GehDoc/svg-to-video)
 
 ---
 
