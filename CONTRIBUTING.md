@@ -128,22 +128,28 @@ This project requires strict version alignment between **Storybook** and **Vites
 
 #### Project-wide Orchestration (Run from Root)
 
-| Command              | Description                                                                |
-| :------------------- | :------------------------------------------------------------------------- |
-| `npm run check`      | Runs full verification suite (lint, format, type-check, unit & e2e tests). |
-| `npm run check:fast` | Runs fast validation checks only (lint, format, type-check).               |
-| `npm run build`      | Compiles CLI TypeScript source into ES Modules in `dist/`.                 |
-| `npm run fix`        | Auto-fixes linting and formatting issues across all packages.              |
-| `npm run lint`       | Lints CLI and Web Studio code.                                             |
-| `npm run lint:fix`   | Fixes linting errors across CLI and Web Studio.                            |
-| `npm run format`     | Checks formatting compliance using Prettier.                               |
-| `npm run format:fix` | Formats files with Prettier.                                               |
-| `npm run test`       | Runs all unit, integration, visual regression, and package snapshot tests. |
-| `npm run test:cli`   | Runs CLI integration test suite (`tests/cli.spec.ts`).                     |
-| `npm run test:mcp`   | Runs MCP Server integration test suite (`tests/mcp.spec.ts`).              |
-| `npm run test:pack`  | Validates npm tarball file snapshot (`npm pack --dry-run`).                |
-| `npm run test:unit`  | Runs unit tests with Vitest and Node test runner.                          |
-| `npm run type-check` | Performs TypeScript type checking across root CLI and Web workspace.       |
+| Command                 | Description                                                                |
+| :---------------------- | :------------------------------------------------------------------------- |
+| `npm run check`         | Runs full verification suite (lint, format, type-check, unit & e2e tests). |
+| `npm run check:fast`    | Runs fast validation checks only (lint, format, type-check).               |
+| `npm run build`         | Compiles CLI TypeScript source into ES Modules in `dist/`.                 |
+| `npm run fix`           | Auto-fixes linting and formatting issues across all packages.              |
+| `npm run lint`          | Lints CLI and Web Studio code.                                             |
+| `npm run lint:fix`      | Fixes linting errors across CLI and Web Studio.                            |
+| `npm run format`        | Checks formatting compliance using Prettier.                               |
+| `npm run format:fix`    | Formats files with Prettier.                                               |
+| `npm run test`          | Runs all unit, integration, visual regression, and package snapshot tests. |
+| `npm run cli`           | Runs CLI TypeScript source directly (`tsx src/index.ts`).                  |
+| `npm run mcp`           | Runs MCP Stdio server TypeScript source directly (`tsx src/mcp.ts`).       |
+| `npm run mcp:sse`       | Runs MCP SSE server via `mcp-proxy` wrapper on port 8080.                  |
+| `npm run start:cli`     | Runs compiled CLI production build (`node dist/src/index.js`).             |
+| `npm run start:mcp`     | Runs compiled MCP Stdio production server (`node dist/src/mcp.js`).        |
+| `npm run start:mcp:sse` | Runs compiled MCP SSE production server via `mcp-proxy` on port 8080.      |
+| `npm run test:cli`      | Runs CLI integration test suite (`tests/cli.spec.ts`).                     |
+| `npm run test:mcp`      | Runs MCP Server integration test suite (`tests/mcp.spec.ts`).              |
+| `npm run test:pack`     | Validates npm tarball file snapshot (`npm pack --dry-run`).                |
+| `npm run test:unit`     | Runs unit tests with Vitest and Node test runner.                          |
+| `npm run type-check`    | Performs TypeScript type checking across root CLI and Web workspace.       |
 
 #### Remote vs. Local CLI & MCP Execution
 
