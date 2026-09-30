@@ -1,8 +1,6 @@
 #!/usr/bin/env node
-import http from 'http';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
@@ -18,6 +16,7 @@ import {
   parseSvgDimensions,
   calculateAspectRatio,
 } from '#shared/analyzeSvgAnimation.js';
+import { formatRegistry } from './formats/registry.js';
 import { isLoggerJsonOutput } from './utils/logger.js';
 import { trackEvent } from './utils/analytics.js';
 import { pkg } from './utils/packageInfo.js';
@@ -33,25 +32,26 @@ const isHosted =
   process.env.MCP_HOSTED === '1' ||
   process.argv.includes('--hosted');
 
+function trackSecurityRejection(): void {
+  trackEvent(
+    'file-load',
+    {
+      aspectRatio: 'unknown',
+      hasAnimation: false,
+      isDimensionsDetected: false,
+      rejectionReason: 'path-traversal-blocked',
+      isHosted: true,
+    },
+    'mcp'
+  );
+}
+
 function getMimeType(formatStr: string): string {
-  const fmt = formatStr.toLowerCase();
-  switch (fmt) {
-    case 'gif':
-      return 'image/gif';
-    case 'apng':
-    case 'png':
-      return 'image/png';
-    case 'mp4':
-      return 'video/mp4';
-    case 'webm':
-      return 'video/webm';
-    case 'mkv':
-      return 'video/x-matroska';
-    case 'mov':
-      return 'video/quicktime';
-    default:
-      return 'application/octet-stream';
+  const generator = formatRegistry.get(formatStr);
+  if (generator?.mimeType) {
+    return generator.mimeType;
   }
+  return 'application/octet-stream';
 }
 
 const server = new Server(
@@ -172,17 +172,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     };
 
     if (isHosted && params.svgFilePath) {
-      trackEvent(
-        'file-load',
-        {
-          aspectRatio: 'unknown',
-          hasAnimation: false,
-          isDimensionsDetected: false,
-          rejectionReason: 'path-traversal-blocked',
-          isHosted: true,
-        },
-        'mcp'
-      );
+      trackSecurityRejection();
       return {
         isError: true,
         content: [
@@ -281,17 +271,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     };
 
     if (isHosted && (params.svgFilePath || params.outDir)) {
-      trackEvent(
-        'file-load',
-        {
-          aspectRatio: 'unknown',
-          hasAnimation: false,
-          isDimensionsDetected: false,
-          rejectionReason: 'path-traversal-blocked',
-          isHosted: true,
-        },
-        'mcp'
-      );
+      trackSecurityRejection();
       return {
         isError: true,
         content: [
@@ -421,7 +401,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             responseContentList.push({
               type: 'resource',
               resource: {
-                uri: `file:///${fileName}`,
+                uri: `file:///${encodeURIComponent(fileName)}`,
                 mimeType,
                 blob: base64Data,
               },
@@ -490,46 +470,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 async function runMcp(): Promise<void> {
-  const isSse =
-    process.argv.includes('--sse') ||
-    process.env.MCP_TRANSPORT === 'sse' ||
-    Boolean(process.env.PORT);
-
-  if (isSse) {
-    const port = Number(process.env.PORT) || 8080;
-    let sseTransport: SSEServerTransport | null = null;
-
-    const httpServer = http.createServer(async (req, res) => {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-      if (req.method === 'OPTIONS') {
-        res.writeHead(204).end();
-        return;
-      }
-
-      if (req.url === '/sse' || req.url === '/') {
-        sseTransport = new SSEServerTransport('/message', res);
-        await server.connect(sseTransport);
-      } else if (req.url === '/message' && req.method === 'POST') {
-        if (sseTransport) {
-          await sseTransport.handlePostMessage(req, res);
-        } else {
-          res.writeHead(400).end('SSE connection not initialized.');
-        }
-      } else {
-        res.writeHead(404).end('Not Found');
-      }
-    });
-
-    httpServer.listen(port, () => {
-      console.error(`MCP SSE Server listening on port ${port}`);
-    });
-  } else {
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
-  }
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
 }
 
 runMcp().catch((err) => {

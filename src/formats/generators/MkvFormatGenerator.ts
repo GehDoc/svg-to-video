@@ -5,6 +5,7 @@ import { mergeMetadataComments } from '#shared/metadata.js';
 export class MkvFormatGenerator implements CLIFormatGenerator {
   readonly id = 'mkv';
   readonly extensions = ['.mkv'];
+  readonly mimeType = 'video/x-matroska';
   readonly supportsAlpha = true;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
