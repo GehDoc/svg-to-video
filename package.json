@@ -1,7 +1,7 @@
 {
   "name": "@gehdoc/svg-to-video",
   "mcpName": "io.github.GehDoc/svg-to-video",
-  "version": "0.27.8",
+  "version": "0.28.0",
   "type": "module",
   "description": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, Model Context Protocol (MCP) server integration, and a serverless Web Studio.",
   "imports": {
@@ -57,12 +57,12 @@
     "@umami/node": "^0.4.0",
     "commander": "^15.0.0",
     "jsdom": "^29.1.1",
+    "mcp-proxy": "^6.7.19",
     "puppeteer": "^25.8.0",
     "tsx": "^4.23.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
-    "@types/commander": "^2.12.0",
     "@types/ffprobe-static": "^2.0.3",
     "@types/jsdom": "^28.0.3",
     "@types/node": "^25.4.0",
@@ -88,7 +88,12 @@
     "lint:fix": "eslint . --fix && npm run lint:fix -w web",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
+    "cli": "tsx src/index.ts",
     "mcp": "tsx src/mcp.ts",
+    "mcp:sse": "mcp-proxy --port 8080 --host 0.0.0.0 -- tsx src/mcp.ts",
+    "start:cli": "node dist/src/index.js",
+    "start:mcp": "node dist/src/mcp.js",
+    "start:mcp:sse": "mcp-proxy --port 8080 --host 0.0.0.0 -- node dist/src/mcp.js",
     "test:cli": "tsx --test tests/cli.spec.ts",
     "test:mcp": "tsx --test tests/mcp.spec.ts",
     "test:pack": "npm run build && tsx --test tests/pack.spec.ts",

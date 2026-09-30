@@ -5,6 +5,7 @@ import { mergeMetadataComments } from '#shared/metadata.js';
 export class Mp4FormatGenerator implements CLIFormatGenerator {
   readonly id = 'mp4';
   readonly extensions = ['.mp4'];
+  readonly mimeType = 'video/mp4';
   readonly supportsAlpha = false;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
