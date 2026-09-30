@@ -7,7 +7,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/GehDoc/svg-to-video/ci.yml?branch=main&logo=githubactions&logoColor=white&label=CI)](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml)
 [![GitHub Release](https://img.shields.io/github/v/release/GehDoc/svg-to-video?logo=github&logoColor=white&label=release&color=2b3137)](https://github.com/GehDoc/svg-to-video/releases)
 [![npm Version](https://img.shields.io/npm/v/@gehdoc/svg-to-video?logo=npm&logoColor=white&label=npm&color=CB3837)](https://www.npmjs.com/package/@gehdoc/svg-to-video)
-[![Glama MCP Server](https://glama.ai/mcp/servers/GehDoc/svg-to-video/badges/score.svg)](https://glama.ai/mcp/servers/GehDoc/svg-to-video)
+[![Glama](https://img.shields.io/badge/Glama-MCP%20listed-orange)](https://glama.ai/mcp/servers/GehDoc/svg-to-video)
 [![MCP Registry](https://img.shields.io/badge/MCP-io.github.GehDoc%2Fsvg--to--video-purple?logo=modelcontextprotocol&logoColor=white)](https://registry.modelcontextprotocol.io/v0/servers/io.github.GehDoc%2Fsvg-to-video/versions/latest)
 [![llms.txt](https://img.shields.io/badge/llms.txt-available-blue)](https://gehdoc.github.io/svg-to-video/llms.txt)
 [![Docker Image](https://img.shields.io/docker/v/gehdoc/svg-to-video?label=docker&logo=docker&logoColor=white&sort=semver&color=2496ed)](https://hub.docker.com/r/gehdoc/svg-to-video)
