@@ -32,6 +32,14 @@ const isHosted =
   process.env.MCP_HOSTED === '1' ||
   process.argv.includes('--hosted');
 
+type McpToolResponseContentBlock =
+  | { type: 'text'; text: string }
+  | { type: 'image'; data: string; mimeType: string }
+  | {
+      type: 'resource';
+      resource: { uri: string; mimeType: string; blob: string };
+    };
+
 function trackSecurityRejection(): void {
   trackEvent(
     'file-load',
@@ -375,14 +383,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           if (!isExplicitOutDir) {
             delete responseTextObject['outputFile'];
           }
-
-          type McpToolResponseContentBlock =
-            | { type: 'text'; text: string }
-            | { type: 'image'; data: string; mimeType: string }
-            | {
-                type: 'resource';
-                resource: { uri: string; mimeType: string; blob: string };
-              };
 
           const responseContentList: McpToolResponseContentBlock[] = [
             {
