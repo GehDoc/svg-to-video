@@ -195,6 +195,21 @@ describe('MCP Server Security Sandboxing (MCP_HOSTED=true)', () => {
     });
     assert.strictEqual(resultOutDir.isError, true);
   });
+
+  test('inspect_svg_animation should accept svgContent when MCP_HOSTED=true', async () => {
+    const rawSvg = fs.readFileSync(exampleSvg, 'utf-8');
+    const result = await hostedClient.callTool({
+      name: 'inspect_svg_animation',
+      arguments: { svgContent: rawSvg },
+    });
+
+    assert.strictEqual(result.isError, undefined);
+    assert.ok(Array.isArray(result.content));
+    const contentText = result.content[0] as { type: string; text: string };
+    assert.strictEqual(contentText.type, 'text');
+    const data = JSON.parse(contentText.text);
+    assert.strictEqual(typeof data.hasAnimation, 'boolean');
+  });
 });
 
 describe('mcp.json Manifest Contract Verification', () => {
