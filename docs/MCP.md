@@ -69,7 +69,11 @@ Open **Cursor Settings > Features > MCP**:
 For cloud agents or sandbox environments without local Chromium or FFmpeg pre-installed:
 
 ```bash
+# Stdio MCP mode
 docker run -i --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" --user $(id -u):$(id -g) -v $(pwd):/app/data:Z gehdoc/svg-to-video mcp
+
+# Containerized SSE MCP Server mode
+docker run --rm -p 8080:8080 --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp
 ```
 
 > **Note**: Chromium memory constraints in containerized environments require passing `--shm-size=2gb` and `-e PUPPETEER_ARGS="--no-sandbox"` to prevent browser crashes during heavy rendering.
