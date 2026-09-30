@@ -136,7 +136,7 @@ describe('MCP Server Integration', () => {
     };
     assert.strictEqual(resourceContent.type, 'resource');
     assert.strictEqual(resourceContent.resource.mimeType, 'video/webm');
-    assert.ok(resourceContent.resource.uri.startsWith('file:///'));
+    assert.strictEqual(resourceContent.resource.uri, 'urn:svg-to-video:media');
     assert.ok(
       typeof resourceContent.resource.blob === 'string' &&
         resourceContent.resource.blob.length > 0

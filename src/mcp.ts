@@ -391,18 +391,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             },
           ];
 
-          if (resolvedFormat === 'gif' || resolvedFormat === 'apng') {
+          if (mimeType.startsWith('image/')) {
             responseContentList.push({
               type: 'image',
               data: base64Data,
               mimeType,
             });
           } else {
-            const fileName = path.basename(generatedFilePath);
             responseContentList.push({
               type: 'resource',
               resource: {
-                uri: `file:///${encodeURIComponent(fileName)}`,
+                uri: `urn:svg-to-video:media`,
                 mimeType,
                 blob: base64Data,
               },
