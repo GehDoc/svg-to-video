@@ -132,6 +132,15 @@ Converts raw SVG content or an SVG file path into a video or animated image file
 | `bgColor`     | `string`  | `#ffffff`       | Background hex color (cannot be used with `transparent`).   |
 | `hold`        | `number`  | `0`             | Seconds to freeze the final frame.                          |
 
+### 2. `inspect_svg_animation`
+
+Inspects an SVG string or file to estimate animation duration, CSS keyframes, and dimensions.
+
+| Parameter     | Type     | Description                         |
+| :------------ | :------- | :---------------------------------- |
+| `svgFilePath` | `string` | Path to the `.svg` file to inspect. |
+| `svgContent`  | `string` | Raw SVG content to inspect.         |
+
 ---
 
 ## 🔍 Debugging with MCP Inspector
@@ -149,17 +158,6 @@ npx -y @modelcontextprotocol/inspector node dist/src/mcp.js
 ```bash
 npx -y @modelcontextprotocol/inspector docker run -i --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video mcp
 ```
-
----
-
-### 2. `inspect_svg_animation`
-
-Inspects an SVG string or file to estimate animation duration, CSS keyframes, and dimensions.
-
-| Parameter     | Type     | Description                         |
-| :------------ | :------- | :---------------------------------- |
-| `svgFilePath` | `string` | Path to the `.svg` file to inspect. |
-| `svgContent`  | `string` | Raw SVG content to inspect.         |
 
 ---
 
