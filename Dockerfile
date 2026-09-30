@@ -3,10 +3,13 @@ FROM node:24-trixie-slim
 # 1. Setup Environment & MCP Metadata
 LABEL io.modelcontextprotocol.server.name="io.github.GehDoc/svg-to-video"
 
+EXPOSE 8080
+
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
     NODE_ENV=production \
-    HOME=/tmp/chrome-home
+    HOME=/tmp/chrome-home \
+    MCP_HOSTED=true
 
 # 2. Heavy Layer: Chromium, FFmpeg, Fonts & OS Security Patches
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
@@ -44,4 +47,5 @@ RUN npm install --include=dev --no-workspaces --ignore-scripts \
     && rm -rf src shared tsconfig*.json
 
 USER node
+CMD ["npm", "run", "mcp:sse"]
 ENTRYPOINT ["node", "/app/dist/src/index.js"]

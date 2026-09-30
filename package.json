@@ -57,6 +57,7 @@
     "@umami/node": "^0.4.0",
     "commander": "^15.0.0",
     "jsdom": "^29.1.1",
+    "mcp-proxy": "^6.7.19",
     "puppeteer": "^25.8.0",
     "tsx": "^4.23.0"
   },
@@ -88,6 +89,7 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "mcp": "tsx src/mcp.ts",
+    "mcp:sse": "MCP_HOSTED=true mcp-proxy --port 8080 --host 0.0.0.0 -- node dist/src/mcp.js --hosted",
     "test:cli": "tsx --test tests/cli.spec.ts",
     "test:mcp": "tsx --test tests/mcp.spec.ts",
     "test:pack": "npm run build && tsx --test tests/pack.spec.ts",
