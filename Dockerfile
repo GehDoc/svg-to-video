@@ -8,8 +8,7 @@ EXPOSE 8080
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
     NODE_ENV=production \
-    HOME=/tmp/chrome-home \
-    MCP_HOSTED=true
+    HOME=/tmp/chrome-home
 
 # 2. Heavy Layer: Chromium, FFmpeg, Fonts & OS Security Patches
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
