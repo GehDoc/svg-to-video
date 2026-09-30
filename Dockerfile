@@ -39,13 +39,14 @@ COPY package*.json tsconfig*.json ./
 COPY src/ ./src/
 COPY shared/ ./shared/
 COPY skills/ ./skills/
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY README.md LICENSE ./
 
-RUN npm install --include=dev --no-workspaces --ignore-scripts \
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+    && npm install --include=dev --no-workspaces --ignore-scripts \
     && npm run build \
     && npm prune --omit=dev --no-workspaces \
     && rm -rf src shared tsconfig*.json
 
 USER node
-CMD ["npm", "run", "mcp:sse"]
-ENTRYPOINT ["node", "/app/dist/src/index.js"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
