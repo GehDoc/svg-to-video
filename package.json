@@ -90,7 +90,7 @@
     "format:fix": "prettier --write .",
     "cli": "tsx src/index.ts",
     "mcp": "tsx src/mcp.ts",
-    "mcp:sse": "tsx src/mcp.ts",
+    "mcp:sse": "mcp-proxy --port 8080 --host 0.0.0.0 -- tsx src/mcp.ts",
     "start:cli": "node dist/src/index.js",
     "start:mcp": "node dist/src/mcp.js",
     "start:mcp:sse": "mcp-proxy --port 8080 --host 0.0.0.0 -- node dist/src/mcp.js",

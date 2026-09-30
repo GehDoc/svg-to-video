@@ -93,7 +93,7 @@ To test a local checkout of the repository as an MCP server:
 
 ### 🔒 Security, Telemetry & Privacy
 
-- **Stdio & SSE Transports**: The MCP server supports standard `stdio` or containerized HTTP/SSE mode (`mcp --sse` / `PORT=8080`).
+- **Stdio & SSE Transports**: The MCP server supports standard `stdio` or containerized HTTP/SSE mode via `mcp-proxy`.
 - **Hosted Sandboxing (`MCP_HOSTED=true`)**: Enforces path traversal security by rejecting local `svgFilePath` and `outDir` arguments in multi-tenant or web environments, ensuring pure in-band media delivery. For details, see **[docs/SECURITY.md](./SECURITY.md)**.
 - **Anonymous Telemetry**: Standard usage events (`file-load`, `conversion-start`, `conversion-success`) are reported anonymously to Umami for feature improvement without collecting file contents or PII. To opt out, set `DO_NOT_TRACK=1` in your environment. See **[docs/ANALYTICS.md](./ANALYTICS.md)** for full event schemas and opt-out details.
 
@@ -107,6 +107,21 @@ The MCP server respects the following environment variables (defined in `mcp.jso
 | `MCP_HOSTED`                | `boolean`  | Set to `true` or `1` to enforce path traversal security sandboxing.                 | `false` |
 | `PUPPETEER_EXECUTABLE_PATH` | `filepath` | Custom file path to a system Chromium or Chrome binary.                             | —       |
 | `PUPPETEER_ARGS`            | `string`   | Additional command-line flags to pass to Puppeteer Chromium (e.g., `--no-sandbox`). | —       |
+
+---
+
+## 📜 NPM Scripts Reference
+
+The root `package.json` provides the following helper scripts for CLI and MCP execution:
+
+| Command                 | Environment | Description                                               |
+| :---------------------- | :---------- | :-------------------------------------------------------- |
+| `npm run cli`           | Development | Run CLI source directly via `tsx src/index.ts`            |
+| `npm run mcp`           | Development | Run Stdio MCP server source directly via `tsx src/mcp.ts` |
+| `npm run mcp:sse`       | Development | Run SSE MCP proxy wrapper on port 8080 via `mcp-proxy`    |
+| `npm run start:cli`     | Production  | Run compiled CLI build (`node dist/src/index.js`)         |
+| `npm run start:mcp`     | Production  | Run compiled Stdio MCP server (`node dist/src/mcp.js`)    |
+| `npm run start:mcp:sse` | Production  | Run compiled SSE MCP server via `mcp-proxy` on port 8080  |
 
 ---
 
