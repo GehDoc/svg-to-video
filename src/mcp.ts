@@ -376,14 +376,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             delete responseTextObject['outputFile'];
           }
 
-          const responseContentList: Array<
+          type McpToolResponseContentBlock =
             | { type: 'text'; text: string }
             | { type: 'image'; data: string; mimeType: string }
             | {
                 type: 'resource';
                 resource: { uri: string; mimeType: string; blob: string };
-              }
-          > = [
+              };
+
+          const responseContentList: McpToolResponseContentBlock[] = [
             {
               type: 'text',
               text: JSON.stringify(responseTextObject, null, 2),
