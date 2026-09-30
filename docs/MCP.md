@@ -110,21 +110,6 @@ The MCP server respects the following environment variables (defined in `mcp.jso
 
 ---
 
-## 📜 NPM Scripts Reference
-
-The root `package.json` provides the following helper scripts for CLI and MCP execution:
-
-| Command                 | Environment | Description                                               |
-| :---------------------- | :---------- | :-------------------------------------------------------- |
-| `npm run cli`           | Development | Run CLI source directly via `tsx src/index.ts`            |
-| `npm run mcp`           | Development | Run Stdio MCP server source directly via `tsx src/mcp.ts` |
-| `npm run mcp:sse`       | Development | Run SSE MCP proxy wrapper on port 8080 via `mcp-proxy`    |
-| `npm run start:cli`     | Production  | Run compiled CLI build (`node dist/src/index.js`)         |
-| `npm run start:mcp`     | Production  | Run compiled Stdio MCP server (`node dist/src/mcp.js`)    |
-| `npm run start:mcp:sse` | Production  | Run compiled SSE MCP server via `mcp-proxy` on port 8080  |
-
----
-
 ## 🛠 Exposed MCP Tools
 
 The MCP server (`src/mcp.ts`) exposes two primary tools over `stdio`:
