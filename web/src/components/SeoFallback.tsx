@@ -62,6 +62,14 @@ export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
           </a>
           <span className="separator">•</span>
           <a
+            href={ECOSYSTEM_LINKS.glama}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Glama MCP
+          </a>
+          <span className="separator">•</span>
+          <a
             href={ECOSYSTEM_LINKS.license}
             target="_blank"
             rel="noopener noreferrer"
