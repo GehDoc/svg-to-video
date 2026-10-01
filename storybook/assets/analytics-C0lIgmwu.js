@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-DkW27tQK.js";import{n as t,t as n}from"./package-Bi_Q7ckd.js";function r(e,n){typeof umami<`u`&&umami.track(e,{...n,version:t.version})}function i(){return(i=e((()=>{n()})))()}export{r as n,i as t};
