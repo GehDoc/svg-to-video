@@ -20,7 +20,7 @@ This document outlines the security architecture, sandboxing model, and pre-flig
 
 ### 3. Transport, Network & Hosted Security (`MCP_HOSTED=true`)
 
-- **Stdio & SSE Transports**: The Model Context Protocol (MCP) server operates over standard I/O (`stdio`) by default, or containerized HTTP/SSE mode via `mcp-proxy` (launched via `docker run gehdoc/svg-to-video --mcp` or `npm run mcp:sse`).
+- **Stdio & SSE Transports**: The Model Context Protocol (MCP) server operates over standard I/O (`stdio`) by default, or containerized HTTP/SSE mode via `supergateway` (launched via `docker run gehdoc/svg-to-video --mcp` or `npm run mcp:sse`).
 - **Hosted Sandboxing Mode (`MCP_HOSTED=true`)**: When running in hosted or multi-tenant environments, setting `MCP_HOSTED=true` (or passing `--hosted`) automatically enforces path traversal rejection:
   - Rejects any requests providing local filesystem paths (`svgFilePath` or custom `outDir`).
   - Restricts rendering input strictly to raw `svgContent`.
