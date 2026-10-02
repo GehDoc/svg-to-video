@@ -1,4 +1,4 @@
-FROM node:24-trixie-slim
+FROM node:26-trixie-slim
 
 # 1. Setup Environment & MCP Metadata
 LABEL io.modelcontextprotocol.server.name="io.github.GehDoc/svg-to-video"
