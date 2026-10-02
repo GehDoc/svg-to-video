@@ -142,6 +142,7 @@ This project requires strict version alignment between **Storybook** and **Vites
 | `npm run cli`           | Runs CLI TypeScript source directly (`tsx src/index.ts`).                  |
 | `npm run mcp`           | Runs MCP Stdio server TypeScript source directly (`tsx src/mcp.ts`).       |
 | `npm run mcp:sse`       | Runs MCP SSE server via `supergateway` wrapper on port 8080.               |
+| `npm run start:cli`     | Runs compiled CLI production build (`node dist/src/index.js`).             |
 | `npm run start:mcp:sse` | Runs compiled MCP SSE production server via `supergateway` on port 8080.   |
 | `npm run start:mcp`     | Runs compiled MCP Stdio production server (`node dist/src/mcp.js`).        |
 | `npm run test:cli`      | Runs CLI integration test suite (`tests/cli.spec.ts`).                     |
