@@ -10,7 +10,7 @@ AI coding assistants frequently generate complex animated vector graphics (SVGs 
 
 `svg-to-video` provides a standard Model Context Protocol (MCP) server and file-based agent skill (`SKILL.md`) that allow AI assistants to render their SVG animations programmatically with high fidelity, background transparency, and auto-detected durations.
 
-Official package metadata is published to the [Model Context Protocol Registry](https://registry.modelcontextprotocol.io/) via `mcp.json`, and listed on [Glama MCP Registry](https://glama.ai/mcp/servers/GehDoc/svg-to-video).
+Official package metadata is published to the [Model Context Protocol Registry](https://registry.modelcontextprotocol.io/) via `mcp.json`.
 
 ---
 
@@ -94,7 +94,7 @@ To test a local checkout of the repository as an MCP server:
 
 ### 🔒 Security, Telemetry & Privacy
 
-- **Stdio & SSE Transports**: The MCP server supports standard `stdio` or containerized HTTP/SSE mode via `mcp-proxy`.
+- **Stdio & SSE Transports**: The MCP server supports standard `stdio` or containerized HTTP/SSE mode via `supergateway`.
 - **Hosted Sandboxing (`MCP_HOSTED=true`)**: Enforces path traversal security by rejecting local `svgFilePath` and `outDir` arguments in multi-tenant or web environments, ensuring pure in-band media delivery. For details, see **[docs/SECURITY.md](./SECURITY.md)**.
 - **Anonymous Telemetry**: Standard usage events (`file-load`, `conversion-start`, `conversion-success`) are reported anonymously to Umami for feature improvement without collecting file contents or PII. To opt out, set `DO_NOT_TRACK=1` in your environment. See **[docs/ANALYTICS.md](./ANALYTICS.md)** for full event schemas and opt-out details.
 
@@ -113,7 +113,7 @@ The MCP server respects the following environment variables (defined in `mcp.jso
 
 ## 🛠 Exposed MCP Tools
 
-The MCP server (`src/mcp.ts`) exposes two primary tools over `stdio` (or SSE via `mcp-proxy`):
+The MCP server (`src/mcp.ts`) exposes two primary tools over `stdio` (or SSE via `supergateway`):
 
 ### 1. `render_svg_to_video`
 
