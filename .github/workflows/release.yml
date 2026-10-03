@@ -10,8 +10,8 @@ permissions:
   id-token: write
 
 jobs:
-  publish:
-    name: Publish Release (npm & Docker)
+  validate:
+    name: Verify Branch & CI Status
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -39,6 +39,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  publish-npm:
+    name: Publish to npm
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
@@ -51,6 +59,14 @@ jobs:
         run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-docker:
+    name: Build & Push Docker Image
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
 
       - name: Set up QEMU (Multi-arch Docker)
         uses: docker/setup-qemu-action@v4
@@ -79,6 +95,35 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+  publish-mcp:
+    name: Publish to MCP Registry (modelcontext.io)
+    needs: [publish-npm, publish-docker]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      - name: Extract Release Version
+        id: meta
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Dynamically Update Version in mcp.json
+        run: |
+          VERSION="${{ steps.meta.outputs.version }}"
+          echo "Injecting version $VERSION into mcp.json..."
+
+          jq \
+            --arg ver "$VERSION" \
+            '.version = $ver |
+            .packages |= map(
+              if .registryType == "npm" then .version = $ver
+              elif .registryType == "oci" then .identifier = (.identifier | sub(":.*$"; ":" + $ver))
+              else . end
+            )' mcp.json > mcp.json.tmp && mv mcp.json.tmp mcp.json
+
+          echo "--- Updated mcp.json Preview ---"
+          cat mcp.json
+
       - name: Install mcp-publisher
         run: |
           curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
@@ -88,11 +133,11 @@ jobs:
 
       - name: Publish server to MCP Registry
         run: |
-          echo "Waiting 30 seconds for npm package and Docker image propagation..."
-          sleep 30
+          MAX_RETRIES=10
+          RETRY_DELAY=60
 
-          MAX_RETRIES=5
-          RETRY_DELAY=30
+          echo "Waiting ${RETRY_DELAY}s for npm package and Docker image propagation..."
+          sleep $RETRY_DELAY
 
           for attempt in $(seq 1 $MAX_RETRIES); do
             echo "Attempt $attempt of $MAX_RETRIES: Publishing server to MCP Registry..."

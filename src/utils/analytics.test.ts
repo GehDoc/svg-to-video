@@ -1,6 +1,11 @@
 import { test, describe, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert';
-import { isOptedOut, sendEvent } from './analytics.js';
+import {
+  isOptedOut,
+  sendEvent,
+  trackEvent,
+  flushAnalytics,
+} from './analytics.js';
 import {
   UMAMI_WEBSITE_ID,
   UMAMI_WEBSITE_HOSTNAME,
@@ -10,12 +15,16 @@ describe('analytics', () => {
   const originalEnv = process.env.DO_NOT_TRACK;
   const originalCi = process.env.CI;
   const originalNodeEnv = process.env.NODE_ENV;
+  const originalVitest = process.env.VITEST;
+  const originalPlaywright = process.env.PLAYWRIGHT_TEST;
   const originalFetch = globalThis.fetch;
 
   beforeEach(() => {
     delete process.env.DO_NOT_TRACK;
     delete process.env.CI;
     delete process.env.NODE_ENV;
+    delete process.env.VITEST;
+    delete process.env.PLAYWRIGHT_TEST;
   });
 
   afterEach(() => {
@@ -33,6 +42,16 @@ describe('analytics', () => {
       process.env.NODE_ENV = originalNodeEnv;
     } else {
       delete process.env.NODE_ENV;
+    }
+    if (originalVitest !== undefined) {
+      process.env.VITEST = originalVitest;
+    } else {
+      delete process.env.VITEST;
+    }
+    if (originalPlaywright !== undefined) {
+      process.env.PLAYWRIGHT_TEST = originalPlaywright;
+    } else {
+      delete process.env.PLAYWRIGHT_TEST;
     }
     globalThis.fetch = originalFetch;
   });
@@ -59,6 +78,16 @@ describe('analytics', () => {
 
     test('should return true when NODE_ENV is test', () => {
       process.env.NODE_ENV = 'test';
+      assert.strictEqual(isOptedOut(), true);
+    });
+
+    test('should return true when VITEST environment variable is set', () => {
+      process.env.VITEST = 'true';
+      assert.strictEqual(isOptedOut(), true);
+    });
+
+    test('should return true when PLAYWRIGHT_TEST environment variable is set', () => {
+      process.env.PLAYWRIGHT_TEST = 'true';
       assert.strictEqual(isOptedOut(), true);
     });
 
@@ -150,6 +179,46 @@ describe('analytics', () => {
         processDurationSec: 2,
       });
       assert.strictEqual(result, false);
+    });
+  });
+
+  describe('flushAnalytics', () => {
+    test('should resolve promptly when no active promises', async () => {
+      const start = Date.now();
+      await flushAnalytics(1000);
+      const elapsed = Date.now() - start;
+      assert.ok(elapsed < 100);
+    });
+
+    test('should await active trackEvent promises', async () => {
+      let resolveFetch: ((res: Response) => void) | undefined;
+      globalThis.fetch = (async () => {
+        return new Promise<Response>((resolve) => {
+          resolveFetch = resolve;
+        });
+      }) as typeof fetch;
+
+      const trackPromise = trackEvent('file-load', {
+        detectedDuration: 5,
+        hasAnimation: true,
+        aspectRatio: 'landscape',
+        isDimensionsDetected: true,
+      });
+
+      let flushed = false;
+      const flushPromise = flushAnalytics(1000).then(() => {
+        flushed = true;
+      });
+
+      assert.strictEqual(flushed, false);
+      if (resolveFetch) {
+        resolveFetch(
+          new Response(JSON.stringify({ ok: true }), { status: 200 })
+        );
+      }
+      await flushPromise;
+      assert.strictEqual(flushed, true);
+      await trackPromise;
     });
   });
 });

@@ -35,5 +35,5 @@ When asked to generate a video or GIF from an SVG animation:
 
 3. **Option C: Via Docker**:
    ```bash
-   docker run -i --rm --user $(id -u):$(id -g) -v $(pwd):/app/data:Z gehdoc/svg-to-video mcp
+   docker run --rm -p 8080:8080 --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp
    ```

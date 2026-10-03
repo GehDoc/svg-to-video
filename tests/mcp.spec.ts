@@ -21,6 +21,10 @@ describe('MCP Server Integration', () => {
     transport = new StdioClientTransport({
       command: 'npx',
       args: ['tsx', 'src/mcp.ts'],
+      env: {
+        ...process.env,
+        NODE_ENV: 'test',
+      },
     });
 
     client = new Client(
@@ -69,7 +73,7 @@ describe('MCP Server Integration', () => {
     assert.strictEqual(typeof data.hasAnimation, 'boolean');
   });
 
-  test('should render SVG via render_svg_to_video tool', async () => {
+  test('should render SVG via render_svg_to_video tool with explicit outDir', async () => {
     const result = await client.callTool({
       name: 'render_svg_to_video',
       arguments: {
@@ -90,6 +94,121 @@ describe('MCP Server Integration', () => {
     assert.strictEqual(data.success, true);
     assert.strictEqual(data.format, 'gif');
     assert.ok(fs.existsSync(data.outputFile));
+
+    const imageContent = result.content[1] as {
+      type: string;
+      data: string;
+      mimeType: string;
+    };
+    assert.strictEqual(imageContent.type, 'image');
+    assert.strictEqual(imageContent.mimeType, 'image/gif');
+    assert.ok(
+      typeof imageContent.data === 'string' && imageContent.data.length > 0
+    );
+  });
+
+  test('should render SVG via render_svg_to_video tool in ephemeral mode when outDir is omitted', async () => {
+    const rawSvg = fs.readFileSync(exampleSvg, 'utf-8');
+    const result = await client.callTool({
+      name: 'render_svg_to_video',
+      arguments: {
+        svgContent: rawSvg,
+        fps: 24,
+        duration: 1,
+        format: 'webm',
+      },
+    });
+
+    assert.strictEqual(result.isError, undefined);
+    assert.ok(Array.isArray(result.content));
+
+    const contentText = result.content[0] as { type: string; text: string };
+    assert.strictEqual(contentText.type, 'text');
+
+    const data = JSON.parse(contentText.text);
+    assert.strictEqual(data.success, true);
+    assert.strictEqual(data.format, 'webm');
+    assert.strictEqual(data.outputFile, undefined);
+
+    const resourceContent = result.content[1] as {
+      type: string;
+      resource: { uri: string; mimeType: string; blob: string };
+    };
+    assert.strictEqual(resourceContent.type, 'resource');
+    assert.strictEqual(resourceContent.resource.mimeType, 'video/webm');
+    assert.strictEqual(resourceContent.resource.uri, 'urn:svg-to-video:media');
+    assert.ok(
+      typeof resourceContent.resource.blob === 'string' &&
+        resourceContent.resource.blob.length > 0
+    );
+  });
+});
+
+describe('MCP Server Security Sandboxing (MCP_HOSTED=true)', () => {
+  let hostedClient: Client;
+  let hostedTransport: StdioClientTransport;
+
+  before(async () => {
+    hostedTransport = new StdioClientTransport({
+      command: 'npx',
+      args: ['tsx', 'src/mcp.ts'],
+      env: {
+        ...process.env,
+        MCP_HOSTED: 'true',
+        NODE_ENV: 'test',
+      },
+    });
+
+    hostedClient = new Client(
+      { name: 'test-hosted-client', version: '1.0.0' },
+      { capabilities: {} }
+    );
+
+    await hostedClient.connect(hostedTransport);
+  });
+
+  after(async () => {
+    if (hostedClient) {
+      await hostedClient.close();
+    }
+  });
+
+  test('inspect_svg_animation should reject svgFilePath when MCP_HOSTED=true', async () => {
+    const result = await hostedClient.callTool({
+      name: 'inspect_svg_animation',
+      arguments: { svgFilePath: exampleSvg },
+    });
+
+    assert.strictEqual(result.isError, true);
+    assert.ok(Array.isArray(result.content));
+    const contentText = result.content[0] as { type: string; text: string };
+    assert.match(contentText.text, /forbidden when MCP_HOSTED/i);
+  });
+
+  test('render_svg_to_video should reject custom outDir when MCP_HOSTED=true', async () => {
+    const resultOutDir = await hostedClient.callTool({
+      name: 'render_svg_to_video',
+      arguments: {
+        svgContent: '<svg></svg>',
+        outDir: outputDir,
+      },
+    });
+    assert.strictEqual(resultOutDir.isError, true);
+  });
+
+  test('inspect_svg_animation should accept svgContent when MCP_HOSTED=true', async () => {
+    const rawSvg = fs.readFileSync(exampleSvg, 'utf-8');
+    const result = await hostedClient.callTool({
+      name: 'inspect_svg_animation',
+      arguments: { svgContent: rawSvg },
+    });
+
+    assert.strictEqual(result.isError, undefined);
+    assert.ok(Array.isArray(result.content));
+    const contentText = result.content[0] as { type: string; text: string };
+    assert.strictEqual(contentText.type, 'text');
+    const data = JSON.parse(contentText.text);
+    assert.strictEqual(typeof data.hasAnimation, 'boolean');
   });
 });
 

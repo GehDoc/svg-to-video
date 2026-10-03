@@ -128,22 +128,28 @@ This project requires strict version alignment between **Storybook** and **Vites
 
 #### Project-wide Orchestration (Run from Root)
 
-| Command              | Description                                                                |
-| :------------------- | :------------------------------------------------------------------------- |
-| `npm run check`      | Runs full verification suite (lint, format, type-check, unit & e2e tests). |
-| `npm run check:fast` | Runs fast validation checks only (lint, format, type-check).               |
-| `npm run build`      | Compiles CLI TypeScript source into ES Modules in `dist/`.                 |
-| `npm run fix`        | Auto-fixes linting and formatting issues across all packages.              |
-| `npm run lint`       | Lints CLI and Web Studio code.                                             |
-| `npm run lint:fix`   | Fixes linting errors across CLI and Web Studio.                            |
-| `npm run format`     | Checks formatting compliance using Prettier.                               |
-| `npm run format:fix` | Formats files with Prettier.                                               |
-| `npm run test`       | Runs all unit, integration, visual regression, and package snapshot tests. |
-| `npm run test:cli`   | Runs CLI integration test suite (`tests/cli.spec.ts`).                     |
-| `npm run test:mcp`   | Runs MCP Server integration test suite (`tests/mcp.spec.ts`).              |
-| `npm run test:pack`  | Validates npm tarball file snapshot (`npm pack --dry-run`).                |
-| `npm run test:unit`  | Runs unit tests with Vitest and Node test runner.                          |
-| `npm run type-check` | Performs TypeScript type checking across root CLI and Web workspace.       |
+| Command                 | Description                                                                |
+| :---------------------- | :------------------------------------------------------------------------- |
+| `npm run check`         | Runs full verification suite (lint, format, type-check, unit & e2e tests). |
+| `npm run check:fast`    | Runs fast validation checks only (lint, format, type-check).               |
+| `npm run build`         | Compiles CLI TypeScript source into ES Modules in `dist/`.                 |
+| `npm run fix`           | Auto-fixes linting and formatting issues across all packages.              |
+| `npm run lint`          | Lints CLI and Web Studio code.                                             |
+| `npm run lint:fix`      | Fixes linting errors across CLI and Web Studio.                            |
+| `npm run format`        | Checks formatting compliance using Prettier.                               |
+| `npm run format:fix`    | Formats files with Prettier.                                               |
+| `npm run test`          | Runs all unit, integration, visual regression, and package snapshot tests. |
+| `npm run cli`           | Runs CLI TypeScript source directly (`tsx src/index.ts`).                  |
+| `npm run mcp`           | Runs MCP Stdio server TypeScript source directly (`tsx src/mcp.ts`).       |
+| `npm run mcp:sse`       | Runs MCP SSE server via `supergateway` wrapper on port 8080.               |
+| `npm run start:cli`     | Runs compiled CLI production build (`node dist/src/index.js`).             |
+| `npm run start:mcp:sse` | Runs compiled MCP SSE production server via `supergateway` on port 8080.   |
+| `npm run start:mcp`     | Runs compiled MCP Stdio production server (`node dist/src/mcp.js`).        |
+| `npm run test:cli`      | Runs CLI integration test suite (`tests/cli.spec.ts`).                     |
+| `npm run test:mcp`      | Runs MCP Server integration test suite (`tests/mcp.spec.ts`).              |
+| `npm run test:pack`     | Validates npm tarball file snapshot (`npm pack --dry-run`).                |
+| `npm run test:unit`     | Runs unit tests with Vitest and Node test runner.                          |
+| `npm run type-check`    | Performs TypeScript type checking across root CLI and Web workspace.       |
 
 #### Remote vs. Local CLI & MCP Execution
 
@@ -363,8 +369,9 @@ To maintain project synchronization, every release or version bump must update t
 
 1. **Root `package.json`**: The `version` field.
 2. **Web `package.json`**: The `version` field (`web/package.json`).
-3. **MCP Registry Manifest (`mcp.json`)**: The `version` field and `packages[].version` field for published npm package entries.
-4. **Root `package-lock.json`**: Synchronized by running `npm install`.
+3. **Root `package-lock.json`**: Synchronized by running `npm install`.
+
+**Note:** The MCP Registry Manifest (`mcp.json`) uses placeholder versions (`0.0.0-0`) in source control. Real package versions and Docker tags are injected dynamically by GitHub Actions during the release pipeline, so you do not need to edit `mcp.json` manually during version bumps.
 
 Use `npm version [patch|minor|major]` or update `package.json` and `mcp.json` files manually, then run `npm install` to update `package-lock.json` before committing.
 

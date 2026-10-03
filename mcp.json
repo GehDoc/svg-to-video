@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.GehDoc/svg-to-video",
   "title": "SVG to Video",
-  "description": "Animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter",
-  "version": "0.27.7",
+  "description": "Convert animated SVG code/files to video (MP4/WebM) or image (GIF/aPNG) with in-band delivery.",
+  "version": "0.0.0-0",
   "websiteUrl": "https://gehdoc.github.io/svg-to-video/",
   "icons": [
     {
@@ -22,7 +22,7 @@
     {
       "registryType": "npm",
       "identifier": "@gehdoc/svg-to-video",
-      "version": "0.27.7",
+      "version": "0.0.0-0",
       "runtimeHint": "npx",
       "runtimeArguments": [
         {
@@ -37,6 +37,13 @@
           "default": "0",
           "isRequired": false,
           "format": "string"
+        },
+        {
+          "name": "MCP_HOSTED",
+          "description": "Set to 'true' or '1' to enforce security sandboxing against path traversal by forbidding local file path arguments.",
+          "default": "false",
+          "isRequired": false,
+          "format": "boolean"
         },
         {
           "name": "PUPPETEER_EXECUTABLE_PATH",
@@ -57,7 +64,7 @@
     },
     {
       "registryType": "oci",
-      "identifier": "docker.io/gehdoc/svg-to-video:latest",
+      "identifier": "docker.io/gehdoc/svg-to-video:0.0.0-0",
       "runtimeHint": "docker",
       "packageArguments": [
         {
@@ -72,6 +79,13 @@
           "default": "0",
           "isRequired": false,
           "format": "string"
+        },
+        {
+          "name": "MCP_HOSTED",
+          "description": "Set to 'true' or '1' to enforce security sandboxing against path traversal by forbidding local file path arguments.",
+          "default": "false",
+          "isRequired": false,
+          "format": "boolean"
         },
         {
           "name": "PUPPETEER_EXECUTABLE_PATH",

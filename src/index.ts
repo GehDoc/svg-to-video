@@ -17,7 +17,7 @@ import { CLIFormatOptions } from './formats/types.js';
 import { pkg } from './utils/packageInfo.js';
 import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 import { Logger } from './utils/logger.js';
-import { trackEvent } from './utils/analytics.js';
+import { trackEvent, flushAnalytics } from './utils/analytics.js';
 import { ConversionTracker } from '#shared/rendererTracking.js';
 
 type FrameFileExtension = 'png';
@@ -127,7 +127,7 @@ Resources:
       await import('./mcp.js');
     });
 
-  program.parse(process.argv);
+  await program.parseAsync(process.argv);
 }
 
 /**
@@ -156,19 +156,22 @@ async function run(
   const outputFullPath = path.join(outDir, outputFileName);
 
   if (fs.existsSync(outputFullPath) && !options.force) {
-    throw logger.fatal(
+    await logger.fatal(
       `Output file "${outputFullPath}" already exists. Use the --force (-f) flag to overwrite it.`
     );
+    return;
   }
 
   try {
     validateOptions(options);
   } catch (error) {
-    throw logger.fatal(error instanceof Error ? error.message : String(error));
+    await logger.fatal(error instanceof Error ? error.message : String(error));
+    return;
   }
 
   if (!fs.existsSync(svgPath)) {
-    throw logger.fatal(`Input SVG file "${svgPath}" does not exist.`);
+    await logger.fatal(`Input SVG file "${svgPath}" does not exist.`);
+    return;
   }
 
   const svg = fs.readFileSync(svgPath, 'utf-8');
@@ -183,9 +186,10 @@ async function run(
 
     duration = detectedDuration;
     if (duration === undefined) {
-      throw logger.fatal(
+      await logger.fatal(
         'Could not detect duration. Please provide a duration using -d or --duration.'
       );
+      return;
     }
     logger.info(`✅ Auto-detected duration: ${duration}s`);
   }
@@ -235,6 +239,25 @@ async function run(
   );
   tracker.start();
 
+  let isCancelled = false;
+  const handleSignal = async (signal: string) => {
+    if (isCancelled) return;
+    isCancelled = true;
+    logger.info(`\n⚠️ Received ${signal}. Cancelling conversion...`);
+    tracker.cancel();
+    if (!options.keepFrames && totalFrames > 0 && padWidth > 0) {
+      cleanupFrames(totalFrames, padWidth, outDir, logger);
+    }
+    await flushAnalytics();
+    process.exit(130);
+  };
+
+  const sigintListener = () => void handleSignal('SIGINT');
+  const sigtermListener = () => void handleSignal('SIGTERM');
+
+  process.once('SIGINT', sigintListener);
+  process.once('SIGTERM', sigtermListener);
+
   try {
     fs.mkdirSync(outDir, { recursive: true });
 
@@ -270,6 +293,7 @@ async function run(
     }
 
     tracker.success(totalFrames);
+    await flushAnalytics();
 
     logger.done(outputFullPath, {
       duration,
@@ -280,8 +304,24 @@ async function run(
       transparent: options.transparent,
     });
   } catch (error) {
-    tracker.failed(error instanceof Error ? error : String(error));
-    throw error;
+    if (!isCancelled) {
+      tracker.failed(error instanceof Error ? error : String(error));
+      if (!options.keepFrames) {
+        try {
+          cleanupFrames(totalFrames, padWidth, outDir, logger);
+        } catch {
+          // ignore frame cleanup error during exception handling
+        }
+      }
+      await flushAnalytics();
+      await logger.fatal(
+        'Conversion failed',
+        error instanceof Error ? error.message : String(error)
+      );
+    }
+  } finally {
+    process.removeListener('SIGINT', sigintListener);
+    process.removeListener('SIGTERM', sigtermListener);
   }
 }
 
@@ -446,10 +486,8 @@ function convertToOutput(
       generator.postProcess(outputFullPath, formatOptions);
     }
   } catch (error) {
-    throw logger.fatal(
-      'FFmpeg execution failed',
-      error instanceof Error ? error.message : String(error)
-    );
+    const details = error instanceof Error ? error.message : String(error);
+    throw new Error(`FFmpeg execution failed: ${details}`);
   }
 }
 
@@ -481,7 +519,8 @@ function getFrameFilename(frame: number, padWidth: number): string {
   return `${prefix}.${frameFileExtension}`;
 }
 
-main().catch((err) => {
+main().catch(async (err) => {
+  await flushAnalytics();
   console.error(err);
   process.exit(1);
 });

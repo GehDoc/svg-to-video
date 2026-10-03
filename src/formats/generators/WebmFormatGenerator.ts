@@ -5,6 +5,7 @@ import { mergeMetadataComments } from '#shared/metadata.js';
 export class WebmFormatGenerator implements CLIFormatGenerator {
   readonly id = 'webm';
   readonly extensions = ['.webm'];
+  readonly mimeType = 'video/webm';
   readonly supportsAlpha = true;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
