@@ -10,8 +10,8 @@ permissions:
   id-token: write
 
 jobs:
-  publish:
-    name: Publish Release (npm & Docker)
+  validate:
+    name: Verify Branch & CI Status
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -39,6 +39,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  publish-npm:
+    name: Publish to npm
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
       - name: Setup Environment
         uses: ./.github/actions/setup
         with:
@@ -51,6 +59,14 @@ jobs:
         run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-docker:
+    name: Build & Push Docker Image
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
 
       - name: Set up QEMU (Multi-arch Docker)
         uses: docker/setup-qemu-action@v4
@@ -78,6 +94,14 @@ jobs:
             gehdoc/svg-to-video:${{ steps.meta.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  publish-mcp:
+    name: Publish to MCP Registry (modelcontext.io)
+    needs: [publish-npm, publish-docker]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
 
       - name: Install mcp-publisher
         run: |
