@@ -218,6 +218,7 @@ export const Studio = () => {
           onStartRender={handleStartRender}
           validationError={validationError}
           originalDim={originalDim}
+          targetDim={targetDim}
           renderedUrl={renderedUrl}
           metadata={metadata}
           onMetadataChange={setMetadata}
