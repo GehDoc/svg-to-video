@@ -14,7 +14,7 @@ export interface ConversionTrackerOptions {
 export type TrackFn = <K extends keyof AnalyticsEventMap>(
   eventName: K,
   properties: AnalyticsEventMap[K]
-) => void | Promise<unknown>;
+) => void;
 
 /**
  * Calculates elapsed duration in seconds.
@@ -41,8 +41,8 @@ export class ConversionTracker {
       typeof performance !== 'undefined' ? performance.now() : Date.now();
   }
 
-  start(): void | Promise<unknown> {
-    return this.trackFn('conversion-start', {
+  start(): void {
+    this.trackFn('conversion-start', {
       format: this.options.format,
       isTransparent: this.options.isTransparent,
       captureMethod: this.options.captureMethod,
@@ -51,9 +51,9 @@ export class ConversionTracker {
     });
   }
 
-  success(totalFrames: number): void | Promise<unknown> {
+  success(totalFrames: number): void {
     const processDurationSec = calculateElapsedSec(this.startTimeMs);
-    return this.trackFn('conversion-success', {
+    this.trackFn('conversion-success', {
       format: this.options.format,
       isTransparent: this.options.isTransparent,
       captureMethod: this.options.captureMethod,
@@ -64,10 +64,10 @@ export class ConversionTracker {
     });
   }
 
-  failed(error: Error | string): void | Promise<unknown> {
+  failed(error: Error | string): void {
     const processDurationSec = calculateElapsedSec(this.startTimeMs);
     const errorMessage = typeof error === 'string' ? error : error.message;
-    return this.trackFn('conversion-failed', {
+    this.trackFn('conversion-failed', {
       error: errorMessage,
       format: this.options.format,
       isTransparent: this.options.isTransparent,
@@ -76,9 +76,9 @@ export class ConversionTracker {
     });
   }
 
-  cancel(): void | Promise<unknown> {
+  cancel(): void {
     const processDurationSec = calculateElapsedSec(this.startTimeMs);
-    return this.trackFn('conversion-cancel', {
+    this.trackFn('conversion-cancel', {
       format: this.options.format,
       isTransparent: this.options.isTransparent,
       captureMethod: this.options.captureMethod,

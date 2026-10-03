@@ -69,11 +69,8 @@ Open **Cursor Settings > Features > MCP**:
 For cloud agents or sandbox environments without local Chromium or FFmpeg pre-installed:
 
 ```bash
-# Containerized SSE MCP Server mode
-docker run --rm -p 8080:8080 --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp
+docker run -i --rm --user $(id -u):$(id -g) -v $(pwd):/app/data:Z gehdoc/svg-to-video mcp
 ```
-
-> **Note**: Chromium memory constraints in containerized environments require passing `--shm-size=2gb` and `-e PUPPETEER_ARGS="--no-sandbox"` to prevent browser crashes during heavy rendering.
 
 ### 🛠 Local Development & Building (Contributors)
 
@@ -94,8 +91,7 @@ To test a local checkout of the repository as an MCP server:
 
 ### 🔒 Security, Telemetry & Privacy
 
-- **Stdio & SSE Transports**: The MCP server supports standard `stdio` or containerized HTTP/SSE mode via `supergateway`.
-- **Hosted Sandboxing (`MCP_HOSTED=true`)**: Enforces path traversal security by rejecting local `svgFilePath` and `outDir` arguments in multi-tenant or web environments, ensuring pure in-band media delivery. For details, see **[docs/SECURITY.md](./SECURITY.md)**.
+- **Stdio Communication**: The MCP server runs over `stdio` without opening external network ports. For details on Chromium browser isolation, argument sanitization, and containerized sandboxing, see **[docs/SECURITY.md](./SECURITY.md)**.
 - **Anonymous Telemetry**: Standard usage events (`file-load`, `conversion-start`, `conversion-success`) are reported anonymously to Umami for feature improvement without collecting file contents or PII. To opt out, set `DO_NOT_TRACK=1` in your environment. See **[docs/ANALYTICS.md](./ANALYTICS.md)** for full event schemas and opt-out details.
 
 ### 🌿 Environment Variables
@@ -105,7 +101,6 @@ The MCP server respects the following environment variables (defined in `mcp.jso
 | Environment Variable        | Format     | Description                                                                         | Default |
 | :-------------------------- | :--------- | :---------------------------------------------------------------------------------- | :------ |
 | `DO_NOT_TRACK`              | `string`   | Set to `1` or `true` to opt out of anonymous telemetry collection.                  | `0`     |
-| `MCP_HOSTED`                | `boolean`  | Set to `true` or `1` to enforce path traversal security sandboxing.                 | `false` |
 | `PUPPETEER_EXECUTABLE_PATH` | `filepath` | Custom file path to a system Chromium or Chrome binary.                             | —       |
 | `PUPPETEER_ARGS`            | `string`   | Additional command-line flags to pass to Puppeteer Chromium (e.g., `--no-sandbox`). | —       |
 
@@ -113,7 +108,7 @@ The MCP server respects the following environment variables (defined in `mcp.jso
 
 ## 🛠 Exposed MCP Tools
 
-The MCP server (`src/mcp.ts`) exposes two primary tools over `stdio` (or SSE via `supergateway`):
+The MCP server (`src/mcp.ts`) exposes two primary tools over `stdio`:
 
 ### 1. `render_svg_to_video`
 
@@ -141,32 +136,6 @@ Inspects an SVG string or file to estimate animation duration, CSS keyframes, an
 | :------------ | :------- | :---------------------------------- |
 | `svgFilePath` | `string` | Path to the `.svg` file to inspect. |
 | `svgContent`  | `string` | Raw SVG content to inspect.         |
-
----
-
-## 🔍 Debugging with MCP Inspector
-
-You can inspect and manually test the MCP server using the official `@modelcontextprotocol/inspector` CLI tool.
-
-### Local Node.js Execution
-
-```bash
-npx -y @modelcontextprotocol/inspector node dist/src/mcp.js
-```
-
-### Dockerized MCP Inspector Test
-
-```bash
-docker run --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp &
-npx -y @modelcontextprotocol/inspector
-```
-
-In this writable interface:
-
-1. Click + Add Server (or edit the server card).
-2. Choose SSE as the transport type.
-3. Set the URL to http://localhost:8080/sse.
-4. Click Connect!
 
 ---
 

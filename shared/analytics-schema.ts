@@ -16,8 +16,6 @@ export interface FileLoadEventProperties {
   hasAnimation: boolean;
   detectedDuration?: number;
   isDimensionsDetected: boolean;
-  rejectionReason?: 'path-traversal-blocked';
-  isHosted?: boolean;
 }
 
 export interface ConversionStartEventProperties {

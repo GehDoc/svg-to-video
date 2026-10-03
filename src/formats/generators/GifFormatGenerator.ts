@@ -7,7 +7,6 @@ import { injectGifMetadata } from '#shared/gifMetadataInjector.js';
 export class GifFormatGenerator implements CLIFormatGenerator {
   readonly id = 'gif';
   readonly extensions = ['.gif'];
-  readonly mimeType = 'image/gif';
   readonly supportsAlpha = true;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {

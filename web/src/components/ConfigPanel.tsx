@@ -354,13 +354,13 @@ export const ConfigPanel = ({
             >
               <option
                 value="optimal"
-                title="Captures canvas stream in real-time. Best for simple CSS animations or fast exports."
+                title="Bakes key animation properties into frames for faster rendering."
               >
                 Optimal (Fast)
               </option>
               <option
                 value="high-fidelity"
-                title="Scrubs Web Animations API frame-by-frame for exact time accuracy. Best for complex CSS keyframes and sub-frame synchronization."
+                title="Bakes all computed SVG and CSS properties into frames for maximum accuracy."
               >
                 High Fidelity (Slow)
               </option>
@@ -370,8 +370,8 @@ export const ConfigPanel = ({
               aria-disabled={isOptionsDisabled}
             >
               {captureMethod === 'optimal'
-                ? 'Optimal (Fast): Captures canvas stream in real-time. Best for simple CSS animations or fast exports.'
-                : 'High Fidelity (Slow): Scrubs Web Animations API frame-by-frame for exact time accuracy. Best for complex CSS keyframes and sub-frame synchronization.'}
+                ? 'Optimal (Fast): Bakes key animation properties into frames. Faster export for standard SVGs.'
+                : 'High Fidelity (Slow): Bakes all computed SVG and CSS properties into frames for maximum visual accuracy.'}
             </p>
           </div>
         </section>

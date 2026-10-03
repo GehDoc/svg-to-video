@@ -45,11 +45,11 @@ export const calculateFinalDimensions = (
   let height = origHeight;
 
   if (settings.preset === '720p') {
-    const ratio = Math.min(1280 / origWidth, 720 / origHeight);
+    const ratio = 720 / origHeight;
     width = origWidth * ratio;
     height = origHeight * ratio;
   } else if (settings.preset === '1080p') {
-    const ratio = Math.min(1920 / origWidth, 1080 / origHeight);
+    const ratio = 1080 / origHeight;
     width = origWidth * ratio;
     height = origHeight * ratio;
   } else if (settings.preset === 'original') {

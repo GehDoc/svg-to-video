@@ -189,7 +189,7 @@ test('ConfigPanel: displays Capture Method helper text for Optimal and High Fide
   });
 
   expect(
-    screen.getByText(/Optimal \(Fast\): Captures canvas stream in real-time/i)
+    screen.getByText(/Optimal \(Fast\): Bakes key animation properties/i)
   ).toBeInTheDocument();
 
   await act(async () => {
@@ -203,8 +203,6 @@ test('ConfigPanel: displays Capture Method helper text for Optimal and High Fide
   });
 
   expect(
-    screen.getByText(
-      /High Fidelity \(Slow\): Scrubs Web Animations API frame-by-frame/i
-    )
+    screen.getByText(/High Fidelity \(Slow\): Bakes all computed SVG/i)
   ).toBeInTheDocument();
 });
