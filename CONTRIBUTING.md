@@ -369,8 +369,9 @@ To maintain project synchronization, every release or version bump must update t
 
 1. **Root `package.json`**: The `version` field.
 2. **Web `package.json`**: The `version` field (`web/package.json`).
-3. **MCP Registry Manifest (`mcp.json`)**: The `version` field and `packages[].version` field for published npm package entries.
-4. **Root `package-lock.json`**: Synchronized by running `npm install`.
+3. **Root `package-lock.json`**: Synchronized by running `npm install`.
+
+**Note:** The MCP Registry Manifest (`mcp.json`) uses placeholder versions (`0.0.0-0`) in source control. Real package versions and Docker tags are injected dynamically by GitHub Actions during the release pipeline, so you do not need to edit `mcp.json` manually during version bumps.
 
 Use `npm version [patch|minor|major]` or update `package.json` and `mcp.json` files manually, then run `npm install` to update `package-lock.json` before committing.
 
