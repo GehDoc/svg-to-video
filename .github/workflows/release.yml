@@ -112,11 +112,11 @@ jobs:
 
       - name: Publish server to MCP Registry
         run: |
-          echo "Waiting 30 seconds for npm package and Docker image propagation..."
-          sleep 30
+          MAX_RETRIES=10
+          RETRY_DELAY=60
 
-          MAX_RETRIES=5
-          RETRY_DELAY=30
+          echo "Waiting ${RETRY_DELAY}s for npm package and Docker image propagation..."
+          sleep $RETRY_DELAY
 
           for attempt in $(seq 1 $MAX_RETRIES); do
             echo "Attempt $attempt of $MAX_RETRIES: Publishing server to MCP Registry..."
