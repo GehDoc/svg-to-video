@@ -103,6 +103,27 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v7
 
+      - name: Extract Release Version
+        id: meta
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Dynamically Update Version in mcp.json
+        run: |
+          VERSION="${{ steps.meta.outputs.version }}"
+          echo "Injecting version $VERSION into mcp.json..."
+
+          jq \
+            --arg ver "$VERSION" \
+            '.version = $ver |
+            .packages |= map(
+              if .registryType == "npm" then .version = $ver
+              elif .registryType == "oci" then .identifier = (.identifier | sub(":.*$"; ":" + $ver))
+              else . end
+            )' mcp.json > mcp.json.tmp && mv mcp.json.tmp mcp.json
+
+          echo "--- Updated mcp.json Preview ---"
+          cat mcp.json
+
       - name: Install mcp-publisher
         run: |
           curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
