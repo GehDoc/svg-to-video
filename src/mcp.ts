@@ -84,21 +84,29 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: 'object',
           properties: {
-            svgFilePath: {
-              type: 'string',
-              description:
-                'Absolute or relative path to the input .svg file (forbidden in hosted sandboxed mode).',
-            },
+            ...(isHosted
+              ? {}
+              : {
+                  svgFilePath: {
+                    type: 'string',
+                    description:
+                      'Absolute or relative path to the input .svg file.',
+                  },
+                }),
             svgContent: {
               type: 'string',
               description:
                 'Raw SVG string content to render (required if svgFilePath is not provided).',
             },
-            outDir: {
-              type: 'string',
-              description:
-                'Output directory to preserve generated file locally. Omit to deliver purely in-band via ephemeral storage (forbidden in hosted sandboxed mode).',
-            },
+            ...(isHosted
+              ? {}
+              : {
+                  outDir: {
+                    type: 'string',
+                    description:
+                      'Output directory to preserve generated file locally. Omit to deliver purely in-band via ephemeral storage.',
+                  },
+                }),
             fps: {
               type: 'number',
               description: 'Frames per second (e.g. 24, 30, 60). Default: 60.',
@@ -154,11 +162,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: 'object',
           properties: {
-            svgFilePath: {
-              type: 'string',
-              description:
-                'Path to the .svg file to inspect (forbidden in hosted sandboxed mode).',
-            },
+            ...(isHosted
+              ? {}
+              : {
+                  svgFilePath: {
+                    type: 'string',
+                    description: 'Path to the .svg file to inspect.',
+                  },
+                }),
             svgContent: {
               type: 'string',
               description: 'Raw SVG content to inspect.',

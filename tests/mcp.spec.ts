@@ -49,11 +49,32 @@ describe('MCP Server Integration', () => {
     }
   });
 
-  test('should list MCP tools', async () => {
+  test('should list MCP tools and expose svgFilePath and outDir when MCP_HOSTED is false', async () => {
     const response = await client.listTools();
     const toolNames = response.tools.map((t) => t.name);
     assert.ok(toolNames.includes('render_svg_to_video'));
     assert.ok(toolNames.includes('inspect_svg_animation'));
+
+    const renderTool = response.tools.find(
+      (t) => t.name === 'render_svg_to_video'
+    );
+    assert.ok(renderTool);
+    const renderProps =
+      (renderTool.inputSchema as { properties?: Record<string, unknown> })
+        .properties || {};
+    assert.ok('svgFilePath' in renderProps);
+    assert.ok('outDir' in renderProps);
+    assert.ok('svgContent' in renderProps);
+
+    const inspectTool = response.tools.find(
+      (t) => t.name === 'inspect_svg_animation'
+    );
+    assert.ok(inspectTool);
+    const inspectProps =
+      (inspectTool.inputSchema as { properties?: Record<string, unknown> })
+        .properties || {};
+    assert.ok('svgFilePath' in inspectProps);
+    assert.ok('svgContent' in inspectProps);
   });
 
   test('should inspect SVG animation via inspect_svg_animation', async () => {
@@ -171,6 +192,30 @@ describe('MCP Server Security Sandboxing (MCP_HOSTED=true)', () => {
     if (hostedClient) {
       await hostedClient.close();
     }
+  });
+
+  test('should omit svgFilePath and outDir from tool schemas when MCP_HOSTED=true', async () => {
+    const response = await hostedClient.listTools();
+    const renderTool = response.tools.find(
+      (t) => t.name === 'render_svg_to_video'
+    );
+    assert.ok(renderTool);
+    const renderProps =
+      (renderTool.inputSchema as { properties?: Record<string, unknown> })
+        .properties || {};
+    assert.strictEqual('svgFilePath' in renderProps, false);
+    assert.strictEqual('outDir' in renderProps, false);
+    assert.ok('svgContent' in renderProps);
+
+    const inspectTool = response.tools.find(
+      (t) => t.name === 'inspect_svg_animation'
+    );
+    assert.ok(inspectTool);
+    const inspectProps =
+      (inspectTool.inputSchema as { properties?: Record<string, unknown> })
+        .properties || {};
+    assert.strictEqual('svgFilePath' in inspectProps, false);
+    assert.ok('svgContent' in inspectProps);
   });
 
   test('inspect_svg_animation should reject svgFilePath when MCP_HOSTED=true', async () => {

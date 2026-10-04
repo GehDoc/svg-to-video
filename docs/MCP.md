@@ -95,7 +95,7 @@ To test a local checkout of the repository as an MCP server:
 ### 🔒 Security, Telemetry & Privacy
 
 - **Stdio & SSE Transports**: The MCP server supports standard `stdio` or containerized HTTP/SSE mode via `supergateway`.
-- **Hosted Sandboxing (`MCP_HOSTED=true`)**: Enforces path traversal security by rejecting local `svgFilePath` and `outDir` arguments in multi-tenant or web environments, ensuring pure in-band media delivery. For details, see **[docs/SECURITY.md](./SECURITY.md)**.
+- **Hosted Sandboxing (`MCP_HOSTED=true`)**: Enforces path traversal security by omitting local filesystem parameters (`svgFilePath` and `outDir`) from tool schemas and rejecting any local path arguments in multi-tenant or web environments, ensuring pure in-band media delivery. For details, see **[docs/SECURITY.md](./SECURITY.md)**.
 - **Anonymous Telemetry**: Standard usage events (`file-load`, `conversion-start`, `conversion-success`) are reported anonymously to Umami for feature improvement without collecting file contents or PII. To opt out, set `DO_NOT_TRACK=1` in your environment. See **[docs/ANALYTICS.md](./ANALYTICS.md)** for full event schemas and opt-out details.
 
 ### 🌿 Environment Variables
@@ -119,28 +119,28 @@ The MCP server (`src/mcp.ts`) exposes two primary tools over `stdio` (or SSE via
 
 Converts raw SVG content or an SVG file path into a video or animated image file.
 
-| Parameter     | Type      | Default         | Description                                                 |
-| :------------ | :-------- | :-------------- | :---------------------------------------------------------- |
-| `svgFilePath` | `string`  | —               | Path to the input `.svg` file.                              |
-| `svgContent`  | `string`  | —               | Raw SVG XML string (if `svgFilePath` is not provided).      |
-| `outDir`      | `string`  | current dir     | Directory to save output file.                              |
-| `fps`         | `number`  | `60`            | Frames per second.                                          |
-| `duration`    | `number`  | _auto-detected_ | Desired animation duration in seconds.                      |
-| `format`      | `string`  | `mp4` / `webm`  | Output format (`mp4`, `webm`, `gif`, `apng`, `mkv`, `mov`). |
-| `transparent` | `boolean` | `false`         | Enable full alpha-channel background transparency.          |
-| `resolution`  | `string`  | `original`      | Resolution preset (`original`, `1080p`, `720p`).            |
-| `scale`       | `number`  | `1`             | Scale factor (1-4) for original resolution.                 |
-| `bgColor`     | `string`  | `#ffffff`       | Background hex color (cannot be used with `transparent`).   |
-| `hold`        | `number`  | `0`             | Seconds to freeze the final frame.                          |
+| Parameter     | Type      | Default         | Description                                                                      |
+| :------------ | :-------- | :-------------- | :------------------------------------------------------------------------------- |
+| `svgFilePath` | `string`  | —               | Path to the input `.svg` file (local mode only; omitted when `MCP_HOSTED=true`). |
+| `svgContent`  | `string`  | —               | Raw SVG XML string (if `svgFilePath` is not provided).                           |
+| `outDir`      | `string`  | current dir     | Directory to save output file (local mode only; omitted when `MCP_HOSTED=true`). |
+| `fps`         | `number`  | `60`            | Frames per second.                                                               |
+| `duration`    | `number`  | _auto-detected_ | Desired animation duration in seconds.                                           |
+| `format`      | `string`  | `mp4` / `webm`  | Output format (`mp4`, `webm`, `gif`, `apng`, `mkv`, `mov`).                      |
+| `transparent` | `boolean` | `false`         | Enable full alpha-channel background transparency.                               |
+| `resolution`  | `string`  | `original`      | Resolution preset (`original`, `1080p`, `720p`).                                 |
+| `scale`       | `number`  | `1`             | Scale factor (1-4) for original resolution.                                      |
+| `bgColor`     | `string`  | `#ffffff`       | Background hex color (cannot be used with `transparent`).                        |
+| `hold`        | `number`  | `0`             | Seconds to freeze the final frame.                                               |
 
 ### 2. `inspect_svg_animation`
 
 Inspects an SVG string or file to estimate animation duration, CSS keyframes, and dimensions.
 
-| Parameter     | Type     | Description                         |
-| :------------ | :------- | :---------------------------------- |
-| `svgFilePath` | `string` | Path to the `.svg` file to inspect. |
-| `svgContent`  | `string` | Raw SVG content to inspect.         |
+| Parameter     | Type     | Description                                                                           |
+| :------------ | :------- | :------------------------------------------------------------------------------------ |
+| `svgFilePath` | `string` | Path to the `.svg` file to inspect (local mode only; omitted when `MCP_HOSTED=true`). |
+| `svgContent`  | `string` | Raw SVG content to inspect.                                                           |
 
 ---
 
