@@ -12,7 +12,7 @@ Optimize the Model Context Protocol (MCP) tool definitions so that unsupported p
 - **MCP Tool Registration**: Conditionally include `svgFilePath` and `outDir` in the `inputSchema` properties in `src/mcp.ts` based on the `isHosted` flag.
 - **Description Clean-up**: Simplify the descriptions of `svgFilePath` and `outDir` in `src/mcp.ts` by removing redundant `(forbidden in hosted sandboxed mode)` text.
 - **Integration Tests**: Verify schema filtering in `tests/mcp.spec.ts` using `listTools()` for both default (`MCP_HOSTED=false`) and hosted (`MCP_HOSTED=true`) configurations, asserting `0.0.0-0` placeholder version contract stability for `mcp.json`.
-- **CI Pipeline Enhancement**: Add `npm run test:unit` and `npm run test:mcp` to `.github/workflows/ci.yml` in Docker environment to run backend unit and MCP integration test suites automatically on PRs and pushes.
+- **CI Pipeline Optimization**: Group Docker CLI and MCP integration tests (`test:cli` and `test:mcp`) under `docker-integration-tests` and unify root and web unit tests under `unit-tests` in `.github/workflows/ci.yml`.
 - **Documentation Alignment**: Update `docs/MCP.md` and `docs/SECURITY.md` to reflect that hosted mode excludes local filesystem parameters from schema definitions.
 - **Version Bump**: Increment package patch version in `package.json` and `web/package.json`, keep `0.0.0-0` placeholders in `mcp.json`, and synchronize `package-lock.json`.
 
@@ -23,7 +23,7 @@ Optimize the Model Context Protocol (MCP) tool definitions so that unsupported p
   - [x] Simplify parameter descriptions in `src/mcp.ts`
 - [x] **Testing & CI**
   - [x] Add assertions in `tests/mcp.spec.ts` to test tool schemas in hosted vs non-hosted mode and verify `0.0.0-0` placeholders in `mcp.json`
-  - [x] Add `mcp-and-unit-tests` job to `.github/workflows/ci.yml`
+  - [x] Consolidate `test:cli` and `test:mcp` under `docker-integration-tests` and `npm run test:unit` under `unit-tests` in `.github/workflows/ci.yml`
 - [x] **Documentation & Versioning**
   - [x] Update `docs/MCP.md` and `docs/SECURITY.md`
   - [x] Bump patch version in `package.json` and `web/package.json`
@@ -33,7 +33,7 @@ Optimize the Model Context Protocol (MCP) tool definitions so that unsupported p
 ## 🧪 Verification Plan
 
 - [x] Automated Test: `npm run test:unit` & `npm run check:fast`
-- [x] Docker CI Test Pipeline: `ci.yml` `mcp-and-unit-tests` step
+- [x] Docker CI Test Pipeline: `ci.yml` `docker-integration-tests` step
 
 ## 📝 Change Log
 
