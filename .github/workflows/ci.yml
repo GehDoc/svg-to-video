@@ -69,6 +69,45 @@ jobs:
           --entrypoint "npm"
           svg-to-video run test:cli
 
+  mcp-and-unit-tests:
+    name: 'MCP & Backend Unit Tests (Docker)'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      - name: Build and load Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: svg-to-video:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Set up User IDs for Docker
+        run: |
+          echo "UID=$(id -u)" >> $GITHUB_ENV
+          echo "GID=$(id -g)" >> $GITHUB_ENV
+      - name: Run Root Unit Tests in Docker
+        run: >
+          docker compose run
+          --rm
+          -e CI=true
+          -w /app/data
+          --entrypoint "npm"
+          svg-to-video run test:unit
+      - name: Run MCP Integration Tests in Docker
+        run: >
+          docker compose run
+          --rm
+          -e CI=true
+          -w /app/data
+          --entrypoint "npm"
+          svg-to-video run test:mcp
+
   web-unit-tests:
     name: 'Web Studio Unit Tests'
     runs-on: ubuntu-latest
@@ -132,6 +171,7 @@ jobs:
       - lint-and-type-check
       - npm-package
       - cli-tests
+      - mcp-and-unit-tests
       - web-unit-tests
       - web-e2e-tests
       - storybook-tests

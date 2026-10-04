@@ -304,8 +304,8 @@ describe('mcp.json Manifest Contract Verification', () => {
     // 3. Versioning sync
     assert.strictEqual(
       mcp.version,
-      pkg.version,
-      'mcp.version must match root package.json version'
+      '0.0.0-0',
+      'mcp.version in source control must remain placeholder 0.0.0-0'
     );
 
     // 4. Website & Repository Metadata
@@ -369,8 +369,8 @@ describe('mcp.json Manifest Contract Verification', () => {
     assert.strictEqual(npmPkg.identifier, pkg.name);
     assert.strictEqual(
       npmPkg.version,
-      pkg.version,
-      'npm package version must match package.json version'
+      '0.0.0-0',
+      'npm package version in source control must remain placeholder 0.0.0-0'
     );
     assert.strictEqual(npmPkg.registryBaseUrl, undefined);
     assert.strictEqual(npmPkg.transport?.type, 'stdio');
@@ -380,6 +380,11 @@ describe('mcp.json Manifest Contract Verification', () => {
       (p: { registryType: string }) => p.registryType === 'oci'
     );
     assert.ok(ociPkg, 'oci package entry must be present');
+    assert.strictEqual(
+      ociPkg.identifier,
+      'docker.io/gehdoc/svg-to-video:0.0.0-0',
+      'oci package identifier in source control must use placeholder tag 0.0.0-0'
+    );
     assert.strictEqual(ociPkg.registryBaseUrl, undefined);
     assert.strictEqual(ociPkg.transport?.type, 'stdio');
     assert.strictEqual(ociPkg.runtimeHint, 'docker');
