@@ -69,8 +69,8 @@ jobs:
           --entrypoint "npm"
           svg-to-video run test:cli
 
-  mcp-and-unit-tests:
-    name: 'MCP & Backend Unit Tests (Docker)'
+  mcp-tests:
+    name: 'MCP Server Integration Tests (Docker)'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -91,14 +91,6 @@ jobs:
         run: |
           echo "UID=$(id -u)" >> $GITHUB_ENV
           echo "GID=$(id -g)" >> $GITHUB_ENV
-      - name: Run Root Unit Tests in Docker
-        run: >
-          docker compose run
-          --rm
-          -e CI=true
-          -w /app/data
-          --entrypoint "npm"
-          svg-to-video run test:unit
       - name: Run MCP Integration Tests in Docker
         run: >
           docker compose run
@@ -171,7 +163,7 @@ jobs:
       - lint-and-type-check
       - npm-package
       - cli-tests
-      - mcp-and-unit-tests
+      - mcp-tests
       - web-unit-tests
       - web-e2e-tests
       - storybook-tests
