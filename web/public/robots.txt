@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Allow: /llms.txt
 
 Sitemap: https://gehdoc.github.io/svg-to-video/sitemap.xml
