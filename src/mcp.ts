@@ -32,6 +32,17 @@ const isHosted =
   process.env.MCP_HOSTED === '1' ||
   process.argv.includes('--hosted');
 
+const SVG_FILE_PATH_PARAM = {
+  type: 'string',
+  description:
+    'Path to the input .svg file (required if svgContent is not provided).',
+};
+
+const SVG_CONTENT_PARAM = {
+  type: 'string',
+  description: 'Raw SVG XML string content.',
+};
+
 type McpToolResponseContentBlock =
   | { type: 'text'; text: string }
   | { type: 'image'; data: string; mimeType: string }
@@ -84,20 +95,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: 'object',
           properties: {
-            ...(isHosted
-              ? {}
-              : {
-                  svgFilePath: {
-                    type: 'string',
-                    description:
-                      'Absolute or relative path to the input .svg file.',
-                  },
-                }),
-            svgContent: {
-              type: 'string',
-              description:
-                'Raw SVG string content to render (required if svgFilePath is not provided).',
-            },
+            ...(isHosted ? {} : { svgFilePath: SVG_FILE_PATH_PARAM }),
+            svgContent: SVG_CONTENT_PARAM,
             ...(isHosted
               ? {}
               : {
@@ -162,18 +161,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: 'object',
           properties: {
-            ...(isHosted
-              ? {}
-              : {
-                  svgFilePath: {
-                    type: 'string',
-                    description: 'Path to the .svg file to inspect.',
-                  },
-                }),
-            svgContent: {
-              type: 'string',
-              description: 'Raw SVG content to inspect.',
-            },
+            ...(isHosted ? {} : { svgFilePath: SVG_FILE_PATH_PARAM }),
+            svgContent: SVG_CONTENT_PARAM,
           },
         },
       },
