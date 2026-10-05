@@ -32,6 +32,17 @@ const isHosted =
   process.env.MCP_HOSTED === '1' ||
   process.argv.includes('--hosted');
 
+const SVG_FILE_PATH_PARAM = {
+  type: 'string',
+  description:
+    'Path to the input .svg file (required if svgContent is not provided).',
+};
+
+const SVG_CONTENT_PARAM = {
+  type: 'string',
+  description: 'Raw SVG XML string content.',
+};
+
 type McpToolResponseContentBlock =
   | { type: 'text'; text: string }
   | { type: 'image'; data: string; mimeType: string }
@@ -84,21 +95,17 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: 'object',
           properties: {
-            svgFilePath: {
-              type: 'string',
-              description:
-                'Absolute or relative path to the input .svg file (forbidden in hosted sandboxed mode).',
-            },
-            svgContent: {
-              type: 'string',
-              description:
-                'Raw SVG string content to render (required if svgFilePath is not provided).',
-            },
-            outDir: {
-              type: 'string',
-              description:
-                'Output directory to preserve generated file locally. Omit to deliver purely in-band via ephemeral storage (forbidden in hosted sandboxed mode).',
-            },
+            ...(isHosted ? {} : { svgFilePath: SVG_FILE_PATH_PARAM }),
+            svgContent: SVG_CONTENT_PARAM,
+            ...(isHosted
+              ? {}
+              : {
+                  outDir: {
+                    type: 'string',
+                    description:
+                      'Output directory to preserve generated file locally. Omit to deliver purely in-band via ephemeral storage.',
+                  },
+                }),
             fps: {
               type: 'number',
               description: 'Frames per second (e.g. 24, 30, 60). Default: 60.',
@@ -145,6 +152,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               default: 0,
             },
           },
+          ...(isHosted
+            ? { required: ['svgContent'] }
+            : {
+                anyOf: [
+                  { required: ['svgContent'] },
+                  { required: ['svgFilePath'] },
+                ],
+              }),
         },
       },
       {
@@ -154,16 +169,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: 'object',
           properties: {
-            svgFilePath: {
-              type: 'string',
-              description:
-                'Path to the .svg file to inspect (forbidden in hosted sandboxed mode).',
-            },
-            svgContent: {
-              type: 'string',
-              description: 'Raw SVG content to inspect.',
-            },
+            ...(isHosted ? {} : { svgFilePath: SVG_FILE_PATH_PARAM }),
+            svgContent: SVG_CONTENT_PARAM,
           },
+          required: ['svgContent'],
         },
       },
     ],

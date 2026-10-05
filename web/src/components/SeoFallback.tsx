@@ -62,6 +62,14 @@ export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
           </a>
           <span className="separator">•</span>
           <a
+            href={ECOSYSTEM_LINKS.huggingface}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            HuggingFace space
+          </a>
+          <span className="separator">•</span>
+          <a
             href={ECOSYSTEM_LINKS.license}
             target="_blank"
             rel="noopener noreferrer"
