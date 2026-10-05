@@ -24,14 +24,14 @@ test.describe('SVG to Video Web Smoke Test', () => {
     await expect(page.locator('label[for="resolution"]')).toBeVisible();
   });
 
-  test('should have a valid sitemap.xml with daily change frequency', async ({
+  test('should have a valid sitemap.xml with weekly change frequency', async ({
     page,
   }) => {
     const response = await page.goto('/sitemap.xml');
     expect(response?.status()).toBe(200);
     const body = await response?.text();
     expect(body).toContain('<loc>https://gehdoc.github.io/svg-to-video/</loc>');
-    expect(body).toContain('<changefreq>daily</changefreq>');
+    expect(body).toContain('<changefreq>weekly</changefreq>');
   });
 
   test('should disallow Storybook in robots.txt', async ({ page }) => {
