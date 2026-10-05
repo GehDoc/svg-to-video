@@ -184,3 +184,7 @@ Once connected, agent operators can use natural prompts to trigger media renderi
 
 - **Inspect Animation Metadata**:
   > _"Inspect `animation.svg` using `inspect_svg_animation` and tell me its detected duration and resolution."_
+
+## 🤗 Live Interactive Demo (HuggingFace Space)
+
+If you want to test the MCP server without installing Docker or Node.js locally, try our hosted demo: **[GehDoc/svg-to-video-mcp on HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)**

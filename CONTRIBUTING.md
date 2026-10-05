@@ -15,7 +15,7 @@ Key project documentation and resources:
 - **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)**: Technical architecture deep-dive, WebCodecs engine details, and the "Bake & Clean" frame rendering algorithm.
 - **[docs/SECURITY.md](./docs/SECURITY.md)**: Security and sandboxing standards, subprocess rules, temp file handling, and type guard validation.
 - **[docs/CLI.md](./docs/CLI.md)**: Detailed CLI options, arguments, input formats, and batch automation examples.
-- **[docs/MCP.md](./docs/MCP.md)**: Model Context Protocol setup, LLM configuration, and JSON-RPC tool schemas.
+- **[docs/MCP.md](./docs/MCP.md)**: Model Context Protocol setup, LLM configuration, and JSON-RPC tool schemas, and HuggingFace Space interactive demo.
 - **[docs/ANALYTICS.md](./docs/ANALYTICS.md)**: Umami Telemetry event tracking schema and domain helpers.
 - **[specs/pending/](./specs/pending/)**: Active feature specifications and roadmap task lists.
 - **[specs/completed/](./specs/completed/)**: Historical record of completed features and architectural decisions.
