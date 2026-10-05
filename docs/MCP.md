@@ -27,7 +27,7 @@ Add `svg-to-video` to your assistant's MCP configuration file (e.g. `claude_desk
   "mcpServers": {
     "svg-to-video": {
       "command": "npx",
-      "args": ["-y", "@gehdoc/svg-to-video", "mcp"]
+      "args": ["-y", "-p", "@gehdoc/svg-to-video", "svg-to-video-mcp"]
     }
   }
 }
@@ -62,7 +62,7 @@ Open **Cursor Settings > Features > MCP**:
 1. Click **+ Add New MCP Server**.
 2. **Name**: `svg-to-video`
 3. **Type**: `command`
-4. **Command**: `npx -y @gehdoc/svg-to-video mcp`
+4. **Command**: `npx -y -p @gehdoc/svg-to-video svg-to-video-mcp`
 
 ### Dockerized MCP Server (Zero Dependencies)
 

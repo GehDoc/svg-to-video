@@ -102,7 +102,7 @@ Connect `svg-to-video` to AI Assistants (Claude Desktop, Cursor, Antigravity, Au
      "mcpServers": {
        "svg-to-video": {
          "command": "npx",
-         "args": ["-y", "@gehdoc/svg-to-video", "mcp"]
+         "args": ["-y", "-p", "@gehdoc/svg-to-video", "svg-to-video-mcp"]
        }
      }
    }

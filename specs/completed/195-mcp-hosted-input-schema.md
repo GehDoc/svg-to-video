@@ -13,7 +13,7 @@ Optimize the Model Context Protocol (MCP) tool definitions so that unsupported p
 - **DRY Parameter Definitions**: Define shared constants (`SVG_FILE_PATH_PARAM`, `SVG_CONTENT_PARAM`) in `src/mcp.ts` where `svgFilePath` carries the conditional requirement (`required if svgContent is not provided`) and `svgContent` is `'Raw SVG XML string content.'`.
 - **Integration Tests**: Verify schema filtering in `tests/mcp.spec.ts` using `listTools()` for both default (`MCP_HOSTED=false`) and hosted (`MCP_HOSTED=true`) configurations, asserting `0.0.0-0` placeholder version contract stability for `mcp.json`.
 - **CI Pipeline Optimization**: Group Docker CLI and MCP integration tests (`test:cli` and `test:mcp`) under `docker-integration-tests` and unify root and web unit tests under `unit-tests` in `.github/workflows/ci.yml`.
-- **Documentation Alignment**: Update `docs/MCP.md` and `docs/SECURITY.md` to reflect synchronized parameter descriptions and hosted mode schema parameter omissions.
+- **Documentation Alignment**: Update `docs/MCP.md`, `README.md`, and `docs/SECURITY.md` to reflect synchronized parameter descriptions, corrected default values (`outDir`, `bgColor`), updated `-y -p @gehdoc/svg-to-video svg-to-video-mcp` execution snippets, and hosted mode schema parameter omissions.
 - **Version Bump**: Increment package patch version in `package.json` and `web/package.json`, keep `0.0.0-0` placeholders in `mcp.json`, and synchronize `package-lock.json`.
 
 ## ✅ Task List
@@ -25,7 +25,7 @@ Optimize the Model Context Protocol (MCP) tool definitions so that unsupported p
   - [x] Add assertions in `tests/mcp.spec.ts` to test tool schemas in hosted vs non-hosted mode and verify `0.0.0-0` placeholders in `mcp.json`
   - [x] Consolidate `test:cli` and `test:mcp` under `docker-integration-tests` and `npm run test:unit` under `unit-tests` in `.github/workflows/ci.yml`
 - [x] **Documentation & Versioning**
-  - [x] Update `docs/MCP.md` and `docs/SECURITY.md`
+  - [x] Update `docs/MCP.md`, `README.md`, and `docs/SECURITY.md`
   - [x] Bump patch version in `package.json` and `web/package.json`
   - [x] Keep `0.0.0-0` placeholders in `mcp.json`
   - [x] Run `npm install` to update `package-lock.json`
