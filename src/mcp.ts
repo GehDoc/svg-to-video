@@ -152,6 +152,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               default: 0,
             },
           },
+          ...(isHosted
+            ? { required: ['svgContent'] }
+            : {
+                anyOf: [
+                  { required: ['svgContent'] },
+                  { required: ['svgFilePath'] },
+                ],
+              }),
         },
       },
       {
@@ -164,6 +172,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             ...(isHosted ? {} : { svgFilePath: SVG_FILE_PATH_PARAM }),
             svgContent: SVG_CONTENT_PARAM,
           },
+          required: ['svgContent'],
         },
       },
     ],
