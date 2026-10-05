@@ -24,11 +24,24 @@ test.describe('SVG to Video Web Smoke Test', () => {
     await expect(page.locator('label[for="resolution"]')).toBeVisible();
   });
 
-  test('should have a valid sitemap.xml', async ({ page }) => {
+  test('should have a valid sitemap.xml with daily change frequency', async ({
+    page,
+  }) => {
     const response = await page.goto('/sitemap.xml');
     expect(response?.status()).toBe(200);
     const body = await response?.text();
     expect(body).toContain('<loc>https://gehdoc.github.io/svg-to-video/</loc>');
+    expect(body).toContain('<changefreq>daily</changefreq>');
+  });
+
+  test('should disallow Storybook in robots.txt', async ({ page }) => {
+    const response = await page.goto('/robots.txt');
+    expect(response?.status()).toBe(200);
+    const body = await response?.text();
+    expect(body).toContain('Disallow: /storybook/');
+    expect(body).toContain(
+      'Sitemap: https://gehdoc.github.io/svg-to-video/sitemap.xml'
+    );
   });
 
   test('should apply mobile layout breakpoint on small screen', async ({
