@@ -77,7 +77,12 @@ const jsonLd = {
     name: pkg.author,
     url: `https://github.com/${pkg.author}`,
   },
-  sameAs: [ECOSYSTEM_LINKS.github, ECOSYSTEM_LINKS.npm, ECOSYSTEM_LINKS.docker],
+  sameAs: [
+    ECOSYSTEM_LINKS.github,
+    ECOSYSTEM_LINKS.npm,
+    ECOSYSTEM_LINKS.docker,
+    ECOSYSTEM_LINKS.huggingface,
+  ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
   featureList: [
     'High-fidelity SVG to video conversion (MP4, WebM, MKV, MOV)',
