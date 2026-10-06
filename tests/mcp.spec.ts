@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import { OUTPUT_DIR_RELATIVE } from './helpers/e2e.js';
+import { OUTPUT_DIR_RELATIVE, getProbeMetadata } from './helpers/e2e.js';
 
 const outputDir = path.resolve(OUTPUT_DIR_RELATIVE, 'mcp');
 const exampleSvg = path.resolve('examples/example.svg');
@@ -162,6 +162,35 @@ describe('MCP Server Integration', () => {
       typeof resourceContent.resource.blob === 'string' &&
         resourceContent.resource.blob.length > 0
     );
+  });
+
+  test('should render SVG via render_svg_to_video tool with custom width and height', async () => {
+    const result = await client.callTool({
+      name: 'render_svg_to_video',
+      arguments: {
+        svgFilePath: exampleSvg,
+        outDir: outputDir,
+        fps: 24,
+        duration: 1,
+        format: 'mp4',
+        width: 1080,
+        height: 1080,
+      },
+    });
+
+    assert.strictEqual(result.isError, undefined);
+    assert.ok(Array.isArray(result.content));
+    const contentText = result.content[0] as { type: string; text: string };
+    assert.strictEqual(contentText.type, 'text');
+
+    const data = JSON.parse(contentText.text);
+    assert.strictEqual(data.success, true);
+    assert.strictEqual(data.format, 'mp4');
+    assert.ok(fs.existsSync(data.outputFile));
+
+    const probe = getProbeMetadata(data.outputFile);
+    assert.strictEqual(probe.width, '1080');
+    assert.strictEqual(probe.height, '1080');
   });
 });
 

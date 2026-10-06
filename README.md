@@ -82,6 +82,9 @@ npx @gehdoc/svg-to-video input.svg 60 ./out-dir
 # Node.js (explicit duration & GIF output)
 npx @gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent
 
+# Node.js (custom resolution dimensions e.g. vertical 1080x1920)
+npx @gehdoc/svg-to-video input.svg 60 ./out-dir --width 1080 --height 1920
+
 # Node.js (animated PNG output)
 npx @gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format apng
 

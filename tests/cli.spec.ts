@@ -148,6 +148,58 @@ describe('CLI Functionality', () => {
       assert.strictEqual(data.height, '1080');
     });
 
+    test('should render font-test.svg with custom formatted resolution (1080x1080)', () => {
+      const { inputFile, outputFile } = getTestPaths('font-test');
+      const result = spawnSync(
+        'npx',
+        [
+          'tsx',
+          'src/index.ts',
+          inputFile,
+          '24',
+          outputDir,
+          '-d',
+          '1',
+          '--resolution',
+          '1080x1080',
+          '--force',
+        ],
+        { encoding: 'utf-8' }
+      );
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+      const data = getProbeMetadata(outputFile);
+      assert.strictEqual(data.width, '1080');
+      assert.strictEqual(data.height, '1080');
+    });
+
+    test('should render font-test.svg with explicit --width and --height (1080x1920)', () => {
+      const { inputFile, outputFile } = getTestPaths('font-test');
+      const result = spawnSync(
+        'npx',
+        [
+          'tsx',
+          'src/index.ts',
+          inputFile,
+          '24',
+          outputDir,
+          '-d',
+          '1',
+          '--width',
+          '1080',
+          '--height',
+          '1920',
+          '--force',
+        ],
+        { encoding: 'utf-8' }
+      );
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+      const data = getProbeMetadata(outputFile);
+      assert.strictEqual(data.width, '1080');
+      assert.strictEqual(data.height, '1920');
+    });
+
     test('should render transparent-test.svg with explicit background color (blue)', () => {
       const { inputFile, outputFile } = getTestPaths('transparent-test');
       const framePath = outputFile.replace('.mp4', '.png');

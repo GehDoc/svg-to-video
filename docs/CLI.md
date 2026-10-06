@@ -11,6 +11,12 @@ The tool is built to run in a headless environment, making it perfect for CI/CD 
 # Run on-demand via npx from npmjs registry
 npx @gehdoc/svg-to-video <svgPath> <fps> <outDir> [options]
 
+# Custom video resolution (e.g., vertical video 1080x1920)
+npx @gehdoc/svg-to-video input.svg 60 ./out --width 1080 --height 1920
+
+# Formatted resolution string (e.g., square video 1080x1080)
+npx @gehdoc/svg-to-video input.svg 60 ./out --resolution 1080x1080
+
 # Run official Docker image from Docker Hub
 docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/<svgPath> <fps> /data/<outDir> [options]
 ```
@@ -43,8 +49,10 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 | `--format <format>`     | Output format: `mp4`, `webm`, `mkv`, `mov`, `gif`, `apng`, or `png`. (Default: `webm` if `--transparent`, otherwise `mp4`)                                    |
 | `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                                                                            |
 | `-f, --force`           | Overwrite the output video if it already exists.                                                                                                              |
-| `--resolution <preset>` | Resolution preset: `720p`, `1080p`, or `original`. (Default: `original`)                                                                                      |
+| `--resolution <preset>` | Resolution preset (`720p`, `1080p`, `original`) or custom dimension string (`WIDTHxHEIGHT`, e.g., `1080x1080`). (Default: `original`)                         |
 | `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`.                                                          |
+| `-w, --width <pixels>`  | Custom width in pixels. If height is omitted, aspect ratio is preserved.                                                                                      |
+| `--height <pixels>`     | Custom height in pixels. If width is omitted, aspect ratio is preserved.                                                                                      |
 | `--transparent`         | Render with a transparent background (supported for `webm`, `gif`, `apng`, `mov`). (Cannot be used with `--bg-color`)                                         |
 | `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`) - (Cannot be used with `--transparent`)                                                                  |
 | `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Mandatory attribution is automatically appended to the 'comment' tag for video and image exports. |
