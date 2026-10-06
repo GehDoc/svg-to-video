@@ -9,6 +9,7 @@
 - [npm Package](https://www.npmjs.com/package/@gehdoc/svg-to-video): CLI tool and programmatic Node.js API.
 - [Docker Image](https://hub.docker.com/r/gehdoc/svg-to-video): Headless containerized rendering environment.
 - [MCP Server Registry](https://registry.modelcontextprotocol.io/v0/servers/io.github.GehDoc%2Fsvg-to-video/versions/latest): Official Model Context Protocol registration for AI agents.
+- [HuggingFace Space](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp): Live hosted MCP server demo (Python wrapper, no local install required).
 
 ## Documentation & Guides
 
