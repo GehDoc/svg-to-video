@@ -17,7 +17,7 @@ This skill enables AI agents to render animated vector graphics (SVGs with CSS a
 1. **Format Export**: Converts SVGs into `mp4`, `webm`, `gif`, `apng`, `mkv`, and `mov`.
 2. **Transparent Backgrounds**: Supports full alpha-channel transparency for `webm`, `gif`, `apng`, and `mov`.
 3. **Auto-Duration Detection**: Automatically detects CSS keyframe and animation loop durations if not specified.
-4. **Resolution Presets**: Supports `original`, `1080p`, `720p`, and custom scaling factors (1x-4x).
+4. **Resolution Presets & Custom Dimensions**: Supports `original`, `1080p`, `720p`, custom scaling factors (1x-4x), explicit `--width` and `--height` parameters (e.g. 1080x1920), or formatted resolution strings (e.g., `1080x1080`).
 
 ## Usage Guidelines for AI Agents
 
@@ -26,11 +26,12 @@ When asked to generate a video or GIF from an SVG animation:
 1. **Option A: Via MCP Tools (Recommended)**:
    - Call `render_svg_to_video` directly passing either `svgContent` (raw XML string) or `svgFilePath`.
    - Set `transparent: true` and `format: "webm"` or `format: "gif"` if a transparent overlay is requested.
+   - Set `width` and `height` parameters or custom `resolution: "1080x1920"` for specific video aspect ratios (e.g. square 1080x1080, vertical 1080x1920).
 
 2. **Option B: Via CLI Command**:
 
    ```bash
-   npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent --json
+   npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --width 1080 --height 1920 --format webm --transparent --json
    ```
 
 3. **Option C: Via Docker**:
