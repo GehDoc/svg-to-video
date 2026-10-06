@@ -12,7 +12,7 @@ describe('validateOptions', () => {
           transparent: false,
           bgColor: '#ffffff',
         }),
-      /--scale can only be used with --resolution original/
+      /--scale can only be used with --resolution original and without custom width or height options/
     );
   });
 
@@ -26,7 +26,46 @@ describe('validateOptions', () => {
           bgColor: '#ffffff',
           width: 500,
         }),
-      /--scale can only be used with --resolution original/
+      /--scale can only be used with --resolution original and without custom width or height options/
+    );
+  });
+
+  test('should throw error when custom resolution string and width/height are used together', () => {
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: '1080x1080',
+          transparent: false,
+          bgColor: '#ffffff',
+          width: 500,
+        }),
+      /--width and --height cannot be used when a custom resolution string/
+    );
+  });
+
+  test('should throw error when width or height exceeds maximum limit of 7680px', () => {
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          bgColor: '#ffffff',
+          width: 10000,
+        }),
+      /Width exceeds maximum supported limit of 7680 pixels/
+    );
+
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: '10000x1080',
+          transparent: false,
+          bgColor: '#ffffff',
+        }),
+      /Custom resolution dimensions must not exceed 7680 pixels/
     );
   });
 

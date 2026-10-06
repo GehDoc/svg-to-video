@@ -102,7 +102,7 @@ Resources:
     .option('-w, --width <pixels>', 'custom width in pixels', (v) =>
       parseInt(v, 10)
     )
-    .option('--height <pixels>', 'custom height in pixels', (v) =>
+    .option('-H, --height <pixels>', 'custom height in pixels', (v) =>
       parseInt(v, 10)
     )
     .option('--transparent', 'render with a transparent background', false)

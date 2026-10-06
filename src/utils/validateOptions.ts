@@ -1,5 +1,7 @@
 import { formatRegistry } from '../formats/registry.js';
 
+const MAX_DIMENSION_PIXELS = 7680; // Maximum supported resolution dimension (8K UHD)
+
 /**
  * Validates CLI options
  */
@@ -26,11 +28,23 @@ export function validateOptions(options: ValidateOptionsParams): void {
     throw new Error('Width must be a positive number.');
   }
 
+  if (options.width !== undefined && options.width > MAX_DIMENSION_PIXELS) {
+    throw new Error(
+      `Width exceeds maximum supported limit of ${MAX_DIMENSION_PIXELS} pixels.`
+    );
+  }
+
   if (
     options.height !== undefined &&
     (isNaN(options.height) || options.height <= 0)
   ) {
     throw new Error('Height must be a positive number.');
+  }
+
+  if (options.height !== undefined && options.height > MAX_DIMENSION_PIXELS) {
+    throw new Error(
+      `Height exceeds maximum supported limit of ${MAX_DIMENSION_PIXELS} pixels.`
+    );
   }
 
   const isPreset = ['original', '1080p', '720p'].includes(options.resolution);
@@ -47,6 +61,16 @@ export function validateOptions(options: ValidateOptionsParams): void {
     if (resW <= 0 || resH <= 0) {
       throw new Error('Custom resolution dimensions must be positive numbers.');
     }
+    if (resW > MAX_DIMENSION_PIXELS || resH > MAX_DIMENSION_PIXELS) {
+      throw new Error(
+        `Custom resolution dimensions must not exceed ${MAX_DIMENSION_PIXELS} pixels.`
+      );
+    }
+    if (options.width !== undefined || options.height !== undefined) {
+      throw new Error(
+        '--width and --height cannot be used when a custom resolution string (e.g. 1080x1080) is provided.'
+      );
+    }
   }
 
   if (
@@ -55,7 +79,9 @@ export function validateOptions(options: ValidateOptionsParams): void {
       options.width !== undefined ||
       options.height !== undefined)
   ) {
-    throw new Error('--scale can only be used with --resolution original.');
+    throw new Error(
+      '--scale can only be used with --resolution original and without custom width or height options.'
+    );
   }
 
   if (options.transparent && options.bgColor !== '#ffffff') {
