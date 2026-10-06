@@ -119,23 +119,21 @@ The MCP server (`src/mcp.ts`) exposes two primary tools over `stdio` (or SSE via
 
 Converts raw SVG content or an SVG file path into a video or animated image file.
 
-
-| Parameter     | Type      | Default                 | Description                                                                                                                |
-| :------------ | :-------- | :---------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `svgFilePath` | `string`  | —                       | Path to the input `.svg` file.                                                                                             |
-| `svgContent`  | `string`  | —                       | Raw SVG XML string (if `svgFilePath` is not provided).                                                                     |
-| `outDir`      | `string`  | current dir             | Directory to save output file.                                                                                             |
-| `fps`         | `number`  | `60`                    | Frames per second.                                                                                                         |
-| `duration`    | `number`  | _auto-detected_         | Desired animation duration in seconds.                                                                                     |
-| `format`      | `string`  | `mp4` / `webm`          | Output format (`mp4`, `webm`, `gif`, `apng`, `mkv`, `mov`).                                                                |
-| `transparent` | `boolean` | `false`                 | Enable full alpha-channel background transparency.                                                                         |
-| `resolution`  | `string`  | `original`              | Resolution preset (`original`, `1080p`, `720p`) or custom formatted string (e.g. `1080x1080`, `1080x1920`).                |
-| `scale`       | `number`  | `1`                     | Scale factor (1-4) for original resolution.                                                                                |
-| `width`       | `number`  | —                       | Custom output video width in pixels.                                                                                       |
-| `height`      | `number`  | —                       | Custom output video height in pixels.                                                                                      |
-| `bgColor`     | `string`  | `#ffffff`               | Background hex color (cannot be used with `transparent`).                                                                  |
-| `hold`        | `number`  | `0`                     | Seconds to freeze the final frame.                                                                                         |
-
+| Parameter     | Type      | Default         | Description                                                                                                 |
+| :------------ | :-------- | :-------------- | :---------------------------------------------------------------------------------------------------------- |
+| `svgFilePath` | `string`  | —               | Path to the input `.svg` file.                                                                              |
+| `svgContent`  | `string`  | —               | Raw SVG XML string (if `svgFilePath` is not provided).                                                      |
+| `outDir`      | `string`  | current dir     | Directory to save output file.                                                                              |
+| `fps`         | `number`  | `60`            | Frames per second.                                                                                          |
+| `duration`    | `number`  | _auto-detected_ | Desired animation duration in seconds.                                                                      |
+| `format`      | `string`  | `mp4` / `webm`  | Output format (`mp4`, `webm`, `gif`, `apng`, `mkv`, `mov`).                                                 |
+| `transparent` | `boolean` | `false`         | Enable full alpha-channel background transparency.                                                          |
+| `resolution`  | `string`  | `original`      | Resolution preset (`original`, `1080p`, `720p`) or custom formatted string (e.g. `1080x1080`, `1080x1920`). |
+| `scale`       | `number`  | `1`             | Scale factor (1-4) for original resolution.                                                                 |
+| `width`       | `number`  | —               | Custom output video width in pixels.                                                                        |
+| `height`      | `number`  | —               | Custom output video height in pixels.                                                                       |
+| `bgColor`     | `string`  | `#ffffff`       | Background hex color (cannot be used with `transparent`).                                                   |
+| `hold`        | `number`  | `0`             | Seconds to freeze the final frame.                                                                          |
 
 ### 2. `inspect_svg_animation`
 
