@@ -216,6 +216,27 @@ describe('CLI Functionality', () => {
       ]);
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
+      const data = getProbeMetadata(outputFile);
+      assert.strictEqual(data.width, '1080');
+      assert.strictEqual(data.height, '1920');
+    });
+
+    test('should render transparent-test.svg with explicit background color (blue)', () => {
+      const { inputFile, outputFile } = getTestPaths('transparent-test');
+      const framePath = outputFile.replace('.mp4', '.png');
+
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--bg-color',
+        '#0000FF',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
 
       assert.ok(
         extractFrame(outputFile, framePath),

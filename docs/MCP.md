@@ -119,7 +119,6 @@ The MCP server (`src/mcp.ts`) exposes two primary tools over `stdio` (or SSE via
 
 Converts raw SVG content or an SVG file path into a video or animated image file.
 
-<<<<<<< HEAD
 
 | Parameter     | Type      | Default                 | Description                                                                                                                |
 | :------------ | :-------- | :---------------------- | :------------------------------------------------------------------------------------------------------------------------- |
@@ -136,22 +135,7 @@ Converts raw SVG content or an SVG file path into a video or animated image file
 | `height`      | `number`  | —                       | Custom output video height in pixels.                                                                                      |
 | `bgColor`     | `string`  | `#ffffff`               | Background hex color (cannot be used with `transparent`).                                                                  |
 | `hold`        | `number`  | `0`                     | Seconds to freeze the final frame.                                                                                         |
-| =======       |
-| Parameter     | Type      | Default                 | Description                                                                                                                |
-| :------------ | :-------- | :---------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `svgFilePath` | `string`  | —                       | Path to the input `.svg` file (required if `svgContent` is not provided; local mode only, omitted when `MCP_HOSTED=true`). |
-| `svgContent`  | `string`  | —                       | Raw SVG XML string content.                                                                                                |
-| `outDir`      | `string`  | — (ephemeral / in-band) | Directory to save output file (local mode only, omitted when `MCP_HOSTED=true`). Omit to deliver purely in-band media.     |
-| `fps`         | `number`  | `60`                    | Frames per second.                                                                                                         |
-| `duration`    | `number`  | _auto-detected_         | Desired animation duration in seconds.                                                                                     |
-| `format`      | `string`  | `mp4` / `webm`          | Output format (`mp4`, `webm`, `gif`, `apng`, `mkv`, `mov`).                                                                |
-| `transparent` | `boolean` | `false`                 | Enable full alpha-channel background transparency.                                                                         |
-| `resolution`  | `string`  | `original`              | Resolution preset (`original`, `1080p`, `720p`).                                                                           |
-| `scale`       | `number`  | `1`                     | Scale factor (1-4) for original resolution.                                                                                |
-| `bgColor`     | `string`  | —                       | Background hex color (e.g. `#ffffff`; cannot be used with `transparent`).                                                  |
-| `hold`        | `number`  | `0`                     | Seconds to freeze the final frame.                                                                                         |
 
-> > > > > > > origin/main
 
 ### 2. `inspect_svg_animation`
 
