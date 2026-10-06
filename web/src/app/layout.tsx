@@ -91,6 +91,7 @@ const jsonLd = {
     'Metadata embedding across video and animated images',
     'Frame-accurate Web Animations API scrubbing',
     'Model Context Protocol (MCP) server & Agent Skill support',
+    'HuggingFace hosted MCP server (zero-install demo)',
     '100% Client-side serverless browser rendering',
     'CLI & Docker automation support',
   ],

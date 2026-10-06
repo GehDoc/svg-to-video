@@ -190,3 +190,5 @@ Once connected, agent operators can use natural prompts to trigger media renderi
 ## 🤗 Live Interactive Demo (HuggingFace Space)
 
 If you want to test the MCP server without installing Docker or Node.js locally, try our hosted demo: **[GehDoc/svg-to-video-mcp on HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)**
+
+> **Architecture note**: The HuggingFace Space exposes the MCP server via a **Python wrapper** (not a Dockerfile) for cost reasons — it installs and invokes the npm package at runtime. The Space is backed by a dedicated **HuggingFace repository** ([`GehDoc/svg-to-video-mcp`](https://huggingface.co/GehDoc/svg-to-video-mcp)) that requires **Python development** for any changes to the hosting layer.

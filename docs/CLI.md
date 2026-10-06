@@ -9,13 +9,13 @@ The tool is built to run in a headless environment, making it perfect for CI/CD 
 
 ```bash
 # Run on-demand via npx from npmjs registry
-npx @gehdoc/svg-to-video <svgPath> <fps> <outDir> [options]
+npx -y -p @gehdoc/svg-to-video svg-to-video <svgPath> <fps> <outDir> [options]
 
 # Custom video resolution (e.g., vertical video 1080x1920)
-npx @gehdoc/svg-to-video input.svg 60 ./out --width 1080 --height 1920
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out --width 1080 --height 1920
 
 # Formatted resolution string (e.g., square video 1080x1080)
-npx @gehdoc/svg-to-video input.svg 60 ./out --resolution 1080x1080
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out --resolution 1080x1080
 
 # Run official Docker image from Docker Hub
 docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/<svgPath> <fps> /data/<outDir> [options]

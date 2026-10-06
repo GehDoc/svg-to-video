@@ -33,6 +33,7 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - `mcp.json` (MCP server registry manifest description and metadata)
    - GitHub Repository Metadata (Description & Topics via `gh repo edit`)
    - GitHub Releases: Draft and publish GitHub release (`vX.Y.Z` tag, title `X.Y.Z - Title`) per [CONTRIBUTING.md](./CONTRIBUTING.md#-release-note-best-practices). Do not commit release note `.md` files to git.
+   - **External surfaces** _(manual)_: Check HuggingFace Space README and Docker Hub overview per the [SEO & Metadata Audit Checklist in CONTRIBUTING.md](./CONTRIBUTING.md#-seo--metadata-audit-checklist).
 7. **Clean Up**: Once code, tests, documentation, and SEO audits are complete and verified, update the spec status to `🟢 Completed` and move the spec file from `specs/pending/` to `specs/completed/`.
 
 ## 🛠 How to Create a New Spec

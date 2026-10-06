@@ -159,7 +159,7 @@ Contributors must distinguish between testing published remote artifacts and bui
 
 ```bash
 # Test on-demand remote package execution via npx (npmjs registry)
-npx @gehdoc/svg-to-video input.svg 60 ./out-dir
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir
 
 # Test published Docker Hub container execution
 docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir --format webm
@@ -527,3 +527,5 @@ When adding new features or core capabilities, systematically update public-faci
      ```
 6. **Docker Hub Overview Metadata**:
    - Manually update the repository **Overview** text and **Short Description** on Docker Hub ([hub.docker.com/r/gehdoc/svg-to-video](https://hub.docker.com/r/gehdoc/svg-to-video)) via the web UI whenever releasing new features or updating documentation.
+7. **HuggingFace Space README** _(manual)_:
+   - If the MCP interface, setup instructions, or environment variables changed, update the README in the [`GehDoc/svg-to-video-mcp`](https://huggingface.co/GehDoc/svg-to-video-mcp) HuggingFace repository. The Space is backed by a Python wrapper (not a Dockerfile) and requires **Python development** for any hosting-layer changes.
