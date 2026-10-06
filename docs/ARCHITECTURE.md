@@ -218,3 +218,7 @@ The CLI uses standard `puppeteer.launch` with optional environment configuration
 
 1. **Default**: Launches Puppeteer's Chrome instance.
 2. **Environment Variable**: Respects `process.env.PUPPETEER_EXECUTABLE_PATH` if provided (e.g. for custom system Chromium binaries in CI/Docker environments).
+
+### Process Signals & Telemetry Flushing
+
+When the CLI completes rendering, encounters an error, or receives a process interrupt signal (`SIGINT` / `SIGTERM`), execution paths invoke `flushAnalytics()` in `src/utils/analytics.ts` to await active non-blocking Umami HTTP requests before process termination. Upon receiving `SIGINT` or `SIGTERM`, signal listeners emit `conversion-cancel`, clean up temporary `.png` frames (unless `--keep-frames` is active), flush pending telemetry payloads, and exit cleanly with status code 130.

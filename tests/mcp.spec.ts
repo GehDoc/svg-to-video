@@ -21,6 +21,10 @@ describe('MCP Server Integration', () => {
     transport = new StdioClientTransport({
       command: 'npx',
       args: ['tsx', 'src/mcp.ts'],
+      env: {
+        ...process.env,
+        NODE_ENV: 'test',
+      },
     });
 
     client = new Client(
@@ -45,11 +49,32 @@ describe('MCP Server Integration', () => {
     }
   });
 
-  test('should list MCP tools', async () => {
+  test('should list MCP tools and expose svgFilePath and outDir when MCP_HOSTED is false', async () => {
     const response = await client.listTools();
     const toolNames = response.tools.map((t) => t.name);
     assert.ok(toolNames.includes('render_svg_to_video'));
     assert.ok(toolNames.includes('inspect_svg_animation'));
+
+    const renderTool = response.tools.find(
+      (t) => t.name === 'render_svg_to_video'
+    );
+    assert.ok(renderTool);
+    const renderProps =
+      (renderTool.inputSchema as { properties?: Record<string, unknown> })
+        .properties || {};
+    assert.ok('svgFilePath' in renderProps);
+    assert.ok('outDir' in renderProps);
+    assert.ok('svgContent' in renderProps);
+
+    const inspectTool = response.tools.find(
+      (t) => t.name === 'inspect_svg_animation'
+    );
+    assert.ok(inspectTool);
+    const inspectProps =
+      (inspectTool.inputSchema as { properties?: Record<string, unknown> })
+        .properties || {};
+    assert.ok('svgFilePath' in inspectProps);
+    assert.ok('svgContent' in inspectProps);
   });
 
   test('should inspect SVG animation via inspect_svg_animation', async () => {
@@ -69,7 +94,7 @@ describe('MCP Server Integration', () => {
     assert.strictEqual(typeof data.hasAnimation, 'boolean');
   });
 
-  test('should render SVG via render_svg_to_video tool', async () => {
+  test('should render SVG via render_svg_to_video tool with explicit outDir', async () => {
     const result = await client.callTool({
       name: 'render_svg_to_video',
       arguments: {
@@ -90,6 +115,53 @@ describe('MCP Server Integration', () => {
     assert.strictEqual(data.success, true);
     assert.strictEqual(data.format, 'gif');
     assert.ok(fs.existsSync(data.outputFile));
+
+    const imageContent = result.content[1] as {
+      type: string;
+      data: string;
+      mimeType: string;
+    };
+    assert.strictEqual(imageContent.type, 'image');
+    assert.strictEqual(imageContent.mimeType, 'image/gif');
+    assert.ok(
+      typeof imageContent.data === 'string' && imageContent.data.length > 0
+    );
+  });
+
+  test('should render SVG via render_svg_to_video tool in ephemeral mode when outDir is omitted', async () => {
+    const rawSvg = fs.readFileSync(exampleSvg, 'utf-8');
+    const result = await client.callTool({
+      name: 'render_svg_to_video',
+      arguments: {
+        svgContent: rawSvg,
+        fps: 24,
+        duration: 1,
+        format: 'webm',
+      },
+    });
+
+    assert.strictEqual(result.isError, undefined);
+    assert.ok(Array.isArray(result.content));
+
+    const contentText = result.content[0] as { type: string; text: string };
+    assert.strictEqual(contentText.type, 'text');
+
+    const data = JSON.parse(contentText.text);
+    assert.strictEqual(data.success, true);
+    assert.strictEqual(data.format, 'webm');
+    assert.strictEqual(data.outputFile, undefined);
+
+    const resourceContent = result.content[1] as {
+      type: string;
+      resource: { uri: string; mimeType: string; blob: string };
+    };
+    assert.strictEqual(resourceContent.type, 'resource');
+    assert.strictEqual(resourceContent.resource.mimeType, 'video/webm');
+    assert.strictEqual(resourceContent.resource.uri, 'urn:svg-to-video:media');
+    assert.ok(
+      typeof resourceContent.resource.blob === 'string' &&
+        resourceContent.resource.blob.length > 0
+    );
   });
 
   test('should render SVG via render_svg_to_video tool with custom width and height', async () => {
@@ -119,6 +191,98 @@ describe('MCP Server Integration', () => {
     const probe = getProbeMetadata(data.outputFile);
     assert.strictEqual(probe.width, '1080');
     assert.strictEqual(probe.height, '1080');
+  });
+});
+
+describe('MCP Server Security Sandboxing (MCP_HOSTED=true)', () => {
+  let hostedClient: Client;
+  let hostedTransport: StdioClientTransport;
+
+  before(async () => {
+    hostedTransport = new StdioClientTransport({
+      command: 'npx',
+      args: ['tsx', 'src/mcp.ts'],
+      env: {
+        ...process.env,
+        MCP_HOSTED: 'true',
+        NODE_ENV: 'test',
+      },
+    });
+
+    hostedClient = new Client(
+      { name: 'test-hosted-client', version: '1.0.0' },
+      { capabilities: {} }
+    );
+
+    await hostedClient.connect(hostedTransport);
+  });
+
+  after(async () => {
+    if (hostedClient) {
+      await hostedClient.close();
+    }
+  });
+
+  test('should omit svgFilePath and outDir from tool schemas when MCP_HOSTED=true', async () => {
+    const response = await hostedClient.listTools();
+    const renderTool = response.tools.find(
+      (t) => t.name === 'render_svg_to_video'
+    );
+    assert.ok(renderTool);
+    const renderProps =
+      (renderTool.inputSchema as { properties?: Record<string, unknown> })
+        .properties || {};
+    assert.strictEqual('svgFilePath' in renderProps, false);
+    assert.strictEqual('outDir' in renderProps, false);
+    assert.ok('svgContent' in renderProps);
+
+    const inspectTool = response.tools.find(
+      (t) => t.name === 'inspect_svg_animation'
+    );
+    assert.ok(inspectTool);
+    const inspectProps =
+      (inspectTool.inputSchema as { properties?: Record<string, unknown> })
+        .properties || {};
+    assert.strictEqual('svgFilePath' in inspectProps, false);
+    assert.ok('svgContent' in inspectProps);
+  });
+
+  test('inspect_svg_animation should reject svgFilePath when MCP_HOSTED=true', async () => {
+    const result = await hostedClient.callTool({
+      name: 'inspect_svg_animation',
+      arguments: { svgFilePath: exampleSvg },
+    });
+
+    assert.strictEqual(result.isError, true);
+    assert.ok(Array.isArray(result.content));
+    const contentText = result.content[0] as { type: string; text: string };
+    assert.match(contentText.text, /forbidden when MCP_HOSTED/i);
+  });
+
+  test('render_svg_to_video should reject custom outDir when MCP_HOSTED=true', async () => {
+    const resultOutDir = await hostedClient.callTool({
+      name: 'render_svg_to_video',
+      arguments: {
+        svgContent: '<svg></svg>',
+        outDir: outputDir,
+      },
+    });
+    assert.strictEqual(resultOutDir.isError, true);
+  });
+
+  test('inspect_svg_animation should accept svgContent when MCP_HOSTED=true', async () => {
+    const rawSvg = fs.readFileSync(exampleSvg, 'utf-8');
+    const result = await hostedClient.callTool({
+      name: 'inspect_svg_animation',
+      arguments: { svgContent: rawSvg },
+    });
+
+    assert.strictEqual(result.isError, undefined);
+    assert.ok(Array.isArray(result.content));
+    const contentText = result.content[0] as { type: string; text: string };
+    assert.strictEqual(contentText.type, 'text');
+    const data = JSON.parse(contentText.text);
+    assert.strictEqual(typeof data.hasAnimation, 'boolean');
   });
 });
 
@@ -169,8 +333,8 @@ describe('mcp.json Manifest Contract Verification', () => {
     // 3. Versioning sync
     assert.strictEqual(
       mcp.version,
-      pkg.version,
-      'mcp.version must match root package.json version'
+      '0.0.0-0',
+      'mcp.version in source control must remain placeholder 0.0.0-0'
     );
 
     // 4. Website & Repository Metadata
@@ -234,8 +398,8 @@ describe('mcp.json Manifest Contract Verification', () => {
     assert.strictEqual(npmPkg.identifier, pkg.name);
     assert.strictEqual(
       npmPkg.version,
-      pkg.version,
-      'npm package version must match package.json version'
+      '0.0.0-0',
+      'npm package version in source control must remain placeholder 0.0.0-0'
     );
     assert.strictEqual(npmPkg.registryBaseUrl, undefined);
     assert.strictEqual(npmPkg.transport?.type, 'stdio');
@@ -245,6 +409,11 @@ describe('mcp.json Manifest Contract Verification', () => {
       (p: { registryType: string }) => p.registryType === 'oci'
     );
     assert.ok(ociPkg, 'oci package entry must be present');
+    assert.strictEqual(
+      ociPkg.identifier,
+      'docker.io/gehdoc/svg-to-video:0.0.0-0',
+      'oci package identifier in source control must use placeholder tag 0.0.0-0'
+    );
     assert.strictEqual(ociPkg.registryBaseUrl, undefined);
     assert.strictEqual(ociPkg.transport?.type, 'stdio');
     assert.strictEqual(ociPkg.runtimeHint, 'docker');

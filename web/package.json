@@ -1,6 +1,6 @@
 {
   "name": "@svg-to-video/web",
-  "version": "0.27.7",
+  "version": "0.28.4",
   "description": "High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) and optimized animated image converter (aPNG, GIF) with perfect alpha-channel transparency.",
   "author": "GehDoc",
   "repository": {
@@ -37,7 +37,7 @@
     "coi-serviceworker": "^0.1.7",
     "gifenc": "^1.0.3",
     "mediabunny": "^1.39.2",
-    "next": "^16.3.3",
+    "next": "^16.3.6",
     "react": "^19.2.4",
     "react-dom": "^19.3.0",
     "react-icons": "^5.6.0"

@@ -7,6 +7,7 @@ import { injectApngMetadata } from '#shared/apngMetadataInjector.js';
 export class ApngFormatGenerator implements CLIFormatGenerator {
   readonly id = 'apng';
   readonly extensions = ['.apng', '.png'];
+  readonly mimeType = 'image/png';
   readonly supportsAlpha = true;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {

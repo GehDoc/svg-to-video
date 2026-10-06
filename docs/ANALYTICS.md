@@ -83,7 +83,8 @@ This pattern encapsulates timing measurement (`performance.now()` / `Date.now()`
 - **Paths & Hostname**: Requests set `url` to `/cli` or `/mcp` (distinguishing the interface) and `hostname` to `gehdoc.github.io` (same as the Web Studio, allowing unified session tracking in the Umami dashboard).
 - **User-Agent Header**: `Mozilla/5.0 Umami/<node-version>` (SDK default — accepted by Umami's server).
 - **Shared Constants**: `UMAMI_HOST_URL`, `UMAMI_WEBSITE_ID`, and `UMAMI_WEBSITE_HOSTNAME` are declared once in [`shared/analytics-schema.ts`](../shared/analytics-schema.ts) and imported by both the CLI/MCP analytics module and the Web Studio layout.
-- **Fail-Safe Isolation**: All network calls are non-blocking with 3-second timeouts and silent exception handling. Failures never affect CLI exit codes or MCP `stdio` communication streams.
+- **Fail-Safe Isolation & Promise Flushing**: All network calls are non-blocking with 3-second timeouts and silent exception handling. To ensure asynchronous telemetry payloads (`conversion-success`, `conversion-failed`, `conversion-cancel`) complete before process termination, the CLI module tracks active HTTP promises and awaits `flushAnalytics()` before process exit, fatal error output, or process signal interrupts.
+- **Process Signal Handling**: SIGINT (`Ctrl+C`) and SIGTERM signals trigger `tracker.cancel()`, clean up temporary frame files, await pending analytics flush, and exit cleanly with status code 130.
 - **Helper**: `src/utils/analytics.ts` and `shared/rendererTracking.ts`.
 
 ## Privacy & Opt-Out

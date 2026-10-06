@@ -5,6 +5,7 @@ import { mergeMetadataComments } from '#shared/metadata.js';
 export class MovFormatGenerator implements CLIFormatGenerator {
   readonly id = 'mov';
   readonly extensions = ['.mov'];
+  readonly mimeType = 'video/quicktime';
   readonly supportsAlpha = true;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {

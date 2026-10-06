@@ -66,7 +66,7 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 | `PUPPETEER_EXECUTABLE_PATH` | Runtime | Explicit path to host Chrome or Chromium binary executable for rendering fallback.                                                                |
 | `PUPPETEER_ARGS`            | Runtime | Additional arguments passed directly to the Puppeteer `launch` method. Useful for custom browser flags (e.g., `--proxy-server`, `--disable-gpu`). |
 
-## Output Handling
+## Output Handling & Process Signals
 
 The tool creates the output file in the specified `<outDir>`. The filename will match your input file with the chosen extension (`.mp4`, `.webm`, `.gif`, `.apng`, etc.). By default, it will **fail** if the destination file already exists to prevent accidental overwrites. Use `-f` to bypass this.
 
@@ -75,3 +75,7 @@ The tool creates the output file in the specified `<outDir>`. The filename will 
 
 - **Input:** `my-animation.svg` (`--format gif`)
 - **Result:** `./out-dir/my-animation.gif`
+
+### Process Cancellation (SIGINT / SIGTERM)
+
+If execution is interrupted (e.g. via `Ctrl+C` / `SIGINT` or `SIGTERM`), the CLI cleanly cancels rendering, emits a `conversion-cancel` telemetry event, cleans up temporary frames (unless `--keep-frames` was passed), flushes analytics, and exits with status code 130.

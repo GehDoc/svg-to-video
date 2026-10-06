@@ -1,5 +1,9 @@
 import { useEffect, useState, type ChangeEvent, useCallback } from 'react';
-import type { ResolutionPreset, RenderState } from '../hooks/useRenderer';
+import {
+  calculateFinalDimensions,
+  type ResolutionPreset,
+  type RenderState,
+} from '../hooks/useRenderer';
 import { isTransparencySupported } from '../utils/isTransparencySupported';
 import {
   discoverFormats,
@@ -44,7 +48,12 @@ interface ConfigPanelProps {
   state: RenderState;
   onStartRender: () => void;
   validationError: string | null;
-  originalDim: { isDimensionsDetected: boolean };
+  originalDim: {
+    width?: number;
+    height?: number;
+    isDimensionsDetected: boolean;
+  };
+  targetDim?: { width: number; height: number };
   renderedUrl: string | null;
   metadata: VideoMetadata;
   onMetadataChange: (m: VideoMetadata) => void;
@@ -79,6 +88,7 @@ export const ConfigPanel = ({
   onStartRender,
   validationError,
   originalDim,
+  targetDim,
   renderedUrl,
   metadata,
   onMetadataChange,
@@ -91,6 +101,15 @@ export const ConfigPanel = ({
 
   const isRenderingOrSuccess = state.isRendering || !!renderedUrl;
   const isOptionsDisabled = isRenderingOrSuccess || !svgContent;
+
+  const effectiveTargetDim =
+    targetDim ||
+    (originalDim.width && originalDim.height
+      ? calculateFinalDimensions(originalDim.width, originalDim.height, {
+          preset,
+          scale,
+        })
+      : null);
 
   const processFile = (file: File, method: 'file-picker' | 'drag-and-drop') => {
     const reader = new FileReader();
@@ -181,6 +200,17 @@ export const ConfigPanel = ({
               <option value="720p">720p (Fit)</option>
               <option value="1080p">1080p (Fit)</option>
             </select>
+            {svgContent &&
+              originalDim.isDimensionsDetected &&
+              effectiveTargetDim && (
+                <p
+                  className="hint-text hint-text--info"
+                  aria-disabled={isOptionsDisabled}
+                >
+                  Target resolution: {effectiveTargetDim.width} x{' '}
+                  {effectiveTargetDim.height} px
+                </p>
+              )}
             {svgContent && !originalDim.isDimensionsDetected && (
               <p
                 className="hint-text"
@@ -322,9 +352,27 @@ export const ConfigPanel = ({
               }
               disabled={isOptionsDisabled}
             >
-              <option value="optimal">Optimal (Fast)</option>
-              <option value="high-fidelity">High Fidelity (Slow)</option>
+              <option
+                value="optimal"
+                title="Bakes key animation properties into frames for faster rendering."
+              >
+                Optimal (Fast)
+              </option>
+              <option
+                value="high-fidelity"
+                title="Bakes all computed SVG and CSS properties into frames for maximum accuracy."
+              >
+                High Fidelity (Slow)
+              </option>
             </select>
+            <p
+              className="hint-text hint-text--info"
+              aria-disabled={isOptionsDisabled}
+            >
+              {captureMethod === 'optimal'
+                ? 'Optimal (Fast): Bakes key animation properties into frames. Faster export for standard SVGs.'
+                : 'High Fidelity (Slow): Bakes all computed SVG and CSS properties into frames for maximum visual accuracy.'}
+            </p>
           </div>
         </section>
 

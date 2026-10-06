@@ -16,6 +16,7 @@ import {
   parseSvgDimensions,
   calculateAspectRatio,
 } from '#shared/analyzeSvgAnimation.js';
+import { formatRegistry } from './formats/registry.js';
 import { isLoggerJsonOutput } from './utils/logger.js';
 import { trackEvent } from './utils/analytics.js';
 import { pkg } from './utils/packageInfo.js';
@@ -25,6 +26,52 @@ const __dirname = path.dirname(__filename);
 const cliJsPath = path.join(__dirname, 'index.js');
 const cliTsPath = path.join(__dirname, 'index.ts');
 const cliIndexPath = fs.existsSync(cliJsPath) ? cliJsPath : cliTsPath;
+
+const isHosted =
+  process.env.MCP_HOSTED === 'true' ||
+  process.env.MCP_HOSTED === '1' ||
+  process.argv.includes('--hosted');
+
+const SVG_FILE_PATH_PARAM = {
+  type: 'string',
+  description:
+    'Path to the input .svg file (required if svgContent is not provided).',
+};
+
+const SVG_CONTENT_PARAM = {
+  type: 'string',
+  description: 'Raw SVG XML string content.',
+};
+
+type McpToolResponseContentBlock =
+  | { type: 'text'; text: string }
+  | { type: 'image'; data: string; mimeType: string }
+  | {
+      type: 'resource';
+      resource: { uri: string; mimeType: string; blob: string };
+    };
+
+function trackSecurityRejection(): void {
+  trackEvent(
+    'file-load',
+    {
+      aspectRatio: 'unknown',
+      hasAnimation: false,
+      isDimensionsDetected: false,
+      rejectionReason: 'path-traversal-blocked',
+      isHosted: true,
+    },
+    'mcp'
+  );
+}
+
+function getMimeType(formatStr: string): string {
+  const generator = formatRegistry.get(formatStr);
+  if (generator?.mimeType) {
+    return generator.mimeType;
+  }
+  return 'application/octet-stream';
+}
 
 const server = new Server(
   {
@@ -44,24 +91,21 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'render_svg_to_video',
         description:
-          'Render an animated SVG (from file path or raw SVG code) into a high-quality video (MP4, WebM, MKV, MOV) or animated image (aPNG, GIF) with optional background transparency.',
+          'Render an animated SVG (from raw SVG code or file path) into a high-quality video (MP4, WebM, MKV, MOV) or animated image (aPNG, GIF) with in-band Base64 media delivery. Use this tool when you need to convert animated SVG graphics into video or image files. First use inspect_svg_animation to detect duration and dimensions if unknown. Specify svgContent for raw XML input or svgFilePath for local files. Pass transparent: true for WebM/GIF/aPNG transparency.',
         inputSchema: {
           type: 'object',
           properties: {
-            svgFilePath: {
-              type: 'string',
-              description: 'Absolute or relative path to the input .svg file.',
-            },
-            svgContent: {
-              type: 'string',
-              description:
-                'Raw SVG string content to render (if svgFilePath is not provided).',
-            },
-            outDir: {
-              type: 'string',
-              description:
-                'Output directory for the generated media file. Defaults to current working directory.',
-            },
+            ...(isHosted ? {} : { svgFilePath: SVG_FILE_PATH_PARAM }),
+            svgContent: SVG_CONTENT_PARAM,
+            ...(isHosted
+              ? {}
+              : {
+                  outDir: {
+                    type: 'string',
+                    description:
+                      'Output directory to preserve generated file locally. Omit to deliver purely in-band via ephemeral storage.',
+                  },
+                }),
             fps: {
               type: 'number',
               description: 'Frames per second (e.g. 24, 30, 60). Default: 60.',
@@ -116,24 +160,27 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               default: 0,
             },
           },
+          ...(isHosted
+            ? { required: ['svgContent'] }
+            : {
+                anyOf: [
+                  { required: ['svgContent'] },
+                  { required: ['svgFilePath'] },
+                ],
+              }),
         },
       },
       {
         name: 'inspect_svg_animation',
         description:
-          'Analyze an SVG file or raw SVG content to detect CSS keyframe animations, estimate duration, and extract viewBox dimensions.',
+          'Analyze an SVG file or raw SVG content to detect CSS keyframe animations, estimate duration, and extract viewBox dimensions. Call this tool first before rendering to discover animation parameters and calculate optimal resolution.',
         inputSchema: {
           type: 'object',
           properties: {
-            svgFilePath: {
-              type: 'string',
-              description: 'Path to the .svg file to inspect.',
-            },
-            svgContent: {
-              type: 'string',
-              description: 'Raw SVG content to inspect.',
-            },
+            ...(isHosted ? {} : { svgFilePath: SVG_FILE_PATH_PARAM }),
+            svgContent: SVG_CONTENT_PARAM,
           },
+          required: ['svgContent'],
         },
       },
     ],
@@ -148,6 +195,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       svgFilePath?: string;
       svgContent?: string;
     };
+
+    if (isHosted && params.svgFilePath) {
+      trackSecurityRejection();
+      return {
+        isError: true,
+        content: [
+          {
+            type: 'text',
+            text: 'Access to svgFilePath is forbidden when MCP_HOSTED security sandboxing is enabled. Please provide raw svgContent instead.',
+          },
+        ],
+      };
+    }
+
     let svgContent = params.svgContent;
 
     if (!svgContent && params.svgFilePath) {
@@ -236,65 +297,95 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       hold?: number;
     };
 
-    let targetSvgPath = params.svgFilePath;
-    let tempSvgFile = false;
-
-    if (!targetSvgPath && params.svgContent) {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'svg2vid-mcp-'));
-      targetSvgPath = path.join(tempDir, 'input.svg');
-      fs.writeFileSync(targetSvgPath, params.svgContent, 'utf-8');
-      tempSvgFile = true;
-    }
-
-    if (!targetSvgPath || !fs.existsSync(targetSvgPath)) {
+    if (isHosted && (params.svgFilePath || params.outDir)) {
+      trackSecurityRejection();
       return {
         isError: true,
         content: [
           {
             type: 'text',
-            text: `Input SVG not found or not provided: ${targetSvgPath || 'N/A'}`,
+            text: 'Providing svgFilePath or custom outDir is forbidden when MCP_HOSTED security sandboxing is enabled. Use raw svgContent and rely on in-band media delivery.',
           },
         ],
       };
     }
 
-    const outDir = params.outDir || process.cwd();
-    const fps = String(params.fps || 60);
-
-    const command = cliIndexPath.endsWith('.ts') ? 'npx' : process.execPath;
-    const cliArgs: string[] = cliIndexPath.endsWith('.ts')
-      ? ['tsx', cliIndexPath, targetSvgPath, fps, outDir, '--json', '--force']
-      : [cliIndexPath, targetSvgPath, fps, outDir, '--json', '--force'];
-
-    if (params.duration) {
-      cliArgs.push('-d', String(params.duration));
-    }
-    if (params.format) {
-      cliArgs.push('--format', params.format);
-    }
-    if (params.transparent) {
-      cliArgs.push('--transparent');
-    }
-    if (params.resolution) {
-      cliArgs.push('--resolution', params.resolution);
-    }
-    if (params.scale) {
-      cliArgs.push('--scale', String(params.scale));
-    }
-    if (params.width) {
-      cliArgs.push('--width', String(params.width));
-    }
-    if (params.height) {
-      cliArgs.push('--height', String(params.height));
-    }
-    if (params.bgColor) {
-      cliArgs.push('--bg-color', params.bgColor);
-    }
-    if (params.hold) {
-      cliArgs.push('-h', String(params.hold));
-    }
+    let tempWorkDir: string | null = null;
+    let targetSvgPath = params.svgFilePath;
 
     try {
+      if (!targetSvgPath && params.svgContent) {
+        tempWorkDir = fs.mkdtempSync(path.join(os.tmpdir(), 'svg2vid-mcp-'));
+        targetSvgPath = path.join(tempWorkDir, 'input.svg');
+        fs.writeFileSync(targetSvgPath, params.svgContent, 'utf-8');
+      }
+
+      if (!targetSvgPath || !fs.existsSync(targetSvgPath)) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: 'text',
+              text: `Input SVG not found or not provided: ${targetSvgPath || 'N/A'}`,
+            },
+          ],
+        };
+      }
+
+      const isExplicitOutDir = Boolean(params.outDir);
+      let renderOutDir: string;
+      if (isExplicitOutDir && params.outDir) {
+        renderOutDir = params.outDir;
+      } else {
+        if (!tempWorkDir) {
+          tempWorkDir = fs.mkdtempSync(path.join(os.tmpdir(), 'svg2vid-mcp-'));
+        }
+        renderOutDir = tempWorkDir;
+      }
+
+      const fps = String(params.fps || 60);
+
+      const command = cliIndexPath.endsWith('.ts') ? 'npx' : process.execPath;
+      const cliArgs: string[] = cliIndexPath.endsWith('.ts')
+        ? [
+            'tsx',
+            cliIndexPath,
+            targetSvgPath,
+            fps,
+            renderOutDir,
+            '--json',
+            '--force',
+          ]
+        : [cliIndexPath, targetSvgPath, fps, renderOutDir, '--json', '--force'];
+
+      if (params.duration) {
+        cliArgs.push('-d', String(params.duration));
+      }
+      if (params.format) {
+        cliArgs.push('--format', params.format);
+      }
+      if (params.transparent) {
+        cliArgs.push('--transparent');
+      }
+      if (params.resolution) {
+        cliArgs.push('--resolution', params.resolution);
+      }
+      if (params.scale) {
+        cliArgs.push('--scale', String(params.scale));
+      }
+      if (params.width) {
+        cliArgs.push('--width', String(params.width));
+      }
+      if (params.height) {
+        cliArgs.push('--height', String(params.height));
+      }
+      if (params.bgColor) {
+        cliArgs.push('--bg-color', params.bgColor);
+      }
+      if (params.hold) {
+        cliArgs.push('-h', String(params.hold));
+      }
+
       const rawOutput = execFileSync(command, cliArgs, {
         encoding: 'utf-8',
         cwd: process.cwd(),
@@ -304,35 +395,58 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         },
       });
 
-      if (tempSvgFile && targetSvgPath) {
-        try {
-          fs.rmSync(path.dirname(targetSvgPath), {
-            recursive: true,
-            force: true,
-          });
-        } catch {
-          // ignore cleanup error
-        }
-      }
-
       const parsed: unknown = JSON.parse(rawOutput.trim());
       if (isLoggerJsonOutput(parsed)) {
-        if (parsed.success === true) {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(parsed, null, 2),
+        if (parsed.success === true && parsed.outputFile) {
+          const generatedFilePath = parsed.outputFile;
+          const mediaBuffer = fs.readFileSync(generatedFilePath);
+          const base64Data = mediaBuffer.toString('base64');
+          const resolvedFormat = parsed.format || params.format || 'webm';
+          const mimeType = getMimeType(resolvedFormat);
+
+          const responseTextObject: Record<string, unknown> = { ...parsed };
+          if (!isExplicitOutDir) {
+            delete responseTextObject['outputFile'];
+          }
+
+          const responseContentList: McpToolResponseContentBlock[] = [
+            {
+              type: 'text',
+              text: JSON.stringify(responseTextObject, null, 2),
+            },
+          ];
+
+          if (mimeType.startsWith('image/')) {
+            responseContentList.push({
+              type: 'image',
+              data: base64Data,
+              mimeType,
+            });
+          } else {
+            responseContentList.push({
+              type: 'resource',
+              resource: {
+                uri: `urn:svg-to-video:media`,
+                mimeType,
+                blob: base64Data,
               },
-            ],
+            });
+          }
+
+          return {
+            content: responseContentList,
           };
         } else {
+          const errorMsg =
+            'error' in parsed && typeof parsed.error === 'string'
+              ? parsed.error
+              : 'Conversion failed';
           return {
             isError: true,
             content: [
               {
                 type: 'text',
-                text: parsed.error || 'Conversion failed',
+                text: errorMsg,
               },
             ],
           };
@@ -349,17 +463,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
     } catch (error) {
-      if (tempSvgFile && targetSvgPath) {
-        try {
-          fs.rmSync(path.dirname(targetSvgPath), {
-            recursive: true,
-            force: true,
-          });
-        } catch {
-          // ignore cleanup error
-        }
-      }
-
       return {
         isError: true,
         content: [
@@ -369,6 +472,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           },
         ],
       };
+    } finally {
+      if (tempWorkDir) {
+        try {
+          fs.rmSync(tempWorkDir, { recursive: true, force: true });
+        } catch {
+          // ignore cleanup error
+        }
+      }
     }
   }
 
