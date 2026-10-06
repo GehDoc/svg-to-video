@@ -40,7 +40,8 @@
     "mcp",
     "mcp-server",
     "model-context-protocol",
-    "agent-skill"
+    "agent-skill",
+    "huggingface"
   ],
   "license": "MIT",
   "publishConfig": {

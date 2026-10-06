@@ -33,6 +33,8 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - `mcp.json` (MCP server registry manifest description and metadata)
    - GitHub Repository Metadata (Description & Topics via `gh repo edit`)
    - GitHub Releases: Draft and publish GitHub release (`vX.Y.Z` tag, title `X.Y.Z - Title`) per [CONTRIBUTING.md](./CONTRIBUTING.md#-release-note-best-practices). Do not commit release note `.md` files to git.
+   - **HuggingFace Space README** _(manual)_: If MCP interface, setup instructions, or environment variables changed, update the README in the [`GehDoc/svg-to-video-mcp`](https://huggingface.co/GehDoc/svg-to-video-mcp) HuggingFace repository (Python development required for hosting-layer changes).
+   - **Docker Hub Overview** _(manual)_: Verify the [Docker Hub image description](https://hub.docker.com/r/gehdoc/svg-to-video) reflects any new CLI flags, MCP changes, or environment variables.
 7. **Clean Up**: Once code, tests, documentation, and SEO audits are complete and verified, update the spec status to `🟢 Completed` and move the spec file from `specs/pending/` to `specs/completed/`.
 
 ## 🛠 How to Create a New Spec

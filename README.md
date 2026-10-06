@@ -77,13 +77,13 @@ Ensure [Node.js](https://nodejs.org/) and [FFmpeg](https://ffmpeg.org/) are inst
 
 ```bash
 # Node.js (auto-detected duration)
-npx @gehdoc/svg-to-video input.svg 60 ./out-dir
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir
 
 # Node.js (explicit duration & GIF output)
-npx @gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent
 
 # Node.js (animated PNG output)
-npx @gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format apng
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format apng
 
 # Docker (zero local dependencies; requires --shm-size=2gb for Chromium rendering; add :Z to -v for SELinux / Fedora)
 docker run --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif
@@ -129,7 +129,7 @@ See **[docs/MCP.md](./docs/MCP.md)** for full setup instructions, tool schemas, 
 
 ```bash
 # Run on-demand via npx (no global installation required)
-npx @gehdoc/svg-to-video input.svg 60 ./out-dir
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir
 
 # Install globally via npm
 npm install -g @gehdoc/svg-to-video

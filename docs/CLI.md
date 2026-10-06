@@ -9,7 +9,7 @@ The tool is built to run in a headless environment, making it perfect for CI/CD 
 
 ```bash
 # Run on-demand via npx from npmjs registry
-npx @gehdoc/svg-to-video <svgPath> <fps> <outDir> [options]
+npx -y -p @gehdoc/svg-to-video svg-to-video <svgPath> <fps> <outDir> [options]
 
 # Run official Docker image from Docker Hub
 docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/<svgPath> <fps> /data/<outDir> [options]

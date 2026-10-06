@@ -30,7 +30,7 @@ When asked to generate a video or GIF from an SVG animation:
 2. **Option B: Via CLI Command**:
 
    ```bash
-   npx @gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent --json
+   npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent --json
    ```
 
 3. **Option C: Via Docker**:
