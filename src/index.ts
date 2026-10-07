@@ -518,7 +518,7 @@ function convertToOutput(
     }
   } catch (error) {
     const details = error instanceof Error ? error.message : String(error);
-    throw new Error(`FFmpeg execution failed: ${details}`);
+    throw new Error(`FFmpeg execution failed: ${details}`, { cause: error });
   }
 }
 
