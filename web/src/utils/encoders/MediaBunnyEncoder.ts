@@ -4,110 +4,6 @@ import { mergeMetadataComments } from '@shared/metadata';
 import type { VideoMetadata } from '@shared/metadata';
 import pkg from '../../../../package.json';
 
-const codecSupportCache = new Map<string, Promise<boolean>>();
-
-export async function isCodecReallySupported(
-  codec: string,
-  resolution: { width: number; height: number }
-): Promise<boolean> {
-  const { width, height } = resolution;
-  if (
-    (codec === 'avc' || codec === 'hevc') &&
-    (width % 2 !== 0 || height % 2 !== 0)
-  ) {
-    return false;
-  }
-
-  const cacheKey = `${codec}:${width}x${height}`;
-  if (codecSupportCache.has(cacheKey)) {
-    return codecSupportCache.get(cacheKey)!;
-  }
-
-  const promise = (async () => {
-    try {
-      const mediabunnySupported = await Mediabunny.canEncodeVideo(
-        codec as Mediabunny.VideoCodec,
-        { width, height }
-      );
-      if (!mediabunnySupported) return false;
-
-      if (
-        typeof window === 'undefined' ||
-        typeof (window as unknown as { VideoEncoder?: unknown })
-          .VideoEncoder === 'undefined' ||
-        typeof (window as unknown as { VideoFrame?: unknown }).VideoFrame ===
-          'undefined'
-      ) {
-        return mediabunnySupported;
-      }
-
-      return await new Promise<boolean>((resolve) => {
-        let finished = false;
-        const done = (result: boolean) => {
-          if (!finished) {
-            finished = true;
-            resolve(result);
-          }
-        };
-
-        try {
-          const encoder = new window.VideoEncoder({
-            output: () => {},
-            error: () => done(false),
-          });
-
-          let codecString = codec;
-          if (codec === 'avc') codecString = 'avc1.42001f';
-          else if (codec === 'vp8') codecString = 'vp8';
-          else if (codec === 'vp9') codecString = 'vp09.00.10.08';
-          else if (codec === 'av1') codecString = 'av01.0.04M.08';
-          else if (codec === 'hevc') codecString = 'hvc1.1.6.L93.B0';
-
-          encoder.configure({
-            codec: codecString,
-            width,
-            height,
-            bitrate: 2_000_000,
-          });
-
-          const frameData = new Uint8Array(width * height * 4);
-          const frame = new window.VideoFrame(frameData, {
-            format: 'RGBA',
-            codedWidth: width,
-            codedHeight: height,
-            timestamp: 0,
-          });
-          encoder.encode(frame);
-          frame.close();
-          encoder
-            .flush()
-            .then(() => done(true))
-            .catch(() => done(false));
-        } catch {
-          done(false);
-        }
-      });
-    } catch {
-      return false;
-    }
-  })();
-
-  codecSupportCache.set(cacheKey, promise);
-  return promise;
-}
-
-export async function getFirstVerifiedVideoCodec(
-  codecs: string[],
-  resolution: { width: number; height: number }
-): Promise<string | null> {
-  for (const codec of codecs) {
-    if (await isCodecReallySupported(codec, resolution)) {
-      return codec;
-    }
-  }
-  return null;
-}
-
 export class MediaBunnyEncoder implements VideoEncoder {
   private options: EncoderOptions | null = null;
   private canvas: HTMLCanvasElement | null = null;
@@ -124,7 +20,7 @@ export class MediaBunnyEncoder implements VideoEncoder {
     this.options = options;
     this.canvas = canvas;
 
-    const videoCodec = await getFirstVerifiedVideoCodec(
+    const videoCodec = await Mediabunny.getFirstEncodableVideoCodec(
       this.outputFormat.getSupportedVideoCodecs(),
       {
         width: options.width,
@@ -224,7 +120,10 @@ export class MediaBunnyFormat extends BaseFormat {
     try {
       const instance = new this.OutputFormatClass();
       const codecs = instance.getSupportedVideoCodecs();
-      const bestCodec = await getFirstVerifiedVideoCodec(codecs, resolution);
+      const bestCodec = await Mediabunny.getFirstEncodableVideoCodec(
+        codecs,
+        resolution
+      );
       return !!bestCodec;
     } catch {
       return false;
