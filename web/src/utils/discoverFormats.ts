@@ -66,7 +66,7 @@ export const discoverFormats = async (resolution?: {
 
   return Promise.all(
     formats.map(async (f) => {
-      let isSupported = true;
+      let isSupported: boolean;
       try {
         isSupported = await f.isSupported(res);
       } catch {
