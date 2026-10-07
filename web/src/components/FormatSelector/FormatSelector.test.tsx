@@ -88,7 +88,7 @@ describe('FormatSelector', () => {
     expect(handleChange).toHaveBeenCalledWith('webm');
   });
 
-  it('should disable unsupported options and append (Unsupported) to label', () => {
+  it('should disable unsupported options and show hint text below selector', () => {
     const formatsWithUnsupported: VideoFormat[] = [
       {
         id: 'webm',
@@ -124,11 +124,15 @@ describe('FormatSelector', () => {
       name: 'WebM',
     }) as HTMLOptionElement;
     const mp4Option = screen.getByRole('option', {
-      name: 'MP4 (Unsupported)',
+      name: 'MP4',
     }) as HTMLOptionElement;
 
     expect(webmOption.disabled).toBe(false);
     expect(mp4Option.disabled).toBe(true);
-    expect(mp4Option.textContent).toContain('(Unsupported)');
+    expect(
+      screen.getByText(
+        'Some formats are disabled because they are not supported by your browser.'
+      )
+    ).toBeInTheDocument();
   });
 });
