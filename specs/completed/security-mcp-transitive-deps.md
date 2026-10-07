@@ -2,7 +2,7 @@
 
 **Dependabot Alerts**: [#115](https://github.com/GehDoc/svg-to-video/security/dependabot/115) · [#116](https://github.com/GehDoc/svg-to-video/security/dependabot/116)
 **Advisory**: [GHSA-6qxp-vccf-f47h](https://github.com/advisories/GHSA-6qxp-vccf-f47h) (CVE-2026-104850)
-**Status**: 🟠 Pending
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -34,16 +34,17 @@ Eliminate high-severity OAuth credential-leak vulnerability in `@modelcontextpro
   - [x] Add `overrides` for `@modelcontextprotocol/sdk` and `@modelcontextprotocol/client` in root `package.json`
   - [x] Run `npm install` to regenerate `package-lock.json`
   - [x] Verify `npm audit` reports 0 high-severity vulnerabilities
-- [ ] **Verification**
-  - [ ] Run `npm run test:unit` to confirm no regressions
-  - [ ] Confirm `supergateway` still functions (MCP SSE bridge)
+- [x] **Verification**
+  - [x] Run `npm run test:unit` to confirm no regressions
+  - [x] Confirm `supergateway` still functions (MCP SSE bridge)
 
 ## 🧪 Verification Plan
 
-- [ ] `npm audit` → 0 high-severity vulnerabilities
-- [ ] `npm run check:fast` → no lint/format/type errors
-- [ ] `npm run test:unit` → passes
+- [x] `npm audit` → 0 high-severity vulnerabilities
+- [x] `npm run check:fast` → no lint/format/type errors
+- [x] `npm run test:unit` → passes
 
 ## 📝 Change Log
 
 - 2026-10-07: Security branch and direct-dep fix by user; transitive-dep spec created by agent.
+- 2026-10-07: Verified overrides and moved spec to completed.

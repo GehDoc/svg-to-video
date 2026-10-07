@@ -1,4 +1,10 @@
-import { useEffect, useState, type ChangeEvent, useCallback } from 'react';
+import {
+  useEffect,
+  useState,
+  useMemo,
+  type ChangeEvent,
+  useCallback,
+} from 'react';
 import {
   calculateFinalDimensions,
   type ResolutionPreset,
@@ -95,21 +101,20 @@ export const ConfigPanel = ({
 }: ConfigPanelProps) => {
   const [formats, setFormats] = useState<VideoFormat[]>([]);
 
-  useEffect(() => {
-    discoverFormats().then(setFormats);
-  }, []);
-
   const isRenderingOrSuccess = state.isRendering || !!renderedUrl;
   const isOptionsDisabled = isRenderingOrSuccess || !svgContent;
 
-  const effectiveTargetDim =
-    targetDim ||
-    (originalDim.width && originalDim.height
-      ? calculateFinalDimensions(originalDim.width, originalDim.height, {
-          preset,
-          scale,
-        })
-      : null);
+  const effectiveTargetDim = useMemo(
+    () =>
+      targetDim ||
+      (originalDim.width && originalDim.height
+        ? calculateFinalDimensions(originalDim.width, originalDim.height, {
+            preset,
+            scale,
+          })
+        : null),
+    [targetDim, originalDim.width, originalDim.height, preset, scale]
+  );
 
   const processFile = (file: File, method: 'file-picker' | 'drag-and-drop') => {
     const reader = new FileReader();
@@ -151,6 +156,24 @@ export const ConfigPanel = ({
     },
     [fileName, onFileNameChange, onFormatChange, onIsTransparentChange]
   );
+
+  useEffect(() => {
+    let ignore = false;
+    discoverFormats(effectiveTargetDim || undefined).then((discovered) => {
+      if (ignore) return;
+      setFormats(discovered);
+      const currentFormatObj = discovered.find((f) => f.id === format);
+      if (currentFormatObj && currentFormatObj.isSupported === false) {
+        const firstSupported = discovered.find((f) => f.isSupported !== false);
+        if (firstSupported) {
+          handleFormatChange(firstSupported.id);
+        }
+      }
+    });
+    return () => {
+      ignore = true;
+    };
+  }, [effectiveTargetDim, format, handleFormatChange]);
 
   return (
     <aside className="config-panel">
