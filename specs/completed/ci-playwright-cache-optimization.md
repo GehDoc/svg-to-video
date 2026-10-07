@@ -29,8 +29,8 @@ Optimize GitHub Actions CI pipeline execution by implementing effective Playwrig
 
 ### 3. FFmpeg Setup Optimization
 
-- In `.github/actions/setup/action.yml`, guard `ffmpeg` installation with `if ! command -v ffmpeg &> /dev/null; then ... fi` to avoid redundant `sudo apt-get update` runs on GitHub-hosted runners where `ffmpeg` is already pre-installed.
-- In `.github/workflows/ci.yml`, remove `install-ffmpeg: 'true'` from `web-e2e-tests` job as Web Studio tests execute entirely in-browser without calling the `ffmpeg` binary.
+- In `.github/actions/setup/action.yml`, guard `ffmpeg` installation with `if ! command -v ffmpeg &> /dev/null; then ... fi` to avoid redundant `sudo apt-get update` runs if `ffmpeg` is already present.
+- Retain `install-ffmpeg: 'true'` in `web-e2e-tests` (which relies on `ffmpeg` in `tests/helpers/e2e.ts` for frame-accurate transparency assertions) and `build-and-deploy`.
 
 ## ✅ Task List
 
@@ -39,7 +39,6 @@ Optimize GitHub Actions CI pipeline execution by implementing effective Playwrig
   - [x] Split Playwright step into `install-deps` (runner OS libraries) and conditional `install` (browser binary download on cache miss).
   - [x] Remove unused `install-chromium` input and logic from `.github/actions/setup/action.yml`.
   - [x] Add `command -v ffmpeg` idempotency check to `install-ffmpeg` in `.github/actions/setup/action.yml`.
-  - [x] Remove unused `install-ffmpeg: 'true'` parameter from `web-e2e-tests` in `.github/workflows/ci.yml`.
 - [x] **Verification & Pre-flight**
   - [x] Run `npm run check:fast` to ensure formatting and linting pass.
   - [x] Verify workflow YAML syntax and structure.
