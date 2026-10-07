@@ -1,11 +1,11 @@
 # Spec: CI Playwright & Tooling Cache Optimization
 
 **GitHub Issue**: N/A
-**Status**: 🟠 Pending
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
-Optimize GitHub Actions CI pipeline execution by implementing effective Playwright browser caching with `actions/cache@v5`, removing redundant browser re-downloads, eliminating dead `install-chromium` inputs, and avoiding unnecessary `apt-get` runs for pre-installed tools like `ffmpeg`.
+Optimize GitHub Actions CI pipeline execution by implementing effective Playwright browser caching with `actions/cache@v5`, eliminating redundant browser re-downloads, eliminating dead `install-chromium` inputs, and avoiding unnecessary `apt-get` runs for pre-installed tools like `ffmpeg`.
 
 ## 🛠 Technical Strategy
 
@@ -34,21 +34,22 @@ Optimize GitHub Actions CI pipeline execution by implementing effective Playwrig
 
 ## ✅ Task List
 
-- [ ] **Infrastructure & CI**
-  - [ ] Update `.github/actions/setup/action.yml` to use `actions/cache@v5` with `package-lock.json` hash.
-  - [ ] Split Playwright step into `install-deps` (runner OS libraries) and conditional `install` (browser binary download on cache miss).
-  - [ ] Remove unused `install-chromium` input and logic from `.github/actions/setup/action.yml`.
-  - [ ] Add `command -v ffmpeg` idempotency check to `install-ffmpeg` in `.github/actions/setup/action.yml`.
-  - [ ] Remove unused `install-ffmpeg: 'true'` parameter from `web-e2e-tests` in `.github/workflows/ci.yml`.
-- [ ] **Verification & Pre-flight**
-  - [ ] Run `npm run check:fast` to ensure formatting and linting pass.
-  - [ ] Verify workflow YAML syntax and structure.
+- [x] **Infrastructure & CI**
+  - [x] Update `.github/actions/setup/action.yml` to use `actions/cache@v5` with `package-lock.json` hash.
+  - [x] Split Playwright step into `install-deps` (runner OS libraries) and conditional `install` (browser binary download on cache miss).
+  - [x] Remove unused `install-chromium` input and logic from `.github/actions/setup/action.yml`.
+  - [x] Add `command -v ffmpeg` idempotency check to `install-ffmpeg` in `.github/actions/setup/action.yml`.
+  - [x] Remove unused `install-ffmpeg: 'true'` parameter from `web-e2e-tests` in `.github/workflows/ci.yml`.
+- [x] **Verification & Pre-flight**
+  - [x] Run `npm run check:fast` to ensure formatting and linting pass.
+  - [x] Verify workflow YAML syntax and structure.
 
 ## 🧪 Verification Plan
 
-- [ ] `npm run format` & `npm run check:fast` to validate YAML formatting and project integrity.
-- [ ] Inspect GitHub Actions YAML configs against composite action specifications.
+- [x] `npm run format` & `npm run check:fast` to validate YAML formatting and project integrity.
+- [x] Inspect GitHub Actions YAML configs against composite action specifications.
 
 ## 📝 Change Log
 
 - 2026-10-07: Initial spec created for CI Playwright caching and setup action cleanup.
+- 2026-10-07: Implemented `actions/cache@v5` with `package-lock.json` hash, separated `playwright install-deps` from conditional `playwright install`, removed dead `install-chromium` input/step, and guarded `ffmpeg` installation. Verified with `npm run check:fast`.
