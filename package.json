@@ -63,7 +63,7 @@
     "tsx": "^4.23.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.4",
+    "@eslint/js": "^10.0.1",
     "@types/ffprobe-static": "^2.0.3",
     "@types/jsdom": "^30.0.0",
     "@types/node": "^25.4.0",
