@@ -69,4 +69,12 @@ describe('discoverFormats', () => {
     const unknown = getFormatById('unknown');
     expect(unknown).toBeUndefined();
   });
+
+  it('should discover formats with resolution and report isSupported', async () => {
+    const formats = await discoverFormats({ width: 1280, height: 720 });
+    expect(formats.length).toBeGreaterThan(0);
+    formats.forEach((f) => {
+      expect(f.isSupported).toBe(true);
+    });
+  });
 });

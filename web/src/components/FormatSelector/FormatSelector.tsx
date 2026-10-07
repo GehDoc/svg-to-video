@@ -29,8 +29,13 @@ export const FormatSelector = ({
           {formats
             .filter((f) => f.supportsAlpha)
             .map((f) => (
-              <option key={f.id} value={f.id}>
+              <option
+                key={f.id}
+                value={f.id}
+                disabled={f.isSupported === false}
+              >
                 {f.label}
+                {f.isSupported === false ? ' (Unsupported)' : ''}
               </option>
             ))}
         </optgroup>
@@ -38,8 +43,13 @@ export const FormatSelector = ({
           {formats
             .filter((f) => !f.supportsAlpha)
             .map((f) => (
-              <option key={f.id} value={f.id}>
+              <option
+                key={f.id}
+                value={f.id}
+                disabled={f.isSupported === false}
+              >
                 {f.label}
+                {f.isSupported === false ? ' (Unsupported)' : ''}
               </option>
             ))}
         </optgroup>

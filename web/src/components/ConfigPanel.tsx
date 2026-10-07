@@ -95,10 +95,6 @@ export const ConfigPanel = ({
 }: ConfigPanelProps) => {
   const [formats, setFormats] = useState<VideoFormat[]>([]);
 
-  useEffect(() => {
-    discoverFormats().then(setFormats);
-  }, []);
-
   const isRenderingOrSuccess = state.isRendering || !!renderedUrl;
   const isOptionsDisabled = isRenderingOrSuccess || !svgContent;
 
@@ -151,6 +147,29 @@ export const ConfigPanel = ({
     },
     [fileName, onFileNameChange, onFormatChange, onIsTransparentChange]
   );
+
+  useEffect(() => {
+    let ignore = false;
+    discoverFormats(effectiveTargetDim || undefined).then((discovered) => {
+      if (ignore) return;
+      setFormats(discovered);
+      const currentFormatObj = discovered.find((f) => f.id === format);
+      if (currentFormatObj && currentFormatObj.isSupported === false) {
+        const firstSupported = discovered.find((f) => f.isSupported !== false);
+        if (firstSupported) {
+          handleFormatChange(firstSupported.id);
+        }
+      }
+    });
+    return () => {
+      ignore = true;
+    };
+  }, [
+    effectiveTargetDim?.width,
+    effectiveTargetDim?.height,
+    format,
+    handleFormatChange,
+  ]);
 
   return (
     <aside className="config-panel">
