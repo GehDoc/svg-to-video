@@ -36,6 +36,7 @@ vi.mock('mediabunny', () => {
       }
     },
     getFirstEncodableVideoCodec: vi.fn().mockResolvedValue('mock-codec'),
+    canEncodeVideo: vi.fn().mockResolvedValue(true),
   };
 });
 
