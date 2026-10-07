@@ -1,4 +1,10 @@
-import { useEffect, useState, type ChangeEvent, useCallback } from 'react';
+import {
+  useEffect,
+  useState,
+  useMemo,
+  type ChangeEvent,
+  useCallback,
+} from 'react';
 import {
   calculateFinalDimensions,
   type ResolutionPreset,
@@ -98,14 +104,17 @@ export const ConfigPanel = ({
   const isRenderingOrSuccess = state.isRendering || !!renderedUrl;
   const isOptionsDisabled = isRenderingOrSuccess || !svgContent;
 
-  const effectiveTargetDim =
-    targetDim ||
-    (originalDim.width && originalDim.height
-      ? calculateFinalDimensions(originalDim.width, originalDim.height, {
-          preset,
-          scale,
-        })
-      : null);
+  const effectiveTargetDim = useMemo(
+    () =>
+      targetDim ||
+      (originalDim.width && originalDim.height
+        ? calculateFinalDimensions(originalDim.width, originalDim.height, {
+            preset,
+            scale,
+          })
+        : null),
+    [targetDim, originalDim.width, originalDim.height, preset, scale]
+  );
 
   const processFile = (file: File, method: 'file-picker' | 'drag-and-drop') => {
     const reader = new FileReader();
@@ -164,12 +173,7 @@ export const ConfigPanel = ({
     return () => {
       ignore = true;
     };
-  }, [
-    effectiveTargetDim?.width,
-    effectiveTargetDim?.height,
-    format,
-    handleFormatChange,
-  ]);
+  }, [effectiveTargetDim, format, handleFormatChange]);
 
   return (
     <aside className="config-panel">
