@@ -18,10 +18,6 @@ inputs:
     description: 'Whether to install FFmpeg'
     required: false
     default: 'false'
-  install-chromium:
-    description: 'Whether to install Chromium browser'
-    required: false
-    default: 'false'
 
 runs:
   using: 'composite'
@@ -37,23 +33,11 @@ runs:
       run: npm ci
       shell: bash
 
-    - name: Install FFmpeg & Chromium
-      if: inputs.install-ffmpeg == 'true' || inputs.install-chromium == 'true'
-      run: |
-        sudo apt-get update
-        DEPS=""
-        if [ "${{ inputs.install-ffmpeg }}" = "true" ]; then DEPS="$DEPS ffmpeg"; fi
-        if [ "${{ inputs.install-chromium }}" = "true" ]; then DEPS="$DEPS chromium-browser"; fi
-        sudo apt-get install -y $DEPS
-      shell: bash
-
-    - name: Cache Playwright Browsers
-      if: inputs.install-playwright == 'true'
-      id: playwright-cache
-      uses: actions/cache@v5
+    - name: Setup FFmpeg
+      if: inputs.install-ffmpeg == 'true'
+      uses: FedericoCarboni/setup-ffmpeg@v3
       with:
-        path: ~/.cache/ms-playwright
-        key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
+        ffmpeg-version: 'release'
 
     - name: Install Playwright Browsers
       if: inputs.install-playwright == 'true'
