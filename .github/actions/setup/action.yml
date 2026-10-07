@@ -33,31 +33,13 @@ runs:
       run: npm ci
       shell: bash
 
-    - name: Ensure FFmpeg
+    - name: Setup FFmpeg
       if: inputs.install-ffmpeg == 'true'
-      run: |
-        if ! command -v ffmpeg &> /dev/null; then
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends ffmpeg
-        fi
-      shell: bash
-
-    - name: Cache Playwright Browsers
-      if: inputs.install-playwright == 'true'
-      id: playwright-cache
-      uses: actions/cache@v5
+      uses: FedericoCarboni/setup-ffmpeg@v3
       with:
-        path: ~/.cache/ms-playwright
-        key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-playwright-
-
-    - name: Install Playwright OS Dependencies
-      if: inputs.install-playwright == 'true'
-      run: npx playwright install-deps chromium
-      shell: bash
+        ffmpeg-version: 'release'
 
     - name: Install Playwright Browsers
-      if: inputs.install-playwright == 'true' && steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install chromium
+      if: inputs.install-playwright == 'true'
+      run: npx playwright install chromium --with-deps
       shell: bash
