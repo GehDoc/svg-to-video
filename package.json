@@ -1,7 +1,7 @@
 {
   "name": "@gehdoc/svg-to-video",
   "mcpName": "io.github.GehDoc/svg-to-video",
-  "version": "0.29.2",
+  "version": "0.29.3",
   "type": "module",
   "description": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, Model Context Protocol (MCP) server integration, and a serverless Web Studio.",
   "imports": {
@@ -85,8 +85,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "prepack": "npm run build",
-    "lint": "eslint . && npm run lint -w web",
-    "lint:fix": "eslint . --fix && npm run lint:fix -w web",
+    "lint": "eslint . --max-warnings=0 && npm run lint -w web",
+    "lint:fix": "eslint . --fix --max-warnings=0 && npm run lint:fix -w web",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "cli": "tsx src/index.ts",
@@ -108,10 +108,10 @@
   },
   "lint-staged": {
     "**/*.{js,mjs,ts,tsx,json,md,yml,html,Dockerfile,dockerfile,css,scss}": "prettier --write",
-    "src/**/*.ts": "eslint --fix",
-    "shared/**/*.ts": "eslint --fix",
-    "tests/**/*.ts": "eslint --fix",
-    "web/**/*.{ts,tsx,js}": "npm run lint --workspace=web -- --fix"
+    "src/**/*.ts": "eslint --fix --max-warnings=0",
+    "shared/**/*.ts": "eslint --fix --max-warnings=0",
+    "tests/**/*.ts": "eslint --fix --max-warnings=0",
+    "web/**/*.{ts,tsx,js}": "npm run lint --workspace=web -- --fix --max-warnings=0"
   },
   "main": "dist/src/index.js",
   "bin": {

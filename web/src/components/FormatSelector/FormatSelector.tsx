@@ -14,6 +14,8 @@ export const FormatSelector = ({
   onChange,
   disabled,
 }: FormatSelectorProps) => {
+  const hasUnsupportedFormats = formats.some((f) => f.isSupported === false);
+
   return (
     <div className="input-group">
       <label htmlFor="format">Output Format</label>
@@ -29,7 +31,11 @@ export const FormatSelector = ({
           {formats
             .filter((f) => f.supportsAlpha)
             .map((f) => (
-              <option key={f.id} value={f.id}>
+              <option
+                key={f.id}
+                value={f.id}
+                disabled={f.isSupported === false}
+              >
                 {f.label}
               </option>
             ))}
@@ -38,12 +44,22 @@ export const FormatSelector = ({
           {formats
             .filter((f) => !f.supportsAlpha)
             .map((f) => (
-              <option key={f.id} value={f.id}>
+              <option
+                key={f.id}
+                value={f.id}
+                disabled={f.isSupported === false}
+              >
                 {f.label}
               </option>
             ))}
         </optgroup>
       </select>
+      {hasUnsupportedFormats && (
+        <p className="hint-text hint-text--info">
+          Some formats are disabled because they are not supported by your
+          browser.
+        </p>
+      )}
     </div>
   );
 };
