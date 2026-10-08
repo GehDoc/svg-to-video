@@ -47,7 +47,10 @@ test.describe('SVG to Video Golden Path', () => {
     await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
 
     // 6. Verify Result (Download button exists)
-    const downloadButton = page.locator('text=Download');
+    const downloadButton = successCard.getByRole('button', {
+      name: 'Download',
+      exact: true,
+    });
     await expect(downloadButton).toBeVisible();
 
     // Start waiting for download before clicking
@@ -76,7 +79,9 @@ test.describe('SVG to Video Golden Path', () => {
     expect(videoSrc).toContain('blob:');
 
     // 7. Dismiss modal and check Studio return
-    const backButton = page.locator('text=Back to Studio');
+    const backButton = successCard.getByRole('button', {
+      name: 'Back to Studio',
+    });
     await backButton.click();
     await expect(successCard).toBeHidden();
 
@@ -114,7 +119,10 @@ test.describe('SVG to Video Golden Path', () => {
     const successCard = page.locator('.success-card');
     await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
 
-    const downloadButton = page.locator('text=Download');
+    const downloadButton = successCard.getByRole('button', {
+      name: 'Download',
+      exact: true,
+    });
     const downloadPromise = page.waitForEvent('download');
     await downloadButton.click();
     const download = await downloadPromise;

@@ -11,7 +11,7 @@ export type CaptureMethodType =
   'puppeteer' | 'webcodecs' | 'optimal' | 'canvas' | (string & {});
 
 export interface FileLoadEventProperties {
-  method?: 'file-picker' | 'drag-and-drop';
+  method?: 'file-picker' | 'drag-and-drop' | 'sample';
   aspectRatio: 'square' | 'landscape' | 'portrait' | 'unknown';
   hasAnimation: boolean;
   detectedDuration?: number;

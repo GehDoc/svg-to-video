@@ -83,7 +83,10 @@ export async function exportStudioVideo(
   const successCard = page.locator('.success-card');
   await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
 
-  const downloadButton = page.locator('text=Download');
+  const downloadButton = successCard.getByRole('button', {
+    name: 'Download',
+    exact: true,
+  });
   const downloadPromise = page.waitForEvent('download');
   await downloadButton.click();
   return downloadPromise;

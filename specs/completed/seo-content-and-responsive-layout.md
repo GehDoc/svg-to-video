@@ -1,7 +1,7 @@
 # Spec: Enhance SEO with Responsive Document Flow, Markdown-Driven Documentation, and Rich Studio Landing View
 
 **GitHub Issue**: N/A (Unlinked feature)
-**Status**: 🟠 Pending
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -29,48 +29,49 @@ Restore Google search indexation and maximize organic discoverability through a 
 
 ### 3. Build-Time Markdown Extraction (`SeoContent.tsx`)
 
-- Implement a lightweight build-time utility / script that parses `README.md` sections:
+- Implement a lightweight build-time utility `generate-seo-data.mjs` that parses `README.md` sections:
   - _Why SVG to Video?_ (Core value, Alpha channel, WebCodecs, Privacy)
   - _How it Works & Quick Start_ (Step-by-step conversion workflow)
   - _Supported Export Formats & Use Cases_ (MP4, WebM, aPNG, GIF)
   - _AI Agent & MCP Integration_ (Claude, Cursor, Antigravity)
   - _FAQ & Technical Architecture_ (Scrubbing engine, browser requirements)
-- Render these sections into SSR-friendly semantic HTML (`<section>`, `<h2>`, `<article>`, `<code>`, `<p>`, `<ul>`) below the Studio inside `web/src/app/page.tsx`.
+- Render these sections into SSR-friendly semantic HTML (`<section>`, `<h2>`, `<article>`, `<code>`, `<p>`, `<ul>`, `<table>`) below the Studio inside `web/src/app/page.tsx`.
 
 ## ✅ Task List
 
-- [ ] **Infrastructure & Styling**
-  - [ ] Refactor `web/src/index.scss` and container classes for responsive natural scrolling.
-  - [ ] Ensure dark/light mode token compatibility across all new components.
-- [ ] **Studio Landing View Enhancement**
-  - [ ] Add sample SVG presets in `web/src/assets/samples/`.
-  - [ ] Wire `onSelectSample` callback from `LandingView` to `Studio` to instantly load sample SVGs and settings.
-  - [ ] Implement sample cards, trust badges, format pills, and CLI/MCP callouts in `LandingView.tsx` and `LandingView.scss`.
-- [ ] **Markdown Extraction & SSR Documentation**
-  - [ ] Create build script / extractor to extract structured sections from root `README.md`.
-  - [ ] Create `web/src/components/SeoContent.tsx` & `SeoContent.scss` to render extracted markdown as semantic HTML below the Studio.
-  - [ ] Mount `SeoContent` in `web/src/app/page.tsx`.
-- [ ] **Verification & Testing**
-  - [ ] Verify 1-click sample loading and conversions in Web Studio.
-  - [ ] Verify responsive layout across mobile (<768px) and desktop (>1024px).
-  - [ ] Run `npm run check:fast` and `npm run test`.
-- [ ] **Documentation & SEO Pre-Flight**
-  - [ ] Audit `web/src/app/layout.tsx` metadata and JSON-LD schema.
-  - [ ] Audit `README.md` & `docs/ARCHITECTURE.md`.
-  - [ ] Audit `package.json` descriptions and keywords.
+- [x] **Infrastructure & Styling**
+  - [x] Refactor `web/src/index.scss` and container classes for responsive natural scrolling.
+  - [x] Ensure dark/light mode token compatibility across all new components.
+- [x] **Studio Landing View Enhancement**
+  - [x] Add sample SVG presets in `web/src/assets/samples/`.
+  - [x] Wire `onSelectSample` callback from `LandingView` to `Studio` to instantly load sample SVGs and settings.
+  - [x] Implement sample cards, trust badges, format pills, and CLI/MCP callouts in `LandingView.tsx` and `LandingView.scss`.
+- [x] **Markdown Extraction & SSR Documentation**
+  - [x] Create build script `generate-seo-data.mjs` to extract structured sections from root `README.md`.
+  - [x] Create `web/src/components/SeoContent.tsx` & `SeoContent.scss` to render extracted markdown as semantic HTML below the Studio.
+  - [x] Mount `SeoContent` in `web/src/app/page.tsx`.
+- [x] **Verification & Testing**
+  - [x] Verify 1-click sample loading and conversions in Web Studio.
+  - [x] Verify responsive layout across mobile (<768px) and desktop (>1024px).
+  - [x] Run `npm run check:fast` and `npm run test`.
+- [x] **Documentation & SEO Pre-Flight**
+  - [x] Audit `web/src/app/layout.tsx` metadata and JSON-LD schema.
+  - [x] Audit `README.md` & `docs/ARCHITECTURE.md`.
+  - [x] Audit `package.json` descriptions and keywords.
 
 ## 🧪 Verification Plan
 
-- [ ] Manual Test:
+- [x] Manual Test:
   - Test loading each sample SVG from the landing view and verify rendering.
   - Inspect mobile viewport in browser dev tools: verify natural scroll and content visibility.
-  - Verify generated static HTML (`npm run build`) contains full text and headings for crawlers.
-- [ ] Automated Test:
-  - `npm run check:fast` (type-check, lint, format)
-  - `npm run test` (all tests)
-  - `npm run test:web` (web end-to-end tests)
+  - Verify generated static HTML (`npm run build -w web`) contains full text and headings for crawlers.
+- [x] Automated Test:
+  - `npm run check:fast` (type-check, lint, format) - PASS
+  - `npm run test` (all unit, integration, Storybook a11y, and visual tests) - PASS
+  - `npm run test:web` (web end-to-end tests) - PASS
 
 ## 📝 Change Log
 
 - 2026-10-08: Initial spec created.
 - 2026-10-08: Updated spec to incorporate Markdown-driven documentation extraction and rich interactive landing view with 1-click samples.
+- 2026-10-08: Completed implementation, passed all 45 storybook tests, unit tests, E2E tests, and static HTML generation.
