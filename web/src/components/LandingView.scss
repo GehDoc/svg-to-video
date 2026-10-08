@@ -85,9 +85,14 @@
     border-color 0.2s ease;
   box-shadow: var(--shadow);
 
-  &:hover {
+  &:hover,
+  &:focus-within {
     transform: translateY(-2px);
     border-color: var(--primary);
+
+    .sample-preview svg * {
+      animation-play-state: running !important;
+    }
   }
 
   .sample-preview {
@@ -104,6 +109,10 @@
       max-height: 100%;
       max-width: 100%;
       display: block;
+
+      * {
+        animation-play-state: paused !important;
+      }
     }
   }
 
