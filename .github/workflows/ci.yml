@@ -99,6 +99,8 @@ jobs:
         with:
           install-playwright: 'true'
           install-ffmpeg: 'true'
+      - name: Build Web Studio
+        run: npm run build -w web
       - name: Run Web E2E tests
         run: npm run test:web -w web
 
@@ -157,6 +159,7 @@ jobs:
         run: npm run build -w web
         env:
           NEXT_PUBLIC_COMMIT_SHA: ${{ github.sha }}
+          GITHUB_PAGES: 'true'
 
       - name: Build Storybook
         run: npm run build-storybook -w web

@@ -111,7 +111,7 @@ test.describe('SVG to Video Golden Path', () => {
     await page.fill('#fps', '10');
 
     const exportButton = page.getByRole('button', {
-      name: /Export MP4|Processing/i,
+      name: /Export MP4/i,
     });
     await expect(exportButton).toBeEnabled();
     await exportButton.click();
