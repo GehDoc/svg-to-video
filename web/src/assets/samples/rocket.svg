@@ -16,7 +16,7 @@
     <style>
       @keyframes float {
         0%, 100% { transform: translateY(0px) rotate(-45deg); }
-        50% { transform: translateY(-12px) rotate(-43deg); }
+        50% { transform: translateY(-14px) rotate(-43deg); }
       }
       @keyframes flame {
         0%, 100% { transform: scaleY(1) scaleX(1); opacity: 0.9; }
@@ -28,16 +28,16 @@
       }
       .rocket-group {
         transform-origin: 200px 180px;
-        animation: float 3s ease-in-out infinite;
+        animation: float 5s ease-in-out infinite;
       }
       .flame {
         transform-origin: 200px 240px;
-        animation: flame 0.3s ease-in-out infinite alternate;
+        animation: flame 0.25s ease-in-out infinite alternate;
       }
       .star-1 { animation: starTwinkle 2s ease-in-out infinite; transform-origin: 80px 100px; }
       .star-2 { animation: starTwinkle 2.5s ease-in-out infinite 0.5s; transform-origin: 320px 120px; }
-      .star-3 { animation: starTwinkle 1.8s ease-in-out infinite 1s; transform-origin: 100px 300px; }
-      .star-4 { animation: starTwinkle 2.2s ease-in-out infinite 0.3s; transform-origin: 310px 280px; }
+      .star-3 { animation: starTwinkle 5s ease-in-out infinite 1s; transform-origin: 100px 300px; }
+      .star-4 { animation: starTwinkle 2s ease-in-out infinite 0.3s; transform-origin: 310px 280px; }
     </style>
   </defs>
 
