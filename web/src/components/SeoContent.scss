@@ -224,24 +224,48 @@
     &.format-mp4 {
       background: #e0e7ff;
       color: #3730a3;
+
+      @media (prefers-color-scheme: dark) {
+        background: #312e81;
+        color: #e0e7ff;
+      }
     }
     &.format-webm {
       background: #cffafe;
       color: #0e7490;
+
+      @media (prefers-color-scheme: dark) {
+        background: #164e63;
+        color: #cffafe;
+      }
     }
     &.format-apng {
       background: #fef3c7;
       color: #92400e;
+
+      @media (prefers-color-scheme: dark) {
+        background: #78350f;
+        color: #fef3c7;
+      }
     }
     &.format-gif {
       background: #d1fae5;
       color: #065f46;
+
+      @media (prefers-color-scheme: dark) {
+        background: #064e3b;
+        color: #d1fae5;
+      }
     }
   }
 
   .status-yes {
     color: #047857;
     font-weight: 600;
+
+    @media (prefers-color-scheme: dark) {
+      color: #34d399;
+    }
   }
 
   .status-no {
