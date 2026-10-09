@@ -20,6 +20,13 @@ export interface RenderOptions {
 }
 
 /**
+ * Remove ?
+ */
+export async function gotoIsolated(page: Page, url = '/'): Promise<void> {
+  await page.goto(url);
+}
+
+/**
  * Automates the rendering and downloading of a video from the Web Studio.
  */
 export async function exportStudioVideo(
@@ -37,6 +44,11 @@ export async function exportStudioVideo(
     title,
     comment,
   } = options;
+
+  // Explicitly wait for the loading overlay to go away
+  const loadingPanel = page.locator('.seo-fallback');
+  await expect(loadingPanel).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+  await expect(loadingPanel).toBeHidden({ timeout: SUCCESS_TIMEOUT });
 
   await page.setInputFiles('input[type="file"]', svgPath);
 

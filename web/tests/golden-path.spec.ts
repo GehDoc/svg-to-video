@@ -6,7 +6,7 @@ import {
   SUCCESS_TIMEOUT,
   ensureOutputDir,
 } from '../../tests/helpers/e2e.js';
-import { getTestOutputPath } from './helpers/web-e2e.js';
+import { getTestOutputPath, gotoIsolated } from './helpers/web-e2e.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -18,7 +18,12 @@ test.describe('SVG to Video Golden Path', () => {
     page,
   }, testInfo) => {
     // 1. Load the page
-    await page.goto('/');
+    await gotoIsolated(page);
+
+    // Explicitly wait for the loading overlay to go away
+    const loadingPanel = page.locator('.seo-fallback');
+    await expect(loadingPanel).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+    await expect(loadingPanel).toBeHidden({ timeout: SUCCESS_TIMEOUT });
 
     // 2. Upload the fixture SVG
     const svgPath = path.resolve(
@@ -95,7 +100,12 @@ test.describe('SVG to Video Golden Path', () => {
   test('should successfully render an SVG with custom metadata', async ({
     page,
   }, testInfo) => {
-    await page.goto('/');
+    await gotoIsolated(page);
+
+    // Explicitly wait for the loading overlay to go away
+    const loadingPanel = page.locator('.seo-fallback');
+    await expect(loadingPanel).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+    await expect(loadingPanel).toBeHidden({ timeout: SUCCESS_TIMEOUT });
 
     const svgPath = path.resolve(
       __dirname,
