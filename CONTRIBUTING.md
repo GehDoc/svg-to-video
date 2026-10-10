@@ -191,19 +191,18 @@ npx --package ./gehdoc-svg-to-video-0.26.0.tgz svg-to-video --version
 
 Navigate to `web/` (`cd web`) to run studio commands:
 
-| Command                      | Description                                                                  |
-| :--------------------------- | :--------------------------------------------------------------------------- |
-| `npm run dev`                | Starts Web Studio Next.js development server on `http://localhost:3000`.     |
-| `npm run build`              | Builds Web Studio static export into `web/dist` (with root `/` by default).  |
-| `npm run serve`              | Serves static production export locally on port 3000 (`serve dist -l 3000`). |
-| `npm run start`              | Serves production web build locally.                                         |
-| `npm run storybook`          | Starts interactive Storybook component workbench.                            |
-| `npm run build-storybook`    | Builds static Storybook site for GitHub Pages deployment.                    |
-| `npm run test:demo`          | Records automated demo video using Playwright & Driver.js.                   |
-| `npm run test:web`           | Runs Web Studio E2E Playwright test suite against local static/dev server.   |
-| `npm run test:storybook`     | Runs Storybook component interaction tests via Vitest.                       |
-| `npm run test:visual`        | Runs visual regression tests (pixel snapshot matching).                      |
-| `npm run test:visual:update` | Updates baseline visual regression screenshot snapshots.                     |
+| Command                      | Description                                                                 |
+| :--------------------------- | :-------------------------------------------------------------------------- |
+| `npm run dev`                | Starts Web Studio Next.js development server on `http://localhost:3000`.    |
+| `npm run build`              | Builds Web Studio static export into `web/dist` (with root `/` by default). |
+| `npm run start`              | Serves production web build locally.                                        |
+| `npm run storybook`          | Starts interactive Storybook component workbench.                           |
+| `npm run build-storybook`    | Builds static Storybook site for GitHub Pages deployment.                   |
+| `npm run test:demo`          | Records automated demo video using Playwright & Driver.js.                  |
+| `npm run test:web`           | Runs Web Studio E2E Playwright test suite against local static/dev server.  |
+| `npm run test:storybook`     | Runs Storybook component interaction tests via Vitest.                      |
+| `npm run test:visual`        | Runs visual regression tests (pixel snapshot matching).                     |
+| `npm run test:visual:update` | Updates baseline visual regression screenshot snapshots.                    |
 
 > [!NOTE]
 > **Base Path & Deployment Configuration**:

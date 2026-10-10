@@ -10,6 +10,7 @@ out-dir-test/
 # Playwright Reports/Results
 web/playwright-report/
 web/test-results/
+test-results/
 web/storybook-static/
 .storybook-cache/
 
