@@ -9,7 +9,11 @@ import {
   getFrameCount,
   ensureOutputDir,
 } from '../../tests/helpers/e2e.js';
-import { getTestOutputPath, exportStudioVideo } from './helpers/web-e2e.js';
+import {
+  getTestOutputPath,
+  exportStudioVideo,
+  gotoIsolated,
+} from './helpers/web-e2e.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -24,7 +28,7 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
   test('should successfully render an SVG into an MP4 (opaque with background backfilling)', async ({
     page,
   }, testInfo) => {
-    await page.goto('/');
+    await gotoIsolated(page);
 
     const svgPath = path.resolve(
       __dirname,
@@ -57,7 +61,7 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
   test('should successfully render an SVG into a WebM with transparency', async ({
     page,
   }, testInfo) => {
-    await page.goto('/');
+    await gotoIsolated(page);
 
     const svgPath = path.resolve(
       __dirname,
@@ -86,7 +90,7 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
   test('should successfully render an SVG into a WebM (opaque with background backfilling)', async ({
     page,
   }, testInfo) => {
-    await page.goto('/');
+    await gotoIsolated(page);
 
     const svgPath = path.resolve(
       __dirname,
@@ -120,7 +124,7 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
   test('should successfully render an SVG into an aPNG with transparency', async ({
     page,
   }, testInfo) => {
-    await page.goto('/');
+    await gotoIsolated(page);
 
     const svgPath = path.resolve(
       __dirname,
@@ -151,7 +155,7 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
   test('should successfully render an SVG into an aPNG (opaque with background backfilling)', async ({
     page,
   }, testInfo) => {
-    await page.goto('/');
+    await gotoIsolated(page);
 
     const svgPath = path.resolve(
       __dirname,
@@ -185,7 +189,7 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
   test('should successfully render an SVG into a transparent GIF (GIF89a)', async ({
     page,
   }, testInfo) => {
-    await page.goto('/');
+    await gotoIsolated(page);
 
     const svgPath = path.resolve(
       __dirname,
@@ -215,7 +219,7 @@ test.describe('Rendering Pipeline: Transparency & Backgrounds', () => {
   test('should successfully render an SVG into an opaque GIF (with background backfilling)', async ({
     page,
   }, testInfo) => {
-    await page.goto('/');
+    await gotoIsolated(page);
 
     const svgPath = path.resolve(
       __dirname,

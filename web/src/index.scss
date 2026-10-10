@@ -50,11 +50,11 @@
     --panel: #1e293b;
     --border: #334155;
     --text: #e2e8f0; /* Slate 200 - High contrast */
-    --text-muted: #94a3b8; /* Slate 400 - Clear distinction from --text */
+    --text-muted: #cbd5e1; /* Slate 300 - High contrast (> 5.5:1 against #334155 and #1e293b) */
     --text-h: #f8fafc; /* Slate 50 */
     --primary: #5e61e6;
-    --primary-text: #9fa2ff;
-    --primary-hover: #4338ca;
+    --primary-text: #a5b4fc;
+    --primary-hover: #818cf8;
     --accent: #c084fc;
     --accent-text: #c084fc;
     --card: #334155;
@@ -69,14 +69,21 @@
   }
 }
 
+html {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 body {
   margin: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 100vh;
 }
 
 #root {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -84,21 +91,26 @@ body {
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  min-height: 100vh;
+  width: 100%;
   background-color: var(--bg);
   color: var(--text);
 }
 
 .studio-layout {
   display: flex;
-  flex: 1;
-  overflow: hidden;
+  min-height: calc(100vh - 64px);
+
+  @media (min-width: #{$mobile-breakpoint + 1px}) {
+    height: calc(100vh - 64px);
+    overflow: hidden;
+  }
 
   @media (max-width: $mobile-breakpoint) {
     flex-direction: column;
-    overflow-y: auto;
+    min-height: auto;
+    height: auto;
+    overflow: visible;
   }
 }
 

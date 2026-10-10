@@ -1,0 +1,96 @@
+{
+  "headline": "High-Fidelity SVG Animation to Video & Animated Image Studio",
+  "tagline": "Transform CSS-animated SVGs into MP4, WebM, MKV, MOV, aPNG, or GIF with full alpha-channel transparency directly in your browser or via CLI/MCP.",
+  "features": [
+    {
+      "title": "Transparent Backgrounds",
+      "description": "Export your animations with a full alpha channel using **WebM or aPNG**, and optimized indexed transparency with **GIF89a**. Perfect for overlays in video editing tools or web use."
+    },
+    {
+      "title": "Privacy-First",
+      "description": "The Web Studio runs entirely in your browser—your SVG files never leave your computer."
+    },
+    {
+      "title": "Frame-Accurate",
+      "description": "Our engine scrubs the **Web Animations API**, ensuring every frame is captured exactly as rendered."
+    },
+    {
+      "title": "AI Agent Native",
+      "description": "Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support indexed on the official [MCP Registry](https://registry.modelcontextprotocol.io/) (`mcp.json`) and hosted live on [HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)."
+    },
+    {
+      "title": "Universal Animated Formats",
+      "description": "Beyond video, generate lightweight **Animated PNGs (aPNG)** and **GIFs** perfect for documentation, Slack, or GitHub, with full control over background transparency."
+    },
+    {
+      "title": "Copy to Clipboard",
+      "description": "Instant export to **Base64 Data URL**—copy your video and embed it directly into your HTML, CSS, or JS code without manual downloads. Perfect for rapid prototyping and developers."
+    },
+    {
+      "title": "Metadata Injection",
+      "description": "Support for custom titles and comments across video (MP4, WebM, MKV, MOV) and animated image (aPNG, GIF) formats."
+    },
+    {
+      "title": "Versatile",
+      "description": "Whether you need an accessible [Web Studio](#-web-studio) for quick conversions or a powerful [CLI tool](#-cli--docker-tool) for batch automation and CI/CD pipelines, this project has you covered."
+    }
+  ],
+  "quickStartSteps": [
+    "Open the [Web Studio](https://gehdoc.github.io/svg-to-video/).",
+    "Drag and drop your `.svg` file.",
+    "Adjust resolution, duration, and FPS.",
+    "Select your format, toggle **Transparent Background** if needed, and ensure **High-Fidelity Capture** is enabled for best results.",
+    "Click **Export**."
+  ],
+  "cliSnippet": "# Node.js (auto-detected duration)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir\n\n# Node.js (explicit duration & GIF output)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent\n\n# Node.js (custom resolution dimensions e.g. vertical 1080x1920)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --width 1080 --height 1920\n\n# Node.js (animated PNG output)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format apng\n\n# Docker (zero local dependencies; requires --shm-size=2gb for Chromium rendering; add :Z to -v for SELinux / Fedora)\ndocker run --rm --shm-size=2gb -e PUPPETEER_ARGS=\"--no-sandbox\" -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif",
+  "mcpSnippet": "{\n     \"mcpServers\": {\n       \"svg-to-video\": {\n         \"command\": \"npx\",\n         \"args\": [\"-y\", \"-p\", \"@gehdoc/svg-to-video\", \"svg-to-video-mcp\"]\n       }\n     }\n   }",
+  "formatComparisons": [
+    {
+      "format": "MP4",
+      "codec": "H.264 / AAC",
+      "transparency": "No (Opaque)",
+      "bestFor": "Universal web playback, social media, video editors (Premiere, Final Cut)",
+      "description": "Standard baseline container compatible with all browsers and video players."
+    },
+    {
+      "format": "WebM",
+      "codec": "VP9 / AV1",
+      "transparency": "Yes (Full Alpha Channel)",
+      "bestFor": "Web overlays, OBS streaming, transparent video backgrounds",
+      "description": "Modern open web format with native 8-bit alpha transparency and high compression efficiency."
+    },
+    {
+      "format": "aPNG",
+      "codec": "RGBA PNG",
+      "transparency": "Yes (Full Alpha Channel)",
+      "bestFor": "Documentation, GitHub READMEs, high-color animations, crisp text rendering",
+      "description": "Animated PNG with 24-bit color depth and full 8-bit alpha blending without color quantization."
+    },
+    {
+      "format": "GIF",
+      "codec": "GIF89a",
+      "transparency": "Yes (Indexed 1-bit)",
+      "bestFor": "Slack, Discord, legacy documentation, universal messaging apps",
+      "description": "Standard animated GIF with palette quantization and optional transparent color index."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Are my SVG files uploaded to any external server?",
+      "answer": "No. The Web Studio runs 100% client-side inside your browser using WebCodecs and the Web Animations API. Your SVG source code and exported video frames never leave your local device."
+    },
+    {
+      "question": "How does the Web Animations API frame scrubbing work?",
+      "answer": "The engine mounts your SVG in an isolated offscreen canvas, programmatically pauses all CSS and SMIL animations, and advances the animation timeline frame by frame (e.g. at 24, 30, or 60 FPS) to guarantee 100% frame accuracy without skipped frames."
+    },
+    {
+      "question": "Can I automate conversions in CI/CD pipelines or AI agents?",
+      "answer": "Yes! You can use the official CLI tool (npx -y @gehdoc/svg-to-video), the Docker image (gehdoc/svg-to-video), or connect to the Model Context Protocol (MCP) server for Claude Desktop, Cursor, and Antigravity."
+    },
+    {
+      "question": "How do I preserve transparent backgrounds in exported videos?",
+      "answer": "Select WebM, aPNG, or GIF as your output format, check the \"Transparent Background\" toggle, and ensure your SVG root element does not declare an opaque background rect."
+    }
+  ],
+  "lastUpdated": "2026-10-10T05:55:23.130Z"
+}

@@ -12,6 +12,7 @@ import {
   parseSvgDimensions,
 } from '@shared/analyzeSvgAnimation.js';
 import type { VideoMetadata } from '@shared/metadata';
+import type { SamplePreset } from '../utils/samples';
 import { formatRegistry } from '../utils/encoders/Registry';
 import { Header } from './Header';
 import { ConfigPanel } from './ConfigPanel';
@@ -163,6 +164,34 @@ export const Studio = () => {
     setRenderedUrl(null);
   }, [format, isTransparent]);
 
+  const handleSelectSample = useCallback((sample: SamplePreset) => {
+    setSvgContent(sample.svgContent);
+    setFileName(`${sample.id}.${sample.format}`);
+    setDuration(sample.duration);
+    setFps(sample.fps);
+    setFormat(sample.format);
+    setIsTransparent(sample.isTransparent);
+
+    let dim = { width: 0, height: 0, isDimensionsDetected: false };
+    try {
+      dim = parseSvgDimensions(sample.svgContent);
+      setOriginalDim(dim);
+    } catch {
+      setOriginalDim({
+        width: 0,
+        height: 0,
+        isDimensionsDetected: false,
+      });
+    }
+
+    const detectedDuration = analyzeSvgAnimation(sample.svgContent);
+    if (detectedDuration !== undefined && detectedDuration > 0) {
+      setDuration(detectedDuration);
+    }
+
+    trackFileLoad('sample', dim, sample.duration);
+  }, []);
+
   return (
     <div className="app-container">
       <Header />
@@ -240,6 +269,7 @@ export const Studio = () => {
           onClearError={clearError}
           mimeType={mimeType}
           format={format}
+          onSelectSample={handleSelectSample}
         />
       </main>
     </div>

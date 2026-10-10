@@ -191,18 +191,24 @@ npx --package ./gehdoc-svg-to-video-0.26.0.tgz svg-to-video --version
 
 Navigate to `web/` (`cd web`) to run studio commands:
 
-| Command                      | Description                                                  |
-| :--------------------------- | :----------------------------------------------------------- |
-| `npm run dev`                | Starts Web Studio Next.js development server.                |
-| `npm run build`              | Builds Web Studio for static production export (`web/out/`). |
-| `npm run start`              | Serves production web build locally.                         |
-| `npm run storybook`          | Starts interactive Storybook component workbench.            |
-| `npm run build-storybook`    | Builds static Storybook site for GitHub Pages deployment.    |
-| `npm run test:demo`          | Records automated demo video using Playwright & Driver.js.   |
-| `npm run test:web`           | Runs Web Studio E2E Playwright test suite.                   |
-| `npm run test:storybook`     | Runs Storybook component interaction tests via Vitest.       |
-| `npm run test:visual`        | Runs visual regression tests (pixel snapshot matching).      |
-| `npm run test:visual:update` | Updates baseline visual regression screenshot snapshots.     |
+| Command                      | Description                                                                 |
+| :--------------------------- | :-------------------------------------------------------------------------- |
+| `npm run dev`                | Starts Web Studio Next.js development server on `http://localhost:3000`.    |
+| `npm run build`              | Builds Web Studio static export into `web/dist` (with root `/` by default). |
+| `npm run start`              | Serves production web build locally.                                        |
+| `npm run storybook`          | Starts interactive Storybook component workbench.                           |
+| `npm run build-storybook`    | Builds static Storybook site for GitHub Pages deployment.                   |
+| `npm run test:demo`          | Records automated demo video using Playwright & Driver.js.                  |
+| `npm run test:web`           | Runs Web Studio E2E Playwright test suite against local static/dev server.  |
+| `npm run test:storybook`     | Runs Storybook component interaction tests via Vitest.                      |
+| `npm run test:visual`        | Runs visual regression tests (pixel snapshot matching).                     |
+| `npm run test:visual:update` | Updates baseline visual regression screenshot snapshots.                    |
+
+> [!NOTE]
+> **Base Path & Deployment Configuration**:
+>
+> - `npm run build -w web` creates a static production build in `web/dist` with root base path (`/`) by default, allowing local and CI E2E Playwright tests to execute directly against `serve dist -l 3000` with 0 JIT compilation overhead.
+> - Setting `GITHUB_PAGES=true` (e.g. `GITHUB_PAGES=true npm run build -w web` during the deployment workflow) configures `basePath: '/svg-to-video'` for GitHub Pages hosting.
 
 ### 🧪 Multi-Tiered Testing Strategy
 

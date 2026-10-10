@@ -1,12 +1,12 @@
-const isProd = process.env.NODE_ENV === 'production';
+const isGitHubPages = process.env.GITHUB_PAGES === 'true';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Disable Next.js UI in development to avoid conflicts
   devIndicators: false,
   // Required for GitHub Pages project site deployment
-  basePath: isProd ? '/svg-to-video' : '',
-  assetPrefix: isProd ? '/svg-to-video/' : '',
+  basePath: isGitHubPages ? '/svg-to-video' : '',
+  assetPrefix: isGitHubPages ? '/svg-to-video/' : '',
   // Ensure output is standalone for static export or serverless deployment
   output: 'export',
   distDir: 'dist', // Match existing Vite output directory
