@@ -30,7 +30,7 @@ describe('validateOptions', () => {
     );
   });
 
-  test('should throw error when custom resolution string and width/height are used together', () => {
+  test('should throw error when preset or custom resolution string and width/height are used together', () => {
     assert.throws(
       () =>
         validateOptions({
@@ -40,7 +40,31 @@ describe('validateOptions', () => {
           bgColor: '#ffffff',
           width: 500,
         }),
-      /--width and --height cannot be used when a custom resolution string/
+      /--width and --height cannot be used when --resolution is set to a preset or custom dimension string/
+    );
+
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: '1080p',
+          transparent: false,
+          bgColor: '#ffffff',
+          width: 500,
+        }),
+      /--width and --height cannot be used when --resolution is set to a preset or custom dimension string/
+    );
+
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: '720p',
+          transparent: false,
+          bgColor: '#ffffff',
+          height: 400,
+        }),
+      /--width and --height cannot be used when --resolution is set to a preset or custom dimension string/
     );
   });
 
@@ -69,16 +93,48 @@ describe('validateOptions', () => {
     );
   });
 
-  test('should throw error when transparent and bgColor are set together', () => {
+  test('should throw error when transparent is set for format without alpha support', () => {
     assert.throws(
       () =>
         validateOptions({
           scale: 1,
           resolution: 'original',
           transparent: true,
-          bgColor: '#000000',
+          bgColor: '#ffffff',
+          format: 'mp4',
         }),
-      /--transparent and --bg-color cannot be used together/
+      /Format "mp4" does not support transparency/
+    );
+  });
+
+  test('should allow transparent and bgColor together for alpha formats or when default format is used', () => {
+    assert.doesNotThrow(() =>
+      validateOptions({
+        scale: 1,
+        resolution: 'original',
+        transparent: true,
+        bgColor: '#000000',
+        format: 'webm',
+      })
+    );
+
+    assert.doesNotThrow(() =>
+      validateOptions({
+        scale: 1,
+        resolution: 'original',
+        transparent: true,
+        bgColor: '#000000',
+        format: 'gif',
+      })
+    );
+
+    assert.doesNotThrow(() =>
+      validateOptions({
+        scale: 1,
+        resolution: 'original',
+        transparent: true,
+        bgColor: '#000000',
+      })
     );
   });
 

@@ -142,16 +142,17 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             width: {
               type: 'number',
-              description: 'Custom output video width in pixels.',
+              description:
+                'Custom output video width in pixels. Can only be used when resolution is "original".',
             },
             height: {
               type: 'number',
-              description: 'Custom output video height in pixels.',
+              description:
+                'Custom output video height in pixels. Can only be used when resolution is "original".',
             },
             bgColor: {
               type: 'string',
-              description:
-                'Background color hex code (e.g. #ffffff). Cannot be used with transparent.',
+              description: 'Background color hex code (e.g. #ffffff).',
             },
             hold: {
               type: 'number',

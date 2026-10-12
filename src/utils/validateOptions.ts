@@ -47,6 +47,15 @@ export function validateOptions(options: ValidateOptionsParams): void {
     );
   }
 
+  if (
+    options.resolution !== 'original' &&
+    (options.width !== undefined || options.height !== undefined)
+  ) {
+    throw new Error(
+      '--width and --height cannot be used when --resolution is set to a preset or custom dimension string.'
+    );
+  }
+
   const isPreset = ['original', '1080p', '720p'].includes(options.resolution);
   const resMatch = /^(\d+)x(\d+)$/i.exec(options.resolution);
 
@@ -66,11 +75,6 @@ export function validateOptions(options: ValidateOptionsParams): void {
         `Custom resolution dimensions must not exceed ${MAX_DIMENSION_PIXELS} pixels.`
       );
     }
-    if (options.width !== undefined || options.height !== undefined) {
-      throw new Error(
-        '--width and --height cannot be used when a custom resolution string (e.g. 1080x1080) is provided.'
-      );
-    }
   }
 
   if (
@@ -84,14 +88,18 @@ export function validateOptions(options: ValidateOptionsParams): void {
     );
   }
 
-  if (options.transparent && options.bgColor !== '#ffffff') {
-    throw new Error('--transparent and --bg-color cannot be used together.');
-  }
-
-  if (options.format && !formatRegistry.isSupported(options.format)) {
-    const supported = formatRegistry.getSupportedFormatNames().join(', ');
-    throw new Error(
-      `Invalid format "${options.format}". Supported formats are: ${supported}.`
-    );
+  if (options.format) {
+    if (!formatRegistry.isSupported(options.format)) {
+      const supported = formatRegistry.getSupportedFormatNames().join(', ');
+      throw new Error(
+        `Invalid format "${options.format}". Supported formats are: ${supported}.`
+      );
+    }
+    const generator = formatRegistry.get(options.format);
+    if (options.transparent && generator && !generator.supportsAlpha) {
+      throw new Error(
+        `Format "${options.format}" does not support transparency.`
+      );
+    }
   }
 }

@@ -398,5 +398,43 @@ describe('CLI Functionality', () => {
       assert.strictEqual(result.status, 1);
       assert.match(result.stderr, /Invalid format "invalidformat"/);
     });
+
+    test('should fail when transparent is used with a format without alpha support (e.g. mp4)', () => {
+      const { inputFile } = getTestPaths('font-test');
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--format',
+        'mp4',
+        '--transparent',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 1);
+      assert.match(result.stderr, /Format "mp4" does not support transparency/);
+    });
+
+    test('should fail when preset resolution is combined with custom width or height', () => {
+      const { inputFile } = getTestPaths('font-test');
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--resolution',
+        '1080p',
+        '--width',
+        '1000',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 1);
+      assert.match(
+        result.stderr,
+        /--width and --height cannot be used when --resolution is set to a preset or custom dimension string/
+      );
+    });
   });
 });

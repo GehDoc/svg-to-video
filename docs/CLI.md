@@ -51,10 +51,10 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 | `-f, --force`           | Overwrite the output video if it already exists.                                                                                                              |
 | `--resolution <preset>` | Resolution preset (`720p`, `1080p`, `original`) or custom dimension string (`WIDTHxHEIGHT`, e.g., `1080x1080`). (Default: `original`)                         |
 | `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`.                                                          |
-| `-w, --width <pixels>`  | Custom width in pixels. If height is omitted, aspect ratio is preserved.                                                                                      |
-| `--height <pixels>`     | Custom height in pixels. If width is omitted, aspect ratio is preserved.                                                                                      |
-| `--transparent`         | Render with a transparent background (supported for `webm`, `gif`, `apng`, `mov`). (Cannot be used with `--bg-color`)                                         |
-| `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`) - (Cannot be used with `--transparent`)                                                                  |
+| `-w, --width <pixels>`  | Custom width in pixels. Only used with `--resolution original`. If height is omitted, aspect ratio is preserved.                                              |
+| `--height <pixels>`     | Custom height in pixels. Only used with `--resolution original`. If width is omitted, aspect ratio is preserved.                                              |
+| `--transparent`         | Render with a transparent background (supported for `webm`, `gif`, `apng`, `mov`).                                                                            |
+| `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`).                                                                                                         |
 | `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Mandatory attribution is automatically appended to the 'comment' tag for video and image exports. |
 | `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                                              |
 
