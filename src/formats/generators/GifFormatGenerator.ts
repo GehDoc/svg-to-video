@@ -9,6 +9,7 @@ export class GifFormatGenerator implements CLIFormatGenerator {
   readonly extensions = ['.gif'];
   readonly mimeType = 'image/gif';
   readonly supportsAlpha = true;
+  readonly needsColorKeying = true;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {

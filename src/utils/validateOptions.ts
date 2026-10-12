@@ -88,17 +88,29 @@ export function validateOptions(options: ValidateOptionsParams): void {
     );
   }
 
-  if (options.format) {
-    if (!formatRegistry.isSupported(options.format)) {
-      const supported = formatRegistry.getSupportedFormatNames().join(', ');
+  if (options.format && !formatRegistry.isSupported(options.format)) {
+    const supported = formatRegistry.getSupportedFormatNames().join(', ');
+    throw new Error(
+      `Invalid format "${options.format}". Supported formats are: ${supported}.`
+    );
+  }
+
+  const { generator, format: resolvedFormat } =
+    formatRegistry.resolveFormatAndExtension(
+      options.format,
+      options.transparent
+    );
+
+  if (options.transparent) {
+    if (!generator.supportsAlpha) {
       throw new Error(
-        `Invalid format "${options.format}". Supported formats are: ${supported}.`
+        `Format "${resolvedFormat}" does not support transparency.`
       );
     }
-    const generator = formatRegistry.get(options.format);
-    if (options.transparent && generator && !generator.supportsAlpha) {
+
+    if (options.bgColor !== '#ffffff' && !generator.needsColorKeying) {
       throw new Error(
-        `Format "${options.format}" does not support transparency.`
+        `--transparent and --bg-color cannot be used together for format "${resolvedFormat}".`
       );
     }
   }

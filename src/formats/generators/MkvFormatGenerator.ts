@@ -7,6 +7,7 @@ export class MkvFormatGenerator implements CLIFormatGenerator {
   readonly extensions = ['.mkv'];
   readonly mimeType = 'video/x-matroska';
   readonly supportsAlpha = true;
+  readonly needsColorKeying = false;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {

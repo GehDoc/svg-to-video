@@ -107,17 +107,8 @@ describe('validateOptions', () => {
     );
   });
 
-  test('should allow transparent and bgColor together for alpha formats or when default format is used', () => {
-    assert.doesNotThrow(() =>
-      validateOptions({
-        scale: 1,
-        resolution: 'original',
-        transparent: true,
-        bgColor: '#000000',
-        format: 'webm',
-      })
-    );
-
+  test('should enforce transparent and bgColor constraints based on format needsColorKeying', () => {
+    // GIF has needsColorKeying: true, so transparent + custom bgColor is allowed
     assert.doesNotThrow(() =>
       validateOptions({
         scale: 1,
@@ -128,12 +119,39 @@ describe('validateOptions', () => {
       })
     );
 
+    // webm has needsColorKeying: false, so transparent + custom bgColor throws
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: true,
+          bgColor: '#000000',
+          format: 'webm',
+        }),
+      /--transparent and --bg-color cannot be used together for format "webm"/
+    );
+
+    // apng has needsColorKeying: false, so transparent + custom bgColor throws
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: true,
+          bgColor: '#000000',
+          format: 'apng',
+        }),
+      /--transparent and --bg-color cannot be used together for format "apng"/
+    );
+
+    // Default transparent format (webm) with default bgColor (#ffffff) passes
     assert.doesNotThrow(() =>
       validateOptions({
         scale: 1,
         resolution: 'original',
         transparent: true,
-        bgColor: '#000000',
+        bgColor: '#ffffff',
       })
     );
   });
