@@ -118,7 +118,7 @@ const registerFormats = () => {
 
 #### 2. CLI Format Registry (`src/formats/`)
 
-- **CLI Generator Implementation**: Implement `CLIFormatGenerator` in `src/formats/generators/` defining `id`, `extensions`, `supportsAlpha`, `buildFfmpegArgs(options)`, and optional `postProcess(...)`.
+- **CLI Generator Implementation**: Implement `CLIFormatGenerator` in `src/formats/generators/` defining `id`, `extensions`, `supportsAlpha`, `needsColorKeying`, `buildFfmpegArgs(options)`, and optional `postProcess(...)`.
 - **Registration**: Register the generator strategy in `src/formats/registry.ts` (`CLIFormatRegistry`).
 - **Format Support & Resolution**: `formatRegistry.isSupported(format)` and `formatRegistry.resolveFormatAndExtension(rawFormat, transparent)` dynamically handle CLI format lookup and fallback resolution.
 
