@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import {
   analyzeSvgAnimation,
   parseSvgDimensions,
+  parsePixelDimension,
   calculateAspectRatio,
   parseClockValue,
   gcd,
@@ -247,6 +248,31 @@ describe('analyzeSvgAnimation', () => {
   });
 });
 
+describe('parsePixelDimension', () => {
+  it('should parse unitless pixel numbers', () => {
+    expect(parsePixelDimension('800')).toBe(800);
+    expect(parsePixelDimension('100.5')).toBe(100.5);
+  });
+
+  it('should parse px values', () => {
+    expect(parsePixelDimension('800px')).toBe(800);
+    expect(parsePixelDimension(' 600PX ')).toBe(600);
+  });
+
+  it('should return NaN for percentage or non-pixel units', () => {
+    expect(parsePixelDimension('100%')).toBeNaN();
+    expect(parsePixelDimension('10em')).toBeNaN();
+    expect(parsePixelDimension('10pt')).toBeNaN();
+    expect(parsePixelDimension('10vh')).toBeNaN();
+  });
+
+  it('should return NaN for empty, null, or invalid strings', () => {
+    expect(parsePixelDimension('')).toBeNaN();
+    expect(parsePixelDimension(null)).toBeNaN();
+    expect(parsePixelDimension('auto')).toBeNaN();
+  });
+});
+
 describe('parseSvgDimensions', () => {
   it('should parse width and height from attributes', () => {
     const svg = '<svg width="800" height="600"><rect/></svg>';
@@ -271,6 +297,35 @@ describe('parseSvgDimensions', () => {
     expect(parseSvgDimensions(svg)).toEqual({
       width: 500,
       height: 300,
+      isDimensionsDetected: true,
+    });
+  });
+
+  it('should fallback to viewBox when width and height are percentage values', () => {
+    const svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%"><rect/></svg>';
+    expect(parseSvgDimensions(svg)).toEqual({
+      width: 400,
+      height: 400,
+      isDimensionsDetected: true,
+    });
+  });
+
+  it('should fallback to default dimensions when width/height are percentage values and viewBox is missing', () => {
+    const svg = '<svg width="100%" height="100%"><rect/></svg>';
+    expect(parseSvgDimensions(svg)).toEqual({
+      width: 1920,
+      height: 1080,
+      isDimensionsDetected: false,
+    });
+  });
+
+  it('should handle mixed percentage and absolute dimensions with viewBox fallback', () => {
+    const svg =
+      '<svg width="100%" height="200" viewBox="0 0 800 600"><rect/></svg>';
+    expect(parseSvgDimensions(svg)).toEqual({
+      width: 800,
+      height: 600,
       isDimensionsDetected: true,
     });
   });

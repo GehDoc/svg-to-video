@@ -5,6 +5,7 @@ import fs from 'fs';
 
 export interface PackageJson {
   name: string;
+  mcpName: string;
   version: string;
   description: string;
   homepage: string;

@@ -254,6 +254,18 @@ export interface ParsedSvgDimensions {
 }
 
 /**
+ * Parses an SVG dimension attribute value (e.g. "100", "100px") into a pixel number.
+ * Returns NaN if the value is missing or uses relative/non-pixel units (e.g. "%", "em", "pt").
+ */
+export function parsePixelDimension(val: string | null): number {
+  if (!val) return NaN;
+  const match = val.trim().match(/^([\d.eE+-]+)\s*(px)?$/i);
+  if (!match) return NaN;
+  const num = parseFloat(match[1]);
+  return isNaN(num) ? NaN : num;
+}
+
+/**
  * Parses SVG content to extract width and height from width/height attributes or viewBox.
  * Accepts an optional DOMParser override for non-browser environments.
  */
@@ -275,8 +287,11 @@ export const parseSvgDimensions = (
 
   if (!svg) throw new Error('Invalid SVG content');
 
-  let width = parseFloat(svg.getAttribute('width') || '');
-  let height = parseFloat(svg.getAttribute('height') || '');
+  const widthAttr = svg.getAttribute('width');
+  const heightAttr = svg.getAttribute('height');
+
+  let width = parsePixelDimension(widthAttr);
+  let height = parsePixelDimension(heightAttr);
   const viewBox = svg.getAttribute('viewBox');
 
   let isDimensionsDetected = !(isNaN(width) || isNaN(height));
