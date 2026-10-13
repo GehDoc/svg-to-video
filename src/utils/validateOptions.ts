@@ -47,7 +47,13 @@ export function validateOptions(options: ValidateOptionsParams): void {
     );
   }
 
-  if (
+  if (options.resolution === 'custom') {
+    if (options.width === undefined && options.height === undefined) {
+      throw new Error(
+        "When --resolution is set to 'custom', --width or --height must be provided."
+      );
+    }
+  } else if (
     options.resolution !== 'original' &&
     (options.width !== undefined || options.height !== undefined)
   ) {
@@ -56,13 +62,15 @@ export function validateOptions(options: ValidateOptionsParams): void {
     );
   }
 
-  const isPreset = ['original', '1080p', '720p'].includes(options.resolution);
+  const isPreset = ['original', '1080p', '720p', 'custom'].includes(
+    options.resolution
+  );
   const resMatch = /^(\d+)x(\d+)$/i.exec(options.resolution);
 
   if (!isPreset) {
     if (!resMatch) {
       throw new Error(
-        `Invalid resolution option "${options.resolution}". Expected 'original', '1080p', '720p', or a custom dimension string like '1080x1080'.`
+        `Invalid resolution option "${options.resolution}". Expected 'original', '1080p', '720p', 'custom', or a custom dimension string like '1080x1080'.`
       );
     }
     const resW = parseInt(resMatch[1], 10);

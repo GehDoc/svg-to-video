@@ -220,6 +220,29 @@ describe('validateOptions', () => {
     );
   });
 
+  test('should validate resolution custom preset requirements', () => {
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'custom',
+          transparent: false,
+          bgColor: '#ffffff',
+        }),
+      /When --resolution is set to 'custom', --width or --height must be provided/
+    );
+
+    assert.doesNotThrow(() =>
+      validateOptions({
+        scale: 1,
+        resolution: 'custom',
+        transparent: false,
+        bgColor: '#ffffff',
+        width: 1080,
+      })
+    );
+  });
+
   test('should pass with valid custom width/height or formatted resolution string', () => {
     assert.doesNotThrow(() =>
       validateOptions({

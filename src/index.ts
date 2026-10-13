@@ -90,7 +90,7 @@ Resources:
     )
     .option(
       '--resolution <preset>',
-      'resolution preset (720p, 1080p, original) or custom dimensions (e.g. 1080x1080)',
+      'resolution preset (720p, 1080p, original, custom) or custom dimensions (e.g. 1080x1080)',
       'original'
     )
     .option(
@@ -383,7 +383,7 @@ async function createFrames(
   } else if (resolutionPreset === '720p') {
     width = 1280;
     height = 720;
-  } else if (resolutionPreset === 'original') {
+  } else if (resolutionPreset === 'original' || resolutionPreset === 'custom') {
     if (!parsedDim.isDimensionsDetected) {
       logger.warn(
         '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1920x1080.'
@@ -394,7 +394,7 @@ async function createFrames(
     height = Math.round(parsedDim.height * scaleFactor);
   } else {
     throw new Error(
-      `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', 'original', or custom dimensions.`
+      `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', 'original', 'custom', or custom dimensions.`
     );
   }
 

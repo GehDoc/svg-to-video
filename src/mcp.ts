@@ -131,7 +131,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             resolution: {
               type: 'string',
               description:
-                'Resolution preset (original, 1080p, 720p) or formatted string (e.g. 1080x1080, 1080x1920). Default: original.',
+                'Resolution preset (original, 1080p, 720p, custom) or formatted string (e.g. 1080x1080, 1080x1920). Default: original.',
               default: 'original',
             },
             scale: {
@@ -143,12 +143,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             width: {
               type: 'number',
               description:
-                'Custom output video width in pixels. Can only be used when resolution is "original".',
+                'Custom output video width in pixels. Cannot be used with 1080p/720p presets or custom resolution string.',
             },
             height: {
               type: 'number',
               description:
-                'Custom output video height in pixels. Can only be used when resolution is "original".',
+                'Custom output video height in pixels. Cannot be used with 1080p/720p presets or custom resolution string.',
             },
             bgColor: {
               type: 'string',
