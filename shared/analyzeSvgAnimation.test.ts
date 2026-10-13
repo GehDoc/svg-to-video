@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import {
   analyzeSvgAnimation,
   parseSvgDimensions,
+  parsePixelDimension,
   calculateAspectRatio,
   parseClockValue,
   gcd,
@@ -244,6 +245,31 @@ describe('analyzeSvgAnimation', () => {
       </svg>
     `;
     expect(analyzeSvgAnimation(svg)).toBe(3.5);
+  });
+});
+
+describe('parsePixelDimension', () => {
+  it('should parse unitless pixel numbers', () => {
+    expect(parsePixelDimension('800')).toBe(800);
+    expect(parsePixelDimension('100.5')).toBe(100.5);
+  });
+
+  it('should parse px values', () => {
+    expect(parsePixelDimension('800px')).toBe(800);
+    expect(parsePixelDimension(' 600PX ')).toBe(600);
+  });
+
+  it('should return NaN for percentage or non-pixel units', () => {
+    expect(parsePixelDimension('100%')).toBeNaN();
+    expect(parsePixelDimension('10em')).toBeNaN();
+    expect(parsePixelDimension('10pt')).toBeNaN();
+    expect(parsePixelDimension('10vh')).toBeNaN();
+  });
+
+  it('should return NaN for empty, null, or invalid strings', () => {
+    expect(parsePixelDimension('')).toBeNaN();
+    expect(parsePixelDimension(null)).toBeNaN();
+    expect(parsePixelDimension('auto')).toBeNaN();
   });
 });
 
