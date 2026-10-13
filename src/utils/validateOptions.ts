@@ -53,12 +53,9 @@ export function validateOptions(options: ValidateOptionsParams): void {
         "When --resolution is set to 'custom', --width or --height must be provided."
       );
     }
-  } else if (
-    options.resolution !== 'original' &&
-    (options.width !== undefined || options.height !== undefined)
-  ) {
+  } else if (options.width !== undefined || options.height !== undefined) {
     throw new Error(
-      '--width and --height cannot be used when --resolution is set to a preset or custom dimension string.'
+      `Providing --width or --height is rejected when --resolution is set to '${options.resolution}'. Set --resolution custom to use custom dimensions.`
     );
   }
 

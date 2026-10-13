@@ -21,7 +21,7 @@ describe('validateOptions', () => {
       () =>
         validateOptions({
           scale: 2,
-          resolution: 'original',
+          resolution: 'custom',
           transparent: false,
           bgColor: '#ffffff',
           width: 500,
@@ -30,7 +30,19 @@ describe('validateOptions', () => {
     );
   });
 
-  test('should throw error when preset or custom resolution string and width/height are used together', () => {
+  test('should throw error when resolution is not custom and width/height are provided', () => {
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          bgColor: '#ffffff',
+          width: 500,
+        }),
+      /Providing --width or --height is rejected when --resolution is set to 'original'/
+    );
+
     assert.throws(
       () =>
         validateOptions({
@@ -40,7 +52,7 @@ describe('validateOptions', () => {
           bgColor: '#ffffff',
           width: 500,
         }),
-      /--width and --height cannot be used when --resolution is set to a preset or custom dimension string/
+      /Providing --width or --height is rejected when --resolution is set to '1080x1080'/
     );
 
     assert.throws(
@@ -52,7 +64,7 @@ describe('validateOptions', () => {
           bgColor: '#ffffff',
           width: 500,
         }),
-      /--width and --height cannot be used when --resolution is set to a preset or custom dimension string/
+      /Providing --width or --height is rejected when --resolution is set to '1080p'/
     );
 
     assert.throws(
@@ -64,7 +76,7 @@ describe('validateOptions', () => {
           bgColor: '#ffffff',
           height: 400,
         }),
-      /--width and --height cannot be used when --resolution is set to a preset or custom dimension string/
+      /Providing --width or --height is rejected when --resolution is set to '720p'/
     );
   });
 
@@ -247,7 +259,7 @@ describe('validateOptions', () => {
     assert.doesNotThrow(() =>
       validateOptions({
         scale: 1,
-        resolution: 'original',
+        resolution: 'custom',
         transparent: false,
         bgColor: '#ffffff',
         width: 1080,

@@ -433,7 +433,7 @@ describe('CLI Functionality', () => {
       assert.strictEqual(result.status, 1);
       assert.match(
         result.stderr,
-        /--width and --height cannot be used when --resolution is set to a preset or custom dimension string/
+        /Providing --width or --height is rejected when --resolution is set to '1080p'/
       );
     });
   });

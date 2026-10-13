@@ -143,12 +143,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             width: {
               type: 'number',
               description:
-                'Custom output video width in pixels. Cannot be used with 1080p/720p presets or custom resolution string.',
+                'Custom output video width in pixels. Requires resolution "custom" (or omitting resolution).',
             },
             height: {
               type: 'number',
               description:
-                'Custom output video height in pixels. Cannot be used with 1080p/720p presets or custom resolution string.',
+                'Custom output video height in pixels. Requires resolution "custom" (or omitting resolution).',
             },
             bgColor: {
               type: 'string',
@@ -368,7 +368,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       if (params.transparent) {
         cliArgs.push('--transparent');
       }
-      if (params.resolution) {
+      if (
+        (params.width !== undefined || params.height !== undefined) &&
+        (!params.resolution || params.resolution === 'original')
+      ) {
+        cliArgs.push('--resolution', 'custom');
+      } else if (params.resolution) {
         cliArgs.push('--resolution', params.resolution);
       }
       if (params.scale) {

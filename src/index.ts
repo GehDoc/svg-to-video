@@ -170,6 +170,16 @@ async function run(
     return;
   }
 
+  if (
+    (options.width !== undefined || options.height !== undefined) &&
+    options.resolution === 'original' &&
+    !process.argv.some(
+      (arg) => arg === '--resolution' || arg.startsWith('--resolution=')
+    )
+  ) {
+    options.resolution = 'custom';
+  }
+
   try {
     validateOptions(options);
   } catch (error) {
