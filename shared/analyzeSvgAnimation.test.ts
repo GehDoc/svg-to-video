@@ -275,6 +275,35 @@ describe('parseSvgDimensions', () => {
     });
   });
 
+  it('should fallback to viewBox when width and height are percentage values', () => {
+    const svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%"><rect/></svg>';
+    expect(parseSvgDimensions(svg)).toEqual({
+      width: 400,
+      height: 400,
+      isDimensionsDetected: true,
+    });
+  });
+
+  it('should fallback to default dimensions when width/height are percentage values and viewBox is missing', () => {
+    const svg = '<svg width="100%" height="100%"><rect/></svg>';
+    expect(parseSvgDimensions(svg)).toEqual({
+      width: 1920,
+      height: 1080,
+      isDimensionsDetected: false,
+    });
+  });
+
+  it('should handle mixed percentage and absolute dimensions with viewBox fallback', () => {
+    const svg =
+      '<svg width="100%" height="200" viewBox="0 0 800 600"><rect/></svg>';
+    expect(parseSvgDimensions(svg)).toEqual({
+      width: 800,
+      height: 600,
+      isDimensionsDetected: true,
+    });
+  });
+
   it('should fallback to 1920x1080 when dimensions are missing or invalid', () => {
     const svg = '<svg><rect/></svg>';
     expect(parseSvgDimensions(svg)).toEqual({

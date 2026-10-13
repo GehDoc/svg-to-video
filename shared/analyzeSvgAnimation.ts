@@ -275,8 +275,14 @@ export const parseSvgDimensions = (
 
   if (!svg) throw new Error('Invalid SVG content');
 
-  let width = parseFloat(svg.getAttribute('width') || '');
-  let height = parseFloat(svg.getAttribute('height') || '');
+  const widthAttr = svg.getAttribute('width') || '';
+  const heightAttr = svg.getAttribute('height') || '';
+
+  const isWidthPercent = widthAttr.includes('%');
+  const isHeightPercent = heightAttr.includes('%');
+
+  let width = isWidthPercent ? NaN : parseFloat(widthAttr);
+  let height = isHeightPercent ? NaN : parseFloat(heightAttr);
   const viewBox = svg.getAttribute('viewBox');
 
   let isDimensionsDetected = !(isNaN(width) || isNaN(height));
