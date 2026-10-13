@@ -2,6 +2,8 @@ const isGitHubPages = process.env.GITHUB_PAGES === 'true';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Disables automatic AGENTS.md generation and updates
+  agentRules: false,
   // Disable Next.js UI in development to avoid conflicts
   devIndicators: false,
   // Required for GitHub Pages project site deployment
