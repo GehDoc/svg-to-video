@@ -18,9 +18,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "predev": "node scripts/generate-seo-data.mjs",
+    "predev": "tsx scripts/generate-seo-data.ts",
     "dev": "next dev --webpack",
-    "prebuild": "node scripts/generate-seo-data.mjs",
+    "prebuild": "tsx scripts/generate-seo-data.ts",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",

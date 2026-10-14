@@ -6,10 +6,35 @@ import { marked } from 'marked';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const readmePath = path.resolve(__dirname, '../../README.md');
-const outputPath = path.resolve(__dirname, '../src/data/seoDocumentation.json');
+const rootDir = path.resolve(__dirname, '../..');
+const webDir = path.resolve(__dirname, '..');
 
-function extractSection(markdown, startHeading, endHeadingPattern) {
+const readmePath = path.resolve(rootDir, 'README.md');
+const faqPath = path.resolve(rootDir, 'docs/FAQ.md');
+const rootPkgPath = path.resolve(rootDir, 'package.json');
+const webPkgPath = path.resolve(webDir, 'package.json');
+const outputPath = path.resolve(webDir, 'src/data/seoDocumentation.json');
+
+interface PackageJson {
+  description: string;
+  [key: string]: unknown;
+}
+
+interface FaqEntry {
+  question: string;
+  answerHtml: string;
+}
+
+interface WhyItem {
+  title: string;
+  descriptionHtml: string;
+}
+
+function extractSection(
+  markdown: string,
+  startHeading: string,
+  endHeadingPattern: RegExp
+): string {
   const startIndex = markdown.indexOf(startHeading);
   if (startIndex === -1) return '';
   const contentStart = startIndex + startHeading.length;
@@ -21,23 +46,23 @@ function extractSection(markdown, startHeading, endHeadingPattern) {
   return remaining.trim();
 }
 
-function parseWhySection(whyText) {
-  const items = [];
+function parseWhySection(whyText: string): WhyItem[] {
+  const items: WhyItem[] = [];
   const lines = whyText.split('\n');
   for (const line of lines) {
     const match = line.match(/^-\s+\*\*([^*]+)\*\*:\s+(.+)$/);
     if (match) {
       items.push({
         title: match[1].trim(),
-        descriptionHtml: marked.parseInline(match[2].trim()),
+        descriptionHtml: marked.parseInline(match[2].trim()) as string,
       });
     }
   }
   return items;
 }
 
-function parseQuickStart(webStudioText) {
-  const steps = [];
+function parseQuickStart(webStudioText: string): string[] {
+  const steps: string[] = [];
   const lines = webStudioText.split('\n');
   let inSteps = false;
   for (const line of lines) {
@@ -48,7 +73,7 @@ function parseQuickStart(webStudioText) {
     if (inSteps) {
       const match = line.match(/^\d+\.\s+(.+)$/);
       if (match) {
-        steps.push(marked.parseInline(match[1].trim()));
+        steps.push(marked.parseInline(match[1].trim()) as string);
       } else if (line.startsWith('---') || line.startsWith('##')) {
         break;
       }
@@ -57,19 +82,49 @@ function parseQuickStart(webStudioText) {
   return steps;
 }
 
-function parseCliCommands(cliText) {
+function parseCliCommands(cliText: string): string {
   const codeBlockMatch = cliText.match(/```bash([\s\S]*?)```/);
   if (!codeBlockMatch) return '';
   return codeBlockMatch[1].trim();
 }
 
-function parseMcpConfig(mcpText) {
+function parseMcpConfig(mcpText: string): string {
   const jsonBlockMatch = mcpText.match(/```json([\s\S]*?)```/);
   return jsonBlockMatch ? jsonBlockMatch[1].trim() : '';
 }
 
+/**
+ * Parses docs/FAQ.md, which uses the convention:
+ *   ## Q: <question text>
+ *   <blank line>
+ *   <answer paragraph(s)>
+ */
+function parseFaq(faqMarkdown: string): FaqEntry[] {
+  const entries: FaqEntry[] = [];
+  // Split on level-2 headings that start with "Q:"
+  const blocks = faqMarkdown.split(/\n(?=## Q:)/);
+  for (const block of blocks) {
+    const lines = block.trim().split('\n');
+    const headingLine = lines[0];
+    const questionMatch = headingLine.match(/^## Q:\s+(.+)$/);
+    if (!questionMatch) continue;
+    const question = questionMatch[1].trim();
+    const answerRaw = lines.slice(1).join('\n').trim();
+    entries.push({
+      question,
+      answerHtml: marked.parseInline(answerRaw) as string,
+    });
+  }
+  return entries;
+}
+
 try {
   const readme = fs.readFileSync(readmePath, 'utf8');
+  const faqMarkdown = fs.readFileSync(faqPath, 'utf8');
+  const rootPkg = JSON.parse(
+    fs.readFileSync(rootPkgPath, 'utf8')
+  ) as PackageJson;
+  const webPkg = JSON.parse(fs.readFileSync(webPkgPath, 'utf8')) as PackageJson;
 
   const whyText = extractSection(readme, '## 🌟 Why SVG to Video?', /\n##\s+/);
   const webStudioText = extractSection(readme, '## 🌐 Web Studio', /\n##\s+/);
@@ -84,11 +139,13 @@ try {
   const quickStartSteps = parseQuickStart(webStudioText);
   const cliSnippet = parseCliCommands(cliText);
   const mcpSnippet = parseMcpConfig(mcpText);
+  const faq = parseFaq(faqMarkdown);
 
   const seoData = {
-    headline: 'High-Fidelity SVG Animation to Video & Animated Image Studio',
-    tagline:
-      'Transform CSS-animated SVGs into MP4, WebM, MKV, MOV, aPNG, or GIF with full alpha-channel transparency directly in your browser or via CLI/MCP.',
+    // Sourced from web/package.json description (web-studio-scoped copy)
+    headline: webPkg.description,
+    // Sourced from root package.json description (full-project copy)
+    tagline: rootPkg.description,
     features,
     quickStartSteps,
     cliSnippet,
@@ -130,33 +187,7 @@ try {
           'Standard animated GIF with palette quantization and optional transparent color index.',
       },
     ],
-    faq: [
-      {
-        question: 'Are my SVG files uploaded to any external server?',
-        answerHtml: marked.parseInline(
-          'No. The Web Studio runs 100% client-side inside your browser using WebCodecs and the Web Animations API. Your SVG source code and exported video frames never leave your local device.'
-        ),
-      },
-      {
-        question: 'How does the Web Animations API frame scrubbing work?',
-        answerHtml: marked.parseInline(
-          'The engine mounts your SVG in an isolated offscreen canvas, programmatically pauses all CSS and SMIL animations, and advances the animation timeline frame by frame (e.g. at 24, 30, or 60 FPS) to guarantee 100% frame accuracy without skipped frames.'
-        ),
-      },
-      {
-        question: 'Can I automate conversions in CI/CD pipelines or AI agents?',
-        answerHtml: marked.parseInline(
-          'Yes! You can use the official CLI tool (`npx -y @gehdoc/svg-to-video`), the Docker image (`gehdoc/svg-to-video`), or connect to the Model Context Protocol (MCP) server for Claude Desktop, Cursor, and Antigravity.'
-        ),
-      },
-      {
-        question:
-          'How do I preserve transparent backgrounds in exported videos?',
-        answerHtml: marked.parseInline(
-          'Select **WebM**, **aPNG**, or **GIF** as your output format, check the "Transparent Background" toggle, and ensure your SVG root element does not declare an opaque background rect.'
-        ),
-      },
-    ],
+    faq,
     lastUpdated: new Date().toISOString(),
   };
 
