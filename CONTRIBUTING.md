@@ -191,18 +191,24 @@ npx --package ./gehdoc-svg-to-video-0.26.0.tgz svg-to-video --version
 
 Navigate to `web/` (`cd web`) to run studio commands:
 
-| Command                      | Description                                                  |
-| :--------------------------- | :----------------------------------------------------------- |
-| `npm run dev`                | Starts Web Studio Next.js development server.                |
-| `npm run build`              | Builds Web Studio for static production export (`web/out/`). |
-| `npm run start`              | Serves production web build locally.                         |
-| `npm run storybook`          | Starts interactive Storybook component workbench.            |
-| `npm run build-storybook`    | Builds static Storybook site for GitHub Pages deployment.    |
-| `npm run test:demo`          | Records automated demo video using Playwright & Driver.js.   |
-| `npm run test:web`           | Runs Web Studio E2E Playwright test suite.                   |
-| `npm run test:storybook`     | Runs Storybook component interaction tests via Vitest.       |
-| `npm run test:visual`        | Runs visual regression tests (pixel snapshot matching).      |
-| `npm run test:visual:update` | Updates baseline visual regression screenshot snapshots.     |
+| Command                      | Description                                                                 |
+| :--------------------------- | :-------------------------------------------------------------------------- |
+| `npm run dev`                | Starts Web Studio Next.js development server on `http://localhost:3000`.    |
+| `npm run build`              | Builds Web Studio static export into `web/dist` (with root `/` by default). |
+| `npm run start`              | Serves production web build locally.                                        |
+| `npm run storybook`          | Starts interactive Storybook component workbench.                           |
+| `npm run build-storybook`    | Builds static Storybook site for GitHub Pages deployment.                   |
+| `npm run test:demo`          | Records automated demo video using Playwright & Driver.js.                  |
+| `npm run test:web`           | Runs Web Studio E2E Playwright test suite against local static/dev server.  |
+| `npm run test:storybook`     | Runs Storybook component interaction tests via Vitest.                      |
+| `npm run test:visual`        | Runs visual regression tests (pixel snapshot matching).                     |
+| `npm run test:visual:update` | Updates baseline visual regression screenshot snapshots.                    |
+
+> [!NOTE]
+> **Base Path & Deployment Configuration**:
+>
+> - `npm run build -w web` creates a static production build in `web/dist` with base path `/svg-to-video` when `NODE_ENV=production` (the default for `next build`). For local E2E testing against the built output, run `NODE_ENV=development npm run build -w web` to build with root base path (`/`), then serve with `serve dist -l 3000`.
+> - The `basePath` and `assetPrefix` are controlled by `isProd = process.env.NODE_ENV === 'production'` in `web/next.config.js`. The CI deployment workflow runs `next build` in production mode, which automatically sets the correct GitHub Pages sub-path.
 
 ### 🧪 Multi-Tiered Testing Strategy
 
@@ -508,16 +514,22 @@ When adding new features or core capabilities, systematically update public-faci
      - **Root `package.json`**: Broad ecosystem description referencing all core tools (Web Studio, CLI automation, and Model Context Protocol (MCP) server integration).
      - **Web Workspace `web/package.json`**: Focused Web Studio description, harmonized with and consumed directly by `web/src/app/layout.tsx`.
    - Add new relevant search tags to the `keywords` array in root `package.json`.
-3. **`mcp.json` (MCP Registry Manifest)**:
+3. **`docs/FAQ.md`**:
+   - Add or update FAQ entries here — **do not hardcode them in the script**. Each entry must follow the `## Q: <question>` heading convention (see [SEO Data Pipeline in ARCHITECTURE.md](./docs/ARCHITECTURE.md#-seo-data-pipeline)).
+   - The script (`web/scripts/generate-seo-data.ts`) parses this file at `predev`/`prebuild` and converts answers to HTML via `marked.parseInline()`.
+4. **`web/scripts/generate-seo-data.ts`** (hardcoded UI copy):
+   - `headline` and `tagline` are string literals in this script — update them here when landing page copy changes (intentionally not sourced from `package.json`).
+   - `formatComparisons[]` is also hardcoded inline — update the array here until a `docs/FORMATS.md` source file is introduced.
+5. **`mcp.json` (MCP Registry Manifest)**:
    - Update `description` field when project capabilities or MCP tool features change. Ensure the description is strictly under 100 characters and focuses exclusively on describing the features of the MCP server (not the Web Studio or other elements provided by the package) so as not to exceed this limit.
    - Synchronize `version` and `packages[].version` fields during version bumps with root `package.json`.
    - Maintain `websiteUrl` (`https://gehdoc.github.io/svg-to-video/`), `icons` assets (`https://gehdoc.github.io/svg-to-video/favicon.svg`), and `repository.id` (`1178356431`).
    - Keep `packages[].environmentVariables` updated whenever new runtime flags or environment variables are introduced (`DO_NOT_TRACK`, `PUPPETEER_EXECUTABLE_PATH`, `PUPPETEER_ARGS`). If adding a CLI parameter or environment variable that affects MCP execution, contributors **must** update the corresponding package definitions in `mcp.json`.
    - Ensure `packages` identifiers, transport configurations, registry base URLs (`https://registry.npmjs.org`, `https://docker.io`), and runtime hints reflect published package distributions.
    - Verify changes using `npm run test:mcp`, which enforces automated contract assertions on `mcp.json` schema compliance.
-4. **`README.md`**:
+6. **`README.md`**:
    - Update feature summaries, installation options, and CLI/web quick start usage blocks.
-5. **GitHub Repository Metadata**:
+7. **GitHub Repository Metadata**:
    - Update repository **Description** in GitHub repository settings.
    - Update repository **Topics** (tags) via GitHub Web UI or GitHub CLI:
      ```bash
@@ -525,7 +537,7 @@ When adding new features or core capabilities, systematically update public-faci
        --description "High-fidelity CSS/SVG animation converter to MP4, WebM, GIF & aPNG with transparent background support" \
        --add-topic "svg,video,converter,apng,gif,webm,mp4,mcp"
      ```
-6. **Docker Hub Overview Metadata**:
+8. **Docker Hub Overview Metadata**:
    - Manually update the repository **Overview** text and **Short Description** on Docker Hub ([hub.docker.com/r/gehdoc/svg-to-video](https://hub.docker.com/r/gehdoc/svg-to-video)) via the web UI whenever releasing new features or updating documentation.
-7. **HuggingFace Space README** _(manual)_:
+9. **HuggingFace Space README** _(manual)_:
    - If the MCP interface, setup instructions, or environment variables changed, update the README in the [`GehDoc/svg-to-video-mcp`](https://huggingface.co/GehDoc/svg-to-video-mcp) HuggingFace repository. The Space is backed by a Python wrapper (not a Dockerfile) and requires **Python development** for any hosting-layer changes.

@@ -20,6 +20,14 @@ export interface RenderOptions {
 }
 
 /**
+ * Navigates to the given URL and waits for the page to reach a loaded state.
+ * Used as the standard navigation helper across all E2E specs.
+ */
+export async function gotoIsolated(page: Page, url = '/'): Promise<void> {
+  await page.goto(url);
+}
+
+/**
  * Automates the rendering and downloading of a video from the Web Studio.
  */
 export async function exportStudioVideo(
@@ -37,6 +45,11 @@ export async function exportStudioVideo(
     title,
     comment,
   } = options;
+
+  // Explicitly wait for the loading overlay to go away
+  const loadingPanel = page.locator('.seo-fallback');
+  await expect(loadingPanel).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+  await expect(loadingPanel).toBeHidden({ timeout: SUCCESS_TIMEOUT });
 
   await page.setInputFiles('input[type="file"]', svgPath);
 
@@ -83,7 +96,10 @@ export async function exportStudioVideo(
   const successCard = page.locator('.success-card');
   await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
 
-  const downloadButton = page.locator('text=Download');
+  const downloadButton = successCard.getByRole('button', {
+    name: 'Download',
+    exact: true,
+  });
   const downloadPromise = page.waitForEvent('download');
   await downloadButton.click();
   return downloadPromise;

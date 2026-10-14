@@ -1,0 +1,42 @@
+@use './breakpoints' as *;
+
+/// Reusable card surface styling
+@mixin card-surface($padding: 1.25rem, $radius: 10px) {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: $radius;
+  @if $padding {
+    padding: $padding;
+  }
+}
+
+/// 2-column responsive grid collapsing on mobile
+@mixin responsive-grid-2col($gap: 1.25rem, $mobile-gap: 1rem) {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $gap;
+
+  @media (max-width: $mobile-breakpoint) {
+    grid-template-columns: 1fr;
+    @if $mobile-gap {
+      gap: $mobile-gap;
+    }
+  }
+}
+
+/// Structured item typography (title + muted body)
+@mixin item-content-typography($title-size: 1rem, $body-size: 0.9rem) {
+  h4 {
+    font-size: $title-size;
+    font-weight: 700;
+    color: var(--text-h);
+    margin: 0 0 0.4rem 0;
+  }
+
+  p {
+    font-size: $body-size;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+}
