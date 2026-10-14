@@ -1,7 +1,4 @@
-import { useState } from 'react';
 import {
-  FaCheck,
-  FaCopy,
   FaTerminal,
   FaRobot,
   FaQuestionCircle,
@@ -12,21 +9,10 @@ import {
 } from 'react-icons/fa';
 import seoData from '../data/seoDocumentation.json';
 import { ECOSYSTEM_LINKS } from '../utils/constants';
+import { DevCard } from './DevCard/DevCard';
 import './SeoContent.scss';
 
 export const SeoContent = () => {
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
-
-  const handleCopy = async (text: string, key: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedKey(key);
-      setTimeout(() => setCopiedKey(null), 2000);
-    } catch {
-      // Fallback if clipboard API is not available
-    }
-  };
-
   return (
     <section
       className="seo-content"
@@ -132,67 +118,20 @@ export const SeoContent = () => {
             <h3>Developer CLI, Docker & Model Context Protocol (MCP)</h3>
           </div>
           <div className="developer-grid">
-            <div className="dev-card">
-              <div className="dev-card-header">
-                <div className="dev-title">
-                  <FaTerminal /> CLI & Docker Automation
-                </div>
-                <button
-                  type="button"
-                  className="copy-snippet-btn"
-                  onClick={() => handleCopy(seoData.cliSnippet, 'cli')}
-                  aria-label="Copy CLI snippet"
-                >
-                  {copiedKey === 'cli' ? (
-                    <>
-                      <FaCheck size={11} /> Copied
-                    </>
-                  ) : (
-                    <>
-                      <FaCopy size={11} /> Copy
-                    </>
-                  )}
-                </button>
-              </div>
-              <pre
-                className="dev-snippet"
-                tabIndex={0}
-                aria-label="CLI & Docker automation commands"
-              >
-                <code>{seoData.cliSnippet}</code>
-              </pre>
-            </div>
-
-            <div className="dev-card">
-              <div className="dev-card-header">
-                <div className="dev-title">
-                  <FaRobot /> AI Agent & MCP Integration
-                </div>
-                <button
-                  type="button"
-                  className="copy-snippet-btn"
-                  onClick={() => handleCopy(seoData.mcpSnippet, 'mcp')}
-                  aria-label="Copy MCP config"
-                >
-                  {copiedKey === 'mcp' ? (
-                    <>
-                      <FaCheck size={11} /> Copied
-                    </>
-                  ) : (
-                    <>
-                      <FaCopy size={11} /> Copy
-                    </>
-                  )}
-                </button>
-              </div>
-              <pre
-                className="dev-snippet"
-                tabIndex={0}
-                aria-label="MCP server configuration JSON"
-              >
-                <code>{seoData.mcpSnippet}</code>
-              </pre>
-            </div>
+            <DevCard
+              title="CLI & Docker Automation"
+              icon={<FaTerminal />}
+              snippet={seoData.cliSnippet}
+              snippetAriaLabel="CLI & Docker automation commands"
+              copyAriaLabel="Copy CLI snippet"
+            />
+            <DevCard
+              title="AI Agent & MCP Integration"
+              icon={<FaRobot />}
+              snippet={seoData.mcpSnippet}
+              snippetAriaLabel="MCP server configuration JSON"
+              copyAriaLabel="Copy MCP config"
+            />
           </div>
         </div>
 

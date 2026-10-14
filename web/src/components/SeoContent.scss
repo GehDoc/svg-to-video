@@ -291,65 +291,6 @@
   @media (max-width: $mobile-breakpoint) {
     grid-template-columns: 1fr;
   }
-
-  .dev-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-
-    .dev-card-header {
-      background: var(--panel);
-      border-bottom: 1px solid var(--border);
-      padding: 0.6rem 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      .dev-title {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--text-h);
-      }
-
-      .copy-snippet-btn {
-        background: var(--card);
-        border: 1px solid var(--border);
-        color: var(--text-muted);
-        font-size: 0.75rem;
-        padding: 0.25rem 0.6rem;
-        border-radius: 4px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
-
-        &:hover {
-          color: var(--text-h);
-          border-color: var(--primary);
-        }
-      }
-    }
-
-    .dev-snippet {
-      margin: 0;
-      padding: 1rem;
-      background: var(--card);
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      line-height: 1.5;
-      color: var(--text);
-      overflow-x: auto;
-
-      code {
-        background: transparent;
-        padding: 0;
-      }
-    }
-  }
 }
 
 /* FAQ Grid */
