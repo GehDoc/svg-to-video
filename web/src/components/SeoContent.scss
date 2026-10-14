@@ -8,6 +8,15 @@
   padding: 4rem 1.5rem;
   box-sizing: border-box;
 
+  a {
+    color: var(--primary-text);
+    text-decoration: underline;
+
+    &:hover {
+      color: var(--primary-hover);
+    }
+  }
+
   @media (max-width: $mobile-breakpoint) {
     padding: 2.5rem 1rem;
   }
