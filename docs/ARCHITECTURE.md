@@ -66,18 +66,12 @@ The landing page's structured content (headlines, features, FAQ, format table, c
 
 ### Flow
 
-```
-README.md ──────────────────────────────────────────┐
-docs/FAQ.md  (## Q: … convention → faq[])           ├──► web/scripts/generate-seo-data.ts
-                                                    ─┘       (runs as predev / prebuild via tsx)
-                                                         │
-                                                         ▼
-                                         web/src/data/seoDocumentation.json
-                                                         │
-                                                         ▼
-                                         web/src/components/SeoContent.tsx
-                                           (dangerouslySetInnerHTML for
-                                            pre-rendered markdown fields)
+```mermaid
+flowchart LR
+    A["README.md"] --> S["web/scripts/generate-seo-data.ts\n(predev / prebuild via tsx)"]
+    B["docs/FAQ.md\n(## Q: … convention)"] --> S
+    S --> J["web/src/data/seoDocumentation.json"]
+    J --> C["web/src/components/SeoContent.tsx\n(dangerouslySetInnerHTML)"]
 ```
 
 ### Source files and their roles

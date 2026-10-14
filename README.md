@@ -151,6 +151,12 @@ The tool works by isolating the SVG, scrubbing the Web Animations API, and captu
 
 ---
 
+## ❓ FAQ
+
+Common questions about privacy, how frame scrubbing works, CI/CD automation, and transparency support are answered in **[docs/FAQ.md](./docs/FAQ.md)**.
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! This project follows a **Spec-Driven Development (SDD)** workflow to ensure clear requirements and high quality. Please open an issue or pull request.

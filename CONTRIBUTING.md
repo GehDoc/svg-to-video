@@ -207,8 +207,8 @@ Navigate to `web/` (`cd web`) to run studio commands:
 > [!NOTE]
 > **Base Path & Deployment Configuration**:
 >
-> - `npm run build -w web` creates a static production build in `web/dist` with root base path (`/`) by default, allowing local and CI E2E Playwright tests to execute directly against `serve dist -l 3000` with 0 JIT compilation overhead.
-> - Setting `GITHUB_PAGES=true` (e.g. `GITHUB_PAGES=true npm run build -w web` during the deployment workflow) configures `basePath: '/svg-to-video'` for GitHub Pages hosting.
+> - `npm run build -w web` creates a static production build in `web/dist` with base path `/svg-to-video` when `NODE_ENV=production` (the default for `next build`). For local E2E testing against the built output, run `NODE_ENV=development npm run build -w web` to build with root base path (`/`), then serve with `serve dist -l 3000`.
+> - The `basePath` and `assetPrefix` are controlled by `isProd = process.env.NODE_ENV === 'production'` in `web/next.config.js`. The CI deployment workflow runs `next build` in production mode, which automatically sets the correct GitHub Pages sub-path.
 
 ### 🧪 Multi-Tiered Testing Strategy
 
