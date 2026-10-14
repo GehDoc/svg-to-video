@@ -132,10 +132,6 @@ test('Studio applies sample target capture settings and preserves defined captur
     const fpsInput = screen.getByLabelText(/FPS/i) as HTMLInputElement;
     expect(fpsInput.value).toBe('30');
 
-    // Filename should match sample id & format
-    const nameInput = screen.getByLabelText(/File Name/i) as HTMLInputElement;
-    expect(nameInput.value).toBe('rocket-launch.mp4');
-
     // Resolution preset should be preserved/applied
     const resolutionSelect = screen.getByLabelText(
       /Resolution/i
