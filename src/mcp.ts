@@ -75,7 +75,7 @@ function getMimeType(formatStr: string): string {
 
 const server = new Server(
   {
-    name: 'svg-to-video',
+    name: pkg.mcpName,
     version: pkg.version,
   },
   {

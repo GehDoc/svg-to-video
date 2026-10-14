@@ -2,7 +2,11 @@ import { test, expect } from '@playwright/test';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getProbeMetadata, ensureOutputDir } from '../../tests/helpers/e2e.js';
-import { getTestOutputPath, exportStudioVideo } from './helpers/web-e2e.js';
+import {
+  getTestOutputPath,
+  exportStudioVideo,
+  gotoIsolated,
+} from './helpers/web-e2e.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -27,7 +31,7 @@ test.describe('Rendering Pipeline: Metadata Integrity', () => {
       test(`should correctly embed and verify metadata for ${format.id.toUpperCase()}`, async ({
         page,
       }, testInfo) => {
-        await page.goto('/');
+        await gotoIsolated(page);
 
         const svgPath = path.resolve(
           __dirname,

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Studio } from '../components/Studio';
 import { SeoFallback } from '../components/SeoFallback';
+import { SeoContent } from '../components/SeoContent';
 import './page.scss';
 
 export default function Page() {
@@ -34,14 +35,13 @@ export default function Page() {
       {shouldRenderSplash && <SeoFallback isHidden={!isSplashVisible} />}
       {mounted && (
         <div
-          style={{
-            opacity: isSplashVisible ? 0 : 1,
-            transition: 'opacity 0.5s ease-in-out',
-          }}
+          className={`studio-wrapper ${!isSplashVisible ? 'is-visible' : ''}`}
         >
           <Studio />
+          <SeoContent />
         </div>
       )}
+      {!mounted && <SeoContent />}
     </>
   );
 }

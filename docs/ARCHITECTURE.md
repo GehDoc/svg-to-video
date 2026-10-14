@@ -60,6 +60,55 @@ The renderer (implemented in `web/src/components/SvgRenderer/renderer.js`) follo
 
 This strategy ensures that what the user sees in the "Live Monitor" is exactly what is captured in the final video output.
 
+## 📄 SEO Data Pipeline
+
+The landing page's structured content (headlines, features, FAQ, format table, code snippets) is assembled at build time by a TypeScript script into a single JSON file consumed by the `SeoContent` component at runtime.
+
+### Flow
+
+```mermaid
+flowchart LR
+    A["README.md"] --> S["web/scripts/generate-seo-data.ts\n(predev / prebuild via tsx)"]
+    B["docs/FAQ.md\n(## Q: … convention)"] --> S
+    S --> J["web/src/data/seoDocumentation.json"]
+    J --> C["web/src/components/SeoContent.tsx\n(dangerouslySetInnerHTML)"]
+```
+
+### Source files and their roles
+
+| Source                                           | Field(s) populated    | Parser                                   |
+| ------------------------------------------------ | --------------------- | ---------------------------------------- |
+| Script inline (`headline`)                       | `headline`            | Hardcoded UI copy — **update in script** |
+| Script inline (`tagline`)                        | `tagline`             | Hardcoded UI copy — **update in script** |
+| Script inline (`formatComparisons`)              | `formatComparisons[]` | Hardcoded (pending `docs/FORMATS.md`)    |
+| `README.md → ## 🌟 Why SVG to Video?`            | `features[]`          | `parseWhySection()`                      |
+| `README.md → ## 🌐 Web Studio → ### Quick Start` | `quickStartSteps[]`   | `parseQuickStart()`                      |
+| `README.md → ## 🚀 CLI / Docker Tool`            | `cliSnippet`          | `parseCliCommands()`                     |
+| `README.md → ## 🤖 AI Agent & MCP Integration`   | `mcpSnippet`          | `parseMcpConfig()`                       |
+| `docs/FAQ.md` (heading convention `## Q: …`)     | `faq[]`               | `parseFaq()`                             |
+
+### Hardcoded UI copy in the script
+
+The `headline` and `tagline` fields are intentionally **not** sourced from `package.json` — those descriptions are technical npm/GitHub copy and are too long and parenthesis-heavy for display as UI headings. When landing page copy needs to change, edit the string literals directly in [`web/scripts/generate-seo-data.ts`](../web/scripts/generate-seo-data.ts).
+
+Similarly, `formatComparisons[]` is hardcoded inline. A future `docs/FORMATS.md` could be parsed instead.
+
+### Markdown rendering
+
+Fields that contain markdown (`features[].descriptionHtml`, `faq[].answerHtml`, `quickStartSteps[]`) are converted to HTML at build time using `marked.parseInline()` (a devDependency). `SeoContent.tsx` renders them via `dangerouslySetInnerHTML` — no markdown parsing occurs in the browser bundle.
+
+### Adding or editing FAQ entries
+
+Edit [`docs/FAQ.md`](../docs/FAQ.md). Each entry must follow the heading convention:
+
+```markdown
+## Q: Your question here?
+
+Your answer in plain text or inline markdown (bold, code, links).
+```
+
+The script splits on `## Q:` headings and converts each answer paragraph to HTML automatically.
+
 ## 📸 Visual Regression Testing
 
 The `SvgRenderer` component is monitored for visual regressions using native Vitest matchers.

@@ -1,6 +1,7 @@
 import { test, type Locator } from '@playwright/test';
 import path from 'path';
 import { fileURLToPath } from 'node:url';
+import { gotoIsolated } from './helpers/web-e2e';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DRIVER_JS_PATH = path.resolve(
@@ -21,15 +22,32 @@ test.use({
 test.setTimeout(120000);
 
 test('Generate Demo Video - Web Studio', async ({ page }) => {
-  await page.goto('/');
-
-  // Wait for the app to be ready and splash screen to fade out
-  await page.waitForSelector('input[type="file"]');
-  await page.waitForLoadState('networkidle');
+  await gotoIsolated(page);
+  // Inject styles to disable main page scrolling
+  await page.addStyleTag({
+    content: `
+      html, body {
+        overflow: hidden !important;
+        height: 100% !important;
+      }
+      #root, .app-container {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+      }
+    `,
+  });
 
   // Ensure Splash Screen is gone before starting recording interactions
   const splash = page.locator('.seo-fallback');
   await splash.waitFor({ state: 'hidden', timeout: 5000 });
+
+  // Ensure the page is fully loaded and ready for interaction
+  await page.waitForLoadState('networkidle');
+  await page.waitForSelector('input[type="file"]');
 
   // =========================================================================
   // 1. INJECTION OF DRIVER.JS (Local dependencies)
@@ -63,7 +81,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     // 2. Trigger Morph and Scroll simultaneously (no popover yet)
     await locator.evaluate((element) => {
       window.driverObj!.highlight({ element });
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
     // 3. Wait for the scroll to stabilize

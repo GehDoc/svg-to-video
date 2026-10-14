@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="rocketBody" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+    <linearGradient id="rocketFin" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#b91c1c"/>
+    </linearGradient>
+    <linearGradient id="flameGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="50%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+    <style>
+      @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(-45deg); }
+        50% { transform: translateY(-14px) rotate(-43deg); }
+      }
+      @keyframes flame {
+        0%, 100% { transform: scaleY(1) scaleX(1); opacity: 0.9; }
+        50% { transform: scaleY(1.3) scaleX(0.85); opacity: 1; }
+      }
+      @keyframes starTwinkle {
+        0%, 100% { opacity: 0.2; transform: scale(0.8); }
+        50% { opacity: 1; transform: scale(1.2); }
+      }
+      .rocket-group {
+        transform-origin: 200px 180px;
+        animation: float 5s ease-in-out infinite;
+      }
+      .flame {
+        transform-origin: 200px 240px;
+        animation: flame 0.25s ease-in-out infinite alternate;
+      }
+      .star-1 { animation: starTwinkle 2s ease-in-out infinite; transform-origin: 80px 100px; }
+      .star-2 { animation: starTwinkle 2.5s ease-in-out infinite 0.5s; transform-origin: 320px 120px; }
+      .star-3 { animation: starTwinkle 5s ease-in-out infinite 1s; transform-origin: 100px 300px; }
+      .star-4 { animation: starTwinkle 2s ease-in-out infinite 0.3s; transform-origin: 310px 280px; }
+    </style>
+  </defs>
+
+  <!-- Background Stars -->
+  <g fill="#94a3b8">
+    <circle class="star-1" cx="80" cy="100" r="3" />
+    <circle class="star-2" cx="320" cy="120" r="4" />
+    <circle class="star-3" cx="100" cy="300" r="3.5" />
+    <circle class="star-4" cx="310" cy="280" r="2.5" />
+  </g>
+
+  <!-- Rocket assembly centered at (200, 180) -->
+  <g class="rocket-group">
+    <!-- Flame Exhaust -->
+    <path class="flame" d="M 185 240 Q 200 310 200 320 Q 200 310 215 240 Z" fill="url(#flameGrad)" />
+    <path class="flame" d="M 192 240 Q 200 280 200 290 Q 200 280 208 240 Z" fill="#fef08a" />
+
+    <!-- Left & Right Fins -->
+    <path d="M 170 200 L 140 235 L 175 230 Z" fill="url(#rocketFin)" />
+    <path d="M 230 200 L 260 235 L 225 230 Z" fill="url(#rocketFin)" />
+
+    <!-- Main Fuselage -->
+    <path d="M 200 110 C 170 145 165 205 170 240 L 230 240 C 235 205 230 145 200 110 Z" fill="url(#rocketBody)" stroke="#94a3b8" stroke-width="2" />
+
+    <!-- Center Fin -->
+    <path d="M 197 195 L 200 150 L 203 195 L 200 240 Z" fill="url(#rocketFin)" />
+
+    <!-- Porthole Window -->
+    <circle cx="200" cy="165" r="16" fill="#38bdf8" stroke="#0284c7" stroke-width="3" />
+    <circle cx="196" cy="160" r="5" fill="#ffffff" opacity="0.8" />
+  </g>
+</svg>

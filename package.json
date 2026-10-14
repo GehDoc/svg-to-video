@@ -20,7 +20,7 @@
     "url": "https://github.com/GehDoc/svg-to-video/?sponsor=1"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.22.2"
   },
   "keywords": [
     "animation",
