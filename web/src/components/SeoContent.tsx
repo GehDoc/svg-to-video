@@ -50,7 +50,7 @@ export const SeoContent = () => {
             {seoData.features.map((feat) => (
               <article key={feat.title} className="feature-item">
                 <h4>{feat.title}</h4>
-                <p>{feat.description}</p>
+                <p dangerouslySetInnerHTML={{ __html: feat.descriptionHtml }} />
               </article>
             ))}
           </div>
@@ -63,10 +63,13 @@ export const SeoContent = () => {
             <h3>How to Convert CSS-Animated SVGs</h3>
           </div>
           <div className="steps-container">
-            {seoData.quickStartSteps.map((step, index) => (
-              <div key={step} className="step-card">
+            {seoData.quickStartSteps.map((stepHtml, index) => (
+              <div key={index} className="step-card">
                 <span className="step-num">{index + 1}</span>
-                <p className="step-text">{step}</p>
+                <p
+                  className="step-text"
+                  dangerouslySetInnerHTML={{ __html: stepHtml }}
+                />
               </div>
             ))}
           </div>
@@ -203,7 +206,7 @@ export const SeoContent = () => {
             {seoData.faq.map((item) => (
               <article key={item.question} className="faq-item">
                 <h4>{item.question}</h4>
-                <p>{item.answer}</p>
+                <p dangerouslySetInnerHTML={{ __html: item.answerHtml }} />
               </article>
             ))}
           </div>

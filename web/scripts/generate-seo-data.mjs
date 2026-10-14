@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { marked } from 'marked';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,7 +29,7 @@ function parseWhySection(whyText) {
     if (match) {
       items.push({
         title: match[1].trim(),
-        description: match[2].trim(),
+        descriptionHtml: marked.parseInline(match[2].trim()),
       });
     }
   }
@@ -47,7 +48,7 @@ function parseQuickStart(webStudioText) {
     if (inSteps) {
       const match = line.match(/^\d+\.\s+(.+)$/);
       if (match) {
-        steps.push(match[1].trim());
+        steps.push(marked.parseInline(match[1].trim()));
       } else if (line.startsWith('---') || line.startsWith('##')) {
         break;
       }
@@ -132,24 +133,28 @@ try {
     faq: [
       {
         question: 'Are my SVG files uploaded to any external server?',
-        answer:
-          'No. The Web Studio runs 100% client-side inside your browser using WebCodecs and the Web Animations API. Your SVG source code and exported video frames never leave your local device.',
+        answerHtml: marked.parseInline(
+          'No. The Web Studio runs 100% client-side inside your browser using WebCodecs and the Web Animations API. Your SVG source code and exported video frames never leave your local device.'
+        ),
       },
       {
         question: 'How does the Web Animations API frame scrubbing work?',
-        answer:
-          'The engine mounts your SVG in an isolated offscreen canvas, programmatically pauses all CSS and SMIL animations, and advances the animation timeline frame by frame (e.g. at 24, 30, or 60 FPS) to guarantee 100% frame accuracy without skipped frames.',
+        answerHtml: marked.parseInline(
+          'The engine mounts your SVG in an isolated offscreen canvas, programmatically pauses all CSS and SMIL animations, and advances the animation timeline frame by frame (e.g. at 24, 30, or 60 FPS) to guarantee 100% frame accuracy without skipped frames.'
+        ),
       },
       {
         question: 'Can I automate conversions in CI/CD pipelines or AI agents?',
-        answer:
-          'Yes! You can use the official CLI tool (npx -y @gehdoc/svg-to-video), the Docker image (gehdoc/svg-to-video), or connect to the Model Context Protocol (MCP) server for Claude Desktop, Cursor, and Antigravity.',
+        answerHtml: marked.parseInline(
+          'Yes! You can use the official CLI tool (`npx -y @gehdoc/svg-to-video`), the Docker image (`gehdoc/svg-to-video`), or connect to the Model Context Protocol (MCP) server for Claude Desktop, Cursor, and Antigravity.'
+        ),
       },
       {
         question:
           'How do I preserve transparent backgrounds in exported videos?',
-        answer:
-          'Select WebM, aPNG, or GIF as your output format, check the "Transparent Background" toggle, and ensure your SVG root element does not declare an opaque background rect.',
+        answerHtml: marked.parseInline(
+          'Select **WebM**, **aPNG**, or **GIF** as your output format, check the "Transparent Background" toggle, and ensure your SVG root element does not declare an opaque background rect.'
+        ),
       },
     ],
     lastUpdated: new Date().toISOString(),
