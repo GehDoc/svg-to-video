@@ -68,10 +68,8 @@ The landing page's structured content (headlines, features, FAQ, format table, c
 
 ```
 README.md ──────────────────────────────────────────┐
-root/package.json (.description → tagline)           │
-web/package.json  (.description → headline)          ├──► web/scripts/generate-seo-data.ts
-docs/FAQ.md       (## Q: … convention → faq[])      │       (runs as predev / prebuild via tsx)
-                                                    ─┘
+docs/FAQ.md  (## Q: … convention → faq[])           ├──► web/scripts/generate-seo-data.ts
+                                                    ─┘       (runs as predev / prebuild via tsx)
                                                          │
                                                          ▼
                                          web/src/data/seoDocumentation.json
@@ -84,16 +82,22 @@ docs/FAQ.md       (## Q: … convention → faq[])      │       (runs as prede
 
 ### Source files and their roles
 
-| Source                                           | Field(s) populated    | Parser                                |
-| ------------------------------------------------ | --------------------- | ------------------------------------- |
-| `root/package.json` `.description`               | `tagline`             | Direct read                           |
-| `web/package.json` `.description`                | `headline`            | Direct read                           |
-| `README.md → ## 🌟 Why SVG to Video?`            | `features[]`          | `parseWhySection()`                   |
-| `README.md → ## 🌐 Web Studio → ### Quick Start` | `quickStartSteps[]`   | `parseQuickStart()`                   |
-| `README.md → ## 🚀 CLI / Docker Tool`            | `cliSnippet`          | `parseCliCommands()`                  |
-| `README.md → ## 🤖 AI Agent & MCP Integration`   | `mcpSnippet`          | `parseMcpConfig()`                    |
-| `docs/FAQ.md` (heading convention `## Q: …`)     | `faq[]`               | `parseFaq()`                          |
-| Script inline                                    | `formatComparisons[]` | Hardcoded (pending `docs/FORMATS.md`) |
+| Source                                           | Field(s) populated    | Parser                                   |
+| ------------------------------------------------ | --------------------- | ---------------------------------------- |
+| Script inline (`headline`)                       | `headline`            | Hardcoded UI copy — **update in script** |
+| Script inline (`tagline`)                        | `tagline`             | Hardcoded UI copy — **update in script** |
+| Script inline (`formatComparisons`)              | `formatComparisons[]` | Hardcoded (pending `docs/FORMATS.md`)    |
+| `README.md → ## 🌟 Why SVG to Video?`            | `features[]`          | `parseWhySection()`                      |
+| `README.md → ## 🌐 Web Studio → ### Quick Start` | `quickStartSteps[]`   | `parseQuickStart()`                      |
+| `README.md → ## 🚀 CLI / Docker Tool`            | `cliSnippet`          | `parseCliCommands()`                     |
+| `README.md → ## 🤖 AI Agent & MCP Integration`   | `mcpSnippet`          | `parseMcpConfig()`                       |
+| `docs/FAQ.md` (heading convention `## Q: …`)     | `faq[]`               | `parseFaq()`                             |
+
+### Hardcoded UI copy in the script
+
+The `headline` and `tagline` fields are intentionally **not** sourced from `package.json` — those descriptions are technical npm/GitHub copy and are too long and parenthesis-heavy for display as UI headings. When landing page copy needs to change, edit the string literals directly in [`web/scripts/generate-seo-data.ts`](../web/scripts/generate-seo-data.ts).
+
+Similarly, `formatComparisons[]` is hardcoded inline. A future `docs/FORMATS.md` could be parsed instead.
 
 ### Markdown rendering
 
