@@ -1,39 +1,38 @@
-import { useState } from 'react';
 import {
   FaLock,
   FaCheckCircle,
   FaTerminal,
   FaRobot,
-  FaCopy,
-  FaCheck,
   FaPlay,
 } from 'react-icons/fa';
 import { SAMPLES, type SamplePreset } from '../utils/samples';
 import { Button } from './Button/Button';
+import { DevCard, type DevCardTab } from './DevCard/DevCard';
 import './LandingView.scss';
 
 interface LandingViewProps {
   onSelectSample?: (sample: SamplePreset) => void;
 }
 
+const DEV_TABS: DevCardTab[] = [
+  {
+    id: 'cli',
+    label: 'CLI Automation',
+    icon: <FaTerminal size={12} />,
+    snippet:
+      'npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --format webm --transparent',
+    copyAriaLabel: 'Copy CLI command',
+  },
+  {
+    id: 'mcp',
+    label: 'AI Agent (MCP)',
+    icon: <FaRobot size={12} />,
+    snippet: `{\n  "mcpServers": {\n    "svg-to-video": {\n      "command": "npx",\n      "args": ["-y", "-p", "@gehdoc/svg-to-video", "svg-to-video-mcp"]\n    }\n  }\n}`,
+    copyAriaLabel: 'Copy MCP config snippet',
+  },
+];
+
 export const LandingView = ({ onSelectSample }: LandingViewProps) => {
-  const [copiedTab, setCopiedTab] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'cli' | 'mcp'>('cli');
-
-  const cliCommand =
-    'npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --format webm --transparent';
-  const mcpCommand = `{\n  "mcpServers": {\n    "svg-to-video": {\n      "command": "npx",\n      "args": ["-y", "-p", "@gehdoc/svg-to-video", "svg-to-video-mcp"]\n    }\n  }\n}`;
-
-  const handleCopy = async (text: string, tab: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedTab(tab);
-      setTimeout(() => setCopiedTab(null), 2000);
-    } catch {
-      // Fallback if clipboard API is not available
-    }
-  };
-
   return (
     <div className="landing-view">
       <div className="landing-scroll-content">
@@ -139,51 +138,7 @@ export const LandingView = ({ onSelectSample }: LandingViewProps) => {
           className="landing-section integration-section"
           aria-label="Developer Tools"
         >
-          <div className="integration-card">
-            <div className="integration-header">
-              <div className="integration-tabs">
-                <button
-                  type="button"
-                  className={`tab-btn ${activeTab === 'cli' ? 'is-active' : ''}`}
-                  onClick={() => setActiveTab('cli')}
-                >
-                  <FaTerminal size={12} /> CLI Automation
-                </button>
-                <button
-                  type="button"
-                  className={`tab-btn ${activeTab === 'mcp' ? 'is-active' : ''}`}
-                  onClick={() => setActiveTab('mcp')}
-                >
-                  <FaRobot size={12} /> AI Agent (MCP)
-                </button>
-              </div>
-              <button
-                type="button"
-                className="copy-btn"
-                onClick={() =>
-                  handleCopy(
-                    activeTab === 'cli' ? cliCommand : mcpCommand,
-                    activeTab
-                  )
-                }
-                title="Copy snippet"
-                aria-label="Copy code snippet"
-              >
-                {copiedTab === activeTab ? (
-                  <>
-                    <FaCheck size={12} /> Copied!
-                  </>
-                ) : (
-                  <>
-                    <FaCopy size={12} /> Copy
-                  </>
-                )}
-              </button>
-            </div>
-            <pre className="code-box" tabIndex={0} aria-label="Code snippet">
-              <code>{activeTab === 'cli' ? cliCommand : mcpCommand}</code>
-            </pre>
-          </div>
+          <DevCard tabs={DEV_TABS} />
         </section>
       </div>
 

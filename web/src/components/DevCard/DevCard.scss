@@ -7,10 +7,11 @@
   .dev-card-header {
     background: var(--panel);
     border-bottom: 1px solid var(--border);
-    padding: 0.6rem 1rem;
+    padding: 0.5rem 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 0.5rem;
 
     .dev-title {
       display: flex;
@@ -21,23 +22,56 @@
       color: var(--text-h);
     }
 
+    .dev-card-tabs {
+      display: flex;
+      gap: 0.5rem;
+
+      .dev-tab-btn {
+        background: transparent;
+        border: 1px solid transparent;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.35rem 0.75rem;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.15s ease;
+
+        &:hover {
+          color: var(--text-h);
+          background: var(--card);
+        }
+
+        &.is-active {
+          color: var(--primary-text);
+          background: var(--card);
+          border-color: var(--border);
+        }
+      }
+    }
+
     .copy-snippet-btn {
       background: var(--card);
       border: 1px solid var(--border);
       color: var(--text-muted);
       font-size: 0.75rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 0.35rem;
       transition:
         color 0.15s ease,
-        border-color 0.15s ease;
+        border-color 0.15s ease,
+        background-color 0.15s ease;
 
       &:hover {
         color: var(--text-h);
+        background: var(--panel);
         border-color: var(--primary);
       }
     }
@@ -45,17 +79,20 @@
 
   .dev-snippet {
     margin: 0;
-    padding: 1rem;
+    padding: 0.85rem 1rem;
     background: var(--card);
     font-family: var(--mono);
     font-size: 0.75rem;
-    line-height: 1.5;
+    line-height: 1.45;
     color: var(--text);
     overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
 
     code {
       background: transparent;
       padding: 0;
+      color: inherit;
     }
   }
 }
