@@ -1,7 +1,7 @@
+@use '../../styles/mixins' as *;
+
 .dev-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  @include card-surface($padding: null);
   overflow: hidden;
 
   .dev-card-header {
