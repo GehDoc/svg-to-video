@@ -14,7 +14,7 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
 
   expect(
     screen.getByRole('heading', {
-      name: /SVG to video Studio/i,
+      name: /SVG Animation to Video/i,
       level: 2,
     })
   ).toBeInTheDocument();
@@ -47,9 +47,9 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
     })
   ).toBeInTheDocument();
 
-  // Verify format table rows
-  expect(screen.getByText('MP4')).toBeInTheDocument();
-  expect(screen.getByText('WebM')).toBeInTheDocument();
-  expect(screen.getByText('aPNG')).toBeInTheDocument();
-  expect(screen.getByText('GIF')).toBeInTheDocument();
+  // Verify format table rows (format names may appear in multiple elements)
+  expect(screen.getAllByText('MP4').length).toBeGreaterThan(0);
+  expect(screen.getAllByText('WebM').length).toBeGreaterThan(0);
+  expect(screen.getAllByText('aPNG').length).toBeGreaterThan(0);
+  expect(screen.getAllByText('GIF').length).toBeGreaterThan(0);
 });
