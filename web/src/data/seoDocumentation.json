@@ -1,6 +1,6 @@
 {
-  "headline": "High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) and optimized animated image converter (aPNG, GIF) with perfect alpha-channel transparency.",
-  "tagline": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, Model Context Protocol (MCP) server integration, and a serverless Web Studio.",
+  "headline": "High-Fidelity SVG Animation to Video & Animated Image Studio",
+  "tagline": "Transform CSS-animated SVGs into MP4, WebM, MKV, MOV, aPNG, or GIF with full alpha-channel transparency — directly in your browser or via CLI/MCP.",
   "features": [
     {
       "title": "Transparent Backgrounds",
@@ -92,5 +92,5 @@
       "answerHtml": "Select <strong>WebM</strong>, <strong>aPNG</strong>, or <strong>GIF</strong> as your output format, check the &quot;Transparent Background&quot; toggle, and ensure your SVG root element does not declare an opaque background rect."
     }
   ],
-  "lastUpdated": "2026-10-14T04:34:13.793Z"
+  "lastUpdated": "2026-10-14T04:55:42.883Z"
 }

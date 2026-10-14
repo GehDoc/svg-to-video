@@ -514,16 +514,19 @@ When adding new features or core capabilities, systematically update public-faci
      - **Root `package.json`**: Broad ecosystem description referencing all core tools (Web Studio, CLI automation, and Model Context Protocol (MCP) server integration).
      - **Web Workspace `web/package.json`**: Focused Web Studio description, harmonized with and consumed directly by `web/src/app/layout.tsx`.
    - Add new relevant search tags to the `keywords` array in root `package.json`.
-3. **`mcp.json` (MCP Registry Manifest)**:
+3. **`docs/FAQ.md`**:
+   - Add or update FAQ entries here — **do not hardcode them in the script**. Each entry must follow the `## Q: <question>` heading convention (see [SEO Data Pipeline in ARCHITECTURE.md](./docs/ARCHITECTURE.md#-seo-data-pipeline)).
+   - The script (`web/scripts/generate-seo-data.ts`) parses this file at `predev`/`prebuild` and converts answers to HTML via `marked.parseInline()`.
+4. **`mcp.json` (MCP Registry Manifest)**:
    - Update `description` field when project capabilities or MCP tool features change. Ensure the description is strictly under 100 characters and focuses exclusively on describing the features of the MCP server (not the Web Studio or other elements provided by the package) so as not to exceed this limit.
    - Synchronize `version` and `packages[].version` fields during version bumps with root `package.json`.
    - Maintain `websiteUrl` (`https://gehdoc.github.io/svg-to-video/`), `icons` assets (`https://gehdoc.github.io/svg-to-video/favicon.svg`), and `repository.id` (`1178356431`).
    - Keep `packages[].environmentVariables` updated whenever new runtime flags or environment variables are introduced (`DO_NOT_TRACK`, `PUPPETEER_EXECUTABLE_PATH`, `PUPPETEER_ARGS`). If adding a CLI parameter or environment variable that affects MCP execution, contributors **must** update the corresponding package definitions in `mcp.json`.
    - Ensure `packages` identifiers, transport configurations, registry base URLs (`https://registry.npmjs.org`, `https://docker.io`), and runtime hints reflect published package distributions.
    - Verify changes using `npm run test:mcp`, which enforces automated contract assertions on `mcp.json` schema compliance.
-4. **`README.md`**:
+5. **`README.md`**:
    - Update feature summaries, installation options, and CLI/web quick start usage blocks.
-5. **GitHub Repository Metadata**:
+6. **GitHub Repository Metadata**:
    - Update repository **Description** in GitHub repository settings.
    - Update repository **Topics** (tags) via GitHub Web UI or GitHub CLI:
      ```bash
@@ -531,7 +534,7 @@ When adding new features or core capabilities, systematically update public-faci
        --description "High-fidelity CSS/SVG animation converter to MP4, WebM, GIF & aPNG with transparent background support" \
        --add-topic "svg,video,converter,apng,gif,webm,mp4,mcp"
      ```
-6. **Docker Hub Overview Metadata**:
+7. **Docker Hub Overview Metadata**:
    - Manually update the repository **Overview** text and **Short Description** on Docker Hub ([hub.docker.com/r/gehdoc/svg-to-video](https://hub.docker.com/r/gehdoc/svg-to-video)) via the web UI whenever releasing new features or updating documentation.
-7. **HuggingFace Space README** _(manual)_:
+8. **HuggingFace Space README** _(manual)_:
    - If the MCP interface, setup instructions, or environment variables changed, update the README in the [`GehDoc/svg-to-video-mcp`](https://huggingface.co/GehDoc/svg-to-video-mcp) HuggingFace repository. The Space is backed by a Python wrapper (not a Dockerfile) and requires **Python development** for any hosting-layer changes.

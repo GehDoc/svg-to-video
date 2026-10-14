@@ -11,15 +11,7 @@ const webDir = path.resolve(__dirname, '..');
 
 const readmePath = path.resolve(rootDir, 'README.md');
 const faqPath = path.resolve(rootDir, 'docs/FAQ.md');
-const rootPkgPath = path.resolve(rootDir, 'package.json');
-const webPkgPath = path.resolve(webDir, 'package.json');
 const outputPath = path.resolve(webDir, 'src/data/seoDocumentation.json');
-
-interface PackageJson {
-  description: string;
-  [key: string]: unknown;
-}
-
 interface FaqEntry {
   question: string;
   answerHtml: string;
@@ -121,10 +113,6 @@ function parseFaq(faqMarkdown: string): FaqEntry[] {
 try {
   const readme = fs.readFileSync(readmePath, 'utf8');
   const faqMarkdown = fs.readFileSync(faqPath, 'utf8');
-  const rootPkg = JSON.parse(
-    fs.readFileSync(rootPkgPath, 'utf8')
-  ) as PackageJson;
-  const webPkg = JSON.parse(fs.readFileSync(webPkgPath, 'utf8')) as PackageJson;
 
   const whyText = extractSection(readme, '## 🌟 Why SVG to Video?', /\n##\s+/);
   const webStudioText = extractSection(readme, '## 🌐 Web Studio', /\n##\s+/);
@@ -142,10 +130,12 @@ try {
   const faq = parseFaq(faqMarkdown);
 
   const seoData = {
-    // Sourced from web/package.json description (web-studio-scoped copy)
-    headline: webPkg.description,
-    // Sourced from root package.json description (full-project copy)
-    tagline: rootPkg.description,
+    // UI headline: concise, display-friendly — intentionally NOT sourced from
+    // package.json (which contains technical npm descriptions, not UI copy).
+    headline: 'High-Fidelity SVG Animation to Video & Animated Image Studio',
+    // UI tagline: single sentence, no parenthetical format lists.
+    tagline:
+      'Transform CSS-animated SVGs into MP4, WebM, MKV, MOV, aPNG, or GIF with full alpha-channel transparency — directly in your browser or via CLI/MCP.',
     features,
     quickStartSteps,
     cliSnippet,

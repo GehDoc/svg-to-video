@@ -60,6 +60,57 @@ The renderer (implemented in `web/src/components/SvgRenderer/renderer.js`) follo
 
 This strategy ensures that what the user sees in the "Live Monitor" is exactly what is captured in the final video output.
 
+## 📄 SEO Data Pipeline
+
+The landing page's structured content (headlines, features, FAQ, format table, code snippets) is assembled at build time by a TypeScript script into a single JSON file consumed by the `SeoContent` component at runtime.
+
+### Flow
+
+```
+README.md ──────────────────────────────────────────┐
+root/package.json (.description → tagline)           │
+web/package.json  (.description → headline)          ├──► web/scripts/generate-seo-data.ts
+docs/FAQ.md       (## Q: … convention → faq[])      │       (runs as predev / prebuild via tsx)
+                                                    ─┘
+                                                         │
+                                                         ▼
+                                         web/src/data/seoDocumentation.json
+                                                         │
+                                                         ▼
+                                         web/src/components/SeoContent.tsx
+                                           (dangerouslySetInnerHTML for
+                                            pre-rendered markdown fields)
+```
+
+### Source files and their roles
+
+| Source                                           | Field(s) populated    | Parser                                |
+| ------------------------------------------------ | --------------------- | ------------------------------------- |
+| `root/package.json` `.description`               | `tagline`             | Direct read                           |
+| `web/package.json` `.description`                | `headline`            | Direct read                           |
+| `README.md → ## 🌟 Why SVG to Video?`            | `features[]`          | `parseWhySection()`                   |
+| `README.md → ## 🌐 Web Studio → ### Quick Start` | `quickStartSteps[]`   | `parseQuickStart()`                   |
+| `README.md → ## 🚀 CLI / Docker Tool`            | `cliSnippet`          | `parseCliCommands()`                  |
+| `README.md → ## 🤖 AI Agent & MCP Integration`   | `mcpSnippet`          | `parseMcpConfig()`                    |
+| `docs/FAQ.md` (heading convention `## Q: …`)     | `faq[]`               | `parseFaq()`                          |
+| Script inline                                    | `formatComparisons[]` | Hardcoded (pending `docs/FORMATS.md`) |
+
+### Markdown rendering
+
+Fields that contain markdown (`features[].descriptionHtml`, `faq[].answerHtml`, `quickStartSteps[]`) are converted to HTML at build time using `marked.parseInline()` (a devDependency). `SeoContent.tsx` renders them via `dangerouslySetInnerHTML` — no markdown parsing occurs in the browser bundle.
+
+### Adding or editing FAQ entries
+
+Edit [`docs/FAQ.md`](../docs/FAQ.md). Each entry must follow the heading convention:
+
+```markdown
+## Q: Your question here?
+
+Your answer in plain text or inline markdown (bold, code, links).
+```
+
+The script splits on `## Q:` headings and converts each answer paragraph to HTML automatically.
+
 ## 📸 Visual Regression Testing
 
 The `SvgRenderer` component is monitored for visual regressions using native Vitest matchers.

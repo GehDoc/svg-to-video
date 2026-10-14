@@ -14,7 +14,7 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
 
   expect(
     screen.getByRole('heading', {
-      name: /High-Fidelity SVG Animation to Video/i,
+      name: /SVG to video Studio/i,
       level: 2,
     })
   ).toBeInTheDocument();
