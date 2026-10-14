@@ -160,7 +160,7 @@ try {
     lastUpdated: new Date().toISOString(),
   };
 
-  fs.writeFileSync(outputPath, JSON.stringify(seoData, null, 2), 'utf8');
+  fs.writeFileSync(outputPath, JSON.stringify(seoData, null, 2) + '\n', 'utf8');
   console.log(`[SEO Data Extractor] Successfully generated ${outputPath}`);
 } catch (error) {
   console.error('[SEO Data Extractor] Error generating SEO data:', error);
