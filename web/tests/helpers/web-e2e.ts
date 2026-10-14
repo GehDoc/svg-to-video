@@ -20,7 +20,8 @@ export interface RenderOptions {
 }
 
 /**
- * Remove ?
+ * Navigates to the given URL and waits for the page to reach a loaded state.
+ * Used as the standard navigation helper across all E2E specs.
  */
 export async function gotoIsolated(page: Page, url = '/'): Promise<void> {
   await page.goto(url);
