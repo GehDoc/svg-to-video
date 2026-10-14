@@ -37,7 +37,7 @@
   ],
   "quickStartSteps": [
     "Open the <a href=\"https://gehdoc.github.io/svg-to-video/\">Web Studio</a>.",
-    "Drag and drop your <code>.svg</code> file.",
+    "Drag and drop your <code>.svg</code> file, or test the engine instantly with 1-click built-in samples.",
     "Adjust resolution, duration, and FPS.",
     "Select your format, toggle <strong>Transparent Background</strong> if needed, and ensure <strong>High-Fidelity Capture</strong> is enabled for best results.",
     "Click <strong>Export</strong>."
@@ -92,5 +92,5 @@
       "answerHtml": "Select <strong>WebM</strong>, <strong>aPNG</strong>, or <strong>GIF</strong> as your output format, check the &quot;Transparent Background&quot; toggle, and ensure your SVG root element does not declare an opaque background rect."
     }
   ],
-  "lastUpdated": "2026-10-14T19:30:30.056Z"
+  "lastUpdated": "2026-10-14T19:43:23.164Z"
 }

@@ -75,3 +75,7 @@ Restore Google search indexation and maximize organic discoverability through a 
 - 2026-10-08: Initial spec created.
 - 2026-10-08: Updated spec to incorporate Markdown-driven documentation extraction and rich interactive landing view with 1-click samples.
 - 2026-10-08: Completed implementation, passed all 45 storybook tests, unit tests, E2E tests, and static HTML generation.
+- 2026-10-14: Converted SEO generation pipeline to TypeScript (`generate-seo-data.ts`) with marked inline parsing, and extracted FAQ to dedicated `docs/FAQ.md`.
+- 2026-10-14: Resolved dark mode link contrast for Storybook a11y axe-core tests.
+- 2026-10-14: Extracted reusable `DevCard` component with tabbed switching and unified clipboard copying, reusing across `LandingView` and `SeoContent`.
+- 2026-10-14: Decoupled intrinsic SVG auto-detection (`parseSvgDimensions`, `analyzeSvgAnimation`) from sample target capture settings (`preset`, `duration`, `scale`, `fps`, `format`, `isTransparent`), ensuring sample capture settings are preserved.
