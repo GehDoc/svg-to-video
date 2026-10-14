@@ -30,6 +30,7 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - `web/public/llms.txt` & `robots.txt` (AI model context file & crawler permissions)
    - `web/src/utils/constants.ts` (`ECOSYSTEM_LINKS` centralized link helper)
    - `docs/FAQ.md` (FAQ entries parsed at build time by `web/scripts/generate-seo-data.ts` — use `## Q: <question>` convention)
+   - `docs/ANALYTICS.md` (audit if any telemetry event payloads, tracking methods, or triggers changed)
    - `package.json` (Root & Web `description` sync, `keywords` & version synchronization per [CONTRIBUTING.md](./CONTRIBUTING.md#-versioning-policy))
    - `mcp.json` (MCP server registry manifest description and metadata)
    - GitHub Repository Metadata (Description & Topics via `gh repo edit`)
