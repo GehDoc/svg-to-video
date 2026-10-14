@@ -1,3 +1,4 @@
+import type { ResolutionPreset } from '../hooks/useRenderer';
 import rocketSvg from '../assets/samples/rocket.svg?raw';
 import spinnerSvg from '../assets/samples/spinner.svg?raw';
 import gearSvg from '../assets/samples/gear.svg?raw';
@@ -7,11 +8,14 @@ export interface SamplePreset {
   name: string;
   description: string;
   category: string;
+  svgContent: string;
+  // Target capture settings
   duration: number;
   fps: number;
   format: string;
   isTransparent: boolean;
-  svgContent: string;
+  preset?: ResolutionPreset;
+  scale?: number;
 }
 
 export const SAMPLES: SamplePreset[] = [
@@ -25,6 +29,8 @@ export const SAMPLES: SamplePreset[] = [
     fps: 30,
     format: 'mp4',
     isTransparent: false,
+    preset: 'original',
+    scale: 1,
     svgContent: rocketSvg,
   },
   {
@@ -36,6 +42,8 @@ export const SAMPLES: SamplePreset[] = [
     fps: 30,
     format: 'webm',
     isTransparent: true,
+    preset: 'original',
+    scale: 1,
     svgContent: spinnerSvg,
   },
   {
@@ -48,6 +56,8 @@ export const SAMPLES: SamplePreset[] = [
     fps: 30,
     format: 'gif',
     isTransparent: true,
+    preset: 'original',
+    scale: 1,
     svgContent: gearSvg,
   },
 ];

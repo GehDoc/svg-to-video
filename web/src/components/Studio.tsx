@@ -165,12 +165,9 @@ export const Studio = () => {
   }, [format, isTransparent]);
 
   const handleSelectSample = useCallback((sample: SamplePreset) => {
+    // 1. Load SVG and auto-detect intrinsic properties as for a File
     setSvgContent(sample.svgContent);
     setFileName(`${sample.id}.${sample.format}`);
-    setDuration(sample.duration);
-    setFps(sample.fps);
-    setFormat(sample.format);
-    setIsTransparent(sample.isTransparent);
 
     let dim = { width: 0, height: 0, isDimensionsDetected: false };
     try {
@@ -185,11 +182,16 @@ export const Studio = () => {
     }
 
     const detectedDuration = analyzeSvgAnimation(sample.svgContent);
-    if (detectedDuration !== undefined && detectedDuration > 0) {
-      setDuration(detectedDuration);
-    }
 
-    trackFileLoad('sample', dim, sample.duration);
+    // 2. Apply target capture settings defined by the sample
+    setDuration(sample.duration);
+    setFps(sample.fps);
+    setFormat(sample.format);
+    setIsTransparent(sample.isTransparent);
+    setPreset(sample.preset ?? 'original');
+    setScale(sample.scale ?? 1);
+
+    trackFileLoad('sample', dim, detectedDuration ?? sample.duration);
   }, []);
 
   return (

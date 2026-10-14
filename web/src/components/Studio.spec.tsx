@@ -111,3 +111,35 @@ test('Studio automatically updates duration when animated SVG is uploaded', asyn
     { timeout: 1500 }
   );
 });
+
+test('Studio applies sample target capture settings and preserves defined capture duration', async () => {
+  render(<Studio />);
+
+  // Click on "Test Rocket Launch sample" button
+  const rocketBtn = screen.getByRole('button', {
+    name: /Test Rocket Launch sample/i,
+  });
+  fireEvent.click(rocketBtn);
+
+  await waitFor(() => {
+    // Intrinsic rocket animation is 5s, but sample capture duration is 10s
+    const durationInput = screen.getByLabelText(
+      /Dur\. \(s\)/i
+    ) as HTMLInputElement;
+    expect(durationInput.value).toBe('10');
+
+    // FPS should be set to 30
+    const fpsInput = screen.getByLabelText(/FPS/i) as HTMLInputElement;
+    expect(fpsInput.value).toBe('30');
+
+    // Filename should match sample id & format
+    const nameInput = screen.getByLabelText(/File Name/i) as HTMLInputElement;
+    expect(nameInput.value).toBe('rocket-launch.mp4');
+
+    // Resolution preset should be preserved/applied
+    const resolutionSelect = screen.getByLabelText(
+      /Resolution/i
+    ) as HTMLSelectElement;
+    expect(resolutionSelect.value).toBe('original');
+  });
+});
