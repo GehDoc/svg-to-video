@@ -23,6 +23,7 @@ _One-sentence summary of the user value and technical goal._
   - [ ] [Task 3]
 - [ ] **Documentation & SEO**
   - [ ] Update README.md & docs/ARCHITECTURE.md
+  - [ ] Audit docs/ANALYTICS.md (if telemetry events, methods, or payloads changed)
   - [ ] Update SEO keywords & JSON-LD in web/src/app/layout.tsx
   - [ ] Update static fallback description in web/src/components/SeoFallback.tsx
   - [ ] Update package.json keywords
