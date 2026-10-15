@@ -393,7 +393,7 @@ async function createFrames(
   } else if (resolutionPreset === '720p') {
     width = 1280;
     height = 720;
-  } else if (resolutionPreset === 'original' || resolutionPreset === 'custom') {
+  } else if (resolutionPreset === 'original') {
     if (!parsedDim.isDimensionsDetected) {
       logger.warn(
         '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1920x1080.'
@@ -402,6 +402,10 @@ async function createFrames(
 
     width = Math.round(parsedDim.width * scaleFactor);
     height = Math.round(parsedDim.height * scaleFactor);
+  } else if (resolutionPreset === 'custom') {
+    throw new Error(
+      "Custom dimensions (--width or --height) are required when resolution is set to 'custom'."
+    );
   } else {
     throw new Error(
       `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', 'original', 'custom', or custom dimensions.`
