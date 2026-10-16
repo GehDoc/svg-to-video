@@ -33,7 +33,7 @@ interface RunOptions {
   width?: number;
   height?: number;
   transparent: boolean;
-  bgColor: string;
+  bgColor?: string;
   metadata?: string[];
   format?: string;
   quiet: boolean;
@@ -90,7 +90,7 @@ Resources:
     )
     .option(
       '--resolution <preset>',
-      'resolution preset (720p, 1080p, original) or custom dimensions (e.g. 1080x1080)',
+      'resolution preset (720p, 1080p, original, custom) or custom dimensions (e.g. 1080x1080)',
       'original'
     )
     .option(
@@ -108,8 +108,7 @@ Resources:
     .option('--transparent', 'render with a transparent background', false)
     .option(
       '--bg-color <hex>',
-      'background color for the video (e.g., #FFFFFF)',
-      '#ffffff'
+      'background color for the video (e.g., #FFFFFF)'
     )
     .option(
       '--metadata <items...>',
@@ -351,7 +350,7 @@ async function createFrames(
   customWidth: number | undefined,
   customHeight: number | undefined,
   transparent: boolean,
-  bgColor: string,
+  bgColor: string | undefined,
   logger: Logger
 ): Promise<void> {
   logger.info('📸 Rendering frames with Puppeteer...');
@@ -392,9 +391,13 @@ async function createFrames(
 
     width = Math.round(parsedDim.width * scaleFactor);
     height = Math.round(parsedDim.height * scaleFactor);
+  } else if (resolutionPreset === 'custom') {
+    throw new Error(
+      "Custom dimensions (--width or --height) are required when resolution is set to 'custom'."
+    );
   } else {
     throw new Error(
-      `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', 'original', or custom dimensions.`
+      `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', 'original', 'custom', or custom dimensions.`
     );
   }
 

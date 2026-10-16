@@ -21,7 +21,7 @@ describe('validateOptions', () => {
       () =>
         validateOptions({
           scale: 2,
-          resolution: 'original',
+          resolution: 'custom',
           transparent: false,
           bgColor: '#ffffff',
           width: 500,
@@ -30,7 +30,19 @@ describe('validateOptions', () => {
     );
   });
 
-  test('should throw error when custom resolution string and width/height are used together', () => {
+  test('should throw error when resolution is not custom and width/height are provided', () => {
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          bgColor: '#ffffff',
+          width: 500,
+        }),
+      /Providing --width or --height is rejected when --resolution is set to 'original'/
+    );
+
     assert.throws(
       () =>
         validateOptions({
@@ -40,7 +52,31 @@ describe('validateOptions', () => {
           bgColor: '#ffffff',
           width: 500,
         }),
-      /--width and --height cannot be used when a custom resolution string/
+      /Providing --width or --height is rejected when --resolution is set to '1080x1080'/
+    );
+
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: '1080p',
+          transparent: false,
+          bgColor: '#ffffff',
+          width: 500,
+        }),
+      /Providing --width or --height is rejected when --resolution is set to '1080p'/
+    );
+
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: '720p',
+          transparent: false,
+          bgColor: '#ffffff',
+          height: 400,
+        }),
+      /Providing --width or --height is rejected when --resolution is set to '720p'/
     );
   });
 
@@ -69,7 +105,33 @@ describe('validateOptions', () => {
     );
   });
 
-  test('should throw error when transparent and bgColor are set together', () => {
+  test('should throw error when transparent is set for format without alpha support', () => {
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: true,
+          bgColor: '#ffffff',
+          format: 'mp4',
+        }),
+      /Format "mp4" does not support transparency/
+    );
+  });
+
+  test('should enforce transparent and bgColor constraints based on format needsColorKeying', () => {
+    // GIF has needsColorKeying: true, so transparent + custom bgColor is allowed
+    assert.doesNotThrow(() =>
+      validateOptions({
+        scale: 1,
+        resolution: 'original',
+        transparent: true,
+        bgColor: '#000000',
+        format: 'gif',
+      })
+    );
+
+    // webm has needsColorKeying: false, so transparent + custom bgColor throws
     assert.throws(
       () =>
         validateOptions({
@@ -77,8 +139,44 @@ describe('validateOptions', () => {
           resolution: 'original',
           transparent: true,
           bgColor: '#000000',
+          format: 'webm',
         }),
-      /--transparent and --bg-color cannot be used together/
+      /--transparent and --bg-color cannot be used together for format "webm"/
+    );
+
+    // apng has needsColorKeying: false, so transparent + custom bgColor throws
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: true,
+          bgColor: '#000000',
+          format: 'apng',
+        }),
+      /--transparent and --bg-color cannot be used together for format "apng"/
+    );
+
+    // Transparent format without bgColor passes
+    assert.doesNotThrow(() =>
+      validateOptions({
+        scale: 1,
+        resolution: 'original',
+        transparent: true,
+      })
+    );
+
+    // webm with explicit #ffffff bgColor also throws because webm does not need color keying
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: true,
+          bgColor: '#ffffff',
+          format: 'webm',
+        }),
+      /--transparent and --bg-color cannot be used together for format "webm"/
     );
   });
 
@@ -146,11 +244,34 @@ describe('validateOptions', () => {
     );
   });
 
+  test('should validate resolution custom preset requirements', () => {
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'custom',
+          transparent: false,
+          bgColor: '#ffffff',
+        }),
+      /When --resolution is set to 'custom', --width or --height must be provided/
+    );
+
+    assert.doesNotThrow(() =>
+      validateOptions({
+        scale: 1,
+        resolution: 'custom',
+        transparent: false,
+        bgColor: '#ffffff',
+        width: 1080,
+      })
+    );
+  });
+
   test('should pass with valid custom width/height or formatted resolution string', () => {
     assert.doesNotThrow(() =>
       validateOptions({
         scale: 1,
-        resolution: 'original',
+        resolution: 'custom',
         transparent: false,
         bgColor: '#ffffff',
         width: 1080,

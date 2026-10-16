@@ -185,6 +185,8 @@ describe('CLI Functionality', () => {
           outputDir,
           '-d',
           '1',
+          '--resolution',
+          'custom',
           '--width',
           '1080',
           '--height',
@@ -397,6 +399,44 @@ describe('CLI Functionality', () => {
       ]);
       assert.strictEqual(result.status, 1);
       assert.match(result.stderr, /Invalid format "invalidformat"/);
+    });
+
+    test('should fail when transparent is used with a format without alpha support (e.g. mp4)', () => {
+      const { inputFile } = getTestPaths('font-test');
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--format',
+        'mp4',
+        '--transparent',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 1);
+      assert.match(result.stderr, /Format "mp4" does not support transparency/);
+    });
+
+    test('should fail when preset resolution is combined with custom width or height', () => {
+      const { inputFile } = getTestPaths('font-test');
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--resolution',
+        '1080p',
+        '--width',
+        '1000',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 1);
+      assert.match(
+        result.stderr,
+        /Providing --width or --height is rejected when --resolution is set to '1080p'/
+      );
     });
   });
 });

@@ -7,6 +7,7 @@ export class WebmFormatGenerator implements CLIFormatGenerator {
   readonly extensions = ['.webm'];
   readonly mimeType = 'video/webm';
   readonly supportsAlpha = true;
+  readonly needsColorKeying = false;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {

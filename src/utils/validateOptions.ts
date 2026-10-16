@@ -10,7 +10,7 @@ export interface ValidateOptionsParams {
   scale: number;
   resolution: string;
   transparent: boolean;
-  bgColor: string;
+  bgColor?: string;
   format?: string;
   width?: number;
   height?: number;
@@ -47,13 +47,27 @@ export function validateOptions(options: ValidateOptionsParams): void {
     );
   }
 
-  const isPreset = ['original', '1080p', '720p'].includes(options.resolution);
+  if (options.resolution === 'custom') {
+    if (options.width === undefined && options.height === undefined) {
+      throw new Error(
+        "When --resolution is set to 'custom', --width or --height must be provided."
+      );
+    }
+  } else if (options.width !== undefined || options.height !== undefined) {
+    throw new Error(
+      `Providing --width or --height is rejected when --resolution is set to '${options.resolution}'. Set --resolution custom to use custom dimensions.`
+    );
+  }
+
+  const isPreset = ['original', '1080p', '720p', 'custom'].includes(
+    options.resolution
+  );
   const resMatch = /^(\d+)x(\d+)$/i.exec(options.resolution);
 
   if (!isPreset) {
     if (!resMatch) {
       throw new Error(
-        `Invalid resolution option "${options.resolution}". Expected 'original', '1080p', '720p', or a custom dimension string like '1080x1080'.`
+        `Invalid resolution option "${options.resolution}". Expected 'original', '1080p', '720p', 'custom', or a custom dimension string like '1080x1080'.`
       );
     }
     const resW = parseInt(resMatch[1], 10);
@@ -64,11 +78,6 @@ export function validateOptions(options: ValidateOptionsParams): void {
     if (resW > MAX_DIMENSION_PIXELS || resH > MAX_DIMENSION_PIXELS) {
       throw new Error(
         `Custom resolution dimensions must not exceed ${MAX_DIMENSION_PIXELS} pixels.`
-      );
-    }
-    if (options.width !== undefined || options.height !== undefined) {
-      throw new Error(
-        '--width and --height cannot be used when a custom resolution string (e.g. 1080x1080) is provided.'
       );
     }
   }
@@ -84,14 +93,30 @@ export function validateOptions(options: ValidateOptionsParams): void {
     );
   }
 
-  if (options.transparent && options.bgColor !== '#ffffff') {
-    throw new Error('--transparent and --bg-color cannot be used together.');
-  }
-
   if (options.format && !formatRegistry.isSupported(options.format)) {
     const supported = formatRegistry.getSupportedFormatNames().join(', ');
     throw new Error(
       `Invalid format "${options.format}". Supported formats are: ${supported}.`
     );
+  }
+
+  const { generator, format: resolvedFormat } =
+    formatRegistry.resolveFormatAndExtension(
+      options.format,
+      options.transparent
+    );
+
+  if (options.transparent) {
+    if (!generator.supportsAlpha) {
+      throw new Error(
+        `Format "${resolvedFormat}" does not support transparency.`
+      );
+    }
+
+    if (options.bgColor && !generator.needsColorKeying) {
+      throw new Error(
+        `--transparent and --bg-color cannot be used together for format "${resolvedFormat}".`
+      );
+    }
   }
 }

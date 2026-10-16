@@ -131,7 +131,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             resolution: {
               type: 'string',
               description:
-                'Resolution preset (original, 1080p, 720p) or formatted string (e.g. 1080x1080, 1080x1920). Default: original.',
+                'Resolution preset (original, 1080p, 720p, custom) or formatted string (e.g. 1080x1080, 1080x1920). Default: original.',
               default: 'original',
             },
             scale: {
@@ -142,16 +142,17 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             width: {
               type: 'number',
-              description: 'Custom output video width in pixels.',
+              description:
+                'Custom output video width in pixels. Requires resolution "custom".',
             },
             height: {
               type: 'number',
-              description: 'Custom output video height in pixels.',
+              description:
+                'Custom output video height in pixels. Requires resolution "custom".',
             },
             bgColor: {
               type: 'string',
-              description:
-                'Background color hex code (e.g. #ffffff). Cannot be used with transparent.',
+              description: 'Background color hex code (e.g. #ffffff).',
             },
             hold: {
               type: 'number',

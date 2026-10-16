@@ -173,6 +173,7 @@ describe('MCP Server Integration', () => {
         fps: 24,
         duration: 1,
         format: 'mp4',
+        resolution: 'custom',
         width: 1080,
         height: 1080,
       },
