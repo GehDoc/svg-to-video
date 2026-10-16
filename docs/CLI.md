@@ -51,8 +51,8 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 | `-f, --force`           | Overwrite the output video if it already exists.                                                                                                                   |
 | `--resolution <preset>` | Resolution preset (`720p`, `1080p`, `original`, `custom`) or custom dimension string (`WIDTHxHEIGHT`, e.g., `1080x1080`). (Default: `original`)                    |
 | `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`.                                                               |
-| `-w, --width <pixels>`  | Custom width in pixels. Requires `--resolution custom` (or omitting `--resolution`). If height is omitted, aspect ratio is preserved.                              |
-| `--height <pixels>`     | Custom height in pixels. Requires `--resolution custom` (or omitting `--resolution`). If width is omitted, aspect ratio is preserved.                              |
+| `-w, --width <pixels>`  | Custom width in pixels. Requires `--resolution custom`. If height is omitted, aspect ratio is preserved.                                                           |
+| `--height <pixels>`     | Custom height in pixels. Requires `--resolution custom`. If width is omitted, aspect ratio is preserved.                                                           |
 | `--transparent`         | Render with a transparent background (supported for `webm`, `gif`, `apng`, `mov`). Can be used with `--bg-color` for formats requiring color keying (e.g., `gif`). |
 | `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`). Can be used with `--transparent` for formats requiring color keying (e.g., `gif`).                           |
 | `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Mandatory attribution is automatically appended to the 'comment' tag for video and image exports.      |

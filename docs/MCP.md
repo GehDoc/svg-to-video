@@ -130,8 +130,8 @@ Converts raw SVG content or an SVG file path into a video or animated image file
 | `transparent` | `boolean` | `false`         | Enable full alpha-channel background transparency. Can be used with `bgColor` for formats requiring color keying (e.g. `gif`). |
 | `resolution`  | `string`  | `original`      | Resolution preset (`original`, `1080p`, `720p`, `custom`) or custom formatted string (e.g. `1080x1080`, `1080x1920`).          |
 | `scale`       | `number`  | `1`             | Scale factor (1-4) for original resolution.                                                                                    |
-| `width`       | `number`  | —               | Custom output video width in pixels. Requires `resolution` "custom" (or omitting `resolution`).                                |
-| `height`      | `number`  | —               | Custom output video height in pixels. Requires `resolution` "custom" (or omitting `resolution`).                               |
+| `width`       | `number`  | —               | Custom output video width in pixels. Requires `resolution` "custom".                                                           |
+| `height`      | `number`  | —               | Custom output video height in pixels. Requires `resolution` "custom".                                                          |
 | `bgColor`     | `string`  | `#ffffff`       | Background hex color. Can be used with `transparent` for formats requiring color keying (e.g. `gif`).                          |
 | `hold`        | `number`  | `0`             | Seconds to freeze the final frame.                                                                                             |
 

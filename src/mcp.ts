@@ -143,12 +143,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             width: {
               type: 'number',
               description:
-                'Custom output video width in pixels. Requires resolution "custom" (or omitting resolution).',
+                'Custom output video width in pixels. Requires resolution "custom".',
             },
             height: {
               type: 'number',
               description:
-                'Custom output video height in pixels. Requires resolution "custom" (or omitting resolution).',
+                'Custom output video height in pixels. Requires resolution "custom".',
             },
             bgColor: {
               type: 'string',
