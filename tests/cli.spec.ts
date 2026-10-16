@@ -185,6 +185,8 @@ describe('CLI Functionality', () => {
           outputDir,
           '-d',
           '1',
+          '--resolution',
+          'custom',
           '--width',
           '1080',
           '--height',

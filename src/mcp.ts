@@ -368,12 +368,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       if (params.transparent) {
         cliArgs.push('--transparent');
       }
-      if (
-        (params.width !== undefined || params.height !== undefined) &&
-        (!params.resolution || params.resolution === 'original')
-      ) {
-        cliArgs.push('--resolution', 'custom');
-      } else if (params.resolution) {
+      if (params.resolution) {
         cliArgs.push('--resolution', params.resolution);
       }
       if (params.scale) {
