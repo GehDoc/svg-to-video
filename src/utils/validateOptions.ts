@@ -10,7 +10,7 @@ export interface ValidateOptionsParams {
   scale: number;
   resolution: string;
   transparent: boolean;
-  bgColor: string;
+  bgColor?: string;
   format?: string;
   width?: number;
   height?: number;
@@ -113,7 +113,7 @@ export function validateOptions(options: ValidateOptionsParams): void {
       );
     }
 
-    if (options.bgColor !== '#ffffff' && !generator.needsColorKeying) {
+    if (options.bgColor && !generator.needsColorKeying) {
       throw new Error(
         `--transparent and --bg-color cannot be used together for format "${resolvedFormat}".`
       );

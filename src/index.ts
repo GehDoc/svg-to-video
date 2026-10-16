@@ -33,7 +33,7 @@ interface RunOptions {
   width?: number;
   height?: number;
   transparent: boolean;
-  bgColor: string;
+  bgColor?: string;
   metadata?: string[];
   format?: string;
   quiet: boolean;
@@ -108,8 +108,7 @@ Resources:
     .option('--transparent', 'render with a transparent background', false)
     .option(
       '--bg-color <hex>',
-      'background color for the video (e.g., #FFFFFF)',
-      '#ffffff'
+      'background color for the video (e.g., #FFFFFF)'
     )
     .option(
       '--metadata <items...>',
@@ -351,7 +350,7 @@ async function createFrames(
   customWidth: number | undefined,
   customHeight: number | undefined,
   transparent: boolean,
-  bgColor: string,
+  bgColor: string | undefined,
   logger: Logger
 ): Promise<void> {
   logger.info('📸 Rendering frames with Puppeteer...');

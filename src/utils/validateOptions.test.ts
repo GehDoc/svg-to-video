@@ -157,14 +157,26 @@ describe('validateOptions', () => {
       /--transparent and --bg-color cannot be used together for format "apng"/
     );
 
-    // Default transparent format (webm) with default bgColor (#ffffff) passes
+    // Transparent format without bgColor passes
     assert.doesNotThrow(() =>
       validateOptions({
         scale: 1,
         resolution: 'original',
         transparent: true,
-        bgColor: '#ffffff',
       })
+    );
+
+    // webm with explicit #ffffff bgColor also throws because webm does not need color keying
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: true,
+          bgColor: '#ffffff',
+          format: 'webm',
+        }),
+      /--transparent and --bg-color cannot be used together for format "webm"/
     );
   });
 
