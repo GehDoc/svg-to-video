@@ -110,13 +110,9 @@ export function injectGifMetadata(
 }
 
 export class GifFormat extends BaseFormat {
-  readonly id = 'gif';
-  readonly label = 'GIF';
-  readonly extension = '.gif';
-  readonly mimeType = 'image/gif';
-  override readonly supportsAlpha = true;
-  override readonly supportsMetadata = true;
-  override readonly needsColorKeying = true;
+  constructor() {
+    super('gif');
+  }
 
   createEncoder(): VideoEncoder {
     return new GifEncoder();

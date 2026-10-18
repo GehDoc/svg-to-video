@@ -3,13 +3,16 @@ import fs from 'fs';
 import { CLIFormatGenerator, CLIFormatOptions } from '../types.js';
 import { mergeMetadataComments } from '#shared/metadata.js';
 import { injectGifMetadata } from '#shared/gifMetadataInjector.js';
+import { FORMAT_CAPABILITIES } from '#shared/formatCapabilities.js';
+
+const cap = FORMAT_CAPABILITIES.gif;
 
 export class GifFormatGenerator implements CLIFormatGenerator {
-  readonly id = 'gif';
-  readonly extensions = ['.gif'];
-  readonly mimeType = 'image/gif';
-  readonly supportsAlpha = true;
-  readonly needsColorKeying = true;
+  readonly id = cap.id;
+  readonly extensions = cap.extensions as string[];
+  readonly mimeType = cap.mimeType;
+  readonly supportsAlpha = cap.supportsAlpha;
+  readonly needsColorKeying = cap.needsColorKeying;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {

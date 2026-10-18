@@ -3,13 +3,16 @@ import fs from 'fs';
 import { CLIFormatGenerator, CLIFormatOptions } from '../types.js';
 import { mergeMetadataComments } from '#shared/metadata.js';
 import { injectApngMetadata } from '#shared/apngMetadataInjector.js';
+import { FORMAT_CAPABILITIES } from '#shared/formatCapabilities.js';
+
+const cap = FORMAT_CAPABILITIES.apng;
 
 export class ApngFormatGenerator implements CLIFormatGenerator {
-  readonly id = 'apng';
-  readonly extensions = ['.apng', '.png'];
-  readonly mimeType = 'image/png';
-  readonly supportsAlpha = true;
-  readonly needsColorKeying = false;
+  readonly id = cap.id;
+  readonly extensions = cap.extensions as string[];
+  readonly mimeType = cap.mimeType;
+  readonly supportsAlpha = cap.supportsAlpha;
+  readonly needsColorKeying = cap.needsColorKeying;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {

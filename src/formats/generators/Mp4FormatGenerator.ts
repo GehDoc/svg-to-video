@@ -1,13 +1,16 @@
 import path from 'path';
 import { CLIFormatGenerator, CLIFormatOptions } from '../types.js';
 import { mergeMetadataComments } from '#shared/metadata.js';
+import { FORMAT_CAPABILITIES } from '#shared/formatCapabilities.js';
+
+const cap = FORMAT_CAPABILITIES.mp4;
 
 export class Mp4FormatGenerator implements CLIFormatGenerator {
-  readonly id = 'mp4';
-  readonly extensions = ['.mp4'];
-  readonly mimeType = 'video/mp4';
-  readonly supportsAlpha = false;
-  readonly needsColorKeying = false;
+  readonly id = cap.id;
+  readonly extensions = cap.extensions as string[];
+  readonly mimeType = cap.mimeType;
+  readonly supportsAlpha = cap.supportsAlpha;
+  readonly needsColorKeying = cap.needsColorKeying;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {
