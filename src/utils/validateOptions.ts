@@ -12,8 +12,6 @@ export interface ValidateOptionsParams {
   transparent: boolean;
   bgColor?: string;
   format?: string;
-  width?: number;
-  height?: number;
 }
 
 export function validateOptions(options: ValidateOptionsParams): void {
@@ -21,53 +19,13 @@ export function validateOptions(options: ValidateOptionsParams): void {
     throw new Error('Duration must be a positive number.');
   }
 
-  if (
-    options.width !== undefined &&
-    (isNaN(options.width) || options.width <= 0)
-  ) {
-    throw new Error('Width must be a positive number.');
-  }
-
-  if (options.width !== undefined && options.width > MAX_DIMENSION_PIXELS) {
-    throw new Error(
-      `Width exceeds maximum supported limit of ${MAX_DIMENSION_PIXELS} pixels.`
-    );
-  }
-
-  if (
-    options.height !== undefined &&
-    (isNaN(options.height) || options.height <= 0)
-  ) {
-    throw new Error('Height must be a positive number.');
-  }
-
-  if (options.height !== undefined && options.height > MAX_DIMENSION_PIXELS) {
-    throw new Error(
-      `Height exceeds maximum supported limit of ${MAX_DIMENSION_PIXELS} pixels.`
-    );
-  }
-
-  if (options.resolution === 'custom') {
-    if (options.width === undefined && options.height === undefined) {
-      throw new Error(
-        "When --resolution is set to 'custom', --width or --height must be provided."
-      );
-    }
-  } else if (options.width !== undefined || options.height !== undefined) {
-    throw new Error(
-      `Providing --width or --height is rejected when --resolution is set to '${options.resolution}'. Set --resolution custom to use custom dimensions.`
-    );
-  }
-
-  const isPreset = ['original', '1080p', '720p', 'custom'].includes(
-    options.resolution
-  );
+  const isPreset = ['original', '1080p', '720p'].includes(options.resolution);
   const resMatch = /^(\d+)x(\d+)$/i.exec(options.resolution);
 
   if (!isPreset) {
     if (!resMatch) {
       throw new Error(
-        `Invalid resolution option "${options.resolution}". Expected 'original', '1080p', '720p', 'custom', or a custom dimension string like '1080x1080'.`
+        `Invalid resolution option "${options.resolution}". Expected 'original', '1080p', '720p', or a dimension string like '1080x1080'.`
       );
     }
     const resW = parseInt(resMatch[1], 10);
@@ -82,15 +40,8 @@ export function validateOptions(options: ValidateOptionsParams): void {
     }
   }
 
-  if (
-    options.scale !== 1 &&
-    (options.resolution !== 'original' ||
-      options.width !== undefined ||
-      options.height !== undefined)
-  ) {
-    throw new Error(
-      '--scale can only be used with --resolution original and without custom width or height options.'
-    );
+  if (options.scale !== 1 && options.resolution !== 'original') {
+    throw new Error('--scale can only be used with --resolution original.');
   }
 
   if (options.format && !formatRegistry.isSupported(options.format)) {

@@ -131,7 +131,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             resolution: {
               type: 'string',
               description:
-                'Resolution preset (original, 1080p, 720p, custom) or formatted string (e.g. 1080x1080, 1080x1920). Default: original.',
+                'Resolution preset (original, 1080p, 720p) or formatted dimension string (e.g. 1080x1080, 1080x1920). Default: original.',
               default: 'original',
             },
             scale: {
@@ -140,19 +140,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                 'Scale factor (1-4) when using original resolution. Default: 1.',
               default: 1,
             },
-            width: {
-              type: 'number',
-              description:
-                'Custom output video width in pixels. Requires resolution "custom".',
-            },
-            height: {
-              type: 'number',
-              description:
-                'Custom output video height in pixels. Requires resolution "custom".',
-            },
             bgColor: {
               type: 'string',
-              description: 'Background color hex code (e.g. #ffffff).',
+              description:
+                'Background color hex code (e.g. #ffffff). When transparent is true, acts as a keying/matting color for formats requiring color keying (e.g. gif).',
             },
             hold: {
               type: 'number',
@@ -292,8 +283,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       transparent?: boolean;
       resolution?: string;
       scale?: number;
-      width?: number;
-      height?: number;
       bgColor?: string;
       hold?: number;
     };
@@ -373,12 +362,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
       if (params.scale) {
         cliArgs.push('--scale', String(params.scale));
-      }
-      if (params.width) {
-        cliArgs.push('--width', String(params.width));
-      }
-      if (params.height) {
-        cliArgs.push('--height', String(params.height));
       }
       if (params.bgColor) {
         cliArgs.push('--bg-color', params.bgColor);

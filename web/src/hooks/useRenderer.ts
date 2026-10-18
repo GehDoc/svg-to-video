@@ -5,6 +5,7 @@ import type { VideoMetadata } from '@shared/metadata';
 import { ConversionTracker } from '@shared/rendererTracking';
 import { trackEvent } from '../utils/analytics';
 import { parseSvgDimensions } from '@shared/analyzeSvgAnimation.js';
+import { compositeFrame } from '@shared/canvasCompositing';
 
 export { parseSvgDimensions };
 
@@ -183,17 +184,14 @@ export const useRenderer = (
             settings.captureMethod,
             settings.isTransparent
           );
-          ctx.clearRect(0, 0, width, height);
-          if (backgroundColor) {
-            if (encoder.needsColorKeying) {
-              ctx.drawImage(bitmap, 0, 0, width, height);
-              ctx.globalCompositeOperation = 'source-in';
-            }
-            ctx.fillStyle = backgroundColor;
-            ctx.fillRect(0, 0, width, height);
-            ctx.globalCompositeOperation = 'source-over';
-          }
-          ctx.drawImage(bitmap, 0, 0, width, height);
+          compositeFrame(
+            ctx,
+            bitmap,
+            width,
+            height,
+            backgroundColor,
+            encoder.needsColorKeying
+          );
 
           await encoder.addFrame(timeMs, frameDuration);
           bitmap.close();
@@ -237,17 +235,14 @@ export const useRenderer = (
             const currentFrame = totalAnimationFrames + frame;
             const timeMs = (currentFrame - 1) * frameDuration;
 
-            ctx.clearRect(0, 0, width, height);
-            if (backgroundColor) {
-              if (encoder.needsColorKeying) {
-                ctx.drawImage(finalBitmap, 0, 0, width, height);
-                ctx.globalCompositeOperation = 'source-in';
-              }
-              ctx.fillStyle = backgroundColor;
-              ctx.fillRect(0, 0, width, height);
-              ctx.globalCompositeOperation = 'source-over';
-            }
-            ctx.drawImage(finalBitmap, 0, 0, width, height);
+            compositeFrame(
+              ctx,
+              finalBitmap,
+              width,
+              height,
+              backgroundColor,
+              encoder.needsColorKeying
+            );
 
             await encoder.addFrame(timeMs, frameDuration);
 

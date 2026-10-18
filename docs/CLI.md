@@ -11,11 +11,8 @@ The tool is built to run in a headless environment, making it perfect for CI/CD 
 # Run on-demand via npx from npmjs registry
 npx -y -p @gehdoc/svg-to-video svg-to-video <svgPath> <fps> <outDir> [options]
 
-# Custom video resolution (e.g., vertical video 1080x1920)
-npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out --width 1080 --height 1920
-
-# Formatted resolution string (e.g., square video 1080x1080)
-npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out --resolution 1080x1080
+# Custom video resolution (e.g., vertical video 1080x1920 or square video 1080x1080)
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out --resolution 1080x1920
 
 # Run official Docker image from Docker Hub
 docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/<svgPath> <fps> /data/<outDir> [options]
@@ -43,20 +40,18 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 
 ## Options
 
-| Option                  | Description                                                                                                                                                        |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `-d, --duration <secs>` | Desired animation duration in seconds. If omitted, duration is auto-detected.                                                                                      |
-| `--format <format>`     | Output format: `mp4`, `webm`, `mkv`, `mov`, `gif`, `apng`, or `png`. (Default: `webm` if `--transparent`, otherwise `mp4`)                                         |
-| `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                                                                                 |
-| `-f, --force`           | Overwrite the output video if it already exists.                                                                                                                   |
-| `--resolution <preset>` | Resolution preset (`720p`, `1080p`, `original`, `custom`) or custom dimension string (`WIDTHxHEIGHT`, e.g., `1080x1080`). (Default: `original`)                    |
-| `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`.                                                               |
-| `-w, --width <pixels>`  | Custom width in pixels. Requires `--resolution custom`. If height is omitted, aspect ratio is preserved.                                                           |
-| `--height <pixels>`     | Custom height in pixels. Requires `--resolution custom`. If width is omitted, aspect ratio is preserved.                                                           |
-| `--transparent`         | Render with a transparent background (supported for `webm`, `gif`, `apng`, `mov`). Can be used with `--bg-color` for formats requiring color keying (e.g., `gif`). |
-| `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`). Can be used with `--transparent` for formats requiring color keying (e.g., `gif`).                           |
-| `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Mandatory attribution is automatically appended to the 'comment' tag for video and image exports.      |
-| `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                                                   |
+| Option                  | Description                                                                                                                                                                             |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-d, --duration <secs>` | Desired animation duration in seconds. If omitted, duration is auto-detected.                                                                                                           |
+| `--format <format>`     | Output format: `mp4`, `webm`, `mkv`, `mov`, `gif`, `apng`, or `png`. (Default: `webm` if `--transparent`, otherwise `mp4`)                                                              |
+| `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                                                                                                      |
+| `-f, --force`           | Overwrite the output video if it already exists.                                                                                                                                        |
+| `--resolution <preset>` | Resolution preset (`720p`, `1080p`, `original`) or custom dimension string (`WIDTHxHEIGHT`, e.g., `1080x1920`, `1080x1080`). (Default: `original`)                                      |
+| `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`.                                                                                    |
+| `--transparent`         | Render with a transparent background (supported for `webm`, `gif`, `apng`, `mov`). Can be used with `--bg-color` for formats requiring color keying (e.g., `gif`).                      |
+| `--bg-color <hex>`      | Background color for the video (e.g., `#ffffff`, `#000000`). If omitted, no background fill is applied. Can be combined with `--transparent` for GIF color keying to remove edge halos. |
+| `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Mandatory attribution is automatically appended to the 'comment' tag for video and image exports.                           |
+| `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                                                                        |
 
 ## Environment Variables
 

@@ -164,7 +164,7 @@ describe('MCP Server Integration', () => {
     );
   });
 
-  test('should render SVG via render_svg_to_video tool with custom width and height', async () => {
+  test('should render SVG via render_svg_to_video tool with custom resolution dimensions', async () => {
     const result = await client.callTool({
       name: 'render_svg_to_video',
       arguments: {
@@ -173,9 +173,7 @@ describe('MCP Server Integration', () => {
         fps: 24,
         duration: 1,
         format: 'mp4',
-        resolution: 'custom',
-        width: 1080,
-        height: 1080,
+        resolution: '1080x1080',
       },
     });
 

@@ -173,7 +173,7 @@ describe('CLI Functionality', () => {
       assert.strictEqual(data.height, '1080');
     });
 
-    test('should render font-test.svg with explicit --width and --height (1080x1920)', () => {
+    test('should render font-test.svg with vertical resolution (1080x1920)', () => {
       const { inputFile, outputFile } = getTestPaths('font-test');
       const result = spawnSync(
         'npx',
@@ -186,11 +186,7 @@ describe('CLI Functionality', () => {
           '-d',
           '1',
           '--resolution',
-          'custom',
-          '--width',
-          '1080',
-          '--height',
-          '1920',
+          '1080x1920',
           '--force',
         ],
         { encoding: 'utf-8' }
@@ -358,6 +354,45 @@ describe('CLI Functionality', () => {
       assert.strictEqual(data.height, '300');
     });
 
+    test('should render transparent-loop-test.svg to transparent animated GIF with color keying', () => {
+      const { inputFile } = getTestPaths('transparent-loop-test');
+      const outputFile = `${outputDir}/transparent-loop-test.gif`;
+      const framePath = `${outputDir}/transparent-loop-test-frame.png`;
+
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--format',
+        'gif',
+        '--transparent',
+        '--bg-color',
+        '#FF0000',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+
+      assert.ok(
+        extractFrame(outputFile, framePath),
+        'Frame should be extracted'
+      );
+      const outerPixel = getPixelRGBA(framePath, 10, 10);
+      assert.strictEqual(outerPixel.a, 0, 'Outer pixel should be transparent');
+
+      const centerPixel = getPixelRGBA(framePath, 50, 50);
+      assert.strictEqual(centerPixel.a, 255, 'Center pixel should be opaque');
+
+      // Edge pixel should be matted with red keying color (r higher than center pixel r)
+      const edgePixel = getPixelRGBA(framePath, 69, 50);
+      assert.ok(
+        edgePixel.r > centerPixel.r,
+        `Edge pixel red (${edgePixel.r}) should be greater than center pixel red (${centerPixel.r}) due to red keying`
+      );
+    });
+
     test('should render font-test.svg to animated PNG (aPNG) with custom metadata', () => {
       const { inputFile } = getTestPaths('font-test');
       const outputFile = `${outputDir}/font-test.apng`;
@@ -418,7 +453,7 @@ describe('CLI Functionality', () => {
       assert.match(result.stderr, /Format "mp4" does not support transparency/);
     });
 
-    test('should fail when preset resolution is combined with custom width or height', () => {
+    test('should fail when resolution format is invalid', () => {
       const { inputFile } = getTestPaths('font-test');
       const result = runCli([
         inputFile,
@@ -427,16 +462,11 @@ describe('CLI Functionality', () => {
         '-d',
         '1',
         '--resolution',
-        '1080p',
-        '--width',
-        '1000',
+        'invalid_res',
         '--force',
       ]);
       assert.strictEqual(result.status, 1);
-      assert.match(
-        result.stderr,
-        /Providing --width or --height is rejected when --resolution is set to '1080p'/
-      );
+      assert.match(result.stderr, /Invalid resolution option "invalid_res"/);
     });
   });
 });
