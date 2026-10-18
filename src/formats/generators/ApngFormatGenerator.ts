@@ -9,6 +9,7 @@ export class ApngFormatGenerator implements CLIFormatGenerator {
   readonly extensions = ['.apng', '.png'];
   readonly mimeType = 'image/png';
   readonly supportsAlpha = true;
+  readonly needsColorKeying = false;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {

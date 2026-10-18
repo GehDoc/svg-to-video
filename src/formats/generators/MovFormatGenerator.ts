@@ -7,6 +7,7 @@ export class MovFormatGenerator implements CLIFormatGenerator {
   readonly extensions = ['.mov'];
   readonly mimeType = 'video/quicktime';
   readonly supportsAlpha = true;
+  readonly needsColorKeying = false;
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {

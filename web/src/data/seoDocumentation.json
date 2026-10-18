@@ -42,7 +42,7 @@
     "Select your format, toggle <strong>Transparent Background</strong> if needed, and ensure <strong>High-Fidelity Capture</strong> is enabled for best results.",
     "Click <strong>Export</strong>."
   ],
-  "cliSnippet": "# Node.js (auto-detected duration)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir\n\n# Node.js (explicit duration & GIF output)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent\n\n# Node.js (custom resolution dimensions e.g. vertical 1080x1920)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --width 1080 --height 1920\n\n# Node.js (animated PNG output)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format apng\n\n# Docker (zero local dependencies; requires --shm-size=2gb for Chromium rendering; add :Z to -v for SELinux / Fedora)\ndocker run --rm --shm-size=2gb -e PUPPETEER_ARGS=\"--no-sandbox\" -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif",
+  "cliSnippet": "# Node.js (auto-detected duration)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir\n\n# Node.js (explicit duration & GIF output)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent\n\n# Node.js (custom resolution dimensions e.g. vertical 1080x1920)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --resolution 1080x1920\n\n# Node.js (animated PNG output)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format apng\n\n# Docker (zero local dependencies; requires --shm-size=2gb for Chromium rendering; add :Z to -v for SELinux / Fedora)\ndocker run --rm --shm-size=2gb -e PUPPETEER_ARGS=\"--no-sandbox\" -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif",
   "mcpSnippet": "{\n     \"mcpServers\": {\n       \"svg-to-video\": {\n         \"command\": \"npx\",\n         \"args\": [\"-y\", \"-p\", \"@gehdoc/svg-to-video\", \"svg-to-video-mcp\"]\n       }\n     }\n   }",
   "formatComparisons": [
     {
@@ -92,5 +92,5 @@
       "answerHtml": "Select <strong>WebM</strong>, <strong>aPNG</strong>, or <strong>GIF</strong> as your output format, check the &quot;Transparent Background&quot; toggle, and ensure your SVG root element does not declare an opaque background rect."
     }
   ],
-  "lastUpdated": "2026-10-14T19:43:23.164Z"
+  "lastUpdated": "2026-10-17T23:59:55.612Z"
 }

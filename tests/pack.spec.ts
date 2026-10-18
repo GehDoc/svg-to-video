@@ -9,6 +9,7 @@ const REQUIRED_FILES = [
   'dist/src/index.js',
   'dist/src/mcp.js',
   'dist/src/utils/logger.js',
+  'dist/shared/canvasCompositing.js',
   'skills/svg-to-video/SKILL.md',
 ];
 
@@ -101,8 +102,8 @@ describe('npm pack & compiled dist smoke verification', () => {
     // 3. Assert exact match against expected file count
     assert.strictEqual(
       shippedPaths.length,
-      27,
-      `Expected exactly 27 files in npm package, found ${shippedPaths.length}: ${JSON.stringify(shippedPaths)}`
+      28,
+      `Expected exactly 28 files in npm package, found ${shippedPaths.length}: ${JSON.stringify(shippedPaths)}`
     );
   });
 

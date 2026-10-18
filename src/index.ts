@@ -5,6 +5,7 @@ import puppeteer, { Page, Browser, ScreenshotOptions } from 'puppeteer';
 import { Command } from 'commander';
 import path from 'path';
 import { seekAnimations } from '#shared/animation-engine.js';
+import { compositeFrame } from '#shared/canvasCompositing.js';
 import { validateOptions } from './utils/validateOptions.js';
 import {
   analyzeSvgAnimation,
@@ -30,10 +31,8 @@ interface RunOptions {
   force: boolean;
   resolution: string;
   scale: number;
-  width?: number;
-  height?: number;
   transparent: boolean;
-  bgColor: string;
+  bgColor?: string;
   metadata?: string[];
   format?: string;
   quiet: boolean;
@@ -90,7 +89,7 @@ Resources:
     )
     .option(
       '--resolution <preset>',
-      'resolution preset (720p, 1080p, original) or custom dimensions (e.g. 1080x1080)',
+      'resolution preset (720p, 1080p, original) or custom dimensions (e.g. 1080x1080, 1080x1920)',
       'original'
     )
     .option(
@@ -99,17 +98,10 @@ Resources:
       (v) => parseFloat(v),
       1
     )
-    .option('-w, --width <pixels>', 'custom width in pixels', (v) =>
-      parseInt(v, 10)
-    )
-    .option('-H, --height <pixels>', 'custom height in pixels', (v) =>
-      parseInt(v, 10)
-    )
     .option('--transparent', 'render with a transparent background', false)
     .option(
       '--bg-color <hex>',
-      'background color for the video (e.g., #FFFFFF)',
-      '#ffffff'
+      'background color for the video (e.g., #FFFFFF)'
     )
     .option(
       '--metadata <items...>',
@@ -154,10 +146,11 @@ async function run(
   });
 
   // Resolve format generator and output file extension via format registry
-  const { format, extension } = formatRegistry.resolveFormatAndExtension(
-    options.format,
-    options.transparent
-  );
+  const { generator, format, extension } =
+    formatRegistry.resolveFormatAndExtension(
+      options.format,
+      options.transparent
+    );
   const inputBasename = path.basename(svgPath, path.extname(svgPath));
   const ext = extension.startsWith('.') ? extension : `.${extension}`;
   const outputFileName = `${inputBasename}${ext}`;
@@ -279,10 +272,9 @@ async function run(
       puppeteerArgs,
       options.resolution,
       options.scale,
-      options.width,
-      options.height,
       options.transparent,
       options.bgColor,
+      generator.needsColorKeying,
       logger
     );
 
@@ -348,32 +340,17 @@ async function createFrames(
   puppeteerArgs: string[],
   resolutionPreset: string,
   scaleFactor: number,
-  customWidth: number | undefined,
-  customHeight: number | undefined,
   transparent: boolean,
-  bgColor: string,
+  bgColor: string | undefined,
+  needsColorKeying: boolean,
   logger: Logger
 ): Promise<void> {
   logger.info('📸 Rendering frames with Puppeteer...');
 
-  let width = 0;
-  let height = 0;
+  let width: number;
+  let height: number;
 
-  const svgAspect =
-    parsedDim.height > 0 ? parsedDim.width / parsedDim.height : 16 / 9;
-
-  if (customWidth !== undefined || customHeight !== undefined) {
-    if (customWidth !== undefined && customHeight !== undefined) {
-      width = customWidth;
-      height = customHeight;
-    } else if (customWidth !== undefined) {
-      width = customWidth;
-      height = Math.round(customWidth / svgAspect);
-    } else if (customHeight !== undefined) {
-      height = customHeight;
-      width = Math.round(customHeight * svgAspect);
-    }
-  } else if (/^\d+x\d+$/i.test(resolutionPreset)) {
+  if (/^\d+x\d+$/i.test(resolutionPreset)) {
     const [wStr, hStr] = resolutionPreset.toLowerCase().split('x');
     width = parseInt(wStr, 10);
     height = parseInt(hStr, 10);
@@ -394,7 +371,7 @@ async function createFrames(
     height = Math.round(parsedDim.height * scaleFactor);
   } else {
     throw new Error(
-      `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', 'original', or custom dimensions.`
+      `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', 'original', or custom dimensions (e.g. 1080x1080).`
     );
   }
 
@@ -448,6 +425,8 @@ async function createFrames(
     omitBackground: transparent,
   };
 
+  const shouldKey = Boolean(transparent && bgColor && needsColorKeying);
+
   logger.info('📸 Rendering frames with Puppeteer...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
     logger.writeProgress(`\r📸 Rendering frame ${frame}/${totalFrames}`);
@@ -455,10 +434,43 @@ async function createFrames(
     await page.evaluate(seekAnimations, timeMs);
 
     const filename = path.join(outDir, getFrameFilename(frame, padWidth));
-    await page.screenshot({
-      path: filename,
-      ...screenshotOptions,
-    });
+    if (shouldKey) {
+      const rawScreenshotBuffer = await page.screenshot(screenshotOptions);
+      const b64Input = Buffer.from(rawScreenshotBuffer).toString('base64');
+      const keyedBase64 = await page.evaluate(
+        async (compositeFnStr, b64, bg, w, h) => {
+          let canvas = document.getElementById(
+            'matte-canvas'
+          ) as HTMLCanvasElement;
+          if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.id = 'matte-canvas';
+            canvas.width = w;
+            canvas.height = h;
+            canvas.style.display = 'none';
+            document.body.appendChild(canvas);
+          }
+          const ctx = canvas.getContext('2d')!;
+          const img = new Image();
+          img.src = 'data:image/png;base64,' + b64;
+          await img.decode();
+          const compositeFn = new Function('return ' + compositeFnStr)();
+          compositeFn(ctx, img, w, h, bg, true);
+          return canvas.toDataURL('image/png').split(',')[1];
+        },
+        compositeFrame.toString(),
+        b64Input,
+        bgColor,
+        width,
+        height
+      );
+      fs.writeFileSync(filename, Buffer.from(keyedBase64, 'base64'));
+    } else {
+      await page.screenshot({
+        path: filename,
+        ...screenshotOptions,
+      });
+    }
   }
   logger.info('');
 
