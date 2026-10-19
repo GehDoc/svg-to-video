@@ -1,16 +1,12 @@
 import path from 'path';
-import { CLIFormatGenerator, CLIFormatOptions } from '../types.js';
+import { CLIFormatOptions } from '../types.js';
+import { BaseCLIFormatGenerator } from '../BaseCLIFormatGenerator.js';
 import { mergeMetadataComments } from '#shared/metadata.js';
-import { FORMAT_CAPABILITIES } from '#shared/formatCapabilities.js';
 
-const cap = FORMAT_CAPABILITIES.mkv;
-
-export class MkvFormatGenerator implements CLIFormatGenerator {
-  readonly id = cap.id;
-  readonly extensions = cap.extensions as string[];
-  readonly mimeType = cap.mimeType;
-  readonly supportsAlpha = cap.supportsAlpha;
-  readonly needsColorKeying = cap.needsColorKeying;
+export class MkvFormatGenerator extends BaseCLIFormatGenerator {
+  constructor() {
+    super('mkv');
+  }
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {
