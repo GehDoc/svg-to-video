@@ -58,12 +58,14 @@ test.describe('SVG to Video Web Smoke Test', () => {
   test('should declare Storybook manager and preview as non-indexable in head templates', async () => {
     const fs = await import('node:fs');
     const path = await import('node:path');
+    const { fileURLToPath } = await import('node:url');
+    const dirname = path.dirname(fileURLToPath(import.meta.url));
     const managerHead = fs.readFileSync(
-      path.resolve(process.cwd(), '.storybook/manager-head.html'),
+      path.resolve(dirname, '../.storybook/manager-head.html'),
       'utf-8'
     );
     const previewHead = fs.readFileSync(
-      path.resolve(process.cwd(), '.storybook/preview-head.html'),
+      path.resolve(dirname, '../.storybook/preview-head.html'),
       'utf-8'
     );
 

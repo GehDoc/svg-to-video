@@ -35,9 +35,7 @@ runs:
 
     - name: Setup FFmpeg
       if: inputs.install-ffmpeg == 'true'
-      uses: FedericoCarboni/setup-ffmpeg@v3
-      with:
-        ffmpeg-version: 'release'
+      uses: taiki-e/setup-ffmpeg@v1
 
     - name: Install Playwright Browsers
       if: inputs.install-playwright == 'true'
