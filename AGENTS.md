@@ -25,7 +25,7 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - `README.md` (features & capabilities)
    - `docs/ARCHITECTURE.md` (if design or format strategies changed)
    - `docs/SECURITY.md` (audit subprocess calls, temp file cleanup, and type guards per [CONTRIBUTING.md](./CONTRIBUTING.md#-security--sandboxing-standards))
-   - `web/src/app/layout.tsx` (`title`, `description` from `pkg`, `canonical URL`, `keywords` & `jsonLd.featureList`)
+   - `web/src/app/layout.tsx` (`title`, `description` from `pkg`, `keywords` & `jsonLd.featureList`)
    - `web/src/components/SeoFallback.tsx` (static fallback description and ecosystem links via `ECOSYSTEM_LINKS`)
    - `web/public/llms.txt` & `robots.txt` (AI model context file & crawler permissions)
    - `web/src/utils/constants.ts` (`ECOSYSTEM_LINKS` centralized link helper)

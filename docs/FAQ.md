@@ -4,7 +4,7 @@
 
 No. The Web Studio runs 100% client-side inside your browser using WebCodecs and the Web Animations API. Your SVG source code and exported video frames never leave your local device.
 
-## Q: How does the Web Animations API frame scrubbing work?
+## Q: How does frame scrubbing work for CSS and SMIL animations?
 
 The engine mounts your SVG in an isolated offscreen canvas, programmatically pauses all CSS and SMIL animations, and advances the animation timeline frame by frame (e.g. at 24, 30, or 60 FPS) to guarantee 100% frame accuracy without skipped frames.
 

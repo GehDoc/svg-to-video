@@ -28,42 +28,43 @@ Accurately configure search engine indexing directives across the Web Studio (ke
 
 ## ✅ Task List
 
-- [ ] **Infrastructure & CI**
-  - [ ] Update `.github/actions/setup/action.yml` to install FFmpeg via `sudo apt-get update && sudo apt-get install -y ffmpeg`
-- [ ] **SEO & Indexing Directives**
-  - [ ] Remove `alternates.canonical` from `web/src/app/layout.tsx` (preserving default indexing)
-  - [ ] Verify `web/public/robots.txt` disallows `/storybook/` and `/storybook`
-  - [ ] Create `web/.storybook/manager-head.html` with `<meta name="robots" content="noindex, nofollow" />`
-  - [ ] Update smoke tests in `web/tests/smoke.spec.ts` for canonical link removal and Storybook head tags
-- [ ] **SMIL Sample & Engine Showcase**
-  - [ ] Create SMIL sample SVG in `web/src/assets/samples/`
-  - [ ] Register SMIL sample in `web/src/utils/samples.ts`
-  - [ ] Verify sample rendering and seeking in Web Studio tests
-- [ ] **Documentation, Agent Skills & Metadata Audit**
-  - [ ] Update `README.md` to highlight SMIL and CSS animation capabilities
-  - [ ] Update `mcp.json` description & parameters
-  - [ ] Update root `package.json` description and keywords
-  - [ ] Update `web/package.json` description and keywords
-  - [ ] Update `skills/svg-to-video/SKILL.md` to clarify SMIL support for AI agents
-  - [ ] Update `web/public/llms.txt`
-  - [ ] Update CLI description in `src/index.ts`
-  - [ ] Update `web/src/components/SeoContent.tsx` & `web/scripts/generate-seo-data.ts`
-  - [ ] Run `npm run docs:generate-seo` to synchronize SEO JSON data
-  - [ ] Audit `AGENTS.md` and `CONTRIBUTING.md` guidelines
-- [ ] **External Distribution Artifacts**
-  - [ ] Provide GitHub repository description and topics
-  - [ ] Provide Docker Hub overview markdown
-  - [ ] Provide Hugging Face Space `README.md` and `app.py` updates
+- [x] **Infrastructure & CI**
+  - [x] Update `.github/actions/setup/action.yml` to install FFmpeg via `sudo apt-get update && sudo apt-get install -y ffmpeg`
+- [x] **SEO & Indexing Directives**
+  - [x] Remove `alternates.canonical` from `web/src/app/layout.tsx` (preserving default indexing)
+  - [x] Verify `web/public/robots.txt` disallows `/storybook/` and `/storybook`
+  - [x] Create `web/.storybook/manager-head.html` with `<meta name="robots" content="noindex, nofollow" />`
+  - [x] Update smoke tests in `web/tests/smoke.spec.ts` for canonical link removal and Storybook head tags
+- [x] **SMIL Sample & Engine Showcase**
+  - [x] Create SMIL sample SVG in `web/src/assets/samples/`
+  - [x] Register SMIL sample in `web/src/utils/samples.ts`
+  - [x] Verify sample rendering and seeking in Web Studio tests
+- [x] **Documentation, Agent Skills & Metadata Audit**
+  - [x] Update `README.md` to highlight SMIL and CSS animation capabilities
+  - [x] Update `mcp.json` description & parameters
+  - [x] Update root `package.json` description and keywords
+  - [x] Update `web/package.json` description and keywords
+  - [x] Update `skills/svg-to-video/SKILL.md` to clarify SMIL support for AI agents
+  - [x] Update `web/public/llms.txt`
+  - [x] Update CLI description in `src/index.ts`
+  - [x] Update `web/src/components/SeoContent.tsx` & `web/scripts/generate-seo-data.ts`
+  - [x] Run `npm run docs:generate-seo` to synchronize SEO JSON data
+  - [x] Audit `AGENTS.md` and `CONTRIBUTING.md` guidelines
+- [x] **External Distribution Artifacts**
+  - [x] Provide GitHub repository description and topics
+  - [x] Provide Docker Hub overview markdown
+  - [x] Provide Hugging Face Space `README.md` and `app.py` updates
 
 ## 🧪 Verification Plan
 
-- [ ] Run `npm run test:fast` / `npm run check:fast` to verify types, formatting, and linting
-- [ ] Run `npm run test:web -w web` to verify smoke and unit tests
-- [ ] Inspect generated HTML of Web Studio homepage to confirm no canonical tag and presence of indexability
-- [ ] Inspect generated Storybook manager HTML to confirm `noindex, nofollow` meta tag
-- [ ] Verify CI builds with FFmpeg installation via apt-get
+- [x] Run `npm run test:fast` / `npm run check:fast` to verify types, formatting, and linting
+- [x] Run `npm run test:web -w web` to verify smoke and unit tests
+- [x] Inspect generated HTML of Web Studio homepage to confirm no canonical tag and presence of indexability
+- [x] Inspect generated Storybook manager HTML to confirm `noindex, nofollow` meta tag
+- [x] Verify CI builds with FFmpeg installation via apt-get
 
 ## 📝 Change Log
 
 - 2026-10-19: Initial spec created by Antigravity assistant.
 - 2026-10-19: Updated spec to include mcp.json, packages.json, external surfaces (GitHub, Docker Hub, Hugging Face).
+- 2026-10-19: Implemented indexing fixes, FFmpeg apt-get CI setup, SMIL sample, documentation updates, and verified tests.
