@@ -13,7 +13,7 @@
 [![HuggingFace Space](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Demo%20Space-yellow?style=flat)](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)
 [![llms.txt](https://img.shields.io/badge/llms.txt-available-blue)](https://gehdoc.github.io/svg-to-video/llms.txt)
 
-A high-fidelity tool to transform your CSS-animated SVGs into high-quality videos (MP4, WebM, MKV, MOV) or lightweight animated formats (aPNG, GIF) with perfect alpha-channel transparency directly in your browser or via CLI/MCP server.
+A high-fidelity tool to transform your CSS- and SMIL-animated SVGs into high-quality videos (MP4, WebM, MKV, MOV) or lightweight animated formats (aPNG, GIF) with perfect alpha-channel transparency directly in your browser or via CLI/MCP server.
 
 <div align="center">
   <a href="https://gehdoc.github.io/svg-to-video/"><img src="https://gehdoc.github.io/svg-to-video/assets/demo.gif" width="800" alt="SVG to Video Demo"></a>
@@ -26,7 +26,7 @@ A high-fidelity tool to transform your CSS-animated SVGs into high-quality video
 
 - **Transparent Backgrounds**: Export your animations with a full alpha channel using **WebM or aPNG**, and optimized indexed transparency with **GIF89a**. Perfect for overlays in video editing tools or web use.
 - **Privacy-First**: The Web Studio runs entirely in your browser—your SVG files never leave your computer.
-- **Frame-Accurate**: Our engine scrubs the **Web Animations API**, ensuring every frame is captured exactly as rendered.
+- **Frame-Accurate**: Our engine scrubs both the **Web Animations API** and native **SVG SMIL**, ensuring every frame is captured exactly as rendered.
 - **AI Agent Native**: Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support indexed on the official [MCP Registry](https://registry.modelcontextprotocol.io/) (`mcp.json`) and hosted live on [HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp).
 - **Universal Animated Formats**: Beyond video, generate lightweight **Animated PNGs (aPNG)** and **GIFs** perfect for documentation, Slack, or GitHub, with full control over background transparency.
 - **Copy to Clipboard**: Instant export to **Base64 Data URL**—copy your video and embed it directly into your HTML, CSS, or JS code without manual downloads. Perfect for rapid prototyping and developers.
@@ -55,7 +55,7 @@ Our **Web Studio** is a serverless, client-side rendering tool. It runs entirely
 
 > **Privacy Note**: We use [Umami Analytics](https://umami.is/) to collect anonymous usage data across our Web Studio, CLI, and MCP server interfaces (e.g., number of conversions and format usage) to help us improve the tool. This tracking is cookie-less, respects standard "Do Not Track" settings (set the `DO_NOT_TRACK=1` environment variable to opt out), and never collects personal information or SVG contents. See **[docs/ANALYTICS.md](./docs/ANALYTICS.md)** for details.
 
-Explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video/storybook/)** to see how the engine handles complex CSS and fonts.
+Explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video/storybook/)** to see how the engine handles complex CSS, SMIL, and fonts.
 
 ### Quick Start
 
@@ -147,7 +147,7 @@ docker pull gehdoc/svg-to-video:latest
 
 For a deep dive into the rendering engine, algorithms, and infrastructure, see [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
 
-The tool works by isolating the SVG, scrubbing the Web Animations API, and capturing frames via WebCodecs or FFmpeg.
+The tool works by isolating the SVG, scrubbing both the Web Animations API and native SVG SMIL DOM, and capturing frames via WebCodecs or FFmpeg.
 
 ---
 

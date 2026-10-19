@@ -135,7 +135,7 @@ try {
     headline: 'High-Fidelity SVG Animation to Video & Animated Image Studio',
     // UI tagline: single sentence, no parenthetical format lists.
     tagline:
-      'Transform CSS-animated SVGs into MP4, WebM, MKV, MOV, aPNG, or GIF with full alpha-channel transparency — directly in your browser or via CLI/MCP.',
+      'Transform animated SVGs (CSS & SMIL) into MP4, WebM, MKV, MOV, aPNG, or GIF with full alpha-channel transparency — directly in your browser or via CLI/MCP.',
     features,
     quickStartSteps,
     cliSnippet,

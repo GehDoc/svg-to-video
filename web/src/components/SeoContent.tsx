@@ -46,7 +46,7 @@ export const SeoContent = () => {
         <div className="seo-block">
           <div className="block-header">
             <FaCogs className="block-icon" />
-            <h3>How to Convert CSS-Animated SVGs</h3>
+            <h3>How to Convert Animated SVGs (CSS & SMIL)</h3>
           </div>
           <div className="steps-container">
             {seoData.quickStartSteps.map((stepHtml, index) => (

@@ -22,6 +22,7 @@ test('LandingView renders welcome header, sample cards, and trust badges', () =>
   expect(screen.getByText(/Rocket Launch/i)).toBeInTheDocument();
   expect(screen.getByText(/Loading Spinner/i)).toBeInTheDocument();
   expect(screen.getByText(/Mechanical Gear/i)).toBeInTheDocument();
+  expect(screen.getByText(/Radar Scanner/i)).toBeInTheDocument();
   expect(screen.getByText(/100% Local & Private/i)).toBeInTheDocument();
   expect(screen.getByText(/Alpha Channel Transparency/i)).toBeInTheDocument();
   expect(
@@ -30,6 +31,29 @@ test('LandingView renders welcome header, sample cards, and trust badges', () =>
   expect(
     screen.getByText(/Released under the MIT License/i)
   ).toBeInTheDocument();
+});
+
+test('LandingView pauses SMIL animations by default and unpauses on hover', () => {
+  const pauseMock = vi.fn();
+  const unpauseMock = vi.fn();
+  window.SVGSVGElement.prototype.pauseAnimations = pauseMock;
+  window.SVGSVGElement.prototype.unpauseAnimations = unpauseMock;
+
+  render(<LandingView />);
+
+  // Should pause all SVGs upon mounting
+  expect(pauseMock).toHaveBeenCalled();
+
+  const cards = document.querySelectorAll('.sample-card');
+  expect(cards.length).toBeGreaterThan(0);
+
+  // Hovering should trigger unpause
+  fireEvent.mouseEnter(cards[0]);
+  expect(unpauseMock).toHaveBeenCalled();
+
+  // Leaving should trigger pause again
+  fireEvent.mouseLeave(cards[0]);
+  expect(pauseMock).toHaveBeenCalledTimes(pauseMock.mock.calls.length);
 });
 
 test('LandingView calls onSelectSample when clicking Try This Sample', () => {

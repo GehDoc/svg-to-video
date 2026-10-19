@@ -46,7 +46,7 @@ async function main(): Promise<void> {
     .name('svg-to-video')
     .version(pkg.version)
     .description(
-      `svg-to-video v${pkg.version} - Render a CSS-animated SVG to a high-quality video or animated image (MP4, WebM, MKV, MOV, GIF, aPNG)`
+      `svg-to-video v${pkg.version} - Render an animated SVG (CSS & SMIL) to a high-quality video or animated image (MP4, WebM, MKV, MOV, GIF, aPNG)`
     )
     .usage('<svgPath> <fps> <outDir> [options]')
     .addHelpText(
