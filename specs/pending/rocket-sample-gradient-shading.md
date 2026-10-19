@@ -1,6 +1,6 @@
 # Spec: Align Rocket Sample Fuselage Gradient with Cylindrical Geometry
 
-**GitHub Issue**: N/A
+**Pull Request**: [#233](https://github.com/GehDoc/svg-to-video/pull/233)
 **Status**: 🟠 Pending
 
 ## 🎯 Objective
