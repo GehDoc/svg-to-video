@@ -39,8 +39,9 @@ export const metadata: Metadata = {
     'model context protocol',
     'agent skill',
   ],
-  alternates: {
-    canonical: url,
+  robots: {
+    index: false,
+    follow: false,
   },
   openGraph: {
     title,

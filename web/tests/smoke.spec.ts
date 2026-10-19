@@ -7,6 +7,17 @@ test.describe('SVG to Video Web Smoke Test', () => {
     await expect(page.locator('.header-title')).toContainText('SVG to Video');
   });
 
+  test('should declare home page as non-indexable and omit canonical link', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const canonicalLink = page.locator('link[rel="canonical"]');
+    await expect(canonicalLink).toHaveCount(0);
+
+    const robotsMeta = page.locator('meta[name="robots"]');
+    await expect(robotsMeta).toHaveAttribute('content', 'noindex, nofollow');
+  });
+
   test('should have a disabled render button by default', async ({ page }) => {
     await page.goto('/');
     const renderButton = page.getByRole('button', {
@@ -41,6 +52,26 @@ test.describe('SVG to Video Web Smoke Test', () => {
     expect(body).toContain('Disallow: /storybook/');
     expect(body).toContain(
       'Sitemap: https://gehdoc.github.io/svg-to-video/sitemap.xml'
+    );
+  });
+
+  test('should declare Storybook manager and preview as non-indexable in head templates', async () => {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const managerHead = fs.readFileSync(
+      path.resolve(process.cwd(), '.storybook/manager-head.html'),
+      'utf-8'
+    );
+    const previewHead = fs.readFileSync(
+      path.resolve(process.cwd(), '.storybook/preview-head.html'),
+      'utf-8'
+    );
+
+    expect(managerHead).toContain(
+      '<meta name="robots" content="noindex, nofollow" />'
+    );
+    expect(previewHead).toContain(
+      '<meta name="robots" content="noindex, nofollow" />'
     );
   });
 
