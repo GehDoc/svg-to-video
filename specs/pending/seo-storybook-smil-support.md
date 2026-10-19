@@ -1,11 +1,12 @@
 # Spec: Correct Web Studio & Storybook SEO Indexing Directives, Stable FFmpeg CI Setup, and SMIL Animation Promotion
 
 **GitHub Issue**: N/A
+**Pull Request**: [#235](https://github.com/GehDoc/svg-to-video/pull/235)
 **Status**: 🟠 Pending
 
 ## 🎯 Objective
 
-Accurately configure search engine indexing directives across the Web Studio (keep homepage indexable without declaring a canonical URL) and Storybook (exclude Storybook tree via robots.txt and Storybook manager home via noindex meta tag), replace unreliable third-party FFmpeg action with standard Ubuntu apt-get installation in CI, and actively document and showcase full native SMIL animation support across docs, samples, and agent metadata.
+Accurately configure search engine indexing directives across the Web Studio (keep homepage indexable without declaring a canonical URL) and Storybook (exclude Storybook tree via robots.txt and Storybook manager home via noindex meta tag), replace unreliable third-party FFmpeg action with standard Ubuntu apt-get installation in CI, and actively document and showcase full native SMIL animation support across repository docs, packages, samples, agent metadata, and external distribution surfaces (GitHub, Docker Hub, Hugging Face).
 
 ## 🛠 Technical Strategy
 
@@ -17,9 +18,13 @@ Accurately configure search engine indexing directives across the Web Studio (ke
 - **CI / FFmpeg Installation**:
   - Update `.github/actions/setup/action.yml` to replace `FedericoCarboni/setup-ffmpeg@v3` with standard `sudo apt-get update && sudo apt-get install -y ffmpeg` to provide full codec support across standard Ubuntu packages without third-party download failures.
 - **SMIL Animation Promotion & Samples**:
-  - Add a dedicated SMIL animation sample SVG file in `web/src/assets/samples/` (e.g. `morph-pulse.svg` or `radar.svg` leveraging `<animate>`, `<animateTransform>`).
+  - Add a dedicated SMIL animation sample SVG file in `web/src/assets/samples/radar.svg` showcasing native SMIL `<animate>` and `<animateTransform>`.
   - Register the new sample in `web/src/utils/samples.ts`.
-  - Update public documentation, agent metadata, and SEO copy (`README.md`, `skills/svg-to-video/SKILL.md`, `web/public/llms.txt`, `src/index.ts`, `docs/ARCHITECTURE.md`, `docs/FAQ.md`, `web/src/components/SeoContent.tsx`, `web/src/data/seoDocumentation.json`) from "CSS-animated SVGs" to "CSS- and SMIL-animated SVGs" (or "animated SVGs (CSS & SMIL)").
+  - Update public documentation, agent metadata, and package manifests (`README.md`, `mcp.json`, `package.json`, `web/package.json`, `skills/svg-to-video/SKILL.md`, `web/public/llms.txt`, `src/index.ts`, `docs/ARCHITECTURE.md`, `docs/FAQ.md`, `web/src/components/SeoContent.tsx`, `web/src/data/seoDocumentation.json`) from "CSS-animated SVGs" to "CSS- and SMIL-animated SVGs" (or "animated SVGs (CSS & SMIL)").
+- **External Distribution Surfaces**:
+  - Prepare updated GitHub repository description and topics (`gh repo edit`).
+  - Prepare updated Docker Hub overview markdown.
+  - Prepare updated Hugging Face Space `README.md` and `app.py`.
 
 ## ✅ Task List
 
@@ -34,14 +39,21 @@ Accurately configure search engine indexing directives across the Web Studio (ke
   - [ ] Create SMIL sample SVG in `web/src/assets/samples/`
   - [ ] Register SMIL sample in `web/src/utils/samples.ts`
   - [ ] Verify sample rendering and seeking in Web Studio tests
-- [ ] **Documentation, Agent Skills & SEO Pre-Flight**
+- [ ] **Documentation, Agent Skills & Metadata Audit**
   - [ ] Update `README.md` to highlight SMIL and CSS animation capabilities
+  - [ ] Update `mcp.json` description & parameters
+  - [ ] Update root `package.json` description and keywords
+  - [ ] Update `web/package.json` description and keywords
   - [ ] Update `skills/svg-to-video/SKILL.md` to clarify SMIL support for AI agents
   - [ ] Update `web/public/llms.txt`
   - [ ] Update CLI description in `src/index.ts`
   - [ ] Update `web/src/components/SeoContent.tsx` & `web/scripts/generate-seo-data.ts`
   - [ ] Run `npm run docs:generate-seo` to synchronize SEO JSON data
   - [ ] Audit `AGENTS.md` and `CONTRIBUTING.md` guidelines
+- [ ] **External Distribution Artifacts**
+  - [ ] Provide GitHub repository description and topics
+  - [ ] Provide Docker Hub overview markdown
+  - [ ] Provide Hugging Face Space `README.md` and `app.py` updates
 
 ## 🧪 Verification Plan
 
@@ -54,3 +66,4 @@ Accurately configure search engine indexing directives across the Web Studio (ke
 ## 📝 Change Log
 
 - 2026-10-19: Initial spec created by Antigravity assistant.
+- 2026-10-19: Updated spec to include mcp.json, packages.json, external surfaces (GitHub, Docker Hub, Hugging Face).
