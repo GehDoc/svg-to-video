@@ -55,6 +55,11 @@ Accurately configure search engine indexing directives across the Web Studio (ke
   - [x] Provide Docker Hub overview markdown
   - [x] Provide Hugging Face Space `README.md` and `app.py` updates
 
+- [x] **SampleCard & SMIL Hover Preview**
+  - [x] Ensure SMIL animations in sample preview cards are paused on mount and play only on hover/focus
+  - [x] Extract `SampleCard` and `SampleCardProps` into `web/src/components/SampleCard.tsx`
+  - [x] Add unit tests in `web/src/components/SampleCard.test.tsx` for rendering, selection, and SVG pause/unpause lifecycle
+
 ## 🧪 Verification Plan
 
 - [x] Run `npm run test:fast` / `npm run check:fast` to verify types, formatting, and linting
@@ -68,3 +73,4 @@ Accurately configure search engine indexing directives across the Web Studio (ke
 - 2026-10-19: Initial spec created by Antigravity assistant.
 - 2026-10-19: Updated spec to include mcp.json, packages.json, external surfaces (GitHub, Docker Hub, Hugging Face).
 - 2026-10-19: Implemented indexing fixes, FFmpeg apt-get CI setup, SMIL sample, documentation updates, and verified tests.
+- 2026-10-19: Bumped version to 0.33.0. Paused SMIL preview on initial display (playing only on hover/focus). Extracted and tested `SampleCard` component.
