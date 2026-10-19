@@ -71,12 +71,9 @@ export function injectApngMetadata(
 }
 
 export class ApngFormat extends BaseFormat {
-  readonly id = 'apng';
-  readonly label = 'aPNG';
-  readonly extension = '.png';
-  readonly mimeType = 'image/png';
-  override readonly supportsAlpha = true;
-  override readonly supportsMetadata = true;
+  constructor() {
+    super('apng');
+  }
 
   createEncoder(): VideoEncoder {
     return new ApngEncoder();

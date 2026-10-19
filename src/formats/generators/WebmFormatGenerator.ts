@@ -1,13 +1,12 @@
 import path from 'path';
-import { CLIFormatGenerator, CLIFormatOptions } from '../types.js';
+import { CLIFormatOptions } from '../types.js';
+import { BaseCLIFormatGenerator } from '../BaseCLIFormatGenerator.js';
 import { mergeMetadataComments } from '#shared/metadata.js';
 
-export class WebmFormatGenerator implements CLIFormatGenerator {
-  readonly id = 'webm';
-  readonly extensions = ['.webm'];
-  readonly mimeType = 'video/webm';
-  readonly supportsAlpha = true;
-  readonly needsColorKeying = false;
+export class WebmFormatGenerator extends BaseCLIFormatGenerator {
+  constructor() {
+    super('webm');
+  }
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {

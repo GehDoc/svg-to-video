@@ -92,21 +92,10 @@ export class MediaBunnyEncoder implements VideoEncoder {
 
 export class MediaBunnyFormat extends BaseFormat {
   constructor(
-    public readonly id: string,
-    public readonly label: string,
-    private OutputFormatClass: new () => Mediabunny.OutputFormat,
-    override readonly supportsAlpha: boolean,
-    override readonly supportsMetadata: boolean
+    id: string,
+    private OutputFormatClass: new () => Mediabunny.OutputFormat
   ) {
-    super();
-  }
-
-  get extension(): string {
-    return new this.OutputFormatClass().fileExtension;
-  }
-
-  get mimeType(): string {
-    return new this.OutputFormatClass().mimeType;
+    super(id);
   }
 
   createEncoder(): VideoEncoder {
@@ -132,8 +121,8 @@ export class MediaBunnyFormat extends BaseFormat {
 }
 
 export const MEDIABUNNY_FORMATS = [
-  new MediaBunnyFormat('mp4', 'MP4', Mediabunny.Mp4OutputFormat, false, true),
-  new MediaBunnyFormat('webm', 'WebM', Mediabunny.WebMOutputFormat, true, true),
-  new MediaBunnyFormat('mkv', 'MKV', Mediabunny.MkvOutputFormat, true, true),
-  new MediaBunnyFormat('mov', 'MOV', Mediabunny.MovOutputFormat, false, true),
+  new MediaBunnyFormat('mp4', Mediabunny.Mp4OutputFormat),
+  new MediaBunnyFormat('webm', Mediabunny.WebMOutputFormat),
+  new MediaBunnyFormat('mkv', Mediabunny.MkvOutputFormat),
+  new MediaBunnyFormat('mov', Mediabunny.MovOutputFormat),
 ];

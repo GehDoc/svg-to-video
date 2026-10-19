@@ -1,15 +1,14 @@
 import path from 'path';
 import fs from 'fs';
-import { CLIFormatGenerator, CLIFormatOptions } from '../types.js';
+import { CLIFormatOptions } from '../types.js';
+import { BaseCLIFormatGenerator } from '../BaseCLIFormatGenerator.js';
 import { mergeMetadataComments } from '#shared/metadata.js';
 import { injectGifMetadata } from '#shared/gifMetadataInjector.js';
 
-export class GifFormatGenerator implements CLIFormatGenerator {
-  readonly id = 'gif';
-  readonly extensions = ['.gif'];
-  readonly mimeType = 'image/gif';
-  readonly supportsAlpha = true;
-  readonly needsColorKeying = true;
+export class GifFormatGenerator extends BaseCLIFormatGenerator {
+  constructor() {
+    super('gif');
+  }
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {

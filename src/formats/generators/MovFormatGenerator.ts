@@ -1,13 +1,12 @@
 import path from 'path';
-import { CLIFormatGenerator, CLIFormatOptions } from '../types.js';
+import { CLIFormatOptions } from '../types.js';
+import { BaseCLIFormatGenerator } from '../BaseCLIFormatGenerator.js';
 import { mergeMetadataComments } from '#shared/metadata.js';
 
-export class MovFormatGenerator implements CLIFormatGenerator {
-  readonly id = 'mov';
-  readonly extensions = ['.mov'];
-  readonly mimeType = 'video/quicktime';
-  readonly supportsAlpha = true;
-  readonly needsColorKeying = false;
+export class MovFormatGenerator extends BaseCLIFormatGenerator {
+  constructor() {
+    super('mov');
+  }
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {

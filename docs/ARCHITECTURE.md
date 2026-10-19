@@ -146,9 +146,17 @@ screenshotOptions: {
 
 This section documents how to add new output formats and manage the alpha channel for transparency.
 
+### Format Capabilities Registry (`shared/formatCapabilities.ts`)
+
+Format definitions, MIME types, primary extensions, extension aliases, `supportsAlpha`, `supportsMetadata`, and `needsColorKeying` capability flags are centralized in `shared/formatCapabilities.ts`. Both the CLI format generators and Web Studio encoders consume this single source of truth, ensuring format metadata remains synchronized across environments.
+
 ### Adding New Formats
 
-The project uses modular **Registry of Format Factories** architecture in both the Web Studio and the CLI tool to decouple output encoding pipelines from specific format implementations.
+To add a new output format across CLI and Web Studio:
+
+1. **Central Definition**: Add the format capability entry to `FORMAT_CAPABILITIES` in `shared/formatCapabilities.ts`.
+2. **Web Studio Encoder**: Create/update the format class in `web/src/utils/encoders/` (extending `BaseFormat`).
+3. **CLI Generator**: Implement `CLIFormatGenerator` in `src/formats/generators/` and register it in `src/formats/registry.ts`.
 
 #### 1. Web Studio Format Registry (`web/src/utils/encoders/`)
 
