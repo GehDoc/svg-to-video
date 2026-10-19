@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react';
 import {
   FaLock,
   FaCheckCircle,
@@ -32,6 +33,80 @@ const DEV_TABS: DevCardTab[] = [
   },
 ];
 
+interface SampleCardProps {
+  sample: SamplePreset;
+  onSelectSample?: (sample: SamplePreset) => void;
+}
+
+const SampleCard = ({ sample, onSelectSample }: SampleCardProps) => {
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const svg = previewRef.current?.querySelector('svg');
+    if (svg && typeof svg.pauseAnimations === 'function') {
+      try {
+        svg.pauseAnimations();
+      } catch {
+        /* ignored */
+      }
+    }
+  }, [sample.svgContent]);
+
+  const handleStart = () => {
+    const svg = previewRef.current?.querySelector('svg');
+    if (svg && typeof svg.unpauseAnimations === 'function') {
+      try {
+        svg.unpauseAnimations();
+      } catch {
+        /* ignored */
+      }
+    }
+  };
+
+  const handleStop = () => {
+    const svg = previewRef.current?.querySelector('svg');
+    if (svg && typeof svg.pauseAnimations === 'function') {
+      try {
+        svg.pauseAnimations();
+      } catch {
+        /* ignored */
+      }
+    }
+  };
+
+  return (
+    <div
+      className="sample-card"
+      onMouseEnter={handleStart}
+      onMouseLeave={handleStop}
+      onFocus={handleStart}
+      onBlur={handleStop}
+    >
+      <div
+        ref={previewRef}
+        className="sample-preview"
+        dangerouslySetInnerHTML={{ __html: sample.svgContent }}
+        aria-hidden="true"
+      />
+      <div className="sample-info">
+        <div className="sample-header">
+          <h3 className="sample-name">{sample.name}</h3>
+          <span className="sample-tag">{sample.format.toUpperCase()}</span>
+        </div>
+        <p className="sample-desc">{sample.description}</p>
+        <Button
+          variant="outline"
+          className="sample-btn"
+          onClick={() => onSelectSample?.(sample)}
+          aria-label={`Test ${sample.name} sample`}
+        >
+          <FaPlay size={10} className="btn-icon" /> Try This Sample
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 export const LandingView = ({ onSelectSample }: LandingViewProps) => {
   return (
     <div className="landing-view">
@@ -49,30 +124,11 @@ export const LandingView = ({ onSelectSample }: LandingViewProps) => {
         <section className="landing-section" aria-label="Interactive Samples">
           <div className="sample-grid">
             {SAMPLES.map((sample) => (
-              <div key={sample.id} className="sample-card">
-                <div
-                  className="sample-preview"
-                  dangerouslySetInnerHTML={{ __html: sample.svgContent }}
-                  aria-hidden="true"
-                />
-                <div className="sample-info">
-                  <div className="sample-header">
-                    <h3 className="sample-name">{sample.name}</h3>
-                    <span className="sample-tag">
-                      {sample.format.toUpperCase()}
-                    </span>
-                  </div>
-                  <p className="sample-desc">{sample.description}</p>
-                  <Button
-                    variant="outline"
-                    className="sample-btn"
-                    onClick={() => onSelectSample?.(sample)}
-                    aria-label={`Test ${sample.name} sample`}
-                  >
-                    <FaPlay size={10} className="btn-icon" /> Try This Sample
-                  </Button>
-                </div>
-              </div>
+              <SampleCard
+                key={sample.id}
+                sample={sample}
+                onSelectSample={onSelectSample}
+              />
             ))}
           </div>
         </section>

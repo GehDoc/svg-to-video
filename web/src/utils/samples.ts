@@ -63,7 +63,7 @@ export const SAMPLES: SamplePreset[] = [
   },
   {
     id: 'radar-scanner',
-    name: 'SMIL Radar Scanner',
+    name: 'Radar Scanner',
     description:
       'Native SVG SMIL animation with rotating beam, sonar waves, and pulsing targets.',
     category: 'SMIL Animation',
