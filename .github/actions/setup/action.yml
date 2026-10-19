@@ -35,7 +35,8 @@ runs:
 
     - name: Setup FFmpeg
       if: inputs.install-ffmpeg == 'true'
-      uses: taiki-e/setup-ffmpeg@v1
+      run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      shell: bash
 
     - name: Install Playwright Browsers
       if: inputs.install-playwright == 'true'
