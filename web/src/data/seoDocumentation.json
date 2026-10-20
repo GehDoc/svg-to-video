@@ -1,6 +1,6 @@
 {
   "headline": "High-Fidelity SVG Animation to Video & Animated Image Studio",
-  "tagline": "Transform CSS-animated SVGs into MP4, WebM, MKV, MOV, aPNG, or GIF with full alpha-channel transparency — directly in your browser or via CLI/MCP.",
+  "tagline": "Transform animated SVGs (CSS & SMIL) into MP4, WebM, MKV, MOV, aPNG, or GIF with full alpha-channel transparency — directly in your browser or via CLI/MCP.",
   "features": [
     {
       "title": "Transparent Backgrounds",
@@ -12,7 +12,7 @@
     },
     {
       "title": "Frame-Accurate",
-      "descriptionHtml": "Our engine scrubs the <strong>Web Animations API</strong>, ensuring every frame is captured exactly as rendered."
+      "descriptionHtml": "Our engine scrubs both the <strong>Web Animations API</strong> and native <strong>SVG SMIL</strong>, ensuring every frame is captured exactly as rendered."
     },
     {
       "title": "AI Agent Native",
@@ -80,7 +80,7 @@
       "answerHtml": "No. The Web Studio runs 100% client-side inside your browser using WebCodecs and the Web Animations API. Your SVG source code and exported video frames never leave your local device."
     },
     {
-      "question": "How does the Web Animations API frame scrubbing work?",
+      "question": "How does frame scrubbing work for CSS and SMIL animations?",
       "answerHtml": "The engine mounts your SVG in an isolated offscreen canvas, programmatically pauses all CSS and SMIL animations, and advances the animation timeline frame by frame (e.g. at 24, 30, or 60 FPS) to guarantee 100% frame accuracy without skipped frames."
     },
     {
@@ -92,5 +92,5 @@
       "answerHtml": "Select <strong>WebM</strong>, <strong>aPNG</strong>, or <strong>GIF</strong> as your output format, check the &quot;Transparent Background&quot; toggle, and ensure your SVG root element does not declare an opaque background rect."
     }
   ],
-  "lastUpdated": "2026-10-17T23:59:55.612Z"
+  "lastUpdated": "2026-10-19T20:07:23.805Z"
 }

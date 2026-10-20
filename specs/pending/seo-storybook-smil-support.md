@@ -1,0 +1,76 @@
+# Spec: Correct Web Studio & Storybook SEO Indexing Directives, Stable FFmpeg CI Setup, and SMIL Animation Promotion
+
+**GitHub Issue**: N/A
+**Pull Request**: [#235](https://github.com/GehDoc/svg-to-video/pull/235)
+**Status**: 🟠 Pending
+
+## 🎯 Objective
+
+Accurately configure search engine indexing directives across the Web Studio (keep homepage indexable without declaring a canonical URL) and Storybook (exclude Storybook tree via robots.txt and Storybook manager home via noindex meta tag), replace unreliable third-party FFmpeg action with standard Ubuntu apt-get installation in CI, and actively document and showcase full native SMIL animation support across repository docs, packages, samples, agent metadata, and external distribution surfaces (GitHub, Docker Hub, Hugging Face).
+
+## 🛠 Technical Strategy
+
+- **SEO & Search Indexing**:
+  - `web/src/app/layout.tsx`: Remove `alternates.canonical` so the homepage does not declare a canonical URL, while keeping standard indexing enabled (do NOT add `robots: { index: false, follow: false }`).
+  - `web/public/robots.txt`: Ensure `/storybook/` and `/storybook` are disallowed for all user agents.
+  - `web/.storybook/manager-head.html`: Add `<meta name="robots" content="noindex, nofollow" />` to ensure Storybook manager frame (`index.html`) is non-indexable, matching `preview-head.html`.
+  - Update `web/tests/smoke.spec.ts` to verify the homepage has no canonical link and is indexable, and that Storybook head files have the noindex tag.
+- **CI / FFmpeg Installation**:
+  - Update `.github/actions/setup/action.yml` to replace `FedericoCarboni/setup-ffmpeg@v3` with standard `sudo apt-get update && sudo apt-get install -y ffmpeg` to provide full codec support across standard Ubuntu packages without third-party download failures.
+- **SMIL Animation Promotion & Samples**:
+  - Add a dedicated SMIL animation sample SVG file in `web/src/assets/samples/radar.svg` showcasing native SMIL `<animate>` and `<animateTransform>`.
+  - Register the new sample in `web/src/utils/samples.ts`.
+  - Update public documentation, agent metadata, and package manifests (`README.md`, `mcp.json`, `package.json`, `web/package.json`, `skills/svg-to-video/SKILL.md`, `web/public/llms.txt`, `src/index.ts`, `docs/ARCHITECTURE.md`, `docs/FAQ.md`, `web/src/components/SeoContent.tsx`, `web/src/data/seoDocumentation.json`) from "CSS-animated SVGs" to "CSS- and SMIL-animated SVGs" (or "animated SVGs (CSS & SMIL)").
+- **External Distribution Surfaces**:
+  - Prepare updated GitHub repository description and topics (`gh repo edit`).
+  - Prepare updated Docker Hub overview markdown.
+  - Prepare updated Hugging Face Space `README.md` and `app.py`.
+
+## ✅ Task List
+
+- [x] **Infrastructure & CI**
+  - [x] Update `.github/actions/setup/action.yml` to install FFmpeg via `sudo apt-get update && sudo apt-get install -y ffmpeg`
+- [x] **SEO & Indexing Directives**
+  - [x] Remove `alternates.canonical` from `web/src/app/layout.tsx` (preserving default indexing)
+  - [x] Verify `web/public/robots.txt` disallows `/storybook/` and `/storybook`
+  - [x] Create `web/.storybook/manager-head.html` with `<meta name="robots" content="noindex, nofollow" />`
+  - [x] Update smoke tests in `web/tests/smoke.spec.ts` for canonical link removal and Storybook head tags
+- [x] **SMIL Sample & Engine Showcase**
+  - [x] Create SMIL sample SVG in `web/src/assets/samples/`
+  - [x] Register SMIL sample in `web/src/utils/samples.ts`
+  - [x] Verify sample rendering and seeking in Web Studio tests
+- [x] **Documentation, Agent Skills & Metadata Audit**
+  - [x] Update `README.md` to highlight SMIL and CSS animation capabilities
+  - [x] Update `mcp.json` description & parameters
+  - [x] Update root `package.json` description and keywords
+  - [x] Update `web/package.json` description and keywords
+  - [x] Update `skills/svg-to-video/SKILL.md` to clarify SMIL support for AI agents
+  - [x] Update `web/public/llms.txt`
+  - [x] Update CLI description in `src/index.ts`
+  - [x] Update `web/src/components/SeoContent.tsx` & `web/scripts/generate-seo-data.ts`
+  - [x] Run `npm run docs:generate-seo` to synchronize SEO JSON data
+  - [x] Audit `AGENTS.md` and `CONTRIBUTING.md` guidelines
+- [x] **External Distribution Artifacts**
+  - [x] Provide GitHub repository description and topics
+  - [x] Provide Docker Hub overview markdown
+  - [x] Provide Hugging Face Space `README.md` and `app.py` updates
+
+- [x] **SampleCard & SMIL Hover Preview**
+  - [x] Ensure SMIL animations in sample preview cards are paused on mount and play only on hover/focus
+  - [x] Extract `SampleCard` and `SampleCardProps` into `web/src/components/SampleCard.tsx`
+  - [x] Add unit tests in `web/src/components/SampleCard.test.tsx` for rendering, selection, and SVG pause/unpause lifecycle
+
+## 🧪 Verification Plan
+
+- [x] Run `npm run test:fast` / `npm run check:fast` to verify types, formatting, and linting
+- [x] Run `npm run test:web -w web` to verify smoke and unit tests
+- [x] Inspect generated HTML of Web Studio homepage to confirm no canonical tag and presence of indexability
+- [x] Inspect generated Storybook manager HTML to confirm `noindex, nofollow` meta tag
+- [x] Verify CI builds with FFmpeg installation via apt-get
+
+## 📝 Change Log
+
+- 2026-10-19: Initial spec created by Antigravity assistant.
+- 2026-10-19: Updated spec to include mcp.json, packages.json, external surfaces (GitHub, Docker Hub, Hugging Face).
+- 2026-10-19: Implemented indexing fixes, FFmpeg apt-get CI setup, SMIL sample, documentation updates, and verified tests.
+- 2026-10-19: Bumped version to 0.33.0. Paused SMIL preview on initial display (playing only on hover/focus). Extracted and tested `SampleCard` component.

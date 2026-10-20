@@ -33,15 +33,14 @@ export const metadata: Metadata = {
     'video metadata',
     'cli gif export',
     'cli apng export',
+    'smil animation',
+    'svg smil',
     'web animations api',
     'browser-based converter',
     'mcp server',
     'model context protocol',
     'agent skill',
   ],
-  alternates: {
-    canonical: url,
-  },
   openGraph: {
     title,
     description,

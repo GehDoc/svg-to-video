@@ -1,6 +1,6 @@
 # SVG to Video Studio
 
-> High-fidelity, browser-based SVG to video Studio and CLI converter. Transforms CSS-animated SVGs into MP4, WebM, GIF, and aPNG with alpha-channel transparency.
+> High-fidelity, browser-based SVG to video Studio and CLI converter. Transforms CSS- and SMIL-animated SVGs into MP4, WebM, GIF, and aPNG with alpha-channel transparency.
 
 ## Core Resources
 
@@ -20,6 +20,6 @@
 
 - Supports MP4, WebM, MKV, MOV, aPNG, and GIF exports.
 - Full alpha-channel transparency support for WebM, aPNG, and GIF.
-- Frame-accurate Web Animations API scrubbing.
+- Frame-accurate Web Animations API (CSS) and SVG DOM (SMIL) scrubbing.
 - Metadata injection (Title and Comment) into exported video files.
 - 100% serverless, client-side rendering privacy in the browser.

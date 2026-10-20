@@ -35,9 +35,8 @@ runs:
 
     - name: Setup FFmpeg
       if: inputs.install-ffmpeg == 'true'
-      uses: FedericoCarboni/setup-ffmpeg@v3
-      with:
-        ffmpeg-version: 'release'
+      run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      shell: bash
 
     - name: Install Playwright Browsers
       if: inputs.install-playwright == 'true'

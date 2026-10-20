@@ -2,6 +2,7 @@ import type { ResolutionPreset } from '../hooks/useRenderer';
 import rocketSvg from '../assets/samples/rocket.svg?raw';
 import spinnerSvg from '../assets/samples/spinner.svg?raw';
 import gearSvg from '../assets/samples/gear.svg?raw';
+import radarSvg from '../assets/samples/radar.svg?raw';
 
 export interface SamplePreset {
   id: string;
@@ -59,5 +60,19 @@ export const SAMPLES: SamplePreset[] = [
     preset: 'original',
     scale: 1,
     svgContent: gearSvg,
+  },
+  {
+    id: 'radar-scanner',
+    name: 'Radar Scanner',
+    description:
+      'Native SVG SMIL animation with rotating beam, sonar waves, and pulsing targets.',
+    category: 'SMIL Animation',
+    duration: 4,
+    fps: 30,
+    format: 'mp4',
+    isTransparent: false,
+    preset: 'original',
+    scale: 1,
+    svgContent: radarSvg,
   },
 ];

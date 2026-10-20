@@ -1,13 +1,7 @@
-import {
-  FaLock,
-  FaCheckCircle,
-  FaTerminal,
-  FaRobot,
-  FaPlay,
-} from 'react-icons/fa';
+import { FaLock, FaCheckCircle, FaTerminal, FaRobot } from 'react-icons/fa';
 import { SAMPLES, type SamplePreset } from '../utils/samples';
-import { Button } from './Button/Button';
 import { DevCard, type DevCardTab } from './DevCard/DevCard';
+import { SampleCard } from './SampleCard';
 import './LandingView.scss';
 
 interface LandingViewProps {
@@ -49,30 +43,11 @@ export const LandingView = ({ onSelectSample }: LandingViewProps) => {
         <section className="landing-section" aria-label="Interactive Samples">
           <div className="sample-grid">
             {SAMPLES.map((sample) => (
-              <div key={sample.id} className="sample-card">
-                <div
-                  className="sample-preview"
-                  dangerouslySetInnerHTML={{ __html: sample.svgContent }}
-                  aria-hidden="true"
-                />
-                <div className="sample-info">
-                  <div className="sample-header">
-                    <h3 className="sample-name">{sample.name}</h3>
-                    <span className="sample-tag">
-                      {sample.format.toUpperCase()}
-                    </span>
-                  </div>
-                  <p className="sample-desc">{sample.description}</p>
-                  <Button
-                    variant="outline"
-                    className="sample-btn"
-                    onClick={() => onSelectSample?.(sample)}
-                    aria-label={`Test ${sample.name} sample`}
-                  >
-                    <FaPlay size={10} className="btn-icon" /> Try This Sample
-                  </Button>
-                </div>
-              </div>
+              <SampleCard
+                key={sample.id}
+                sample={sample}
+                onSelectSample={onSelectSample}
+              />
             ))}
           </div>
         </section>

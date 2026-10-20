@@ -28,7 +28,7 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
 
   expect(
     screen.getByRole('heading', {
-      name: /How to Convert CSS-Animated SVGs/i,
+      name: /How to Convert Animated SVGs/i,
       level: 3,
     })
   ).toBeInTheDocument();
