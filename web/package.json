@@ -70,7 +70,7 @@
     "playwright": "^1.63.0",
     "sass": "^1.99.0",
     "storybook": "^10.4.6",
-    "vite": "^8.0.5",
+    "vite": "^8.3.5",
     "vite-plugin-sitemap": "^0.8.2",
     "vite-plugin-svgr": "^5.2.0"
   }
