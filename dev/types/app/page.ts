@@ -2,7 +2,7 @@
 import * as entry from '../../../../src/app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
-import type { InstantConfigForTypeCheckInternal, Prefetch } from 'next/dist/build/segment-config/app/app-segment-config.js'
+import type { InstantConfigForTypeCheckInternal, Prefetch, EnsureStatic } from 'next/dist/build/segment-config/app/app-segment-config.js'
 
 type TEntry = typeof import('../../../../src/app/page.js')
 
@@ -15,8 +15,11 @@ checkFields<Diff<{
   default: Function
   config?: {}
   generateStaticParams?: Function
+  unstable_paramMatching?: {}
+  unstable_generateParamMatching?: Function
   instant?: InstantConfigForTypeCheckInternal
   prefetch?: Prefetch
+  ensureStatic?: EnsureStatic
   unstable_dynamicStaleTime?: number
   revalidate?: RevalidateRange<TEntry> | false
   dynamic?: 'auto' | 'force-dynamic' | 'error' | 'force-static'
