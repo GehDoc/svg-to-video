@@ -1,7 +1,7 @@
 {
   "name": "@svg-to-video/web",
   "version": "0.33.0",
-  "description": "High-fidelity, browser-based SVG to video Studio (MP4, WebM, MKV, MOV) and optimized animated image converter (aPNG, GIF) supporting CSS and SMIL animations with perfect alpha-channel transparency.",
+  "description": "Convert SVG animations into MP4, MOV, WebM, GIF, or aPNG directly in your browser. Supports CSS/SMIL and perfect transparent backgrounds.",
   "author": "GehDoc",
   "repository": {
     "type": "git",
