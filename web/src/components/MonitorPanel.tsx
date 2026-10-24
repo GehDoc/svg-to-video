@@ -3,6 +3,7 @@ import { SuccessView } from './SuccessView';
 import { RenderingView } from './RenderingView';
 import { LandingView } from './LandingView';
 import { type RenderState } from '../hooks/useRenderer';
+import { type SamplePreset } from '../utils/samples';
 import './MonitorPanel.scss';
 
 interface MonitorPanelProps {
@@ -22,6 +23,7 @@ interface MonitorPanelProps {
   isTransparent: boolean;
   onCancel: () => void;
   onClearError: () => void;
+  onSelectSample?: (sample: SamplePreset) => void;
 }
 
 export const MonitorPanel = ({
@@ -41,6 +43,7 @@ export const MonitorPanel = ({
   isTransparent,
   onCancel,
   onClearError,
+  onSelectSample,
 }: MonitorPanelProps) => {
   return (
     <section className="monitor-panel">
@@ -68,7 +71,7 @@ export const MonitorPanel = ({
           onClearError={onClearError}
         />
       ) : (
-        <LandingView />
+        <LandingView onSelectSample={onSelectSample} />
       )}
     </section>
   );

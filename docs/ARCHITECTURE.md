@@ -60,6 +60,55 @@ The renderer (implemented in `web/src/components/SvgRenderer/renderer.js`) follo
 
 This strategy ensures that what the user sees in the "Live Monitor" is exactly what is captured in the final video output.
 
+## 📄 SEO Data Pipeline
+
+The landing page's structured content (headlines, features, FAQ, format table, code snippets) is assembled at build time by a TypeScript script into a single JSON file consumed by the `SeoContent` component at runtime.
+
+### Flow
+
+```mermaid
+flowchart LR
+    A["README.md"] --> S["web/scripts/generate-seo-data.ts\n(predev / prebuild via tsx)"]
+    B["docs/FAQ.md\n(## Q: … convention)"] --> S
+    S --> J["web/src/data/seoDocumentation.json"]
+    J --> C["web/src/components/SeoContent.tsx\n(dangerouslySetInnerHTML)"]
+```
+
+### Source files and their roles
+
+| Source                                           | Field(s) populated    | Parser                                   |
+| ------------------------------------------------ | --------------------- | ---------------------------------------- |
+| Script inline (`headline`)                       | `headline`            | Hardcoded UI copy — **update in script** |
+| Script inline (`tagline`)                        | `tagline`             | Hardcoded UI copy — **update in script** |
+| Script inline (`formatComparisons`)              | `formatComparisons[]` | Hardcoded (pending `docs/FORMATS.md`)    |
+| `README.md → ## 🌟 Why SVG to Video?`            | `features[]`          | `parseWhySection()`                      |
+| `README.md → ## 🌐 Web Studio → ### Quick Start` | `quickStartSteps[]`   | `parseQuickStart()`                      |
+| `README.md → ## 🚀 CLI / Docker Tool`            | `cliSnippet`          | `parseCliCommands()`                     |
+| `README.md → ## 🤖 AI Agent & MCP Integration`   | `mcpSnippet`          | `parseMcpConfig()`                       |
+| `docs/FAQ.md` (heading convention `## Q: …`)     | `faq[]`               | `parseFaq()`                             |
+
+### Hardcoded UI copy in the script
+
+The `headline` and `tagline` fields are intentionally **not** sourced from `package.json` — those descriptions are technical npm/GitHub copy and are too long and parenthesis-heavy for display as UI headings. When landing page copy needs to change, edit the string literals directly in [`web/scripts/generate-seo-data.ts`](../web/scripts/generate-seo-data.ts).
+
+Similarly, `formatComparisons[]` is hardcoded inline. A future `docs/FORMATS.md` could be parsed instead.
+
+### Markdown rendering
+
+Fields that contain markdown (`features[].descriptionHtml`, `faq[].answerHtml`, `quickStartSteps[]`) are converted to HTML at build time using `marked.parseInline()` (a devDependency). `SeoContent.tsx` renders them via `dangerouslySetInnerHTML` — no markdown parsing occurs in the browser bundle.
+
+### Adding or editing FAQ entries
+
+Edit [`docs/FAQ.md`](../docs/FAQ.md). Each entry must follow the heading convention:
+
+```markdown
+## Q: Your question here?
+
+Your answer in plain text or inline markdown (bold, code, links).
+```
+
+The script splits on `## Q:` headings and converts each answer paragraph to HTML automatically.
+
 ## 📸 Visual Regression Testing
 
 The `SvgRenderer` component is monitored for visual regressions using native Vitest matchers.
@@ -97,9 +146,17 @@ screenshotOptions: {
 
 This section documents how to add new output formats and manage the alpha channel for transparency.
 
+### Format Capabilities Registry (`shared/formatCapabilities.ts`)
+
+Format definitions, MIME types, primary extensions, extension aliases, `supportsAlpha`, `supportsMetadata`, and `needsColorKeying` capability flags are centralized in `shared/formatCapabilities.ts`. Both the CLI format generators and Web Studio encoders consume this single source of truth, ensuring format metadata remains synchronized across environments.
+
 ### Adding New Formats
 
-The project uses modular **Registry of Format Factories** architecture in both the Web Studio and the CLI tool to decouple output encoding pipelines from specific format implementations.
+To add a new output format across CLI and Web Studio:
+
+1. **Central Definition**: Add the format capability entry to `FORMAT_CAPABILITIES` in `shared/formatCapabilities.ts`.
+2. **Web Studio Encoder**: Create/update the format class in `web/src/utils/encoders/` (extending `BaseFormat`).
+3. **CLI Generator**: Implement `CLIFormatGenerator` in `src/formats/generators/` and register it in `src/formats/registry.ts`.
 
 #### 1. Web Studio Format Registry (`web/src/utils/encoders/`)
 
@@ -118,7 +175,7 @@ const registerFormats = () => {
 
 #### 2. CLI Format Registry (`src/formats/`)
 
-- **CLI Generator Implementation**: Implement `CLIFormatGenerator` in `src/formats/generators/` defining `id`, `extensions`, `supportsAlpha`, `buildFfmpegArgs(options)`, and optional `postProcess(...)`.
+- **CLI Generator Implementation**: Implement `CLIFormatGenerator` in `src/formats/generators/` defining `id`, `extensions`, `supportsAlpha`, `needsColorKeying`, `buildFfmpegArgs(options)`, and optional `postProcess(...)`.
 - **Registration**: Register the generator strategy in `src/formats/registry.ts` (`CLIFormatRegistry`).
 - **Format Support & Resolution**: `formatRegistry.isSupported(format)` and `formatRegistry.resolveFormatAndExtension(rawFormat, transparent)` dynamically handle CLI format lookup and fallback resolution.
 
@@ -218,3 +275,7 @@ The CLI uses standard `puppeteer.launch` with optional environment configuration
 
 1. **Default**: Launches Puppeteer's Chrome instance.
 2. **Environment Variable**: Respects `process.env.PUPPETEER_EXECUTABLE_PATH` if provided (e.g. for custom system Chromium binaries in CI/Docker environments).
+
+### Process Signals & Telemetry Flushing
+
+When the CLI completes rendering, encounters an error, or receives a process interrupt signal (`SIGINT` / `SIGTERM`), execution paths invoke `flushAnalytics()` in `src/utils/analytics.ts` to await active non-blocking Umami HTTP requests before process termination. Upon receiving `SIGINT` or `SIGTERM`, signal listeners emit `conversion-cancel`, clean up temporary `.png` frames (unless `--keep-frames` is active), flush pending telemetry payloads, and exit cleanly with status code 130.

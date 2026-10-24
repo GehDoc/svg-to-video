@@ -9,7 +9,10 @@ The tool is built to run in a headless environment, making it perfect for CI/CD 
 
 ```bash
 # Run on-demand via npx from npmjs registry
-npx @gehdoc/svg-to-video <svgPath> <fps> <outDir> [options]
+npx -y -p @gehdoc/svg-to-video svg-to-video <svgPath> <fps> <outDir> [options]
+
+# Custom video resolution (e.g., vertical video 1080x1920 or square video 1080x1080)
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out --resolution 1080x1920
 
 # Run official Docker image from Docker Hub
 docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/<svgPath> <fps> /data/<outDir> [options]
@@ -37,18 +40,18 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 
 ## Options
 
-| Option                  | Description                                                                                                                                                   |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `-d, --duration <secs>` | Desired animation duration in seconds. If omitted, duration is auto-detected.                                                                                 |
-| `--format <format>`     | Output format: `mp4`, `webm`, `mkv`, `mov`, `gif`, `apng`, or `png`. (Default: `webm` if `--transparent`, otherwise `mp4`)                                    |
-| `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                                                                            |
-| `-f, --force`           | Overwrite the output video if it already exists.                                                                                                              |
-| `--resolution <preset>` | Resolution preset: `720p`, `1080p`, or `original`. (Default: `original`)                                                                                      |
-| `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`.                                                          |
-| `--transparent`         | Render with a transparent background (supported for `webm`, `gif`, `apng`, `mov`). (Cannot be used with `--bg-color`)                                         |
-| `--bg-color <hex>`      | Background color for the video. (Default: `#ffffff`) - (Cannot be used with `--transparent`)                                                                  |
-| `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Mandatory attribution is automatically appended to the 'comment' tag for video and image exports. |
-| `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                                              |
+| Option                  | Description                                                                                                                                                                             |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-d, --duration <secs>` | Desired animation duration in seconds. If omitted, duration is auto-detected.                                                                                                           |
+| `--format <format>`     | Output format: `mp4`, `webm`, `mkv`, `mov`, `gif`, `apng`, or `png`. (Default: `webm` if `--transparent`, otherwise `mp4`)                                                              |
+| `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                                                                                                      |
+| `-f, --force`           | Overwrite the output video if it already exists.                                                                                                                                        |
+| `--resolution <preset>` | Resolution preset (`720p`, `1080p`, `original`) or custom dimension string (`WIDTHxHEIGHT`, e.g., `1080x1920`, `1080x1080`). (Default: `original`)                                      |
+| `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`.                                                                                    |
+| `--transparent`         | Render with a transparent background (supported for `webm`, `gif`, `apng`, `mov`). Can be used with `--bg-color` for formats requiring color keying (e.g., `gif`).                      |
+| `--bg-color <hex>`      | Background color for the video (e.g., `#ffffff`, `#000000`). If omitted, no background fill is applied. Can be combined with `--transparent` for GIF color keying to remove edge halos. |
+| `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Mandatory attribution is automatically appended to the 'comment' tag for video and image exports.                           |
+| `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                                                                        |
 
 ## Environment Variables
 
@@ -58,7 +61,7 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 | `PUPPETEER_EXECUTABLE_PATH` | Runtime | Explicit path to host Chrome or Chromium binary executable for rendering fallback.                                                                |
 | `PUPPETEER_ARGS`            | Runtime | Additional arguments passed directly to the Puppeteer `launch` method. Useful for custom browser flags (e.g., `--proxy-server`, `--disable-gpu`). |
 
-## Output Handling
+## Output Handling & Process Signals
 
 The tool creates the output file in the specified `<outDir>`. The filename will match your input file with the chosen extension (`.mp4`, `.webm`, `.gif`, `.apng`, etc.). By default, it will **fail** if the destination file already exists to prevent accidental overwrites. Use `-f` to bypass this.
 
@@ -67,3 +70,7 @@ The tool creates the output file in the specified `<outDir>`. The filename will 
 
 - **Input:** `my-animation.svg` (`--format gif`)
 - **Result:** `./out-dir/my-animation.gif`
+
+### Process Cancellation (SIGINT / SIGTERM)
+
+If execution is interrupted (e.g. via `Ctrl+C` / `SIGINT` or `SIGTERM`), the CLI cleanly cancels rendering, emits a `conversion-cancel` telemetry event, cleans up temporary frames (unless `--keep-frames` was passed), flushes analytics, and exits with status code 130.

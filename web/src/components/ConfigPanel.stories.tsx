@@ -54,7 +54,8 @@ export const Default: Story = {};
 export const WithSvg: Story = {
   args: {
     svgContent: '<svg></svg>',
-    originalDim: { isDimensionsDetected: true },
+    originalDim: { width: 1920, height: 1080, isDimensionsDetected: true },
+    targetDim: { width: 1920, height: 1080 },
   },
 };
 
@@ -63,7 +64,8 @@ export const TransparentEnabled: Story = {
     svgContent: '<svg></svg>',
     format: 'webm',
     isTransparent: true,
-    originalDim: { isDimensionsDetected: true },
+    originalDim: { width: 1920, height: 1080, isDimensionsDetected: true },
+    targetDim: { width: 1920, height: 1080 },
   },
 };
 
@@ -72,7 +74,8 @@ export const TransparentDisabled: Story = {
     svgContent: '<svg></svg>',
     format: 'mp4',
     isTransparent: false,
-    originalDim: { isDimensionsDetected: true },
+    originalDim: { width: 1920, height: 1080, isDimensionsDetected: true },
+    targetDim: { width: 1920, height: 1080 },
   },
 };
 
@@ -80,7 +83,8 @@ export const Rendering: Story = {
   args: {
     state: { isRendering: true, status: 'Processing...', progress: 45 },
     svgContent: '<svg></svg>',
-    originalDim: { isDimensionsDetected: true },
+    originalDim: { width: 1920, height: 1080, isDimensionsDetected: true },
+    targetDim: { width: 1920, height: 1080 },
   },
 };
 

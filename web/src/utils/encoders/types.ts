@@ -1,4 +1,5 @@
 import type { VideoMetadata } from '../../../../shared/metadata';
+import { getFormatCapability } from '@shared/formatCapabilities';
 
 export interface EncoderOptions {
   width: number;
@@ -53,16 +54,30 @@ export interface VideoFormat {
 
 /**
  * Abstract base class for VideoFormat implementations to reduce redundancy.
+ * Automatically resolves format capability metadata from shared/formatCapabilities.ts.
  */
 export abstract class BaseFormat implements VideoFormat {
-  abstract readonly id: string;
-  abstract readonly label: string;
-  abstract readonly extension: string;
-  abstract readonly mimeType: string;
+  readonly id: string;
+  readonly label: string;
+  readonly extension: string;
+  readonly mimeType: string;
+  readonly supportsAlpha: boolean;
+  readonly supportsMetadata: boolean;
+  readonly needsColorKeying: boolean;
 
-  readonly supportsAlpha: boolean = false;
-  readonly supportsMetadata: boolean = false;
-  readonly needsColorKeying: boolean = false;
+  constructor(formatId: string) {
+    const cap = getFormatCapability(formatId);
+    if (!cap) {
+      throw new Error(`Unknown format capability for ID: ${formatId}`);
+    }
+    this.id = cap.id;
+    this.label = cap.label;
+    this.extension = cap.extension;
+    this.mimeType = cap.mimeType;
+    this.supportsAlpha = cap.supportsAlpha;
+    this.supportsMetadata = cap.supportsMetadata;
+    this.needsColorKeying = cap.needsColorKeying;
+  }
 
   abstract createEncoder(): VideoEncoder;
 

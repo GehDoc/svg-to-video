@@ -16,7 +16,9 @@ export interface CLIFormatOptions {
 export interface CLIFormatGenerator {
   readonly id: string;
   readonly extensions: string[];
+  readonly mimeType: string;
   readonly supportsAlpha: boolean;
+  readonly needsColorKeying: boolean;
   buildFfmpegArgs(options: CLIFormatOptions): string[];
   postProcess?(outputFilePath: string, options: CLIFormatOptions): void;
 }

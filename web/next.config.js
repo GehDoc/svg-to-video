@@ -2,6 +2,8 @@ const isProd = process.env.NODE_ENV === 'production';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Disables automatic AGENTS.md generation and updates
+  agentRules: false,
   // Disable Next.js UI in development to avoid conflicts
   devIndicators: false,
   // Required for GitHub Pages project site deployment
@@ -34,19 +36,22 @@ const nextConfig = {
         test: /\.svg$/i,
         resourceQuery: /url/, // *.svg?url
       },
-      // Convert all other *.svg imports to React components
+      // Raw string import: handles ANY file imported with ?raw (e.g. *.svg?raw,
+      // *.html?raw). Must be listed BEFORE the SVGR catch-all so webpack picks
+      // it up first for SVG files. Returns the raw file content as a string.
+      {
+        resourceQuery: /raw/,
+        type: 'asset/source',
+      },
+      // Convert all other *.svg imports to React components.
+      // Exclude ?url and ?raw so neither slips through to SVGR.
       {
         test: /\.svg$/i,
         issuer: fileLoaderRule.issuer,
         resourceQuery: {
-          not: [...(fileLoaderRule.resourceQuery?.not || []), /url/],
-        }, // exclude if *.svg?url
+          not: [...(fileLoaderRule.resourceQuery?.not || []), /url/, /raw/],
+        },
         use: ['@svgr/webpack'],
-      },
-      // Vite ?raw support
-      {
-        resourceQuery: /raw/,
-        type: 'asset/source',
       }
     );
 

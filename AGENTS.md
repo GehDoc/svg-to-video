@@ -25,14 +25,17 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - `README.md` (features & capabilities)
    - `docs/ARCHITECTURE.md` (if design or format strategies changed)
    - `docs/SECURITY.md` (audit subprocess calls, temp file cleanup, and type guards per [CONTRIBUTING.md](./CONTRIBUTING.md#-security--sandboxing-standards))
-   - `web/src/app/layout.tsx` (`title`, `description` from `pkg`, `canonical URL`, `keywords` & `jsonLd.featureList`)
+   - `web/src/app/layout.tsx` (`title`, `description` from `pkg`, `keywords` & `jsonLd.featureList`)
    - `web/src/components/SeoFallback.tsx` (static fallback description and ecosystem links via `ECOSYSTEM_LINKS`)
    - `web/public/llms.txt` & `robots.txt` (AI model context file & crawler permissions)
    - `web/src/utils/constants.ts` (`ECOSYSTEM_LINKS` centralized link helper)
+   - `docs/FAQ.md` (FAQ entries parsed at build time by `web/scripts/generate-seo-data.ts` — use `## Q: <question>` convention)
+   - `docs/ANALYTICS.md` (audit if any telemetry event payloads, tracking methods, or triggers changed)
    - `package.json` (Root & Web `description` sync, `keywords` & version synchronization per [CONTRIBUTING.md](./CONTRIBUTING.md#-versioning-policy))
    - `mcp.json` (MCP server registry manifest description and metadata)
    - GitHub Repository Metadata (Description & Topics via `gh repo edit`)
    - GitHub Releases: Draft and publish GitHub release (`vX.Y.Z` tag, title `X.Y.Z - Title`) per [CONTRIBUTING.md](./CONTRIBUTING.md#-release-note-best-practices). Do not commit release note `.md` files to git.
+   - **External surfaces** _(manual)_: Check HuggingFace Space README and Docker Hub overview per the [SEO & Metadata Audit Checklist in CONTRIBUTING.md](./CONTRIBUTING.md#-seo--metadata-audit-checklist).
 7. **Clean Up**: Once code, tests, documentation, and SEO audits are complete and verified, update the spec status to `🟢 Completed` and move the spec file from `specs/pending/` to `specs/completed/`.
 
 ## 🛠 How to Create a New Spec

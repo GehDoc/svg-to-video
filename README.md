@@ -5,14 +5,15 @@
 # SVG to Video
 
 [![CI](https://img.shields.io/github/actions/workflow/status/GehDoc/svg-to-video/ci.yml?branch=main&logo=githubactions&logoColor=white&label=CI)](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml)
+[![Last Commit](https://img.shields.io/github/last-commit/GehDoc/svg-to-video?logo=github&logoColor=white)](https://github.com/GehDoc/svg-to-video/commits/main)
 [![GitHub Release](https://img.shields.io/github/v/release/GehDoc/svg-to-video?logo=github&logoColor=white&label=release&color=2b3137)](https://github.com/GehDoc/svg-to-video/releases)
 [![npm Version](https://img.shields.io/npm/v/@gehdoc/svg-to-video?logo=npm&logoColor=white&label=npm&color=CB3837)](https://www.npmjs.com/package/@gehdoc/svg-to-video)
-[![MCP Registry](https://img.shields.io/badge/MCP-io.github.GehDoc%2Fsvg--to--video-purple?logo=modelcontextprotocol&logoColor=white)](https://registry.modelcontextprotocol.io/v0/servers/io.github.GehDoc%2Fsvg-to-video/versions/latest)
-[![llms.txt](https://img.shields.io/badge/llms.txt-available-blue)](https://gehdoc.github.io/svg-to-video/llms.txt)
 [![Docker Image](https://img.shields.io/docker/v/gehdoc/svg-to-video?label=docker&logo=docker&logoColor=white&sort=semver&color=2496ed)](https://hub.docker.com/r/gehdoc/svg-to-video)
-[![Last Commit](https://img.shields.io/github/last-commit/GehDoc/svg-to-video?logo=github&logoColor=white)](https://github.com/GehDoc/svg-to-video/commits/main)
+[![MCP Registry](https://img.shields.io/badge/MCP-io.github.GehDoc%2Fsvg--to--video-purple?logo=modelcontextprotocol&logoColor=white)](https://registry.modelcontextprotocol.io/v0/servers/io.github.GehDoc%2Fsvg-to-video/versions/latest)
+[![HuggingFace Space](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Demo%20Space-yellow?style=flat)](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)
+[![llms.txt](https://img.shields.io/badge/llms.txt-available-blue)](https://gehdoc.github.io/svg-to-video/llms.txt)
 
-A high-fidelity tool to transform your CSS-animated SVGs into high-quality videos (MP4, WebM, MKV, MOV) or lightweight animated formats (aPNG, GIF) with perfect alpha-channel transparency directly in your browser or via CLI/MCP server.
+A high-fidelity tool to transform your CSS- and SMIL-animated SVGs into high-quality videos (MP4, WebM, MKV, MOV) or lightweight animated formats (aPNG, GIF) with perfect alpha-channel transparency directly in your browser or via CLI/MCP server.
 
 <div align="center">
   <a href="https://gehdoc.github.io/svg-to-video/"><img src="https://gehdoc.github.io/svg-to-video/assets/demo.gif" width="800" alt="SVG to Video Demo"></a>
@@ -25,8 +26,8 @@ A high-fidelity tool to transform your CSS-animated SVGs into high-quality video
 
 - **Transparent Backgrounds**: Export your animations with a full alpha channel using **WebM or aPNG**, and optimized indexed transparency with **GIF89a**. Perfect for overlays in video editing tools or web use.
 - **Privacy-First**: The Web Studio runs entirely in your browser—your SVG files never leave your computer.
-- **Frame-Accurate**: Our engine scrubs the **Web Animations API**, ensuring every frame is captured exactly as rendered.
-- **AI Agent Native**: Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support indexed on the official [MCP Registry](https://registry.modelcontextprotocol.io/) (`mcp.json`) to let AI assistants render their generated SVG animations into MP4/GIF automatically.
+- **Frame-Accurate**: Our engine scrubs both the **Web Animations API** and native **SVG SMIL**, ensuring every frame is captured exactly as rendered.
+- **AI Agent Native**: Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support indexed on the official [MCP Registry](https://registry.modelcontextprotocol.io/) (`mcp.json`) and hosted live on [HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp).
 - **Universal Animated Formats**: Beyond video, generate lightweight **Animated PNGs (aPNG)** and **GIFs** perfect for documentation, Slack, or GitHub, with full control over background transparency.
 - **Copy to Clipboard**: Instant export to **Base64 Data URL**—copy your video and embed it directly into your HTML, CSS, or JS code without manual downloads. Perfect for rapid prototyping and developers.
 - **Metadata Injection**: Support for custom titles and comments across video (MP4, WebM, MKV, MOV) and animated image (aPNG, GIF) formats.
@@ -54,12 +55,12 @@ Our **Web Studio** is a serverless, client-side rendering tool. It runs entirely
 
 > **Privacy Note**: We use [Umami Analytics](https://umami.is/) to collect anonymous usage data across our Web Studio, CLI, and MCP server interfaces (e.g., number of conversions and format usage) to help us improve the tool. This tracking is cookie-less, respects standard "Do Not Track" settings (set the `DO_NOT_TRACK=1` environment variable to opt out), and never collects personal information or SVG contents. See **[docs/ANALYTICS.md](./docs/ANALYTICS.md)** for details.
 
-Explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video/storybook/)** to see how the engine handles complex CSS and fonts.
+Explore our **[Visual Gallery (Storybook)](https://gehdoc.github.io/svg-to-video/storybook/)** to see how the engine handles complex CSS, SMIL, and fonts.
 
 ### Quick Start
 
 1. Open the [Web Studio](https://gehdoc.github.io/svg-to-video/).
-2. Drag and drop your `.svg` file.
+2. Drag and drop your `.svg` file, or test the engine instantly with 1-click built-in samples.
 3. Adjust resolution, duration, and FPS.
 4. Select your format, toggle **Transparent Background** if needed, and ensure **High-Fidelity Capture** is enabled for best results.
 5. Click **Export**.
@@ -76,19 +77,27 @@ Ensure [Node.js](https://nodejs.org/) and [FFmpeg](https://ffmpeg.org/) are inst
 
 ```bash
 # Node.js (auto-detected duration)
-npx @gehdoc/svg-to-video input.svg 60 ./out-dir
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir
 
 # Node.js (explicit duration & GIF output)
-npx @gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent
+
+# Node.js (custom resolution dimensions e.g. vertical 1080x1920)
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --resolution 1080x1920
 
 # Node.js (animated PNG output)
-npx @gehdoc/svg-to-video input.svg 60 ./out-dir -d 5 --format apng
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format apng
 
+<<<<<<< HEAD
 # Node.js (custom bitrate, CRF, and quality)
 npx @gehdoc/svg-to-video input.svg 60 ./out-dir --bitrate 5M --crf 18 --quality 80
 
 # Docker (zero local dependencies; add :Z to -v for SELinux / Fedora)
 docker run --rm -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif
+=======
+# Docker (zero local dependencies; requires --shm-size=2gb for Chromium rendering; add :Z to -v for SELinux / Fedora)
+docker run --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif
+>>>>>>> origin/main
 ```
 
 See [docs/CLI.md](./docs/CLI.md) for full usage, arguments, and options. For local building and source execution, see [CONTRIBUTING.md](./CONTRIBUTING.md#commands--testing-strategy).
@@ -105,7 +114,7 @@ Connect `svg-to-video` to AI Assistants (Claude Desktop, Cursor, Antigravity, Au
      "mcpServers": {
        "svg-to-video": {
          "command": "npx",
-         "args": ["-y", "@gehdoc/svg-to-video", "mcp"]
+         "args": ["-y", "-p", "@gehdoc/svg-to-video", "svg-to-video-mcp"]
        }
      }
    }
@@ -122,6 +131,8 @@ See **[docs/MCP.md](./docs/MCP.md)** for full setup instructions, tool schemas, 
 - 📦 **npm Package**: [`@gehdoc/svg-to-video`](https://www.npmjs.com/package/@gehdoc/svg-to-video)
 - 🐳 **Docker Hub Image**: [`gehdoc/svg-to-video`](https://hub.docker.com/r/gehdoc/svg-to-video)
 - 🌐 **Web Studio**: [`gehdoc.github.io/svg-to-video/`](https://gehdoc.github.io/svg-to-video/)
+- 🤖 **MCP Registry**: [`io.github.GehDoc/svg-to-video`](https://registry.modelcontextprotocol.io/v0/servers/io.github.GehDoc%2Fsvg-to-video/versions/latest)
+- 🤗 **HuggingFace Space**: [`GehDoc/svg-to-video-mcp`](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)
 
 ---
 
@@ -129,7 +140,7 @@ See **[docs/MCP.md](./docs/MCP.md)** for full setup instructions, tool schemas, 
 
 ```bash
 # Run on-demand via npx (no global installation required)
-npx @gehdoc/svg-to-video input.svg 60 ./out-dir
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir
 
 # Install globally via npm
 npm install -g @gehdoc/svg-to-video
@@ -144,7 +155,13 @@ docker pull gehdoc/svg-to-video:latest
 
 For a deep dive into the rendering engine, algorithms, and infrastructure, see [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
 
-The tool works by isolating the SVG, scrubbing the Web Animations API, and capturing frames via WebCodecs or FFmpeg.
+The tool works by isolating the SVG, scrubbing both the Web Animations API and native SVG SMIL DOM, and capturing frames via WebCodecs or FFmpeg.
+
+---
+
+## ❓ FAQ
+
+Common questions about privacy, how frame scrubbing works, CI/CD automation, and transparency support are answered in **[docs/FAQ.md](./docs/FAQ.md)**.
 
 ---
 

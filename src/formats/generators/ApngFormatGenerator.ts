@@ -1,13 +1,14 @@
 import path from 'path';
 import fs from 'fs';
-import { CLIFormatGenerator, CLIFormatOptions } from '../types.js';
+import { CLIFormatOptions } from '../types.js';
+import { BaseCLIFormatGenerator } from '../BaseCLIFormatGenerator.js';
 import { mergeMetadataComments } from '#shared/metadata.js';
 import { injectApngMetadata } from '#shared/apngMetadataInjector.js';
 
-export class ApngFormatGenerator implements CLIFormatGenerator {
-  readonly id = 'apng';
-  readonly extensions = ['.apng', '.png'];
-  readonly supportsAlpha = true;
+export class ApngFormatGenerator extends BaseCLIFormatGenerator {
+  constructor() {
+    super('apng');
+  }
 
   buildFfmpegArgs(options: CLIFormatOptions): string[] {
     const {

@@ -6,7 +6,7 @@ import {
   SUCCESS_TIMEOUT,
   ensureOutputDir,
 } from '../../tests/helpers/e2e.js';
-import { getTestOutputPath } from './helpers/web-e2e.js';
+import { getTestOutputPath, gotoIsolated } from './helpers/web-e2e.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -18,7 +18,12 @@ test.describe('SVG to Video Golden Path', () => {
     page,
   }, testInfo) => {
     // 1. Load the page
-    await page.goto('/');
+    await gotoIsolated(page);
+
+    // Explicitly wait for the loading overlay to go away
+    const loadingPanel = page.locator('.seo-fallback');
+    await expect(loadingPanel).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+    await expect(loadingPanel).toBeHidden({ timeout: SUCCESS_TIMEOUT });
 
     // 2. Upload the fixture SVG
     const svgPath = path.resolve(
@@ -47,7 +52,10 @@ test.describe('SVG to Video Golden Path', () => {
     await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
 
     // 6. Verify Result (Download button exists)
-    const downloadButton = page.locator('text=Download');
+    const downloadButton = successCard.getByRole('button', {
+      name: 'Download',
+      exact: true,
+    });
     await expect(downloadButton).toBeVisible();
 
     // Start waiting for download before clicking
@@ -76,7 +84,9 @@ test.describe('SVG to Video Golden Path', () => {
     expect(videoSrc).toContain('blob:');
 
     // 7. Dismiss modal and check Studio return
-    const backButton = page.locator('text=Back to Studio');
+    const backButton = successCard.getByRole('button', {
+      name: 'Back to Studio',
+    });
     await backButton.click();
     await expect(successCard).toBeHidden();
 
@@ -90,7 +100,12 @@ test.describe('SVG to Video Golden Path', () => {
   test('should successfully render an SVG with custom metadata', async ({
     page,
   }, testInfo) => {
-    await page.goto('/');
+    await gotoIsolated(page);
+
+    // Explicitly wait for the loading overlay to go away
+    const loadingPanel = page.locator('.seo-fallback');
+    await expect(loadingPanel).toBeVisible({ timeout: SUCCESS_TIMEOUT });
+    await expect(loadingPanel).toBeHidden({ timeout: SUCCESS_TIMEOUT });
 
     const svgPath = path.resolve(
       __dirname,
@@ -106,7 +121,7 @@ test.describe('SVG to Video Golden Path', () => {
     await page.fill('#fps', '10');
 
     const exportButton = page.getByRole('button', {
-      name: /Export MP4|Processing/i,
+      name: /Export MP4/i,
     });
     await expect(exportButton).toBeEnabled();
     await exportButton.click();
@@ -114,7 +129,10 @@ test.describe('SVG to Video Golden Path', () => {
     const successCard = page.locator('.success-card');
     await expect(successCard).toBeVisible({ timeout: SUCCESS_TIMEOUT });
 
-    const downloadButton = page.locator('text=Download');
+    const downloadButton = successCard.getByRole('button', {
+      name: 'Download',
+      exact: true,
+    });
     const downloadPromise = page.waitForEvent('download');
     await downloadButton.click();
     const download = await downloadPromise;

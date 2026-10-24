@@ -1,7 +1,7 @@
 import { trackEvent } from '../analytics';
 import { calculateAspectRatio } from '@shared/analyzeSvgAnimation.js';
 
-export type IngestionMethod = 'file-picker' | 'drag-and-drop';
+export type IngestionMethod = 'file-picker' | 'drag-and-drop' | 'sample';
 
 export interface SvgDimensionInfo {
   width: number;

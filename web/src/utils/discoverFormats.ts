@@ -11,6 +11,7 @@ export interface VideoFormat {
   supportsAlpha: boolean;
   supportsMetadata: boolean;
   needsColorKeying: boolean;
+  isSupported?: boolean;
 }
 
 /**
@@ -52,17 +53,35 @@ export const isImageMimeType = (mimeType: string): boolean => {
   return !!mimeType && mimeType.startsWith('image/');
 };
 
-export const discoverFormats = async (): Promise<VideoFormat[]> => {
+export const discoverFormats = async (resolution?: {
+  width: number;
+  height: number;
+}): Promise<VideoFormat[]> => {
   registerFormats();
   const formats = formatRegistry.getAllFormats();
+  const res =
+    resolution && resolution.width > 0 && resolution.height > 0
+      ? resolution
+      : { width: 1920, height: 1080 };
 
-  return formats.map((f) => ({
-    id: f.id,
-    label: f.label,
-    extension: f.extension,
-    mimeType: f.mimeType,
-    supportsAlpha: f.supportsAlpha,
-    supportsMetadata: f.supportsMetadata,
-    needsColorKeying: f.needsColorKeying,
-  }));
+  return Promise.all(
+    formats.map(async (f) => {
+      let isSupported: boolean;
+      try {
+        isSupported = await f.isSupported(res);
+      } catch {
+        isSupported = false;
+      }
+      return {
+        id: f.id,
+        label: f.label,
+        extension: f.extension,
+        mimeType: f.mimeType,
+        supportsAlpha: f.supportsAlpha,
+        supportsMetadata: f.supportsMetadata,
+        needsColorKeying: f.needsColorKeying,
+        isSupported,
+      };
+    })
+  );
 };

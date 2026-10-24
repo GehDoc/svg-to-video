@@ -17,6 +17,8 @@ const umami = new Umami({
   websiteId: UMAMI_WEBSITE_ID,
 });
 
+const activePromises = new Set<Promise<boolean>>();
+
 export function isOptedOut(): boolean {
   const dnt = process.env.DO_NOT_TRACK;
   if (dnt) {
@@ -26,7 +28,12 @@ export function isOptedOut(): boolean {
     }
   }
 
-  if (process.env.CI || process.env.NODE_ENV === 'test') {
+  if (
+    process.env.CI ||
+    process.env.NODE_ENV === 'test' ||
+    process.env.VITEST ||
+    process.env.PLAYWRIGHT_TEST
+  ) {
     return true;
   }
 
@@ -46,14 +53,19 @@ export function trackEvent<K extends AnalyticsEventName>(
   eventName: K,
   properties?: AnalyticsEventMap[K],
   interfaceType?: InterfaceType
-): void {
+): Promise<boolean> {
   if (isOptedOut()) {
-    return;
+    return Promise.resolve(false);
   }
 
-  sendEvent(eventName, properties, interfaceType).catch(() => {
-    // Silent fail-safe
+  const promise = sendEvent(eventName, properties, interfaceType).catch(
+    () => false
+  );
+  activePromises.add(promise);
+  promise.finally(() => {
+    activePromises.delete(promise);
   });
+  return promise;
 }
 
 export async function sendEvent<K extends AnalyticsEventName>(
@@ -87,4 +99,26 @@ export async function sendEvent<K extends AnalyticsEventName>(
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+export async function flushAnalytics(timeoutMs = 3000): Promise<void> {
+  if (activePromises.size === 0) {
+    return;
+  }
+
+  const active = Array.from(activePromises);
+  const flushPromise = Promise.allSettled(active);
+
+  if (timeoutMs <= 0) {
+    await flushPromise;
+    return;
+  }
+
+  let timeoutId: NodeJS.Timeout;
+  const timeoutPromise = new Promise<void>((resolve) => {
+    timeoutId = setTimeout(() => resolve(), timeoutMs);
+  });
+
+  await Promise.race([flushPromise.then(() => {}), timeoutPromise]);
+  clearTimeout(timeoutId!);
 }

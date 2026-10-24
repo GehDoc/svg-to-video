@@ -1,7 +1,9 @@
-FROM node:24-slim
+FROM node:24-trixie-slim
 
 # 1. Setup Environment & MCP Metadata
 LABEL io.modelcontextprotocol.server.name="io.github.GehDoc/svg-to-video"
+
+EXPOSE 8080
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
@@ -36,12 +38,14 @@ COPY package*.json tsconfig*.json ./
 COPY src/ ./src/
 COPY shared/ ./shared/
 COPY skills/ ./skills/
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY README.md LICENSE ./
 
-RUN npm install --include=dev --no-workspaces --ignore-scripts \
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+    && npm install --include=dev --no-workspaces --ignore-scripts \
     && npm run build \
     && npm prune --omit=dev --no-workspaces \
     && rm -rf src shared tsconfig*.json
 
 USER node
-ENTRYPOINT ["node", "/app/dist/src/index.js"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

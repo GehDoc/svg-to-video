@@ -32,6 +32,15 @@ describe('CLIFormatRegistry', () => {
     assert.strictEqual(formatRegistry.isSupported('invalid_fmt'), false);
   });
 
+  test('should expose needsColorKeying flag correctly for format generators', () => {
+    assert.strictEqual(formatRegistry.get('gif')?.needsColorKeying, true);
+    assert.strictEqual(formatRegistry.get('mp4')?.needsColorKeying, false);
+    assert.strictEqual(formatRegistry.get('webm')?.needsColorKeying, false);
+    assert.strictEqual(formatRegistry.get('apng')?.needsColorKeying, false);
+    assert.strictEqual(formatRegistry.get('mkv')?.needsColorKeying, false);
+    assert.strictEqual(formatRegistry.get('mov')?.needsColorKeying, false);
+  });
+
   test('should resolve format and extension with default fallbacks', () => {
     const res1 = formatRegistry.resolveFormatAndExtension(undefined, false);
     assert.strictEqual(res1.format, 'mp4');

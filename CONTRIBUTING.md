@@ -15,7 +15,7 @@ Key project documentation and resources:
 - **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)**: Technical architecture deep-dive, WebCodecs engine details, and the "Bake & Clean" frame rendering algorithm.
 - **[docs/SECURITY.md](./docs/SECURITY.md)**: Security and sandboxing standards, subprocess rules, temp file handling, and type guard validation.
 - **[docs/CLI.md](./docs/CLI.md)**: Detailed CLI options, arguments, input formats, and batch automation examples.
-- **[docs/MCP.md](./docs/MCP.md)**: Model Context Protocol setup, LLM configuration, and JSON-RPC tool schemas.
+- **[docs/MCP.md](./docs/MCP.md)**: Model Context Protocol setup, LLM configuration, and JSON-RPC tool schemas, and HuggingFace Space interactive demo.
 - **[docs/ANALYTICS.md](./docs/ANALYTICS.md)**: Umami Telemetry event tracking schema and domain helpers.
 - **[specs/pending/](./specs/pending/)**: Active feature specifications and roadmap task lists.
 - **[specs/completed/](./specs/completed/)**: Historical record of completed features and architectural decisions.
@@ -128,22 +128,28 @@ This project requires strict version alignment between **Storybook** and **Vites
 
 #### Project-wide Orchestration (Run from Root)
 
-| Command              | Description                                                                |
-| :------------------- | :------------------------------------------------------------------------- |
-| `npm run check`      | Runs full verification suite (lint, format, type-check, unit & e2e tests). |
-| `npm run check:fast` | Runs fast validation checks only (lint, format, type-check).               |
-| `npm run build`      | Compiles CLI TypeScript source into ES Modules in `dist/`.                 |
-| `npm run fix`        | Auto-fixes linting and formatting issues across all packages.              |
-| `npm run lint`       | Lints CLI and Web Studio code.                                             |
-| `npm run lint:fix`   | Fixes linting errors across CLI and Web Studio.                            |
-| `npm run format`     | Checks formatting compliance using Prettier.                               |
-| `npm run format:fix` | Formats files with Prettier.                                               |
-| `npm run test`       | Runs all unit, integration, visual regression, and package snapshot tests. |
-| `npm run test:cli`   | Runs CLI integration test suite (`tests/cli.spec.ts`).                     |
-| `npm run test:mcp`   | Runs MCP Server integration test suite (`tests/mcp.spec.ts`).              |
-| `npm run test:pack`  | Validates npm tarball file snapshot (`npm pack --dry-run`).                |
-| `npm run test:unit`  | Runs unit tests with Vitest and Node test runner.                          |
-| `npm run type-check` | Performs TypeScript type checking across root CLI and Web workspace.       |
+| Command                 | Description                                                                |
+| :---------------------- | :------------------------------------------------------------------------- |
+| `npm run check`         | Runs full verification suite (lint, format, type-check, unit & e2e tests). |
+| `npm run check:fast`    | Runs fast validation checks only (lint, format, type-check).               |
+| `npm run build`         | Compiles CLI TypeScript source into ES Modules in `dist/`.                 |
+| `npm run fix`           | Auto-fixes linting and formatting issues across all packages.              |
+| `npm run lint`          | Lints CLI and Web Studio code.                                             |
+| `npm run lint:fix`      | Fixes linting errors across CLI and Web Studio.                            |
+| `npm run format`        | Checks formatting compliance using Prettier.                               |
+| `npm run format:fix`    | Formats files with Prettier.                                               |
+| `npm run test`          | Runs all unit, integration, visual regression, and package snapshot tests. |
+| `npm run cli`           | Runs CLI TypeScript source directly (`tsx src/index.ts`).                  |
+| `npm run mcp`           | Runs MCP Stdio server TypeScript source directly (`tsx src/mcp.ts`).       |
+| `npm run mcp:sse`       | Runs MCP SSE server via `supergateway` wrapper on port 8080.               |
+| `npm run start:cli`     | Runs compiled CLI production build (`node dist/src/index.js`).             |
+| `npm run start:mcp:sse` | Runs compiled MCP SSE production server via `supergateway` on port 8080.   |
+| `npm run start:mcp`     | Runs compiled MCP Stdio production server (`node dist/src/mcp.js`).        |
+| `npm run test:cli`      | Runs CLI integration test suite (`tests/cli.spec.ts`).                     |
+| `npm run test:mcp`      | Runs MCP Server integration test suite (`tests/mcp.spec.ts`).              |
+| `npm run test:pack`     | Validates npm tarball file snapshot (`npm pack --dry-run`).                |
+| `npm run test:unit`     | Runs unit tests with Vitest and Node test runner.                          |
+| `npm run type-check`    | Performs TypeScript type checking across root CLI and Web workspace.       |
 
 #### Remote vs. Local CLI & MCP Execution
 
@@ -153,7 +159,7 @@ Contributors must distinguish between testing published remote artifacts and bui
 
 ```bash
 # Test on-demand remote package execution via npx (npmjs registry)
-npx @gehdoc/svg-to-video input.svg 60 ./out-dir
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir
 
 # Test published Docker Hub container execution
 docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir --format webm
@@ -185,18 +191,24 @@ npx --package ./gehdoc-svg-to-video-0.26.0.tgz svg-to-video --version
 
 Navigate to `web/` (`cd web`) to run studio commands:
 
-| Command                      | Description                                                  |
-| :--------------------------- | :----------------------------------------------------------- |
-| `npm run dev`                | Starts Web Studio Next.js development server.                |
-| `npm run build`              | Builds Web Studio for static production export (`web/out/`). |
-| `npm run start`              | Serves production web build locally.                         |
-| `npm run storybook`          | Starts interactive Storybook component workbench.            |
-| `npm run build-storybook`    | Builds static Storybook site for GitHub Pages deployment.    |
-| `npm run test:demo`          | Records automated demo video using Playwright & Driver.js.   |
-| `npm run test:web`           | Runs Web Studio E2E Playwright test suite.                   |
-| `npm run test:storybook`     | Runs Storybook component interaction tests via Vitest.       |
-| `npm run test:visual`        | Runs visual regression tests (pixel snapshot matching).      |
-| `npm run test:visual:update` | Updates baseline visual regression screenshot snapshots.     |
+| Command                      | Description                                                                 |
+| :--------------------------- | :-------------------------------------------------------------------------- |
+| `npm run dev`                | Starts Web Studio Next.js development server on `http://localhost:3000`.    |
+| `npm run build`              | Builds Web Studio static export into `web/dist` (with root `/` by default). |
+| `npm run start`              | Serves production web build locally.                                        |
+| `npm run storybook`          | Starts interactive Storybook component workbench.                           |
+| `npm run build-storybook`    | Builds static Storybook site for GitHub Pages deployment.                   |
+| `npm run test:demo`          | Records automated demo video using Playwright & Driver.js.                  |
+| `npm run test:web`           | Runs Web Studio E2E Playwright test suite against local static/dev server.  |
+| `npm run test:storybook`     | Runs Storybook component interaction tests via Vitest.                      |
+| `npm run test:visual`        | Runs visual regression tests (pixel snapshot matching).                     |
+| `npm run test:visual:update` | Updates baseline visual regression screenshot snapshots.                    |
+
+> [!NOTE]
+> **Base Path & Deployment Configuration**:
+>
+> - `npm run build -w web` creates a static production build in `web/dist` with base path `/svg-to-video` when `NODE_ENV=production` (the default for `next build`). For local E2E testing against the built output, run `NODE_ENV=development npm run build -w web` to build with root base path (`/`), then serve with `serve dist -l 3000`.
+> - The `basePath` and `assetPrefix` are controlled by `isProd = process.env.NODE_ENV === 'production'` in `web/next.config.js`. The CI deployment workflow runs `next build` in production mode, which automatically sets the correct GitHub Pages sub-path.
 
 ### 🧪 Multi-Tiered Testing Strategy
 
@@ -363,8 +375,9 @@ To maintain project synchronization, every release or version bump must update t
 
 1. **Root `package.json`**: The `version` field.
 2. **Web `package.json`**: The `version` field (`web/package.json`).
-3. **MCP Registry Manifest (`mcp.json`)**: The `version` field and `packages[].version` field for published npm package entries.
-4. **Root `package-lock.json`**: Synchronized by running `npm install`.
+3. **Root `package-lock.json`**: Synchronized by running `npm install`.
+
+**Note:** The MCP Registry Manifest (`mcp.json`) uses placeholder versions (`0.0.0-0`) in source control. Real package versions and Docker tags are injected dynamically by GitHub Actions during the release pipeline, so you do not need to edit `mcp.json` manually during version bumps.
 
 Use `npm version [patch|minor|major]` or update `package.json` and `mcp.json` files manually, then run `npm install` to update `package-lock.json` before committing.
 
@@ -492,7 +505,7 @@ When adding new features or core capabilities, systematically update public-faci
 
 1. **`web/src/app/layout.tsx`**, **`web/src/components/SeoFallback.tsx`**, & **`web/src/utils/constants.ts`**:
    - Centralize all public ecosystem URLs (GitHub, npm, Docker Hub, MCP docs, License) in `web/src/utils/constants.ts` (`ECOSYSTEM_LINKS`), consuming `pkg.repository.url` as the single source of truth.
-   - Update `layout.tsx` metadata object using unified DRY constants (`title`, `description`) across standard metadata, Open Graph, and Twitter cards. Import `description` directly from `web/package.json` (`pkg.description`), derive `url` from `package.json` (`pkg.homepage`), and configure `alternates.canonical` to establish the canonical URL for search engines and avoid duplicate indexing (e.g., via `index.html`).
+   - Update `layout.tsx` metadata object using unified DRY constants (`title`, `description`) across standard metadata, Open Graph, and Twitter cards. Import `description` directly from `web/package.json` (`pkg.description`), and derive `url` from `package.json` (`pkg.homepage`).
    - Update structured **JSON-LD** data in `layout.tsx` (enrich `featureList`, `alternateName`, `browserRequirements`, DRY `sameAs` array, and DRY `author` URL derived from `package.json`).
    - Update **`SeoFallback.tsx`** static fallback text and footer links (`ECOSYSTEM_LINKS`) for search engine indexing.
    - Maintain standard AI model context file `web/public/llms.txt` and verify `sitemap.ts` and `robots.txt` reflect dynamic site routes.
@@ -501,16 +514,24 @@ When adding new features or core capabilities, systematically update public-faci
      - **Root `package.json`**: Broad ecosystem description referencing all core tools (Web Studio, CLI automation, and Model Context Protocol (MCP) server integration).
      - **Web Workspace `web/package.json`**: Focused Web Studio description, harmonized with and consumed directly by `web/src/app/layout.tsx`.
    - Add new relevant search tags to the `keywords` array in root `package.json`.
-3. **`mcp.json` (MCP Registry Manifest)**:
+3. **`docs/FAQ.md`**:
+   - Add or update FAQ entries here — **do not hardcode them in the script**. Each entry must follow the `## Q: <question>` heading convention (see [SEO Data Pipeline in ARCHITECTURE.md](./docs/ARCHITECTURE.md#-seo-data-pipeline)).
+   - The script (`web/scripts/generate-seo-data.ts`) parses this file at `predev`/`prebuild` and converts answers to HTML via `marked.parseInline()`.
+4. **`docs/ANALYTICS.md`**:
+   - Audit and update telemetry documentation if any Umami event payloads, tracking methods, properties, or triggers changed.
+5. **`web/scripts/generate-seo-data.ts`** (hardcoded UI copy):
+   - `headline` and `tagline` are string literals in this script — update them here when landing page copy changes (intentionally not sourced from `package.json`).
+   - `formatComparisons[]` is also hardcoded inline — update the array here until a `docs/FORMATS.md` source file is introduced.
+6. **`mcp.json` (MCP Registry Manifest)**:
    - Update `description` field when project capabilities or MCP tool features change. Ensure the description is strictly under 100 characters and focuses exclusively on describing the features of the MCP server (not the Web Studio or other elements provided by the package) so as not to exceed this limit.
    - Synchronize `version` and `packages[].version` fields during version bumps with root `package.json`.
    - Maintain `websiteUrl` (`https://gehdoc.github.io/svg-to-video/`), `icons` assets (`https://gehdoc.github.io/svg-to-video/favicon.svg`), and `repository.id` (`1178356431`).
    - Keep `packages[].environmentVariables` updated whenever new runtime flags or environment variables are introduced (`DO_NOT_TRACK`, `PUPPETEER_EXECUTABLE_PATH`, `PUPPETEER_ARGS`). If adding a CLI parameter or environment variable that affects MCP execution, contributors **must** update the corresponding package definitions in `mcp.json`.
    - Ensure `packages` identifiers, transport configurations, registry base URLs (`https://registry.npmjs.org`, `https://docker.io`), and runtime hints reflect published package distributions.
    - Verify changes using `npm run test:mcp`, which enforces automated contract assertions on `mcp.json` schema compliance.
-4. **`README.md`**:
+7. **`README.md`**:
    - Update feature summaries, installation options, and CLI/web quick start usage blocks.
-5. **GitHub Repository Metadata**:
+8. **GitHub Repository Metadata**:
    - Update repository **Description** in GitHub repository settings.
    - Update repository **Topics** (tags) via GitHub Web UI or GitHub CLI:
      ```bash
@@ -518,5 +539,7 @@ When adding new features or core capabilities, systematically update public-faci
        --description "High-fidelity CSS/SVG animation converter to MP4, WebM, GIF & aPNG with transparent background support" \
        --add-topic "svg,video,converter,apng,gif,webm,mp4,mcp"
      ```
-6. **Docker Hub Overview Metadata**:
+9. **Docker Hub Overview Metadata**:
    - Manually update the repository **Overview** text and **Short Description** on Docker Hub ([hub.docker.com/r/gehdoc/svg-to-video](https://hub.docker.com/r/gehdoc/svg-to-video)) via the web UI whenever releasing new features or updating documentation.
+10. **HuggingFace Space README** _(manual)_:
+    - If the MCP interface, setup instructions, or environment variables changed, update the README in the [`GehDoc/svg-to-video-mcp`](https://huggingface.co/GehDoc/svg-to-video-mcp) HuggingFace repository. The Space is backed by a Python wrapper (not a Dockerfile) and requires **Python development** for any hosting-layer changes.

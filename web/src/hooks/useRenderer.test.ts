@@ -15,6 +15,16 @@ describe('useRenderer helpers', () => {
       });
     });
 
+    it('should parse viewBox if width and height are percentage values', () => {
+      const svg =
+        '<svg width="100%" height="100%" viewBox="0 0 400 400"></svg>';
+      expect(parseSvgDimensions(svg)).toEqual({
+        width: 400,
+        height: 400,
+        isDimensionsDetected: true,
+      });
+    });
+
     it('should parse viewBox if attributes are missing', () => {
       const svg = '<svg viewBox="0 0 100 200"></svg>';
       expect(parseSvgDimensions(svg)).toEqual({

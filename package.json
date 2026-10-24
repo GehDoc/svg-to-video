@@ -1,9 +1,9 @@
 {
   "name": "@gehdoc/svg-to-video",
   "mcpName": "io.github.GehDoc/svg-to-video",
-  "version": "0.27.7",
+  "version": "0.33.0",
   "type": "module",
-  "description": "Professional animated SVG to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, Model Context Protocol (MCP) server integration, and a serverless Web Studio.",
+  "description": "Professional animated SVG (CSS & SMIL) to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, Model Context Protocol (MCP) server integration, and a serverless Web Studio.",
   "imports": {
     "#shared/*": "./dist/shared/*"
   },
@@ -20,11 +20,13 @@
     "url": "https://github.com/GehDoc/svg-to-video/?sponsor=1"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.22.2"
   },
   "keywords": [
     "animation",
     "css",
+    "smil",
+    "svg-animation",
     "video",
     "svg",
     "convert",
@@ -40,7 +42,8 @@
     "mcp",
     "mcp-server",
     "model-context-protocol",
-    "agent-skill"
+    "agent-skill",
+    "huggingface"
   ],
   "license": "MIT",
   "publishConfig": {
@@ -53,27 +56,27 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@modelcontextprotocol/sdk": "^1.31.1",
     "@umami/node": "^0.4.0",
     "commander": "^15.0.0",
-    "jsdom": "^29.1.1",
+    "jsdom": "^30.1.1",
+    "supergateway": "^4.1.0",
     "puppeteer": "^25.8.0",
     "tsx": "^4.23.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.4",
-    "@types/commander": "^2.12.0",
+    "@eslint/js": "^10.0.1",
     "@types/ffprobe-static": "^2.0.3",
-    "@types/jsdom": "^28.0.3",
+    "@types/jsdom": "^30.0.0",
     "@types/node": "^25.4.0",
     "@types/pngjs": "^6.0.5",
     "@vitest/coverage-v8": "4.1.11",
-    "eslint": "^9.39.4",
+    "eslint": "^10.0.1",
     "ffprobe": "^1.1.2",
     "ffprobe-static": "^3.1.0",
     "globals": "^17.4.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.3.2",
+    "lint-staged": "^17.6.0",
     "pngjs": "^7.0.0",
     "prettier": "^3.8.1",
     "prettier-plugin-sh": "^0.19.0",
@@ -84,11 +87,16 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "prepack": "npm run build",
-    "lint": "eslint . && npm run lint -w web",
-    "lint:fix": "eslint . --fix && npm run lint:fix -w web",
+    "lint": "eslint . --max-warnings=0 && npm run lint -w web",
+    "lint:fix": "eslint . --fix --max-warnings=0 && npm run lint:fix -w web",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
+    "cli": "tsx src/index.ts",
     "mcp": "tsx src/mcp.ts",
+    "mcp:sse": "supergateway --port 8080 --stdio \"tsx src/mcp.ts\"",
+    "start:cli": "node dist/src/index.js",
+    "start:mcp": "node dist/src/mcp.js",
+    "start:mcp:sse": "supergateway --port 8080 --stdio \"node dist/src/mcp.js\"",
     "test:cli": "tsx --test tests/cli.spec.ts",
     "test:mcp": "tsx --test tests/mcp.spec.ts",
     "test:pack": "npm run build && tsx --test tests/pack.spec.ts",
@@ -102,10 +110,10 @@
   },
   "lint-staged": {
     "**/*.{js,mjs,ts,tsx,json,md,yml,html,Dockerfile,dockerfile,css,scss}": "prettier --write",
-    "src/**/*.ts": "eslint --fix",
-    "shared/**/*.ts": "eslint --fix",
-    "tests/**/*.ts": "eslint --fix",
-    "web/**/*.{ts,tsx,js}": "npm run lint --workspace=web -- --fix"
+    "src/**/*.ts": "eslint --fix --max-warnings=0",
+    "shared/**/*.ts": "eslint --fix --max-warnings=0",
+    "tests/**/*.ts": "eslint --fix --max-warnings=0",
+    "web/**/*.{ts,tsx,js}": "npm run lint --workspace=web -- --fix --max-warnings=0"
   },
   "main": "dist/src/index.js",
   "bin": {
@@ -122,6 +130,8 @@
     "@vitest/utils": "$vitest",
     "@vitest/mocker": "$vitest",
     "@vitest/runner": "$vitest",
-    "@vitest/snapshot": "$vitest"
+    "@vitest/snapshot": "$vitest",
+    "@modelcontextprotocol/sdk": "$@modelcontextprotocol/sdk",
+    "@modelcontextprotocol/client": "2.3.1"
   }
 }

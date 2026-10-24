@@ -5,6 +5,7 @@ import puppeteer, { Page, Browser, ScreenshotOptions } from 'puppeteer';
 import { Command } from 'commander';
 import path from 'path';
 import { seekAnimations } from '#shared/animation-engine.js';
+import { compositeFrame } from '#shared/canvasCompositing.js';
 import { validateOptions } from './utils/validateOptions.js';
 import {
   analyzeSvgAnimation,
@@ -17,7 +18,7 @@ import { CLIFormatOptions } from './formats/types.js';
 import { pkg } from './utils/packageInfo.js';
 import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 import { Logger } from './utils/logger.js';
-import { trackEvent } from './utils/analytics.js';
+import { trackEvent, flushAnalytics } from './utils/analytics.js';
 import { ConversionTracker } from '#shared/rendererTracking.js';
 
 type FrameFileExtension = 'png';
@@ -31,7 +32,7 @@ interface RunOptions {
   resolution: string;
   scale: number;
   transparent: boolean;
-  bgColor: string;
+  bgColor?: string;
   metadata?: string[];
   format?: string;
   quiet: boolean;
@@ -48,7 +49,7 @@ async function main(): Promise<void> {
     .name('svg-to-video')
     .version(pkg.version)
     .description(
-      `svg-to-video v${pkg.version} - Render a CSS-animated SVG to a high-quality video or animated image (MP4, WebM, MKV, MOV, GIF, aPNG)`
+      `svg-to-video v${pkg.version} - Render an animated SVG (CSS & SMIL) to a high-quality video or animated image (MP4, WebM, MKV, MOV, GIF, aPNG)`
     )
     .usage('<svgPath> <fps> <outDir> [options]')
     .addHelpText(
@@ -91,7 +92,7 @@ Resources:
     )
     .option(
       '--resolution <preset>',
-      'resolution preset: 720p, 1080p, or original',
+      'resolution preset (720p, 1080p, original) or custom dimensions (e.g. 1080x1080, 1080x1920)',
       'original'
     )
     .option(
@@ -103,8 +104,7 @@ Resources:
     .option('--transparent', 'render with a transparent background', false)
     .option(
       '--bg-color <hex>',
-      'background color for the video (e.g., #FFFFFF)',
-      '#ffffff'
+      'background color for the video (e.g., #FFFFFF)'
     )
     .option(
       '--metadata <items...>',
@@ -141,7 +141,7 @@ Resources:
       await import('./mcp.js');
     });
 
-  program.parse(process.argv);
+  await program.parseAsync(process.argv);
 }
 
 /**
@@ -160,29 +160,33 @@ async function run(
   });
 
   // Resolve format generator and output file extension via format registry
-  const { format, extension } = formatRegistry.resolveFormatAndExtension(
-    options.format,
-    options.transparent
-  );
+  const { generator, format, extension } =
+    formatRegistry.resolveFormatAndExtension(
+      options.format,
+      options.transparent
+    );
   const inputBasename = path.basename(svgPath, path.extname(svgPath));
   const ext = extension.startsWith('.') ? extension : `.${extension}`;
   const outputFileName = `${inputBasename}${ext}`;
   const outputFullPath = path.join(outDir, outputFileName);
 
   if (fs.existsSync(outputFullPath) && !options.force) {
-    throw logger.fatal(
+    await logger.fatal(
       `Output file "${outputFullPath}" already exists. Use the --force (-f) flag to overwrite it.`
     );
+    return;
   }
 
   try {
     validateOptions(options);
   } catch (error) {
-    throw logger.fatal(error instanceof Error ? error.message : String(error));
+    await logger.fatal(error instanceof Error ? error.message : String(error));
+    return;
   }
 
   if (!fs.existsSync(svgPath)) {
-    throw logger.fatal(`Input SVG file "${svgPath}" does not exist.`);
+    await logger.fatal(`Input SVG file "${svgPath}" does not exist.`);
+    return;
   }
 
   const svg = fs.readFileSync(svgPath, 'utf-8');
@@ -197,9 +201,10 @@ async function run(
 
     duration = detectedDuration;
     if (duration === undefined) {
-      throw logger.fatal(
+      await logger.fatal(
         'Could not detect duration. Please provide a duration using -d or --duration.'
       );
+      return;
     }
     logger.info(`✅ Auto-detected duration: ${duration}s`);
   }
@@ -249,6 +254,25 @@ async function run(
   );
   tracker.start();
 
+  let isCancelled = false;
+  const handleSignal = async (signal: string) => {
+    if (isCancelled) return;
+    isCancelled = true;
+    logger.info(`\n⚠️ Received ${signal}. Cancelling conversion...`);
+    tracker.cancel();
+    if (!options.keepFrames && totalFrames > 0 && padWidth > 0) {
+      cleanupFrames(totalFrames, padWidth, outDir, logger);
+    }
+    await flushAnalytics();
+    process.exit(130);
+  };
+
+  const sigintListener = () => void handleSignal('SIGINT');
+  const sigtermListener = () => void handleSignal('SIGTERM');
+
+  process.once('SIGINT', sigintListener);
+  process.once('SIGTERM', sigtermListener);
+
   try {
     fs.mkdirSync(outDir, { recursive: true });
 
@@ -264,6 +288,7 @@ async function run(
       options.scale,
       options.transparent,
       options.bgColor,
+      generator.needsColorKeying,
       logger
     );
 
@@ -287,6 +312,7 @@ async function run(
     }
 
     tracker.success(totalFrames);
+    await flushAnalytics();
 
     logger.done(outputFullPath, {
       duration,
@@ -297,8 +323,24 @@ async function run(
       transparent: options.transparent,
     });
   } catch (error) {
-    tracker.failed(error instanceof Error ? error : String(error));
-    throw error;
+    if (!isCancelled) {
+      tracker.failed(error instanceof Error ? error : String(error));
+      if (!options.keepFrames) {
+        try {
+          cleanupFrames(totalFrames, padWidth, outDir, logger);
+        } catch {
+          // ignore frame cleanup error during exception handling
+        }
+      }
+      await flushAnalytics();
+      await logger.fatal(
+        'Conversion failed',
+        error instanceof Error ? error.message : String(error)
+      );
+    }
+  } finally {
+    process.removeListener('SIGINT', sigintListener);
+    process.removeListener('SIGTERM', sigtermListener);
   }
 }
 
@@ -316,15 +358,20 @@ async function createFrames(
   resolutionPreset: string,
   scaleFactor: number,
   transparent: boolean,
-  bgColor: string,
+  bgColor: string | undefined,
+  needsColorKeying: boolean,
   logger: Logger
 ): Promise<void> {
   logger.info('📸 Rendering frames with Puppeteer...');
 
-  let width = 0;
-  let height = 0;
+  let width: number;
+  let height: number;
 
-  if (resolutionPreset === '1080p') {
+  if (/^\d+x\d+$/i.test(resolutionPreset)) {
+    const [wStr, hStr] = resolutionPreset.toLowerCase().split('x');
+    width = parseInt(wStr, 10);
+    height = parseInt(hStr, 10);
+  } else if (resolutionPreset === '1080p') {
     width = 1920;
     height = 1080;
   } else if (resolutionPreset === '720p') {
@@ -341,10 +388,11 @@ async function createFrames(
     height = Math.round(parsedDim.height * scaleFactor);
   } else {
     throw new Error(
-      `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', or 'original'.`
+      `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', 'original', or custom dimensions (e.g. 1080x1080).`
     );
   }
 
+  logger.info(`  Viewport:   ${width}x${height}`);
   logger.info('🚀 Preparing Puppeteer browser...');
 
   const launchOptions: Parameters<typeof puppeteer.launch>[0] = {
@@ -394,6 +442,8 @@ async function createFrames(
     omitBackground: transparent,
   };
 
+  const shouldKey = Boolean(transparent && bgColor && needsColorKeying);
+
   logger.info('📸 Rendering frames with Puppeteer...');
   for (let frame = 1; frame <= totalFrames; ++frame) {
     logger.writeProgress(`\r📸 Rendering frame ${frame}/${totalFrames}`);
@@ -401,10 +451,43 @@ async function createFrames(
     await page.evaluate(seekAnimations, timeMs);
 
     const filename = path.join(outDir, getFrameFilename(frame, padWidth));
-    await page.screenshot({
-      path: filename,
-      ...screenshotOptions,
-    });
+    if (shouldKey) {
+      const rawScreenshotBuffer = await page.screenshot(screenshotOptions);
+      const b64Input = Buffer.from(rawScreenshotBuffer).toString('base64');
+      const keyedBase64 = await page.evaluate(
+        async (compositeFnStr, b64, bg, w, h) => {
+          let canvas = document.getElementById(
+            'matte-canvas'
+          ) as HTMLCanvasElement;
+          if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.id = 'matte-canvas';
+            canvas.width = w;
+            canvas.height = h;
+            canvas.style.display = 'none';
+            document.body.appendChild(canvas);
+          }
+          const ctx = canvas.getContext('2d')!;
+          const img = new Image();
+          img.src = 'data:image/png;base64,' + b64;
+          await img.decode();
+          const compositeFn = new Function('return ' + compositeFnStr)();
+          compositeFn(ctx, img, w, h, bg, true);
+          return canvas.toDataURL('image/png').split(',')[1];
+        },
+        compositeFrame.toString(),
+        b64Input,
+        bgColor,
+        width,
+        height
+      );
+      fs.writeFileSync(filename, Buffer.from(keyedBase64, 'base64'));
+    } else {
+      await page.screenshot({
+        path: filename,
+        ...screenshotOptions,
+      });
+    }
   }
   logger.info('');
 
@@ -469,10 +552,8 @@ function convertToOutput(
       generator.postProcess(outputFullPath, formatOptions);
     }
   } catch (error) {
-    throw logger.fatal(
-      'FFmpeg execution failed',
-      error instanceof Error ? error.message : String(error)
-    );
+    const details = error instanceof Error ? error.message : String(error);
+    throw new Error(`FFmpeg execution failed: ${details}`, { cause: error });
   }
 }
 
@@ -504,7 +585,8 @@ function getFrameFilename(frame: number, padWidth: number): string {
   return `${prefix}.${frameFileExtension}`;
 }
 
-main().catch((err) => {
+main().catch(async (err) => {
+  await flushAnalytics();
   console.error(err);
   process.exit(1);
 });

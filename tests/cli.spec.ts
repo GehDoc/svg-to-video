@@ -13,6 +13,18 @@ import {
 const LOG_STARTING_CONVERSION = '🚀 Starting conversion:';
 const LOG_RENDERING_FRAME = '📸 Rendering frame';
 
+function runCli(args: string[], options: Record<string, unknown> = {}) {
+  return spawnSync('npx', ['tsx', 'src/index.ts', ...args], {
+    encoding: 'utf-8',
+    ...options,
+    env: {
+      ...process.env,
+      NODE_ENV: 'test',
+      ...(options.env as Record<string, string> | undefined),
+    },
+  });
+}
+
 describe('CLI Functionality', () => {
   before(() => {
     if (!fs.existsSync(outputDir)) {
@@ -28,9 +40,7 @@ describe('CLI Functionality', () => {
 
   describe('Version', () => {
     test('should output version', () => {
-      const result = spawnSync('npx', ['tsx', 'src/index.ts', '--version'], {
-        encoding: 'utf-8',
-      });
+      const result = runCli(['--version']);
       assert.match(result.stdout, /\d+\.\d+\.\d+/);
     });
   });
@@ -38,21 +48,15 @@ describe('CLI Functionality', () => {
   describe('Machine Output (--quiet, --json)', () => {
     test('should suppress progress logs when --quiet is passed', () => {
       const { inputFile, outputFile } = getTestPaths('loop-test');
-      const result = spawnSync(
-        'npx',
-        [
-          'tsx',
-          'src/index.ts',
-          inputFile,
-          '24',
-          outputDir,
-          '-d',
-          '1',
-          '--quiet',
-          '--force',
-        ],
-        { encoding: 'utf-8' }
-      );
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--quiet',
+        '--force',
+      ]);
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
       assert.strictEqual(result.stdout.includes(LOG_RENDERING_FRAME), false);
@@ -64,21 +68,15 @@ describe('CLI Functionality', () => {
 
     test('should output clean JSON when --json is passed', () => {
       const { inputFile, outputFile } = getTestPaths('loop-test');
-      const result = spawnSync(
-        'npx',
-        [
-          'tsx',
-          'src/index.ts',
-          inputFile,
-          '24',
-          outputDir,
-          '-d',
-          '1',
-          '--json',
-          '--force',
-        ],
-        { encoding: 'utf-8' }
-      );
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--json',
+        '--force',
+      ]);
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
       assert.strictEqual(result.stdout.includes(LOG_RENDERING_FRAME), false);
@@ -98,22 +96,14 @@ describe('CLI Functionality', () => {
   describe('Duration Auto-Detection', () => {
     test('should auto-detect duration from loop-test.svg', () => {
       const { inputFile, outputFile } = getTestPaths('loop-test');
-      const result = spawnSync(
-        'npx',
-        ['tsx', 'src/index.ts', inputFile, '24', outputDir, '--force'],
-        { encoding: 'utf-8' }
-      );
+      const result = runCli([inputFile, '24', outputDir, '--force']);
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
     });
 
     test('should fail if no duration is provided and cannot detect', () => {
       const { inputFile } = getTestPaths('font-test');
-      const result = spawnSync(
-        'npx',
-        ['tsx', 'src/index.ts', inputFile, '24', outputDir, '--force'],
-        { encoding: 'utf-8' }
-      );
+      const result = runCli([inputFile, '24', outputDir, '--force']);
       assert.strictEqual(result.status, 1);
       assert.match(result.stderr, /Could not detect duration/);
     });
@@ -122,20 +112,7 @@ describe('CLI Functionality', () => {
   describe('Rendering', () => {
     test('should render font-test.svg into a valid mp4 file and output standard progress logs', () => {
       const { inputFile, outputFile } = getTestPaths('font-test');
-      const result = spawnSync(
-        'npx',
-        [
-          'tsx',
-          'src/index.ts',
-          inputFile,
-          '24',
-          outputDir,
-          '-d',
-          '1',
-          '--force',
-        ],
-        { encoding: 'utf-8' }
-      );
+      const result = runCli([inputFile, '24', outputDir, '-d', '1', '--force']);
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
       assert.strictEqual(result.stdout.includes(LOG_STARTING_CONVERSION), true);
@@ -154,6 +131,25 @@ describe('CLI Functionality', () => {
 
     test('should render font-test.svg with explicit 1080p resolution', () => {
       const { inputFile, outputFile } = getTestPaths('font-test');
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--resolution',
+        '1080p',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+      const data = getProbeMetadata(outputFile);
+      assert.strictEqual(data.width, '1920');
+      assert.strictEqual(data.height, '1080');
+    });
+
+    test('should render font-test.svg with custom formatted resolution (1080x1080)', () => {
+      const { inputFile, outputFile } = getTestPaths('font-test');
       const result = spawnSync(
         'npx',
         [
@@ -165,7 +161,7 @@ describe('CLI Functionality', () => {
           '-d',
           '1',
           '--resolution',
-          '1080p',
+          '1080x1080',
           '--force',
         ],
         { encoding: 'utf-8' }
@@ -173,14 +169,12 @@ describe('CLI Functionality', () => {
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
       const data = getProbeMetadata(outputFile);
-      assert.strictEqual(data.width, '1920');
+      assert.strictEqual(data.width, '1080');
       assert.strictEqual(data.height, '1080');
     });
 
-    test('should render transparent-test.svg with explicit background color (blue)', () => {
-      const { inputFile, outputFile } = getTestPaths('transparent-test');
-      const framePath = outputFile.replace('.mp4', '.png');
-
+    test('should render font-test.svg with vertical resolution (1080x1920)', () => {
+      const { inputFile, outputFile } = getTestPaths('font-test');
       const result = spawnSync(
         'npx',
         [
@@ -191,12 +185,33 @@ describe('CLI Functionality', () => {
           outputDir,
           '-d',
           '1',
-          '--bg-color',
-          '#0000FF',
+          '--resolution',
+          '1080x1920',
           '--force',
         ],
         { encoding: 'utf-8' }
       );
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+      const data = getProbeMetadata(outputFile);
+      assert.strictEqual(data.width, '1080');
+      assert.strictEqual(data.height, '1920');
+    });
+
+    test('should render transparent-test.svg with explicit background color (blue)', () => {
+      const { inputFile, outputFile } = getTestPaths('transparent-test');
+      const framePath = outputFile.replace('.mp4', '.png');
+
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--bg-color',
+        '#0000FF',
+        '--force',
+      ]);
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
 
@@ -212,24 +227,18 @@ describe('CLI Functionality', () => {
     });
     test('should render font-test.svg with explicit scale factor', () => {
       const { inputFile, outputFile } = getTestPaths('font-test');
-      const result = spawnSync(
-        'npx',
-        [
-          'tsx',
-          'src/index.ts',
-          inputFile,
-          '24',
-          outputDir,
-          '-d',
-          '1',
-          '--scale',
-          '2.0',
-          '--resolution',
-          'original',
-          '--force',
-        ],
-        { encoding: 'utf-8' }
-      );
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--scale',
+        '2.0',
+        '--resolution',
+        'original',
+        '--force',
+      ]);
 
       assert.strictEqual(
         result.status,
@@ -248,21 +257,15 @@ describe('CLI Functionality', () => {
         'transparent-test',
         '.webm'
       );
-      const result = spawnSync(
-        'npx',
-        [
-          'tsx',
-          'src/index.ts',
-          inputFile,
-          '24',
-          outputDir,
-          '-d',
-          '2',
-          '--transparent',
-          '--force',
-        ],
-        { encoding: 'utf-8' }
-      );
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '2',
+        '--transparent',
+        '--force',
+      ]);
 
       assert.strictEqual(
         result.status,
@@ -280,23 +283,17 @@ describe('CLI Functionality', () => {
 
     test('should render font-test.svg with custom metadata', () => {
       const { inputFile, outputFile } = getTestPaths('font-test');
-      const result = spawnSync(
-        'npx',
-        [
-          'tsx',
-          'src/index.ts',
-          inputFile,
-          '24',
-          outputDir,
-          '-d',
-          '1',
-          '--metadata',
-          'title=Custom Title',
-          'comment=Test Comment',
-          '--force',
-        ],
-        { encoding: 'utf-8' }
-      );
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--metadata',
+        'title=Custom Title',
+        'comment=Test Comment',
+        '--force',
+      ]);
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
 
@@ -311,25 +308,19 @@ describe('CLI Functionality', () => {
     test('should render font-test.svg to animated GIF with custom metadata', () => {
       const { inputFile } = getTestPaths('font-test');
       const outputFile = `${outputDir}/font-test.gif`;
-      const result = spawnSync(
-        'npx',
-        [
-          'tsx',
-          'src/index.ts',
-          inputFile,
-          '24',
-          outputDir,
-          '-d',
-          '1',
-          '--format',
-          'gif',
-          '--metadata',
-          'title=GIF Title',
-          'comment=GIF Comment',
-          '--force',
-        ],
-        { encoding: 'utf-8' }
-      );
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--format',
+        'gif',
+        '--metadata',
+        'title=GIF Title',
+        'comment=GIF Comment',
+        '--force',
+      ]);
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
 
@@ -344,23 +335,17 @@ describe('CLI Functionality', () => {
     test('should render transparent-test.svg to transparent animated GIF', () => {
       const { inputFile } = getTestPaths('transparent-test');
       const outputFile = `${outputDir}/transparent-test.gif`;
-      const result = spawnSync(
-        'npx',
-        [
-          'tsx',
-          'src/index.ts',
-          inputFile,
-          '24',
-          outputDir,
-          '-d',
-          '1',
-          '--format',
-          'gif',
-          '--transparent',
-          '--force',
-        ],
-        { encoding: 'utf-8' }
-      );
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--format',
+        'gif',
+        '--transparent',
+        '--force',
+      ]);
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
 
@@ -369,28 +354,61 @@ describe('CLI Functionality', () => {
       assert.strictEqual(data.height, '300');
     });
 
+    test('should render transparent-loop-test.svg to transparent animated GIF with color keying', () => {
+      const { inputFile } = getTestPaths('transparent-loop-test');
+      const outputFile = `${outputDir}/transparent-loop-test.gif`;
+      const framePath = `${outputDir}/transparent-loop-test-frame.png`;
+
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--format',
+        'gif',
+        '--transparent',
+        '--bg-color',
+        '#FF0000',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+
+      assert.ok(
+        extractFrame(outputFile, framePath),
+        'Frame should be extracted'
+      );
+      const outerPixel = getPixelRGBA(framePath, 10, 10);
+      assert.strictEqual(outerPixel.a, 0, 'Outer pixel should be transparent');
+
+      const centerPixel = getPixelRGBA(framePath, 50, 50);
+      assert.strictEqual(centerPixel.a, 255, 'Center pixel should be opaque');
+
+      // Edge pixel should be matted with red keying color (r higher than center pixel r)
+      const edgePixel = getPixelRGBA(framePath, 69, 50);
+      assert.ok(
+        edgePixel.r > centerPixel.r,
+        `Edge pixel red (${edgePixel.r}) should be greater than center pixel red (${centerPixel.r}) due to red keying`
+      );
+    });
+
     test('should render font-test.svg to animated PNG (aPNG) with custom metadata', () => {
       const { inputFile } = getTestPaths('font-test');
       const outputFile = `${outputDir}/font-test.apng`;
-      const result = spawnSync(
-        'npx',
-        [
-          'tsx',
-          'src/index.ts',
-          inputFile,
-          '24',
-          outputDir,
-          '-d',
-          '1',
-          '--format',
-          'apng',
-          '--metadata',
-          'title=aPNG Title',
-          'comment=aPNG Comment',
-          '--force',
-        ],
-        { encoding: 'utf-8' }
-      );
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--format',
+        'apng',
+        '--metadata',
+        'title=aPNG Title',
+        'comment=aPNG Comment',
+        '--force',
+      ]);
       assert.strictEqual(result.status, 0, result.stderr);
       assert.ok(fs.existsSync(outputFile));
 
@@ -404,24 +422,51 @@ describe('CLI Functionality', () => {
 
     test('should fail when an invalid format is specified', () => {
       const { inputFile } = getTestPaths('font-test');
-      const result = spawnSync(
-        'npx',
-        [
-          'tsx',
-          'src/index.ts',
-          inputFile,
-          '24',
-          outputDir,
-          '-d',
-          '1',
-          '--format',
-          'invalidformat',
-          '--force',
-        ],
-        { encoding: 'utf-8' }
-      );
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--format',
+        'invalidformat',
+        '--force',
+      ]);
       assert.strictEqual(result.status, 1);
       assert.match(result.stderr, /Invalid format "invalidformat"/);
+    });
+
+    test('should fail when transparent is used with a format without alpha support (e.g. mp4)', () => {
+      const { inputFile } = getTestPaths('font-test');
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--format',
+        'mp4',
+        '--transparent',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 1);
+      assert.match(result.stderr, /Format "mp4" does not support transparency/);
+    });
+
+    test('should fail when resolution format is invalid', () => {
+      const { inputFile } = getTestPaths('font-test');
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--resolution',
+        'invalid_res',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 1);
+      assert.match(result.stderr, /Invalid resolution option "invalid_res"/);
     });
   });
 });
