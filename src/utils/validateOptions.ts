@@ -22,7 +22,6 @@ export function validateOptions(options: ValidateOptionsParams): void {
     throw new Error('Duration must be a positive number.');
   }
 
-<<<<<<< HEAD
   if (
     options.crf !== undefined &&
     (isNaN(options.crf) || options.crf < 0 || options.crf > 63)
@@ -46,9 +45,6 @@ export function validateOptions(options: ValidateOptionsParams): void {
     );
   }
 
-  if (options.scale !== 1 && options.resolution !== 'original') {
-    throw new Error('--scale can only be used with --resolution original.');
-=======
   const isPreset = ['original', '1080p', '720p'].includes(options.resolution);
   const resMatch = /^(\d+)x(\d+)$/i.exec(options.resolution);
 
@@ -68,7 +64,6 @@ export function validateOptions(options: ValidateOptionsParams): void {
         `Custom resolution dimensions must not exceed ${MAX_DIMENSION_PIXELS} pixels.`
       );
     }
->>>>>>> origin/main
   }
 
   if (options.scale !== 1 && options.resolution !== 'original') {

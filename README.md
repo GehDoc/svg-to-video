@@ -88,16 +88,8 @@ npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --resolution 
 # Node.js (animated PNG output)
 npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format apng
 
-<<<<<<< HEAD
-# Node.js (custom bitrate, CRF, and quality)
-npx @gehdoc/svg-to-video input.svg 60 ./out-dir --bitrate 5M --crf 18 --quality 80
-
-# Docker (zero local dependencies; add :Z to -v for SELinux / Fedora)
-docker run --rm -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif
-=======
 # Docker (zero local dependencies; requires --shm-size=2gb for Chromium rendering; add :Z to -v for SELinux / Fedora)
 docker run --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif
->>>>>>> origin/main
 ```
 
 See [docs/CLI.md](./docs/CLI.md) for full usage, arguments, and options. For local building and source execution, see [CONTRIBUTING.md](./CONTRIBUTING.md#commands--testing-strategy).

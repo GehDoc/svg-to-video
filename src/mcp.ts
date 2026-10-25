@@ -318,49 +318,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
     }
 
-<<<<<<< HEAD
-    const outDir = params.outDir || process.cwd();
-    const fps = String(params.fps || 60);
-
-    const command = cliIndexPath.endsWith('.ts') ? 'npx' : process.execPath;
-    const cliArgs: string[] = cliIndexPath.endsWith('.ts')
-      ? ['tsx', cliIndexPath, targetSvgPath, fps, outDir, '--json', '--force']
-      : [cliIndexPath, targetSvgPath, fps, outDir, '--json', '--force'];
-
-    if (params.duration) {
-      cliArgs.push('-d', String(params.duration));
-    }
-    if (params.format) {
-      cliArgs.push('--format', params.format);
-    }
-    if (params.transparent) {
-      cliArgs.push('--transparent');
-    }
-    if (params.resolution) {
-      cliArgs.push('--resolution', params.resolution);
-    }
-    if (params.scale) {
-      cliArgs.push('--scale', String(params.scale));
-    }
-    if (params.bgColor) {
-      cliArgs.push('--bg-color', params.bgColor);
-    }
-    if (params.hold) {
-      cliArgs.push('-h', String(params.hold));
-    }
-    if (params.bitrate) {
-      cliArgs.push('--bitrate', params.bitrate);
-    }
-    if (params.crf !== undefined) {
-      cliArgs.push('--crf', String(params.crf));
-    }
-    if (params.quality !== undefined) {
-      cliArgs.push('--quality', String(params.quality));
-    }
-=======
     let tempWorkDir: string | null = null;
     let targetSvgPath = params.svgFilePath;
->>>>>>> origin/main
 
     try {
       if (!targetSvgPath && params.svgContent) {
@@ -427,6 +386,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
       if (params.hold) {
         cliArgs.push('-h', String(params.hold));
+      }
+      if (params.bitrate) {
+        cliArgs.push('--bitrate', params.bitrate);
+      }
+      if (params.crf !== undefined) {
+        cliArgs.push('--crf', String(params.crf));
+      }
+      if (params.quality !== undefined) {
+        cliArgs.push('--quality', String(params.quality));
       }
 
       const rawOutput = execFileSync(command, cliArgs, {

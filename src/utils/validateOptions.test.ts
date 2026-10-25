@@ -118,83 +118,22 @@ describe('validateOptions', () => {
     );
   });
 
-<<<<<<< HEAD
-  test('should throw error when crf is out of bounds or NaN', () => {
-=======
   test('should throw error when resolution string is invalid or contains non-positive numbers', () => {
->>>>>>> origin/main
     assert.throws(
       () =>
         validateOptions({
           scale: 1,
-<<<<<<< HEAD
-          resolution: 'original',
-          transparent: false,
-          bgColor: '#ffffff',
-          crf: -1,
-        }),
-      /CRF value must be a number between 0 and 63/
-=======
           resolution: 'invalid_res',
           transparent: false,
           bgColor: '#ffffff',
         }),
       /Invalid resolution option "invalid_res"/
->>>>>>> origin/main
     );
 
     assert.throws(
       () =>
         validateOptions({
           scale: 1,
-<<<<<<< HEAD
-          resolution: 'original',
-          transparent: false,
-          bgColor: '#ffffff',
-          crf: 64,
-        }),
-      /CRF value must be a number between 0 and 63/
-    );
-  });
-
-  test('should throw error when quality is out of bounds or NaN', () => {
-    assert.throws(
-      () =>
-        validateOptions({
-          scale: 1,
-          resolution: 'original',
-          transparent: false,
-          bgColor: '#ffffff',
-          quality: 0,
-        }),
-      /Quality value must be a number between 1 and 100/
-    );
-
-    assert.throws(
-      () =>
-        validateOptions({
-          scale: 1,
-          resolution: 'original',
-          transparent: false,
-          bgColor: '#ffffff',
-          quality: 101,
-        }),
-      /Quality value must be a number between 1 and 100/
-    );
-  });
-
-  test('should throw error when bitrate is invalid', () => {
-    assert.throws(
-      () =>
-        validateOptions({
-          scale: 1,
-          resolution: 'original',
-          transparent: false,
-          bgColor: '#ffffff',
-          bitrate: 'invalid_bitrate',
-        }),
-      /Invalid bitrate format/
-=======
           resolution: '0x1080',
           transparent: false,
           bgColor: '#ffffff',
@@ -220,7 +159,6 @@ describe('validateOptions', () => {
         transparent: false,
         bgColor: '#ffffff',
       })
->>>>>>> origin/main
     );
   });
 
@@ -232,9 +170,6 @@ describe('validateOptions', () => {
         transparent: false,
         bgColor: '#ffffff',
         format: 'gif',
-        crf: 20,
-        bitrate: '5M',
-        quality: 80,
       })
     );
   });
