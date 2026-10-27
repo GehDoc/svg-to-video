@@ -468,5 +468,52 @@ describe('CLI Functionality', () => {
       assert.strictEqual(result.status, 1);
       assert.match(result.stderr, /Invalid resolution option "invalid_res"/);
     });
+
+    test('should not write intermediate PNG frame files to disk by default', () => {
+      const { inputFile } = getTestPaths('font-test');
+      const keepTestDir = `${outputDir}/no-keep-test`;
+      const result = runCli([
+        inputFile,
+        '12',
+        keepTestDir,
+        '-d',
+        '1',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(`${keepTestDir}/font-test.mp4`));
+
+      const files = fs.readdirSync(keepTestDir);
+      const pngFiles = files.filter((f) => f.endsWith('.png'));
+      assert.strictEqual(
+        pngFiles.length,
+        0,
+        `Expected 0 PNG frame files on disk, but found: ${pngFiles.join(', ')}`
+      );
+    });
+
+    test('should write intermediate PNG frame files to disk when --keep-frames is passed', () => {
+      const { inputFile } = getTestPaths('font-test');
+      const keepTestDir = `${outputDir}/keep-test`;
+      const result = runCli([
+        inputFile,
+        '12',
+        keepTestDir,
+        '-d',
+        '1',
+        '--keep-frames',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(`${keepTestDir}/font-test.mp4`));
+
+      const files = fs.readdirSync(keepTestDir);
+      const pngFiles = files.filter((f) => /^\d+\.png$/.test(f));
+      assert.strictEqual(
+        pngFiles.length,
+        12,
+        `Expected 12 PNG frame files on disk, but found ${pngFiles.length}`
+      );
+    });
   });
 });
