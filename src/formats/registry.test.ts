@@ -71,6 +71,26 @@ describe('CLIFormatRegistry', () => {
     assert.ok(args[args.length - 1].includes('test.mp4'));
   });
 
+  test('should include -f image2pipe when inputPattern is pipe:0', () => {
+    const formats = ['mp4', 'webm', 'gif', 'apng', 'mkv', 'mov'];
+    for (const fmt of formats) {
+      const gen = formatRegistry.get(fmt)!;
+      const args = gen.buildFfmpegArgs({
+        ...baseOptions,
+        outputFileName: `test.${fmt}`,
+        inputPattern: 'pipe:0',
+      });
+      assert.ok(args.includes('-f'), `Format ${fmt} missing -f`);
+      const fIdx = args.indexOf('-f');
+      assert.strictEqual(
+        args[fIdx + 1],
+        'image2pipe',
+        `Format ${fmt} expected image2pipe after -f`
+      );
+      assert.ok(args.includes('pipe:0'), `Format ${fmt} missing pipe:0`);
+    }
+  });
+
   test('should build correct FFmpeg args for GIF with transparency', () => {
     const gifGen = formatRegistry.get('gif')!;
     const args = gifGen.buildFfmpegArgs({
