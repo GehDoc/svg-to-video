@@ -278,4 +278,36 @@ The CLI uses standard `puppeteer.launch` with optional environment configuration
 
 ### Process Signals & Telemetry Flushing
 
-When the CLI completes rendering, encounters an error, or receives a process interrupt signal (`SIGINT` / `SIGTERM`), execution paths invoke `flushAnalytics()` in `src/utils/analytics.ts` to await active non-blocking Umami HTTP requests before process termination. Upon receiving `SIGINT` or `SIGTERM`, signal listeners emit `conversion-cancel`, clean up temporary `.png` frames (unless `--keep-frames` is active), flush pending telemetry payloads, and exit cleanly with status code 130.
+When the CLI completes rendering, encounters an error, or receives a process interrupt signal (`SIGINT` / `SIGTERM`), execution paths invoke `flushAnalytics()` in `src/utils/analytics.ts` to await active non-blocking Umami HTTP requests before process termination. Upon receiving `SIGINT` or `SIGTERM`, signal listeners kill the active FFmpeg process (`SIGKILL`), close the Puppeteer browser, flush pending telemetry payloads, and exit cleanly with status code 130.
+
+### CLI Render Pipeline: Pipelined Render + Encode
+
+The CLI rendering pipeline uses a **single-pass pipelined architecture** where Puppeteer frame capture and FFmpeg encoding run concurrently — no intermediate PNG files are written to disk.
+
+```
+Puppeteer (headless Chrome)
+  │  screenshot() → Buffer (in-memory PNG)
+  │
+  ├──► [--keep-frames] → fs.writeFileSync() → outDir/00001.png, 00002.png …
+  │
+  └──► stdin.write(buffer)
+              │
+              ▼
+        FFmpeg (child_process.spawn)
+          -f image2pipe -i pipe:0
+              │
+              ▼
+        outDir/output.mp4 (or .gif, .webm, …)
+```
+
+**Key design decisions:**
+
+1. **FFmpeg starts before Puppeteer** — `child_process.spawn('ffmpeg', [..., '-f', 'image2pipe', '-i', 'pipe:0', ...])` is called first. This ensures the pipe is open and ready before the first frame arrives.
+2. **`-f image2pipe`** — tells FFmpeg to treat `stdin` as a stream of concatenated image files rather than a single file. Each write to `stdin` appends one complete PNG.
+3. **`writeFrameToStdin(stdin, buffer)`** — a thin wrapper around `stdin.write()`. Resolves/rejects exclusively via the write callback (the callback always fires once data is accepted, regardless of backpressure). The return value of `write()` is intentionally ignored for resolution — it is only a flow-control hint.
+4. **`stdin.end()`** after the loop — signals EOF to FFmpeg, causing it to finalize the output container and exit cleanly.
+5. **`--keep-frames` flag** — when set, each frame buffer is _also_ written to `outDir/%05d.png` before being piped to FFmpeg. This preserves the previous behavior for debugging. On failure, any partially written frames are left on disk (intentional — useful as a debugging aid).
+6. **`postProcess` hook** — called after FFmpeg exits cleanly (exit code 0). Used by the GIF generator to inject metadata via `injectGifMetadata`.
+
+> [!NOTE]
+> The bundled system FFmpeg binary (on `$PATH`) is used directly. Zero-install fallback via `ffmpeg-static` is tracked in issue [#248](https://github.com/GehDoc/svg-to-video/issues/248).

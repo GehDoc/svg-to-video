@@ -20,16 +20,13 @@ export class MkvFormatGenerator extends BaseCLIFormatGenerator {
       outputFileName,
     } = options;
 
-    const args = [
-      '-hide_banner',
-      '-loglevel',
-      'warning',
-      '-y',
-      '-framerate',
-      String(fps),
-      '-i',
-      inputPattern,
-    ];
+    const args = ['-hide_banner', '-loglevel', 'warning', '-y'];
+
+    if (inputPattern === 'pipe:0' || inputPattern.startsWith('pipe:')) {
+      args.push('-f', 'image2pipe');
+    }
+
+    args.push('-framerate', String(fps), '-i', inputPattern);
 
     let userComment: string | undefined;
     if (metadata) {

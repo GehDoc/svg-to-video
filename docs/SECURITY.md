@@ -10,7 +10,7 @@ This document outlines the security architecture, sandboxing model, and pre-flig
 
 ### 1. Subprocess Execution & Parameter Safety
 
-- **No Shell Interpolation**: All internal CLI and FFmpeg invocations use `execFileSync` or argument arrays (e.g. `execFileSync('npx', args)`). Shell execution strings (`child_process.exec('/bin/sh')`) are strictly forbidden to prevent shell injection vulnerabilities.
+- **No Shell Interpolation**: All internal CLI and FFmpeg invocations use `child_process.spawn`, `execFileSync`, or argument arrays (e.g. `child_process.spawn('ffmpeg', args, { stdio: ['pipe', 'pipe', 'pipe'] })` or `execFileSync('npx', args)`). Shell execution strings (`child_process.exec('/bin/sh')`) are strictly forbidden to prevent shell injection vulnerabilities.
 - **Machine Payload Boundaries**: Machine interfaces (`--json`) enforce closed, typed JSON payloads (`LoggerJsonOutput`) validated at runtime with type guards (`isLoggerJsonOutput`) to prevent improper data deserialization.
 
 ### 2. Browser & Rendering Context Isolation
@@ -37,7 +37,7 @@ Before merging any PR into `main`, ensure all new or modified code satisfies the
 
 1. **Subprocess Calls**:
    - [ ] No string concatenation inside shell execution commands.
-   - [ ] `execFileSync` or argument arrays must be used for all child process calls.
+   - [ ] `spawn` or `execFileSync` with argument arrays must be used for all child process calls (never raw shell strings).
 2. **File System & Temp Cleanup**:
    - [ ] Ephemeral files must use `fs.mkdtempSync` and be cleaned up in a `finally` or `try/catch` block.
    - [ ] Path traversal vectors must be validated when resolving input/output directories.

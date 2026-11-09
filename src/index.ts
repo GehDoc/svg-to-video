@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'fs';
 import child_process from 'child_process';
+import { Writable } from 'stream';
 import puppeteer, { Page, Browser, ScreenshotOptions } from 'puppeteer';
 import { Command } from 'commander';
 import path from 'path';
@@ -14,7 +15,7 @@ import {
   ParsedSvgDimensions,
 } from '#shared/analyzeSvgAnimation.js';
 import { formatRegistry } from './formats/registry.js';
-import { CLIFormatOptions } from './formats/types.js';
+import { CLIFormatGenerator, CLIFormatOptions } from './formats/types.js';
 import { pkg } from './utils/packageInfo.js';
 import { JSDOM } from 'jsdom'; // For duration detection in Node environment
 import { Logger } from './utils/logger.js';
@@ -38,6 +39,20 @@ interface RunOptions {
   quiet: boolean;
   silent: boolean;
   json: boolean;
+}
+
+function writeFrameToStdin(stdin: Writable, buffer: Buffer): Promise<void> {
+  return new Promise((resolve, reject) => {
+    // The write() callback is always invoked once the data is accepted,
+    // regardless of backpressure — it is the only place we resolve/reject.
+    // The boolean return value of write() is only a flow-control hint and
+    // must not be used to gate resolution (doing so causes the promise to
+    // hang when canWrite is false but the callback fires before drain).
+    stdin.write(buffer, (err) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
 }
 
 async function main(): Promise<void> {
@@ -240,14 +255,20 @@ async function run(
   );
   tracker.start();
 
+  let activeBrowser: Browser | null = null;
+  let activeFfmpeg: child_process.ChildProcess | null = null;
+
   let isCancelled = false;
   const handleSignal = async (signal: string) => {
     if (isCancelled) return;
     isCancelled = true;
     logger.info(`\n⚠️ Received ${signal}. Cancelling conversion...`);
     tracker.cancel();
-    if (!options.keepFrames && totalFrames > 0 && padWidth > 0) {
-      cleanupFrames(totalFrames, padWidth, outDir, logger);
+    if (activeFfmpeg && !activeFfmpeg.killed) {
+      activeFfmpeg.kill('SIGKILL');
+    }
+    if (activeBrowser) {
+      await activeBrowser.close().catch(() => {});
     }
     await flushAnalytics();
     process.exit(130);
@@ -262,37 +283,32 @@ async function run(
   try {
     fs.mkdirSync(outDir, { recursive: true });
 
-    await createFrames(
+    await renderAndEncodeFrames({
       svg,
       parsedDim,
       fps,
       totalFrames,
       padWidth,
       outDir,
-      puppeteerArgs,
-      options.resolution,
-      options.scale,
-      options.transparent,
-      options.bgColor,
-      generator.needsColorKeying,
-      logger
-    );
-
-    convertToOutput(
       outputFileName,
-      format,
-      fps,
-      padWidth,
-      options.hold,
-      outDir,
-      options.transparent,
-      options.metadata,
-      logger
-    );
-
-    if (!options.keepFrames) {
-      cleanupFrames(totalFrames, padWidth, outDir, logger);
-    }
+      puppeteerArgs,
+      resolutionPreset: options.resolution,
+      scaleFactor: options.scale,
+      transparent: options.transparent,
+      bgColor: options.bgColor,
+      needsColorKeying: generator.needsColorKeying,
+      keepFrames: options.keepFrames,
+      hold: options.hold,
+      metadata: options.metadata,
+      generator,
+      logger,
+      onBrowserCreated: (b) => {
+        activeBrowser = b;
+      },
+      onFfmpegCreated: (f) => {
+        activeFfmpeg = f;
+      },
+    });
 
     tracker.success(totalFrames);
     await flushAnalytics();
@@ -308,13 +324,6 @@ async function run(
   } catch (error) {
     if (!isCancelled) {
       tracker.failed(error instanceof Error ? error : String(error));
-      if (!options.keepFrames) {
-        try {
-          cleanupFrames(totalFrames, padWidth, outDir, logger);
-        } catch {
-          // ignore frame cleanup error during exception handling
-        }
-      }
       await flushAnalytics();
       await logger.fatal(
         'Conversion failed',
@@ -328,56 +337,45 @@ async function run(
 }
 
 /**
- * create frame images by rendering the SVG in a headless browser and advancing the animation to the correct timestamp for each frame
+ * Resolves output viewport dimensions based on preset, parsed SVG dimensions, and scale.
  */
-async function createFrames(
-  svg: string,
-  parsedDim: ParsedSvgDimensions,
-  fps: number,
-  totalFrames: number,
-  padWidth: number,
-  outDir: string,
-  puppeteerArgs: string[],
+function calculateDimensions(
   resolutionPreset: string,
+  parsedDim: ParsedSvgDimensions,
   scaleFactor: number,
-  transparent: boolean,
-  bgColor: string | undefined,
-  needsColorKeying: boolean,
   logger: Logger
-): Promise<void> {
-  logger.info('📸 Rendering frames with Puppeteer...');
-
-  let width: number;
-  let height: number;
-
+): { width: number; height: number } {
   if (/^\d+x\d+$/i.test(resolutionPreset)) {
     const [wStr, hStr] = resolutionPreset.toLowerCase().split('x');
-    width = parseInt(wStr, 10);
-    height = parseInt(hStr, 10);
+    return { width: parseInt(wStr, 10), height: parseInt(hStr, 10) };
   } else if (resolutionPreset === '1080p') {
-    width = 1920;
-    height = 1080;
+    return { width: 1920, height: 1080 };
   } else if (resolutionPreset === '720p') {
-    width = 1280;
-    height = 720;
+    return { width: 1280, height: 720 };
   } else if (resolutionPreset === 'original') {
     if (!parsedDim.isDimensionsDetected) {
       logger.warn(
         '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1920x1080.'
       );
     }
-
-    width = Math.round(parsedDim.width * scaleFactor);
-    height = Math.round(parsedDim.height * scaleFactor);
-  } else {
-    throw new Error(
-      `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', 'original', or custom dimensions (e.g. 1080x1080).`
-    );
+    return {
+      width: Math.round(parsedDim.width * scaleFactor),
+      height: Math.round(parsedDim.height * scaleFactor),
+    };
   }
 
-  logger.info(`  Viewport:   ${width}x${height}`);
-  logger.info('🚀 Preparing Puppeteer browser...');
+  throw new Error(
+    `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', 'original', or custom dimensions (e.g. 1080x1080).`
+  );
+}
 
+/**
+ * Launches Puppeteer browser with support for explicit executable path and system Chrome fallback.
+ */
+async function launchBrowser(
+  puppeteerArgs: string[],
+  logger: Logger
+): Promise<Browser> {
   const launchOptions: Parameters<typeof puppeteer.launch>[0] = {
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox', ...puppeteerArgs],
@@ -387,170 +385,248 @@ async function createFrames(
     launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
   }
 
-  let browser: Browser;
   try {
-    browser = await puppeteer.launch(launchOptions);
+    return await puppeteer.launch(launchOptions);
   } catch (initialError) {
     if (launchOptions.executablePath) {
       throw initialError;
     }
     logger.info('🔍 Bundled Chrome not found, attempting system Chrome...');
     try {
-      browser = await puppeteer.launch({ ...launchOptions, channel: 'chrome' });
+      return await puppeteer.launch({ ...launchOptions, channel: 'chrome' });
     } catch {
       throw initialError;
     }
   }
-
-  const page: Page = await browser.newPage();
-  await page.setViewport({ width, height });
-
-  await page.setContent(svg, { waitUntil: 'domcontentloaded' });
-
-  const bgStyle = transparent
-    ? 'html, body { background: transparent !important; }'
-    : bgColor
-      ? `html, body { background-color: ${bgColor} !important; }`
-      : '';
-
-  await page.addStyleTag({
-    content: `
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      svg { width: 100%; height: 100%; display: block; }
-      ${bgStyle}
-    `.trim(),
-  });
-
-  const screenshotOptions: ScreenshotOptions = {
-    omitBackground: transparent,
-  };
-
-  const shouldKey = Boolean(transparent && bgColor && needsColorKeying);
-
-  logger.info('📸 Rendering frames with Puppeteer...');
-  for (let frame = 1; frame <= totalFrames; ++frame) {
-    logger.writeProgress(`\r📸 Rendering frame ${frame}/${totalFrames}`);
-    const timeMs = ((frame - 1) / fps) * 1000;
-    await page.evaluate(seekAnimations, timeMs);
-
-    const filename = path.join(outDir, getFrameFilename(frame, padWidth));
-    if (shouldKey) {
-      const rawScreenshotBuffer = await page.screenshot(screenshotOptions);
-      const b64Input = Buffer.from(rawScreenshotBuffer).toString('base64');
-      const keyedBase64 = await page.evaluate(
-        async (compositeFnStr, b64, bg, w, h) => {
-          let canvas = document.getElementById(
-            'matte-canvas'
-          ) as HTMLCanvasElement;
-          if (!canvas) {
-            canvas = document.createElement('canvas');
-            canvas.id = 'matte-canvas';
-            canvas.width = w;
-            canvas.height = h;
-            canvas.style.display = 'none';
-            document.body.appendChild(canvas);
-          }
-          const ctx = canvas.getContext('2d')!;
-          const img = new Image();
-          img.src = 'data:image/png;base64,' + b64;
-          await img.decode();
-          const compositeFn = new Function('return ' + compositeFnStr)();
-          compositeFn(ctx, img, w, h, bg, true);
-          return canvas.toDataURL('image/png').split(',')[1];
-        },
-        compositeFrame.toString(),
-        b64Input,
-        bgColor,
-        width,
-        height
-      );
-      fs.writeFileSync(filename, Buffer.from(keyedBase64, 'base64'));
-    } else {
-      await page.screenshot({
-        path: filename,
-        ...screenshotOptions,
-      });
-    }
-  }
-  logger.info('');
-
-  await browser.close();
 }
 
 /**
- * convert the generated frames to an output format using ffmpeg
+ * Render frames with Puppeteer and stream PNG buffers into FFmpeg stdin.
  */
-function convertToOutput(
-  outputFileName: string,
-  format: string,
-  fps: number,
-  padWidth: number,
-  hold: number,
-  outDir: string,
-  transparent: boolean,
-  metadata: string[] | undefined,
-  logger: Logger
-): void {
-  logger.info('📦 Encoding output with FFmpeg...');
-
-  const normalizedFormat = format.toLowerCase();
-  const generator = formatRegistry.get(normalizedFormat);
-  if (!generator) {
-    throw new Error(`Unsupported format: ${format}`);
-  }
-
-  const inputPattern = path.join(
-    outDir,
-    `%0${padWidth}d.${frameFileExtension}`
+async function renderAndEncodeFrames(params: {
+  svg: string;
+  parsedDim: ParsedSvgDimensions;
+  fps: number;
+  totalFrames: number;
+  padWidth: number;
+  outDir: string;
+  outputFileName: string;
+  puppeteerArgs: string[];
+  resolutionPreset: string;
+  scaleFactor: number;
+  transparent: boolean;
+  bgColor?: string;
+  needsColorKeying: boolean;
+  keepFrames: boolean;
+  hold: number;
+  metadata?: string[];
+  generator: CLIFormatGenerator;
+  logger: Logger;
+  onBrowserCreated: (browser: Browser) => void;
+  onFfmpegCreated: (ffmpeg: child_process.ChildProcess) => void;
+}): Promise<void> {
+  const { width, height } = calculateDimensions(
+    params.resolutionPreset,
+    params.parsedDim,
+    params.scaleFactor,
+    params.logger
   );
 
+  params.logger.info(`  Viewport:   ${width}x${height}`);
+
   const formatOptions: CLIFormatOptions = {
-    outputFileName,
-    fps,
-    padWidth,
-    hold: hold || 0,
-    outDir,
-    transparent: !!transparent,
-    metadata,
-    inputPattern,
+    outputFileName: params.outputFileName,
+    fps: params.fps,
+    padWidth: params.padWidth,
+    hold: params.hold || 0,
+    outDir: params.outDir,
+    transparent: !!params.transparent,
+    metadata: params.metadata,
+    inputPattern: 'pipe:0',
     pkgVersion: pkg.version,
   };
 
-  const args = generator.buildFfmpegArgs(formatOptions);
+  const args = params.generator.buildFfmpegArgs(formatOptions);
 
+  params.logger.info('📦 Encoding output with FFmpeg...');
+  const ffmpegProcess = child_process.spawn('ffmpeg', args, {
+    stdio: ['pipe', 'ignore', 'pipe'],
+  });
+  params.onFfmpegCreated(ffmpegProcess);
+
+  // Prevent unhandled EPIPE exception if FFmpeg exits before or during writes
+  ffmpegProcess.stdin.on('error', (err: NodeJS.ErrnoException) => {
+    if (err.code !== 'EPIPE' && err.code !== 'ERR_STREAM_DESTROYED') {
+      params.logger.error('FFmpeg stdin error:', err);
+    }
+  });
+
+  let ffmpegStderr = '';
+  ffmpegProcess.stderr.on('data', (chunk) => {
+    ffmpegStderr += chunk.toString();
+  });
+
+  // Track the FFmpeg exit promise separately so we can always await it in the
+  // finally block — preventing dangling rejected promises if the frame loop
+  // throws before we reach the explicit await below.
+  const ffmpegExitPromise = new Promise<{
+    code: number | null;
+    signal: NodeJS.Signals | null;
+  }>((resolve, reject) => {
+    ffmpegProcess.on('error', (err) => reject(err));
+    ffmpegProcess.on('close', (code, signal) => resolve({ code, signal }));
+  });
+  ffmpegExitPromise.catch(() => {});
+
+  params.logger.info('🚀 Preparing Puppeteer browser...');
+  const browser = await launchBrowser(params.puppeteerArgs, params.logger);
+  params.onBrowserCreated(browser);
+
+  let hasFailed = false;
   try {
-    const output = child_process.execFileSync('ffmpeg', args, {
-      encoding: 'utf8',
-    });
-    if (output) logger.info(output);
+    const page: Page = await browser.newPage();
+    await page.setViewport({ width, height });
 
-    const outputFullPath = path.join(outDir, outputFileName);
-    if (generator.postProcess) {
-      generator.postProcess(outputFullPath, formatOptions);
+    await page.setContent(params.svg, { waitUntil: 'domcontentloaded' });
+
+    const bgStyle = params.transparent
+      ? 'html, body { background: transparent !important; }'
+      : params.bgColor
+        ? `html, body { background-color: ${params.bgColor} !important; }`
+        : '';
+
+    await page.addStyleTag({
+      content: `
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        svg { width: 100%; height: 100%; display: block; }
+        ${bgStyle}
+      `.trim(),
+    });
+
+    const screenshotOptions: ScreenshotOptions = {
+      omitBackground: params.transparent,
+    };
+
+    const shouldKey = Boolean(
+      params.transparent && params.bgColor && params.needsColorKeying
+    );
+
+    const progressInterval = Math.max(1, Math.floor(params.totalFrames * 0.05));
+
+    params.logger.info('📸 Rendering frames with Puppeteer...');
+    for (let frame = 1; frame <= params.totalFrames; ++frame) {
+      if (
+        frame === 1 ||
+        frame === params.totalFrames ||
+        frame % progressInterval === 0
+      ) {
+        params.logger.writeProgress(
+          `\r📸 Rendering frame ${frame}/${params.totalFrames}`
+        );
+      }
+      const timeMs = ((frame - 1) / params.fps) * 1000;
+      await page.evaluate(seekAnimations, timeMs);
+
+      let frameBuffer: Buffer;
+      if (shouldKey) {
+        const rawScreenshotBuffer = await page.screenshot(screenshotOptions);
+        const b64Input = Buffer.from(rawScreenshotBuffer).toString('base64');
+        const keyedBase64 = await page.evaluate(
+          async (compositeFnStr, b64, bg, w, h) => {
+            let canvas = document.getElementById(
+              'matte-canvas'
+            ) as HTMLCanvasElement;
+            if (!canvas) {
+              canvas = document.createElement('canvas');
+              canvas.id = 'matte-canvas';
+              canvas.width = w;
+              canvas.height = h;
+              canvas.style.display = 'none';
+              document.body.appendChild(canvas);
+            }
+            const ctx = canvas.getContext('2d')!;
+            const img = new Image();
+            img.src = 'data:image/png;base64,' + b64;
+            await img.decode();
+            const compositeFn = new Function('return ' + compositeFnStr)();
+            compositeFn(ctx, img, w, h, bg, true);
+            return canvas.toDataURL('image/png').split(',')[1];
+          },
+          compositeFrame.toString(),
+          b64Input,
+          params.bgColor,
+          width,
+          height
+        );
+        frameBuffer = Buffer.from(keyedBase64, 'base64');
+      } else {
+        frameBuffer = (await page.screenshot(screenshotOptions)) as Buffer;
+      }
+
+      if (params.keepFrames) {
+        const filename = path.join(
+          params.outDir,
+          getFrameFilename(frame, params.padWidth)
+        );
+        fs.writeFileSync(filename, frameBuffer);
+      }
+
+      try {
+        await writeFrameToStdin(ffmpegProcess.stdin, frameBuffer);
+      } catch (writeError) {
+        // If writing to stdin failed (e.g. EPIPE), await FFmpeg to capture its real exit code and stderr
+        const { code } = await ffmpegExitPromise;
+        if (code !== 0 && code !== null) {
+          throw new Error(
+            `FFmpeg execution failed (exit code ${code}): ${ffmpegStderr.trim()}`,
+            { cause: writeError }
+          );
+        }
+        throw writeError;
+      }
+    }
+    params.logger.info('');
+
+    ffmpegProcess.stdin.end();
+
+    const { code } = await ffmpegExitPromise;
+    if (code !== 0) {
+      throw new Error(
+        `FFmpeg execution failed (exit code ${code}): ${ffmpegStderr.trim()}`
+      );
+    }
+
+    const outputFullPath = path.join(params.outDir, params.outputFileName);
+    if (params.generator.postProcess) {
+      params.generator.postProcess(outputFullPath, formatOptions);
     }
   } catch (error) {
-    const details = error instanceof Error ? error.message : String(error);
-    throw new Error(`FFmpeg execution failed: ${details}`, { cause: error });
-  }
-}
-
-/**
- * delete the generated frames
- */
-function cleanupFrames(
-  totalFrames: number,
-  padWidth: number,
-  outDir: string,
-  logger: Logger
-): void {
-  logger.info('🧹 Cleaning up temporary frames...');
-  for (let frame = 1; frame <= totalFrames; ++frame) {
-    const filename = path.join(outDir, getFrameFilename(frame, padWidth));
-    try {
-      fs.unlinkSync(filename);
-    } catch (error) {
-      logger.error(`❌ Failed to delete frame: ${filename}`, error);
+    hasFailed = true;
+    // On conversion failure, terminate FFmpeg immediately rather than letting it produce a corrupt/partial file
+    if (!ffmpegProcess.killed) {
+      ffmpegProcess.kill('SIGKILL');
     }
+    // Clean up partial output file if created
+    const outputFullPath = path.join(params.outDir, params.outputFileName);
+    if (fs.existsSync(outputFullPath)) {
+      try {
+        fs.unlinkSync(outputFullPath);
+      } catch {
+        // ignore unlink error during error handling
+      }
+    }
+    throw error;
+  } finally {
+    // End stdin cleanly only if not already failed or destroyed
+    if (
+      !hasFailed &&
+      !ffmpegProcess.stdin.destroyed &&
+      !ffmpegProcess.stdin.writableEnded
+    ) {
+      ffmpegProcess.stdin.end();
+    }
+    await ffmpegExitPromise.catch(() => {});
+    await browser?.close().catch(() => {});
   }
 }
 
