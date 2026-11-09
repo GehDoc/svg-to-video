@@ -21,18 +21,22 @@ Clarify and standardize the Spec-Driven Development (SDD) finalization workflow 
 - [x] **Agent Protocol Alignment**
   - [x] Update `AGENTS.md` Directive 7 to Review Handover (`🟡 To be reviewed`)
   - [x] Add `AGENTS.md` Directive 8 for Post-Approval Archival & Release (`🟢 Completed`)
-  - [x] Add Spec Status Lifecycle table and State Transition Triggers to `AGENTS.md`
+  - [x] Add Spec Status Lifecycle table to `AGENTS.md` (streamlined, no redundant triggers)
 - [x] **Documentation & Workflow Alignment**
   - [x] Add `## 📋 Spec-Driven Development (SDD) Protocol` to `CONTRIBUTING.md`
+  - [x] Deprecate conflicting legacy manual SDD workflow in `CONTRIBUTING.md` in favor of single protocol
   - [x] Add `### ⏱️ When to Bump (SDD Lifecycle)` to `CONTRIBUTING.md`
   - [x] Document release notes generation and PR posting workflow in `CONTRIBUTING.md`
+  - [x] Audit and normalize markdown anchors (`#` and `#-` variants) across all sections
   - [x] Validate documentation links and formatting
 
 ## 🧪 Verification Plan
 
 - [x] Manual inspection: Verify that `specs/template.md`, `AGENTS.md`, and `CONTRIBUTING.md` statuses, directives, and lifecycles are consistent.
 - [x] Git diff audit: Ensure no duplicated release note structures or conflicting guidelines.
+- [x] Subagent review: Performed DRY audit and resolved all identified redundancies and misplaced anchors.
 
 ## 📝 Change Log
 
 - 2026-11-10: Initial spec created and implemented by Antigravity agent, aligned with SmartInfoPanel SDD workflow.
+- 2026-11-10: Subagent DRY documentation review completed; removed obsolete manual workflow, normalized section anchors, and eliminated redundant trigger list.

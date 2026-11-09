@@ -69,14 +69,6 @@ When asked to start a new feature:
 | **`🟢 Completed`**      | PR approved, spec archived to `specs/completed/`, release notes posted.              |
 | **`🔴 Blocked`**        | Blocked by external dependency, environment issue, or technical question.            |
 
-### 🔄 State Transition Triggers
-
-1. **Creation (`🟠 Pending`)**: Initial state when drafting any new spec in `specs/pending/`. No functional code written yet.
-2. **Kickoff (`🟠 Pending` ➔ `🔵 In Progress`)**: Triggered when human developer gives explicit confirmation ("yes", "go", "approved"). Update status and begin implementation.
-3. **Handover for Review (`🔵 In Progress` ➔ `🟡 To be reviewed`)**: Triggered when all checklist items `[x]` are done, tests pass, docs/SEO are audited, and PR is ready for human review.
-4. **Approval & Archival (`🟡 To be reviewed` ➔ `🟢 Completed`)**: Triggered strictly AFTER human developer approves the PR on GitHub. Bump versions, mark completed, move to `specs/completed/`, commit archival, post release notes PR comment, and merge.
-5. **Blocker (`*` ➔ `🔴 Blocked`)**: Triggered when blocked by external issue or question. Update status and request guidance.
-
 ## 📂 Folder Roles
 
 - `specs/pending/`: Active "Source of Truth" for current work.
