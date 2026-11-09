@@ -79,17 +79,17 @@ The new pipeline merges these into a single concurrent phase:
 
 - [x] **Missing: `--keep-frames` disk-write should use the same `outDir`** — confirmed correct (`path.join(params.outDir, getFrameFilename(...))`).
 
-- [ ] **Missing: error handling for FFmpeg stdin pipe errors** — if FFmpeg exits early (e.g., codec error on frame 3 of 100), `ffmpegProcess.stdin.write()` will emit an `'error'` event on the stdin stream. This error propagates through `writeFrameToStdin` reject path → will throw in the for-loop → will propagate to `renderAndEncodeFrames` catch → caller. This seems OK, but the `ffmpegExitPromise` will also reject. Need to verify no unhandled rejection occurs. Consider using `Promise.race()` on `ffmpegExitPromise` and frame streaming to fail fast.
+- [x] **Missing: error handling for FFmpeg stdin pipe errors** — handled by attaching a no-op `.catch(() => {})` handler to `ffmpegExitPromise` to prevent unhandled rejection events if FFmpeg exits or errors out before/during the frame loop, and safely cleaning up in `finally`.
 
-- [ ] **Missing: `--keep-frames` does not clean up on conversion failure** — in the old code, `cleanupFrames()` was called on error. Now, with piped frames, partial frames written under `--keep-frames` are left on disk on failure. This is acceptable (debugging aid) but should be documented.
+- [x] **Missing: `--keep-frames` does not clean up on conversion failure** — documented as intentional (partial frames left on disk aid debugging when the user specifically requested frames to be kept).
 
 ### Documentation & SEO (Pre-Flight)
 
 - [x] Update `docs/ARCHITECTURE.md` — added "CLI Render Pipeline: Pipelined Render + Encode" section with architecture diagram, design decisions, and cross-reference to #248
 - [x] Update `docs/ARCHITECTURE.md` — corrected outdated signal handler description
-- [ ] Update `docs/SECURITY.md` — `stdin` pipe introduces a new data flow; confirm no shell injection since args are passed as array (spawn, not exec)
-- [ ] No SEO/web surface changes required (this is CLI-only)
-- [ ] `README.md` — no functional change visible to users (behavior identical unless `--keep-frames`)
+- [x] Update `docs/SECURITY.md` — audited subprocess calls (`child_process.spawn` with typed argument arrays) and updated security guidelines
+- [x] No SEO/web surface changes required (this is CLI-only)
+- [x] `README.md` — audited: CLI behavior and options remain identical and backward-compatible
 
 ---
 

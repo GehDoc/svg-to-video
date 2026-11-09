@@ -416,6 +416,9 @@ async function renderAndEncodeFrames(params: {
     ffmpegStderr += chunk.toString();
   });
 
+  // Track the FFmpeg exit promise separately so we can always await it in the
+  // finally block — preventing dangling rejected promises if the frame loop
+  // throws before we reach the explicit await below.
   const ffmpegExitPromise = new Promise<{
     code: number | null;
     signal: NodeJS.Signals | null;
@@ -423,6 +426,9 @@ async function renderAndEncodeFrames(params: {
     ffmpegProcess.on('error', (err) => reject(err));
     ffmpegProcess.on('close', (code, signal) => resolve({ code, signal }));
   });
+  // Attach a no-op catch so Node does not emit an unhandledRejection if the
+  // promise rejects before we await it in the frame loop or finally block.
+  ffmpegExitPromise.catch(() => {});
 
   params.logger.info('🚀 Preparing Puppeteer browser...');
 
@@ -551,6 +557,12 @@ async function renderAndEncodeFrames(params: {
       params.generator.postProcess(outputFullPath, formatOptions);
     }
   } finally {
+    // Always await FFmpeg so it is never left as a dangling process or
+    // unhandled rejection, regardless of whether the frame loop threw.
+    if (!ffmpegProcess.stdin.destroyed && !ffmpegProcess.stdin.writableEnded) {
+      ffmpegProcess.stdin.end();
+    }
+    await ffmpegExitPromise.catch(() => {});
     await browser.close().catch(() => {});
   }
 }
