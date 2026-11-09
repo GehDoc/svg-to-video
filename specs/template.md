@@ -1,7 +1,7 @@
 # Spec: [ID] - [Feature Name]
 
 **GitHub Issue**: [#IssueNumber](https://github.com/GehDoc/svg-to-video/issues/IssueNumber)
-**Status**: 🟠 Pending / 🟢 Completed / 🔴 Blocked
+**Status**: 🟠 Pending / 🔵 In Progress / 🟡 To be reviewed / 🟢 Completed / 🔴 Blocked
 
 ## 🎯 Objective
 
