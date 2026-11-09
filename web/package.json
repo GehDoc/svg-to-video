@@ -48,7 +48,7 @@
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@storybook/addon-a11y": "^10.6.1",
-    "@storybook/addon-docs": "^10.3.5",
+    "@storybook/addon-docs": "^10.6.5",
     "@storybook/addon-vitest": "^10.6.3",
     "@storybook/react": "^10.3.5",
     "@storybook/react-vite": "^10.3.5",
@@ -65,7 +65,7 @@
     "driver.js": "^1.4.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.7",
-    "eslint-plugin-storybook": "^10.3.5",
+    "eslint-plugin-storybook": "^10.6.5",
     "marked": "^18.1.1",
     "playwright": "^1.63.0",
     "sass": "^1.99.0",
