@@ -65,34 +65,21 @@ The new pipeline merges these into a single concurrent phase:
 - [x] `tests/cli.spec.ts` — integration test: 12 PNG files on disk when `--keep-frames` is passed
 
 ### Open Issues / Corrections Needed
-- [ ] **Bug: `writeFrameToStdin` double-resolve race** — the current implementation can call `resolve()` twice in some cases. When `stdin.write()` returns `false` (backpressure), the callback is registered for the error/resolve case, **and** `drain` is registered. If the write completes with no error while also draining, neither resolves until drain, which is correct. However, if `canWrite` is `true`, the callback resolves, but the `drain` listener is never added — this is correct. But if `canWrite` is `false` and the callback fires with no error, neither the callback nor `drain` calls `resolve()` — **the promise hangs forever**. Correct pattern: resolve/reject in the callback only, and use `drain` as an alternative resolution path only when backpressure is active but callback was not yet called. The correct robust implementation is:
-  ```typescript
-  function writeFrameToStdin(stdin: Writable, buffer: Buffer): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const ok = stdin.write(buffer, (err) => {
-        if (err) reject(err);
-        else resolve();
-      });
-      // No need for drain listener — the write callback fires when the data
-      // is flushed regardless of backpressure. The return value of .write()
-      // is only a hint for flow-control; the callback is always called.
-    });
-  }
-  ```
-  > The current code adds a `drain` listener on the stream that may never fire (if the write already completed), causing a leaked listener, and in some paths `resolve` is never called. **This must be fixed.**
+- [x] **Bug: `writeFrameToStdin` double-resolve race** — fixed in commit `f390638`. The callback is now the sole resolution path; the `drain` listener and conditional `canWrite` gate have been removed.
 
-- [ ] **GitHub Review Comment (line 343 `src/index.ts`)**: Reviewer asked *"why the input is now wrapped in a `param` parameter?"*. The function signature changed from positional arguments to a single `params` object. This was a stylistic refactor to handle the increased arity (11+ params). The reviewer's comment is a question, not a bug. **Response needed** in PR, or the code could be kept as-is (the params-object style is better practice for many-argument functions).
+- [x] **GitHub Review Comment (line 343 `src/index.ts`)**: Replied on GitHub — the params-object refactor is intentional to handle the increased arity.
 
-- [ ] **GitHub Review Comment (`package.json`)**: Reviewer asked *"why do you need this dependency now? and why was it correct to not have it until now?"* — this refers to `ffmpeg-static` which was added in commit `7a9d412` but **then removed** in the follow-up commit `63428e8`. The dependency is correctly absent from the final state of the branch. The PR just needs an explanatory comment that the second commit resolved this. The larger question of bundling `ffmpeg-static` as a proper runtime dependency is tracked in issue [#248](https://github.com/GehDoc/svg-to-video/issues/248) and is out of scope for this PR.
+- [x] **GitHub Review Comment (`package.json`)**: Replied on GitHub — `ffmpeg-static` was erroneously added in `7a9d412` and correctly removed in `63428e8`. Proper runtime bundling tracked in [#248](https://github.com/GehDoc/svg-to-video/issues/248).
 
-- [ ] **Missing: `--keep-frames` disk-write should use the same `outDir`** — confirm that when `keepFrames` is true, frames go to the same `outDir` as before. Currently they do (`path.join(params.outDir, getFrameFilename(...))`). ✅ Correct.
+- [x] **Missing: `--keep-frames` disk-write should use the same `outDir`** — confirmed correct (`path.join(params.outDir, getFrameFilename(...))`).
 
 - [ ] **Missing: error handling for FFmpeg stdin pipe errors** — if FFmpeg exits early (e.g., codec error on frame 3 of 100), `ffmpegProcess.stdin.write()` will emit an `'error'` event on the stdin stream. This error propagates through `writeFrameToStdin` reject path → will throw in the for-loop → will propagate to `renderAndEncodeFrames` catch → caller. This seems OK, but the `ffmpegExitPromise` will also reject. Need to verify no unhandled rejection occurs. Consider using `Promise.race()` on `ffmpegExitPromise` and frame streaming to fail fast.
 
 - [ ] **Missing: `--keep-frames` does not clean up on conversion failure** — in the old code, `cleanupFrames()` was called on error. Now, with piped frames, partial frames written under `--keep-frames` are left on disk on failure. This is acceptable (debugging aid) but should be documented.
 
 ### Documentation & SEO (Pre-Flight)
-- [ ] Update `docs/ARCHITECTURE.md` — the render pipeline section needs to reflect the merged `renderAndEncodeFrames()` approach
+- [x] Update `docs/ARCHITECTURE.md` — added "CLI Render Pipeline: Pipelined Render + Encode" section with architecture diagram, design decisions, and cross-reference to #248
+- [x] Update `docs/ARCHITECTURE.md` — corrected outdated signal handler description
 - [ ] Update `docs/SECURITY.md` — `stdin` pipe introduces a new data flow; confirm no shell injection since args are passed as array (spawn, not exec)
 - [ ] No SEO/web surface changes required (this is CLI-only)
 - [ ] `README.md` — no functional change visible to users (behavior identical unless `--keep-frames`)
@@ -139,3 +126,4 @@ The `writeFrameToStdin` function has a **potential promise hang** (see Open Issu
 - _2026-10-27: Reviewer (GehDoc) left 2 unresolved comments on PR._
 - _2026-11-09: Spec created retroactively by Antigravity to document the work, assess correctness, and identify remaining issues._
 - _2026-11-09: Confirmed `ffmpeg-static` bundling (zero-install UX) is out of scope for this PR — tracked in issue [#248](https://github.com/GehDoc/svg-to-video/issues/248)._
+- _2026-11-09: Fixed `writeFrameToStdin` promise hang bug (commit `f390638`). Replied to both GitHub review threads. Updated `docs/ARCHITECTURE.md`._
