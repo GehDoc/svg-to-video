@@ -43,15 +43,15 @@ interface RunOptions {
 
 function writeFrameToStdin(stdin: Writable, buffer: Buffer): Promise<void> {
   return new Promise((resolve, reject) => {
-    const canWrite = stdin.write(buffer, (err) => {
-      if (err) return reject(err);
-      if (canWrite) {
-        resolve();
-      }
+    // The write() callback is always invoked once the data is accepted,
+    // regardless of backpressure — it is the only place we resolve/reject.
+    // The boolean return value of write() is only a flow-control hint and
+    // must not be used to gate resolution (doing so causes the promise to
+    // hang when canWrite is false but the callback fires before drain).
+    stdin.write(buffer, (err) => {
+      if (err) reject(err);
+      else resolve();
     });
-    if (!canWrite) {
-      stdin.once('drain', resolve);
-    }
   });
 }
 
