@@ -1,1 +1,0 @@
-import{t as e}from"./iframe-CZDPw-v4.js";e();
