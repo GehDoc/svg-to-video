@@ -511,11 +511,19 @@ async function renderAndEncodeFrames(params: {
       params.transparent && params.bgColor && params.needsColorKeying
     );
 
+    const progressInterval = Math.max(1, Math.floor(params.totalFrames * 0.05));
+
     params.logger.info('📸 Rendering frames with Puppeteer...');
     for (let frame = 1; frame <= params.totalFrames; ++frame) {
-      params.logger.writeProgress(
-        `\r📸 Rendering frame ${frame}/${params.totalFrames}`
-      );
+      if (
+        frame === 1 ||
+        frame === params.totalFrames ||
+        frame % progressInterval === 0
+      ) {
+        params.logger.writeProgress(
+          `\r📸 Rendering frame ${frame}/${params.totalFrames}`
+        );
+      }
       const timeMs = ((frame - 1) / params.fps) * 1000;
       await page.evaluate(seekAnimations, timeMs);
 

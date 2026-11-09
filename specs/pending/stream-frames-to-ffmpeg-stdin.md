@@ -99,6 +99,8 @@ Following architectural and stream safety code review, the following improvement
   - Separated resolution preset parsing and original dimension scaling into a pure helper function.
 - [x] **Architecture Refactoring: Extract `launchBrowser`**
   - Moved Puppeteer executable detection, system Chrome fallback, and launch logic into a dedicated helper.
+- [x] **Performance: Throttle CLI frame progress logging to 5% intervals**
+  - Throttled `writeProgress` in the render loop so it only updates at 5% intervals (plus frame 1 and final frame), preventing terminal stdout churn on large frame sequences.
 - [x] **Verification & Formatting**
   - Ran `npm run check:fast` (lint, prettier, type-check).
   - Ran `npm run test:unit` and `npm run test:cli`.
