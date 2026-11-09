@@ -16,10 +16,12 @@ Eliminate all intermediate PNG frame files from the CLI/MCP rendering pipeline b
 ### Core Idea
 
 Previously the pipeline had two sequential phases:
+
 1. **Render** — Puppeteer writes N PNG files to `outDir/`
 2. **Encode** — FFmpeg reads from `outDir/%0Nd.png` pattern, then cleanup
 
 The new pipeline merges these into a single concurrent phase:
+
 1. **Render + Encode (pipelined)** — Puppeteer captures each frame as an in-memory `Buffer`, which is immediately written to FFmpeg's `stdin`. FFmpeg is started first (before Puppeteer) and reads from `pipe:0` using `-f image2pipe`.
 
 ### Key Technologies
@@ -31,19 +33,20 @@ The new pipeline merges these into a single concurrent phase:
 
 ### Architecture Change Summary
 
-| Before | After |
-|--------|-------|
-| `createFrames()` + `convertToOutput()` + `cleanupFrames()` (3 separate functions) | `renderAndEncodeFrames()` (single merged async function) |
-| `child_process.execFileSync('ffmpeg', ...)` — synchronous, blocking | `child_process.spawn('ffmpeg', ...)` — async, with stdin pipe |
-| Input pattern: `outDir/%04d.png` | Input pattern: `pipe:0` |
-| Frames always written to disk; deleted after unless `--keep-frames` | Frames **never** written to disk unless `--keep-frames` |
-| Signal handler cleaned up frame files | Signal handler kills FFmpeg process + closes browser |
+| Before                                                                            | After                                                         |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `createFrames()` + `convertToOutput()` + `cleanupFrames()` (3 separate functions) | `renderAndEncodeFrames()` (single merged async function)      |
+| `child_process.execFileSync('ffmpeg', ...)` — synchronous, blocking               | `child_process.spawn('ffmpeg', ...)` — async, with stdin pipe |
+| Input pattern: `outDir/%04d.png`                                                  | Input pattern: `pipe:0`                                       |
+| Frames always written to disk; deleted after unless `--keep-frames`               | Frames **never** written to disk unless `--keep-frames`       |
+| Signal handler cleaned up frame files                                             | Signal handler kills FFmpeg process + closes browser          |
 
 ---
 
 ## ✅ Task List
 
 ### Infrastructure
+
 - [x] Update `src/index.ts`: merge render+encode into `renderAndEncodeFrames()` params-object function
 - [x] Update all 6 format generators to inject `-f image2pipe` before `-i pipe:0` when `inputPattern` starts with `pipe:`
 - [x] Remove old `createFrames()`, `convertToOutput()`, `cleanupFrames()` functions
@@ -51,6 +54,7 @@ The new pipeline merges these into a single concurrent phase:
   > **Out of scope**: properly bundling `ffmpeg-static` as a runtime `dependency` to solve the zero-install UX problem for end-users (issue [#248](https://github.com/GehDoc/svg-to-video/issues/248)) requires also rethinking the CI FFmpeg installation steps and is tracked separately.
 
 ### Core Logic
+
 - [x] Implement `writeFrameToStdin()` with backpressure handling (`drain` event)
 - [x] Start FFmpeg process **before** Puppeteer render loop (so it is ready to receive frames)
 - [x] Stream each captured frame buffer directly to `ffmpegProcess.stdin`
@@ -60,11 +64,13 @@ The new pipeline merges these into a single concurrent phase:
 - [x] Update signal handler: kill active FFmpeg + close active browser on SIGINT/SIGTERM (instead of cleanup frames)
 
 ### Tests
+
 - [x] `src/formats/registry.test.ts` — unit test: all 6 generators produce `-f image2pipe` when `inputPattern === 'pipe:0'`
 - [x] `tests/cli.spec.ts` — integration test: no PNG files on disk by default after conversion
 - [x] `tests/cli.spec.ts` — integration test: 12 PNG files on disk when `--keep-frames` is passed
 
 ### Open Issues / Corrections Needed
+
 - [x] **Bug: `writeFrameToStdin` double-resolve race** — fixed in commit `f390638`. The callback is now the sole resolution path; the `drain` listener and conditional `canWrite` gate have been removed.
 
 - [x] **GitHub Review Comment (line 343 `src/index.ts`)**: Replied on GitHub — the params-object refactor is intentional to handle the increased arity.
@@ -78,6 +84,7 @@ The new pipeline merges these into a single concurrent phase:
 - [ ] **Missing: `--keep-frames` does not clean up on conversion failure** — in the old code, `cleanupFrames()` was called on error. Now, with piped frames, partial frames written under `--keep-frames` are left on disk on failure. This is acceptable (debugging aid) but should be documented.
 
 ### Documentation & SEO (Pre-Flight)
+
 - [x] Update `docs/ARCHITECTURE.md` — added "CLI Render Pipeline: Pipelined Render + Encode" section with architecture diagram, design decisions, and cross-reference to #248
 - [x] Update `docs/ARCHITECTURE.md` — corrected outdated signal handler description
 - [ ] Update `docs/SECURITY.md` — `stdin` pipe introduces a new data flow; confirm no shell injection since args are passed as array (spawn, not exec)
@@ -101,17 +108,17 @@ The new pipeline merges these into a single concurrent phase:
 
 ### Branch: `jules-14619308868444751465-2bf4228c`
 
-| Commit | Description | Status |
-|--------|-------------|--------|
-| `7a9d412` | Main refactor: stream PNG buffers to FFmpeg stdin | ✅ Core logic done |
-| `63428e8` | Remove erroneously added `ffmpeg-static` dev dependency | ✅ Cleanup done |
+| Commit    | Description                                             | Status             |
+| --------- | ------------------------------------------------------- | ------------------ |
+| `7a9d412` | Main refactor: stream PNG buffers to FFmpeg stdin       | ✅ Core logic done |
+| `63428e8` | Remove erroneously added `ffmpeg-static` dev dependency | ✅ Cleanup done    |
 
 ### Open GitHub Review Threads (2 unresolved)
 
-| File | Comment | Resolution |
-|------|---------|------------|
+| File               | Comment                                                | Resolution                                                          |
+| ------------------ | ------------------------------------------------------ | ------------------------------------------------------------------- |
 | `src/index.ts:343` | "why the input is now wrapped in a `param` parameter?" | Needs PR reply; the params-object refactor is intentional and valid |
-| `package.json` | "why do you need this dependency now?" | Fixed in `63428e8` — needs PR reply to close thread |
+| `package.json`     | "why do you need this dependency now?"                 | Fixed in `63428e8` — needs PR reply to close thread                 |
 
 ### Critical Bug to Fix Before Merge
 
