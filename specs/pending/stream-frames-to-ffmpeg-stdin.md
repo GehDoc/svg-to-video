@@ -83,7 +83,25 @@ The new pipeline merges these into a single concurrent phase:
 
 - [x] **Missing: `--keep-frames` does not clean up on conversion failure** — documented as intentional (partial frames left on disk aid debugging when the user specifically requested frames to be kept).
 
-### Documentation & SEO (Pre-Flight)
+### Code Review & Hardening Task List (Post-Review TODOs)
+
+Following architectural and stream safety code review, the following improvements have been implemented and verified:
+
+- [x] **Stream Safety: Guard `ffmpegProcess.stdin` against unhandled `EPIPE`**
+  - Added explicit `ffmpegProcess.stdin.on('error', ...)` handler ignoring benign `EPIPE`/`ERR_STREAM_DESTROYED` to prevent unhandled stream crash when FFmpeg exits prematurely.
+- [x] **Subprocess Safety: Ignore unconsumed `stdout` pipe to prevent deadlock**
+  - Configured `stdio: ['pipe', 'ignore', 'pipe']` instead of allocating an unconsumed pipe that can deadlock on 64 KB buffer saturation.
+- [x] **Diagnostics: Surface FFmpeg `stderr` when frame write fails**
+  - If `writeFrameToStdin()` rejects (e.g. broken pipe), await `ffmpegExitPromise` to extract and report FFmpeg's actual stderr error message.
+- [x] **Data Integrity: Terminate FFmpeg and cleanup partial file on render failure**
+  - If an error occurs in the render loop, kill FFmpeg with `SIGKILL` instead of calling `stdin.end()` (which produces corrupt/partial files) and unlink any partial output file in `outDir`.
+- [x] **Architecture Refactoring: Extract `calculateDimensions`**
+  - Separated resolution preset parsing and original dimension scaling into a pure helper function.
+- [x] **Architecture Refactoring: Extract `launchBrowser`**
+  - Moved Puppeteer executable detection, system Chrome fallback, and launch logic into a dedicated helper.
+- [x] **Verification & Formatting**
+  - Ran `npm run check:fast` (lint, prettier, type-check).
+  - Ran `npm run test:unit` and `npm run test:cli`.
 
 - [x] Update `docs/ARCHITECTURE.md` — added "CLI Render Pipeline: Pipelined Render + Encode" section with architecture diagram, design decisions, and cross-reference to #248
 - [x] Update `docs/ARCHITECTURE.md` — corrected outdated signal handler description

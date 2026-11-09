@@ -337,6 +337,70 @@ async function run(
 }
 
 /**
+ * Resolves output viewport dimensions based on preset, parsed SVG dimensions, and scale.
+ */
+function calculateDimensions(
+  resolutionPreset: string,
+  parsedDim: ParsedSvgDimensions,
+  scaleFactor: number,
+  logger: Logger
+): { width: number; height: number } {
+  if (/^\d+x\d+$/i.test(resolutionPreset)) {
+    const [wStr, hStr] = resolutionPreset.toLowerCase().split('x');
+    return { width: parseInt(wStr, 10), height: parseInt(hStr, 10) };
+  } else if (resolutionPreset === '1080p') {
+    return { width: 1920, height: 1080 };
+  } else if (resolutionPreset === '720p') {
+    return { width: 1280, height: 720 };
+  } else if (resolutionPreset === 'original') {
+    if (!parsedDim.isDimensionsDetected) {
+      logger.warn(
+        '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1920x1080.'
+      );
+    }
+    return {
+      width: Math.round(parsedDim.width * scaleFactor),
+      height: Math.round(parsedDim.height * scaleFactor),
+    };
+  }
+
+  throw new Error(
+    `Invalid resolution preset: ${resolutionPreset}. Expected '1080p', '720p', 'original', or custom dimensions (e.g. 1080x1080).`
+  );
+}
+
+/**
+ * Launches Puppeteer browser with support for explicit executable path and system Chrome fallback.
+ */
+async function launchBrowser(
+  puppeteerArgs: string[],
+  logger: Logger
+): Promise<Browser> {
+  const launchOptions: Parameters<typeof puppeteer.launch>[0] = {
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', ...puppeteerArgs],
+  };
+
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+  }
+
+  try {
+    return await puppeteer.launch(launchOptions);
+  } catch (initialError) {
+    if (launchOptions.executablePath) {
+      throw initialError;
+    }
+    logger.info('🔍 Bundled Chrome not found, attempting system Chrome...');
+    try {
+      return await puppeteer.launch({ ...launchOptions, channel: 'chrome' });
+    } catch {
+      throw initialError;
+    }
+  }
+}
+
+/**
  * Render frames with Puppeteer and stream PNG buffers into FFmpeg stdin.
  */
 async function renderAndEncodeFrames(params: {
@@ -361,33 +425,12 @@ async function renderAndEncodeFrames(params: {
   onBrowserCreated: (browser: Browser) => void;
   onFfmpegCreated: (ffmpeg: child_process.ChildProcess) => void;
 }): Promise<void> {
-  let width: number;
-  let height: number;
-
-  if (/^\d+x\d+$/i.test(params.resolutionPreset)) {
-    const [wStr, hStr] = params.resolutionPreset.toLowerCase().split('x');
-    width = parseInt(wStr, 10);
-    height = parseInt(hStr, 10);
-  } else if (params.resolutionPreset === '1080p') {
-    width = 1920;
-    height = 1080;
-  } else if (params.resolutionPreset === '720p') {
-    width = 1280;
-    height = 720;
-  } else if (params.resolutionPreset === 'original') {
-    if (!params.parsedDim.isDimensionsDetected) {
-      params.logger.warn(
-        '⚠️ Warning: Could not detect SVG dimensions. Defaulting to 1920x1080.'
-      );
-    }
-
-    width = Math.round(params.parsedDim.width * params.scaleFactor);
-    height = Math.round(params.parsedDim.height * params.scaleFactor);
-  } else {
-    throw new Error(
-      `Invalid resolution preset: ${params.resolutionPreset}. Expected '1080p', '720p', 'original', or custom dimensions (e.g. 1080x1080).`
-    );
-  }
+  const { width, height } = calculateDimensions(
+    params.resolutionPreset,
+    params.parsedDim,
+    params.scaleFactor,
+    params.logger
+  );
 
   params.logger.info(`  Viewport:   ${width}x${height}`);
 
@@ -407,9 +450,16 @@ async function renderAndEncodeFrames(params: {
 
   params.logger.info('📦 Encoding output with FFmpeg...');
   const ffmpegProcess = child_process.spawn('ffmpeg', args, {
-    stdio: ['pipe', 'pipe', 'pipe'],
+    stdio: ['pipe', 'ignore', 'pipe'],
   });
   params.onFfmpegCreated(ffmpegProcess);
+
+  // Prevent unhandled EPIPE exception if FFmpeg exits before or during writes
+  ffmpegProcess.stdin.on('error', (err: NodeJS.ErrnoException) => {
+    if (err.code !== 'EPIPE' && err.code !== 'ERR_STREAM_DESTROYED') {
+      params.logger.error('FFmpeg stdin error:', err);
+    }
+  });
 
   let ffmpegStderr = '';
   ffmpegProcess.stderr.on('data', (chunk) => {
@@ -426,39 +476,13 @@ async function renderAndEncodeFrames(params: {
     ffmpegProcess.on('error', (err) => reject(err));
     ffmpegProcess.on('close', (code, signal) => resolve({ code, signal }));
   });
-  // Attach a no-op catch so Node does not emit an unhandledRejection if the
-  // promise rejects before we await it in the frame loop or finally block.
   ffmpegExitPromise.catch(() => {});
 
   params.logger.info('🚀 Preparing Puppeteer browser...');
-
-  const launchOptions: Parameters<typeof puppeteer.launch>[0] = {
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', ...params.puppeteerArgs],
-  };
-
-  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
-    launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
-  }
-
-  let browser: Browser;
-  try {
-    browser = await puppeteer.launch(launchOptions);
-  } catch (initialError) {
-    if (launchOptions.executablePath) {
-      throw initialError;
-    }
-    params.logger.info(
-      '🔍 Bundled Chrome not found, attempting system Chrome...'
-    );
-    try {
-      browser = await puppeteer.launch({ ...launchOptions, channel: 'chrome' });
-    } catch {
-      throw initialError;
-    }
-  }
+  const browser = await launchBrowser(params.puppeteerArgs, params.logger);
   params.onBrowserCreated(browser);
 
+  let hasFailed = false;
   try {
     const page: Page = await browser.newPage();
     await page.setViewport({ width, height });
@@ -539,7 +563,19 @@ async function renderAndEncodeFrames(params: {
         fs.writeFileSync(filename, frameBuffer);
       }
 
-      await writeFrameToStdin(ffmpegProcess.stdin, frameBuffer);
+      try {
+        await writeFrameToStdin(ffmpegProcess.stdin, frameBuffer);
+      } catch (writeError) {
+        // If writing to stdin failed (e.g. EPIPE), await FFmpeg to capture its real exit code and stderr
+        const { code } = await ffmpegExitPromise;
+        if (code !== 0 && code !== null) {
+          throw new Error(
+            `FFmpeg execution failed (exit code ${code}): ${ffmpegStderr.trim()}`,
+            { cause: writeError }
+          );
+        }
+        throw writeError;
+      }
     }
     params.logger.info('');
 
@@ -548,7 +584,7 @@ async function renderAndEncodeFrames(params: {
     const { code } = await ffmpegExitPromise;
     if (code !== 0) {
       throw new Error(
-        `FFmpeg execution failed (exit code ${code}): ${ffmpegStderr}`
+        `FFmpeg execution failed (exit code ${code}): ${ffmpegStderr.trim()}`
       );
     }
 
@@ -556,14 +592,33 @@ async function renderAndEncodeFrames(params: {
     if (params.generator.postProcess) {
       params.generator.postProcess(outputFullPath, formatOptions);
     }
+  } catch (error) {
+    hasFailed = true;
+    // On conversion failure, terminate FFmpeg immediately rather than letting it produce a corrupt/partial file
+    if (!ffmpegProcess.killed) {
+      ffmpegProcess.kill('SIGKILL');
+    }
+    // Clean up partial output file if created
+    const outputFullPath = path.join(params.outDir, params.outputFileName);
+    if (fs.existsSync(outputFullPath)) {
+      try {
+        fs.unlinkSync(outputFullPath);
+      } catch {
+        // ignore unlink error during error handling
+      }
+    }
+    throw error;
   } finally {
-    // Always await FFmpeg so it is never left as a dangling process or
-    // unhandled rejection, regardless of whether the frame loop threw.
-    if (!ffmpegProcess.stdin.destroyed && !ffmpegProcess.stdin.writableEnded) {
+    // End stdin cleanly only if not already failed or destroyed
+    if (
+      !hasFailed &&
+      !ffmpegProcess.stdin.destroyed &&
+      !ffmpegProcess.stdin.writableEnded
+    ) {
       ffmpegProcess.stdin.end();
     }
     await ffmpegExitPromise.catch(() => {});
-    await browser.close().catch(() => {});
+    await browser?.close().catch(() => {});
   }
 }
 
