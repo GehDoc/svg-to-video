@@ -81,27 +81,7 @@ To initiate a new feature or fix using an AI agent (such as Antigravity, Claude,
 
 > _"Read AGENTS.md and start a plan for GitHub Issue #XX"_
 
-**Automated Workflow:**
-
-1. Branch creation: `feat/XX-description` (or `feat/description` if unlinked).
-2. Spec initialization in `specs/pending/XX-description.md` from template.
-3. Commit initial spec and create PR immediately for human review.
-
-### 🧑‍💻 Manual SDD Workflow
-
-If developing manually, follow these steps:
-
-1. **Branching**: Create a feature branch from `main`:
-   - Linked to issue `#XX`: `git checkout -b feat/XX-short-description`
-   - Unlinked: `git checkout -b feat/short-description`
-2. **Spec-First**: Create a specification file in `specs/pending/` copied from `specs/template.md`.
-3. **Implement & Trace**: Implement feature while checking off tasks `[x]` in the spec. Update the **Technical Strategy** if implementation details evolve.
-4. **Pre-flight Audit & Verification**:
-   - Verify all spec tasks are checked off.
-   - Audit documentation and SEO metadata per [Maintaining SEO & Metadata](#-maintaining-seo--metadata).
-   - Run full project verification: `npm run check`.
-   - Record verification results in the spec's **Change Log**.
-5. **Archive & Merge**: Update spec status to `🟢 Completed`, move file to `specs/completed/`, and merge branch via PR.
+All development—whether guided by AI agents or executed manually by human contributors—follows the unified [Spec-Driven Development (SDD) Protocol](#spec-driven-development-protocol).
 
 ### 📦 Dependency Management (Vitest & Storybook)
 
@@ -322,10 +302,34 @@ The Web Studio uses cookie-less [Umami Analytics](https://umami.is/) for privacy
 
 ---
 
+## 📋 Spec-Driven Development (SDD) Protocol
+
+<a id="spec-driven-development-protocol"></a>
+<a id="-spec-driven-development-protocol"></a>
+
+All significant modifications, refactoring tasks, or new features follow this flow:
+
+1. **Create Branch**: `feat/description` or `fix/description` (or `feat/XX-description` if linked to GitHub issue `#XX`).
+2. **Draft Spec**: Copy `specs/template.md` to `specs/pending/[name].md`. Detail the objective, technical strategy, task checkboxes, and verification plan (`🟠 Pending`). Commit the initial spec, push to origin, and open a Pull Request via `gh pr create`.
+3. **Kickoff**: Upon explicit alignment/confirmation ("yes", "go", "approved"), change spec status to `🔵 In Progress` and implement changes incrementally, ticking off `[x]` checkboxes in the spec as tasks are verified.
+4. **Documentation, Security & SEO Audit**: Systematically audit and update all public surfaces per the [SEO & Metadata Audit Checklist](#-seo--metadata-audit-checklist).
+5. **Review Handover**: Mark the spec status as `🟡 To be reviewed` (keep the file in `specs/pending/`), commit, push the branch, and update the Pull Request description with verification evidence and spec status ready for human review.
+6. **Post-Approval Archival & Release**: Once the Pull Request is approved on GitHub by the human developer:
+   - Bump version across root `package.json` and `web/package.json`, then run `npm install` to synchronize `package-lock.json` per the [Versioning Policy](#-versioning-policy).
+   - Update spec status to `🟢 Completed` and move the file from `specs/pending/[name].md` to `specs/completed/[name].md`.
+   - Commit the archival and version bump step on the branch (`chore(release): bump version to X.Y.Z and archive spec`).
+   - Compose and post the Release Title and Release Notes as a PR comment following the [Release Title & Note Guidelines](#-release-title--note-guidelines).
+   - Merge the Pull Request to `main` (branch deletion is automatic on GitHub).
+   - Tag `vX.Y.Z` is pushed to trigger the automated release pipeline, or published via `gh release create`.
+
+---
+
 ## 🔀 Pull Request & Code Guidelines
 
 <a id="pull-request--code-guidelines"></a>
+<a id="-pull-request--code-guidelines"></a>
 <a id="title--naming-standards-prs--releases"></a>
+<a id="-title--naming-standards-prs--releases"></a>
 
 ### 🎯 Purpose-Driven Principle ("Why & What", not "How")
 
@@ -364,10 +368,9 @@ Introduces high-fidelity aPNG and optimized GIF export capabilities to the CLI t
 ## 🚀 Release Management & Publishing
 
 <a id="release-management--publishing"></a>
+<a id="-release-management--publishing"></a>
 <a id="versioning-policy"></a>
 <a id="-versioning-policy"></a>
-<a id="release-note-best-practices"></a>
-<a id="-release-note-best-practices"></a>
 
 ### 🏷 Versioning Policy
 
@@ -379,7 +382,19 @@ To maintain project synchronization, every release or version bump must update t
 
 **Note:** The MCP Registry Manifest (`mcp.json`) uses placeholder versions (`0.0.0-0`) in source control. Real package versions and Docker tags are injected dynamically by GitHub Actions during the release pipeline, so you do not need to edit `mcp.json` manually during version bumps.
 
-Use `npm version [patch|minor|major]` or update `package.json` and `mcp.json` files manually, then run `npm install` to update `package-lock.json` before committing.
+Use `npm version [patch|minor|major]` or update `package.json` and `web/package.json` manually, then run `npm install` to update `package-lock.json` before committing.
+
+### ⏱️ When to Bump (SDD Lifecycle)
+
+<a id="when-to-bump"></a>
+<a id="-when-to-bump"></a>
+
+In the Spec-Driven Development cycle, version bumping is performed in **Step 6: Post-Approval Archival & Release**, strictly **after** the human developer approves the Pull Request on GitHub. This avoids version collisions across parallel feature branches and bundles the version bump cleanly with the spec archival and release notes.
+
+<a id="release-title--note-guidelines"></a>
+<a id="-release-title--note-guidelines"></a>
+<a id="release-note-best-practices"></a>
+<a id="-release-note-best-practices"></a>
 
 ### 📝 Release Title & Note Guidelines
 
@@ -387,6 +402,7 @@ Releases strictly adhere to the **Purpose-Driven Principle** and **Result-Orient
 
 - **Release Title Format**: `X.Y.Z - [Purpose-Driven Title]` (e.g., `0.22.0 - Standalone CLI Package & Automated Release Pipeline`). Do **NOT** prefix titles with `"Release "`.
 - **Result-Oriented Focus**: Focus strictly on end-user value, new capabilities, and final system results. Do **NOT** list internal development commits or refactor steps.
+- **Generation & PR Posting Workflow**: Release notes are drafted directly from the active spec's **Objective**, **Task List**, and **Change Log**. Upon human approval of the PR, post the finalized Release Title and Release Notes as a structured comment on the Pull Request (prefixed with `## 🚀 Release vX.Y.Z`). Release notes should **never** be committed as `.md` files in git—the PR comment serves as the canonical source text when publishing the GitHub Release (`gh release create vX.Y.Z`).
 - **Release Note Structure**:
   - **Punchline**: A 2-3 sentence summary explaining the primary user value.
   - **Structured Categories**:
@@ -468,9 +484,12 @@ Before triggering a production release tag `vX.Y.Z`, verify the npm package and 
   docker push gehdoc/svg-to-video:beta
   ```
 
+<a id="automated-release-pipeline"></a>
+<a id="-automated-release-pipeline"></a>
+
 ### ⚙️ Automated Release Pipeline
 
-Releases are triggered by pushing a version tag `vX.Y.Z` on the `main` branch. Release notes should **never** be committed as `.md` files in git.
+Releases are triggered by pushing a version tag `vX.Y.Z` on the `main` branch. Release notes should **never** be committed as `.md` files in git (see [Release Title & Note Guidelines](#-release-title--note-guidelines)).
 
 #### Publishing Methods
 
@@ -498,8 +517,12 @@ Publishing the release tag `vX.Y.Z` automatically triggers `.github/workflows/re
 ## 🔍 Maintaining SEO & Metadata
 
 <a id="maintaining-seo--metadata"></a>
+<a id="-maintaining-seo--metadata"></a>
 
 When adding new features or core capabilities, systematically update public-facing metadata for maximum discoverability:
+
+<a id="seo--metadata-audit-checklist"></a>
+<a id="-seo--metadata-audit-checklist"></a>
 
 ### 📋 SEO & Metadata Audit Checklist
 
