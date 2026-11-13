@@ -9,9 +9,9 @@ const nextConfig = {
   // Required for GitHub Pages project site deployment
   basePath: isProd ? '/svg-to-video' : '',
   assetPrefix: isProd ? '/svg-to-video/' : '',
-  // Ensure output is standalone for static export or serverless deployment
+  // Keep the Next build/dev cache separate from the static export in `out/`.
   output: 'export',
-  distDir: 'dist', // Match existing Vite output directory
+  distDir: '.next',
   images: {
     unoptimized: true, // Required for 'output: export'
   },

@@ -24,7 +24,6 @@ dist-ssr
 *.sw?
 
 *storybook.log
-storybook-static
 
 # Vitest
 .vitest-attachments
@@ -35,6 +34,11 @@ __screenshots__
 out/
 next-env.d.ts
 *.tsbuildinfo
+
+# Generated deployment and Storybook outputs
+pages-site/
+storybook-static/
+demo-assets/
 
 # Test Results
 test-results/
