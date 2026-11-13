@@ -1,0 +1,21 @@
+import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{n as t,t as n}from"./Dropzone-B1qeqr98.js";var r,i,a,o,s,c;function l(){return(l=e((()=>{t(),r={title:`Components/Dropzone`,component:n},i={args:{svgContent:null,isDragging:!1}},a={args:{svgContent:`<svg></svg>`,isDragging:!1}},o={args:{svgContent:null,disabled:!0}},s={args:{svgContent:`<svg></svg>`,disabled:!0}},c=[`Default`,`HasContent`,`Disabled`,`DisabledWithContent`],i.parameters={...i.parameters,docs:{...i.parameters?.docs,source:{originalSource:`{
+  args: {
+    svgContent: null,
+    isDragging: false
+  }
+}`,...i.parameters?.docs?.source}}},a.parameters={...a.parameters,docs:{...a.parameters?.docs,source:{originalSource:`{
+  args: {
+    svgContent: '<svg></svg>',
+    isDragging: false
+  }
+}`,...a.parameters?.docs?.source}}},o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
+  args: {
+    svgContent: null,
+    disabled: true
+  }
+}`,...o.parameters?.docs?.source}}},s.parameters={...s.parameters,docs:{...s.parameters?.docs,source:{originalSource:`{
+  args: {
+    svgContent: '<svg></svg>',
+    disabled: true
+  }
+}`,...s.parameters?.docs?.source}}}})))()}l();export{i as Default,o as Disabled,s as DisabledWithContent,a as HasContent,c as __namedExportsOrder,r as default};
