@@ -1,7 +1,7 @@
 # Spec: 248 - Simpler, Reliable FFmpeg Fallback, Docker & CI Build Optimization
 
 **GitHub Issue**: [#248](https://github.com/GehDoc/svg-to-video/issues/248)
-**Status**: 🟡 To be reviewed
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -126,3 +126,4 @@ Just as Puppeteer is bundled as an npm package with support for `PUPPETEER_EXECU
 - 2026-11-10: User confirmed strategy: mirror Puppeteer by adding `ffmpeg-static` as an optional dependency fallback, avoiding any custom manual runtime download scripts.
 - 2026-11-10: Implemented `src/utils/ffmpegResolver.ts`, integrated into `src/index.ts` and `tests/helpers/e2e.ts`, added unit & integration tests, updated Dockerfile and CI action, audited documentation and security.
 - 2026-11-18: Conducted CI duration benchmark comparing branch against average of 2 main runs. Documented answers to PR review comments (Chromium parity, optional dependencies, ffprobe separation). Created reusable `scripts/compare-ci.ts` (`npm run benchmark:ci`) and documented in `CONTRIBUTING.md`.
+- 2026-11-18: PR #256 approved by human developer after benchmark verified 25% total workflow wall-clock reduction (5m 41s vs 7m 35s avg). Version bumped to 0.35.0, spec archived to `specs/completed/`.
