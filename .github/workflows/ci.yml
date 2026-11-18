@@ -210,3 +210,4 @@ jobs:
           folder: web/pages-site
           branch: gh-pages
           clean: true
+          force_orphan: true
