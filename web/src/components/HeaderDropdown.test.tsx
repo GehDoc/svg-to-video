@@ -29,7 +29,7 @@ test('HeaderDropdown renders all sections and links', () => {
   const coffeeLink = screen.getByRole('link', { name: /buy me a coffee/i });
   expect(coffeeLink).toHaveAttribute(
     'href',
-    'https://github.com/GehDoc/svg-to-video/?sponsor=1'
+    'https://github.com/sponsors/GehDoc'
   );
 
   // Check about section

@@ -91,7 +91,7 @@ test('SuccessView renders donation support link and tracks click', () => {
   });
   expect(sponsorLink).toHaveAttribute(
     'href',
-    'https://github.com/GehDoc/svg-to-video/?sponsor=1'
+    'https://github.com/sponsors/GehDoc'
   );
 
   fireEvent.click(sponsorLink);
