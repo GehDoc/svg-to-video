@@ -190,7 +190,10 @@ formatRegistry.register(new ApngFormatGenerator());
 
 - **Canvas Initialization**: Always use `canvas.getContext('2d', { alpha: true })` for transparency support. For non-transparent exports, explicitly fill the background with the chosen color.
 - **Encoder Configuration**: When using transparency, ensure `alpha: 'keep'` is passed to the `CanvasSource` configuration.
-- **GIF Transparency**: The `GifEncoder` uses an optimal palette reservation strategy. When transparency is enabled, opaque pixels ($\alpha \ge 128$) across all frames are quantized using high-precision `rgb565` into up to 255 color slots, reserving index 0 for fully transparent `rgba(0,0,0,0)`. Transparent pixels ($\alpha < 128$) map directly to index 0, eliminating intermediate semi-transparent alpha pollution and edge flickering. CLI rendering mirrors this temporal stability via FFmpeg's deterministic Bayer ordered dithering (`paletteuse=dither=bayer:bayer_scale=3`).
+- **GIF Transparency & Dithering**: The Web Studio's `GifEncoder` uses an optimal palette reservation and dithering strategy:
+  - **Palette Quantization**: When transparency is enabled, opaque pixels ($\alpha \ge 128$) across all frames are quantized using high-precision `rgb565` into up to 255 color slots, reserving index 0 for fully transparent `rgba(0,0,0,0)`. Transparent pixels ($\alpha < 128$) map directly to index 0, eliminating intermediate semi-transparent alpha pollution and edge flickering.
+  - **Deterministic Bayer Ordered Dithering**: `GifEncoder` implements `applyBayerPalette` using an 8x8 Bayer dithering matrix and RGB memoization cache. Unlike Floyd-Steinberg error diffusion (which causes temporal flickering and crawling pixels in animations), ordered Bayer dithering applies deterministic spatial dispersion to smooth subtle gradients without frame-to-frame noise.
+  - **CLI Parity**: CLI FFmpeg rendering mirrors this exact temporal stability via `paletteuse=dither=bayer:bayer_scale=3`.
 - **Renderer Script**: The internal renderer iframe must clear the canvas (`ctx.clearRect`) instead of filling it when `isTransparent` is true.
 
 ### Verification of Transparency
