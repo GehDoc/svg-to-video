@@ -7,13 +7,17 @@ EXPOSE 8080
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
+    FFMPEG_SKIP_DOWNLOAD=true \
+    FFMPEG_PATH=/usr/local/bin/ffmpeg \
     NODE_ENV=production \
     HOME=/tmp/chrome-home
 
-# 2. Heavy Layer: Chromium, FFmpeg, Fonts & OS Security Patches
-RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+# 2. Static FFmpeg & Media Tools
+COPY --from=mwader/static-ffmpeg:7.1 /ffmpeg /ffprobe /usr/local/bin/
+
+# 3. Chromium & International Fonts Layer
+RUN apt-get update && apt-get install -y \
     chromium \
-    ffmpeg \
     fontconfig \
     fonts-freefont-ttf \
     fonts-liberation \
@@ -28,8 +32,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 
 WORKDIR /app
 
-# 3. Create a directory for Chrome's user data and set permissions for allowing non-root users to write to it.
-# 4. Create a directory for output data and set permissions for allowing non-root users to write to it.
+# 4. Create directories for Chrome's user data and output data with non-root permissions
 RUN mkdir -p /tmp/chrome-home && chmod 777 /tmp/chrome-home \
     && mkdir -p /app/data && chmod 777 /app/data
 

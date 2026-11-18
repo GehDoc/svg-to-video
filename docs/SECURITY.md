@@ -10,7 +10,8 @@ This document outlines the security architecture, sandboxing model, and pre-flig
 
 ### 1. Subprocess Execution & Parameter Safety
 
-- **No Shell Interpolation**: All internal CLI and FFmpeg invocations use `child_process.spawn`, `execFileSync`, or argument arrays (e.g. `child_process.spawn('ffmpeg', args, { stdio: ['pipe', 'pipe', 'pipe'] })` or `execFileSync('npx', args)`). Shell execution strings (`child_process.exec('/bin/sh')`) are strictly forbidden to prevent shell injection vulnerabilities.
+- **No Shell Interpolation**: All internal CLI and FFmpeg invocations use `child_process.spawn`, `execFileSync`, or argument arrays (e.g. `child_process.spawn(ffmpegPath, args, { stdio: ['pipe', 'pipe', 'pipe'] })` or `execFileSync('npx', args)`). Shell execution strings (`child_process.exec('/bin/sh')`) are strictly forbidden to prevent shell injection vulnerabilities.
+- **FFmpeg Executable Validation**: Custom FFmpeg paths supplied via `--ffmpeg-path` or `FFMPEG_PATH` / `FFMPEG_EXECUTABLE_PATH` are validated to exist on disk via `fs.existsSync()` before spawning, and are executed directly via typed argument arrays without shell interpolation.
 - **Machine Payload Boundaries**: Machine interfaces (`--json`) enforce closed, typed JSON payloads (`LoggerJsonOutput`) validated at runtime with type guards (`isLoggerJsonOutput`) to prevent improper data deserialization.
 
 ### 2. Browser & Rendering Context Isolation

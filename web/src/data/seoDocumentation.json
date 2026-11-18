@@ -90,7 +90,11 @@
     {
       "question": "How do I preserve transparent backgrounds in exported videos?",
       "answerHtml": "Select <strong>WebM</strong>, <strong>aPNG</strong>, or <strong>GIF</strong> as your output format, check the &quot;Transparent Background&quot; toggle, and ensure your SVG root element does not declare an opaque background rect."
+    },
+    {
+      "question": "Do I need to manually install FFmpeg to use the CLI?",
+      "answerHtml": "No. The CLI automatically uses system FFmpeg if present on your <code>$PATH</code>, or falls back to a bundled static FFmpeg binary out of the box. You can also specify a custom binary path using <code>--ffmpeg-path &lt;path&gt;</code> or the <code>FFMPEG_PATH</code> environment variable."
     }
   ],
-  "lastUpdated": "2026-10-19T20:07:23.805Z"
+  "lastUpdated": "2026-11-10T22:04:41.303Z"
 }

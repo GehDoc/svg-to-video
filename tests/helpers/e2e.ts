@@ -3,6 +3,7 @@ import { spawnSync, execFileSync } from 'child_process';
 import fs from 'node:fs';
 import { PNG } from 'pngjs';
 import ffprobeStatic from 'ffprobe-static';
+import { resolveFfmpegPath } from '../../src/utils/ffmpegResolver.js';
 
 export const FIXTURE_DIR_RELATIVE = './tests/fixtures';
 export const OUTPUT_DIR_RELATIVE = './out-dir-test';
@@ -154,7 +155,8 @@ export const extractFrame = (videoPath: string, framePath: string): boolean => {
   }
   args.push('-i', videoPath, '-vframes', '1', '-pix_fmt', 'rgba', framePath);
 
-  const result = spawnSync('ffmpeg', args, { stdio: 'pipe' });
+  const ffmpegCmd = resolveFfmpegPath();
+  const result = spawnSync(ffmpegCmd, args, { stdio: 'pipe' });
 
   if (result.status !== 0) {
     throw new Error(

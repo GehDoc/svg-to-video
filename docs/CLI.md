@@ -52,12 +52,14 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 | `--bg-color <hex>`      | Background color for the video (e.g., `#ffffff`, `#000000`). If omitted, no background fill is applied. Can be combined with `--transparent` for GIF color keying to remove edge halos. |
 | `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Mandatory attribution is automatically appended to the 'comment' tag for video and image exports.                           |
 | `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                                                                        |
+| `--ffmpeg-path <path>`  | Explicit path to custom FFmpeg binary executable (overrides system `PATH` and `FFMPEG_PATH`).                                                                                           |
 
 ## Environment Variables
 
 | Variable                    | Scope   | Description                                                                                                                                       |
 | --------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `DO_NOT_TRACK`              | Runtime | Set to `1` or `true` to opt out of anonymous Umami telemetry event tracking.                                                                      |
+| `FFMPEG_PATH`               | Runtime | Explicit path to host FFmpeg binary executable (overrides system `PATH`).                                                                         |
 | `PUPPETEER_EXECUTABLE_PATH` | Runtime | Explicit path to host Chrome or Chromium binary executable for rendering fallback.                                                                |
 | `PUPPETEER_ARGS`            | Runtime | Additional arguments passed directly to the Puppeteer `launch` method. Useful for custom browser flags (e.g., `--proxy-server`, `--disable-gpu`). |
 

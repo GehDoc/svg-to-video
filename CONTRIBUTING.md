@@ -232,6 +232,27 @@ GitHub Actions automatically executes verification pipelines (`.github/workflows
 - **Fast Checks**: Validates linting, Prettier formatting, and TypeScript compilation via `npm run check:fast`.
 - **E2E & Snapshot Tests**: Executes full CLI integration, MCP tests, visual regression checks, and package snapshot validation (`npm run test:pack`).
 
+#### ⏱️ CI Performance Benchmarking & Duration Comparison
+
+To measure and compare the duration of CI jobs and steps on any branch, PR, or commit against the baseline on `main` (using the GitHub CLI `gh`), run:
+
+```bash
+# Compare current git HEAD against average of last 2 runs on main
+npm run benchmark:ci
+
+# Compare a specific commit SHA
+npm run benchmark:ci -- <commit-sha>
+
+# Compare a specific branch or PR number
+npm run benchmark:ci -- feat/my-branch
+npm run benchmark:ci -- 256
+
+# Customize base branch and number of comparison runs
+npm run benchmark:ci -- <commit-sha> --base main --runs 3
+```
+
+The script queries the GitHub Actions API via `gh run view` and generates a structured Markdown comparison table showing total workflow wall-clock duration, per-job times, key step times (e.g. `Setup`, `Build and load Docker image`), and percentage deltas.
+
 ---
 
 ## 🐳 Docker & Hardening

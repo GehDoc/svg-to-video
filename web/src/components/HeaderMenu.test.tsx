@@ -15,7 +15,7 @@ test('HeaderMenu renders Sponsor button and toggles dropdown', () => {
   const sponsorLink = screen.getByRole('link', { name: /sponsor/i });
   expect(sponsorLink).toHaveAttribute(
     'href',
-    'https://github.com/GehDoc/svg-to-video/?sponsor=1'
+    'https://github.com/sponsors/GehDoc'
   );
 
   fireEvent.click(sponsorLink);

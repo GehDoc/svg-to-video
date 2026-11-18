@@ -8,6 +8,7 @@ import path from 'path';
 import { seekAnimations } from '#shared/animation-engine.js';
 import { compositeFrame } from '#shared/canvasCompositing.js';
 import { validateOptions } from './utils/validateOptions.js';
+import { resolveFfmpegPath } from './utils/ffmpegResolver.js';
 import {
   analyzeSvgAnimation,
   parseSvgDimensions,
@@ -36,6 +37,7 @@ interface RunOptions {
   bgColor?: string;
   metadata?: string[];
   format?: string;
+  ffmpegPath?: string;
   quiet: boolean;
   silent: boolean;
   json: boolean;
@@ -125,6 +127,10 @@ Resources:
     .option(
       '--format <format>',
       `output format: ${formatRegistry.getSupportedFormatNames().join(', ')}`
+    )
+    .option(
+      '--ffmpeg-path <path>',
+      'custom path to ffmpeg executable (overrides system PATH and FFMPEG_PATH)'
     )
     .option('-q, --quiet', 'suppress interactive progress output', false)
     .option('--silent', 'alias for --quiet', false)
@@ -283,6 +289,8 @@ async function run(
   try {
     fs.mkdirSync(outDir, { recursive: true });
 
+    const ffmpegPath = resolveFfmpegPath(options.ffmpegPath, logger);
+
     await renderAndEncodeFrames({
       svg,
       parsedDim,
@@ -291,6 +299,7 @@ async function run(
       padWidth,
       outDir,
       outputFileName,
+      ffmpegPath,
       puppeteerArgs,
       resolutionPreset: options.resolution,
       scaleFactor: options.scale,
@@ -411,6 +420,7 @@ async function renderAndEncodeFrames(params: {
   padWidth: number;
   outDir: string;
   outputFileName: string;
+  ffmpegPath: string;
   puppeteerArgs: string[];
   resolutionPreset: string;
   scaleFactor: number;
@@ -449,7 +459,7 @@ async function renderAndEncodeFrames(params: {
   const args = params.generator.buildFfmpegArgs(formatOptions);
 
   params.logger.info('📦 Encoding output with FFmpeg...');
-  const ffmpegProcess = child_process.spawn('ffmpeg', args, {
+  const ffmpegProcess = child_process.spawn(params.ffmpegPath, args, {
     stdio: ['pipe', 'ignore', 'pipe'],
   });
   params.onFfmpegCreated(ffmpegProcess);

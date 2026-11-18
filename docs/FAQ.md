@@ -15,3 +15,7 @@ Yes! You can use the official CLI tool (`npx -y @gehdoc/svg-to-video`), the Dock
 ## Q: How do I preserve transparent backgrounds in exported videos?
 
 Select **WebM**, **aPNG**, or **GIF** as your output format, check the "Transparent Background" toggle, and ensure your SVG root element does not declare an opaque background rect.
+
+## Q: Do I need to manually install FFmpeg to use the CLI?
+
+No. The CLI automatically uses system FFmpeg if present on your `$PATH`, or falls back to a bundled static FFmpeg binary out of the box. You can also specify a custom binary path using `--ffmpeg-path <path>` or the `FFMPEG_PATH` environment variable.

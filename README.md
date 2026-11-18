@@ -73,7 +73,7 @@ For automated or batch processing, use the CLI tool. It is built to run in a hea
 
 ### Quick Start
 
-Ensure [Node.js](https://nodejs.org/) and [FFmpeg](https://ffmpeg.org/) are installed.
+Ensure [Node.js](https://nodejs.org/) is installed. Chrome/Chromium is managed automatically by Puppeteer (override via `PUPPETEER_EXECUTABLE_PATH`). System [FFmpeg](https://ffmpeg.org/) is used if available, or a bundled static fallback is automatically used (override via `--ffmpeg-path <path>` or the `FFMPEG_PATH` environment variable).
 
 ```bash
 # Node.js (auto-detected duration)
@@ -171,9 +171,9 @@ For instructions on contributing, build commands, security standards, and the te
 
 If you find this tool helpful, please consider supporting its development:
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/GehDoc)
+[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors)](https://github.com/sponsors/GehDoc)
 
-Your support helps cover maintenance and further development of the tool. Thank you!
+Your support directly fuels my agentic engineering harness and helps keep this tool free, secure, and privacy-first. Thank you!
 
 ---
 

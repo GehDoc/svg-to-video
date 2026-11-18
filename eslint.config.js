@@ -6,7 +6,12 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 export default defineConfig([
   globalIgnores(['dist', 'web', 'coverage', 'node_modules', 'out-dir']),
   {
-    files: ['src/**/*.ts', 'shared/**/*.ts', 'tests/**/*.ts'],
+    files: [
+      'src/**/*.ts',
+      'shared/**/*.ts',
+      'tests/**/*.ts',
+      'scripts/**/*.ts',
+    ],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     languageOptions: {
       ecmaVersion: 2022,
