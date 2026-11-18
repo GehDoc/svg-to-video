@@ -132,7 +132,7 @@ jobs:
         run: npm run test:visual -w web
 
   build-and-deploy:
-    name: 'Deploy UX Demo & GH Pages'
+    name: 'Build and Deploy GitHub Pages'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -153,7 +153,23 @@ jobs:
           install-playwright: 'true'
           install-ffmpeg: 'true'
 
-      - name: Build Web Studio
+      - name: Clean generated output folders
+        run: |
+          rm -rf web/.next web/out web/storybook-static web/demo-assets web/pages-site web/test-results web/.vitest-attachments
+
+      - name: Generate Demo Video
+        run: |
+          mkdir -p web/demo-assets
+          npm run test:demo -w web
+          VIDEO_PATH=$(find web/test-results -name "*.webm" -type f | head -n 1)
+          if [ -n "$VIDEO_PATH" ]; then
+            ffmpeg -i "$VIDEO_PATH" -vf "fps=12,scale=800:-1:flags=neighbor,split[s0][s1];[s0]palettegen=max_colors=64:stats_mode=diff[p];[s1][p]paletteuse=dither=none" -loop 0 -y web/demo-assets/demo.gif
+            cp "$VIDEO_PATH" web/demo-assets/demo.webm
+          else
+            echo "Warning: Demo video was not generated"
+          fi
+
+      - name: Build Web Studio static export
         run: npm run build -w web
         env:
           NEXT_PUBLIC_COMMIT_SHA: ${{ github.sha }}
@@ -161,18 +177,21 @@ jobs:
       - name: Build Storybook
         run: npm run build-storybook -w web
 
-      - name: Generate Demo Video
+      - name: Assemble GitHub Pages site
         run: |
-          mkdir -p web/dist/assets
-          npm run test:demo -w web
-          VIDEO_PATH=$(find web/test-results -name "*.webm" | head -n 1)
-          if [ -n "$VIDEO_PATH" ]; then
-            # Convert to high-quality GIF for README compatibility
-            ffmpeg -i "$VIDEO_PATH" -vf "fps=12,scale=800:-1:flags=neighbor,split[s0][s1];[s0]palettegen=max_colors=64:stats_mode=diff[p];[s1][p]paletteuse=dither=none" -loop 0 -y web/dist/assets/demo.gif
-            # Also keep the webm for artifacts
-            cp "$VIDEO_PATH" web/dist/assets/demo.webm
+          test -d web/out
+          test -d web/storybook-static
+          mkdir -p web/pages-site/assets web/pages-site/storybook
+          cp -a web/out/. web/pages-site/
+          cp -a web/storybook-static/. web/pages-site/storybook/
+          if [ -f web/demo-assets/demo.gif ]; then
+            cp web/demo-assets/demo.gif web/pages-site/assets/demo.gif
           else
-            echo "Warning: Demo video not found"
+            echo "::error::Demo GIF was not generated"
+            exit 1
+          fi
+          if [ -f web/demo-assets/demo.webm ]; then
+            cp web/demo-assets/demo.webm web/pages-site/assets/demo.webm
           fi
 
       - name: Upload Demo Artifacts
@@ -180,13 +199,14 @@ jobs:
         with:
           name: demo-assets
           path: |
-            web/dist/assets/demo.gif
-            web/dist/assets/demo.webm
+            web/demo-assets/demo.gif
+            web/demo-assets/demo.webm
           if-no-files-found: warn
 
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: web/dist
+          folder: web/pages-site
           branch: gh-pages
+          clean: true

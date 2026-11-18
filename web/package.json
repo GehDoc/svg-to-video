@@ -33,7 +33,7 @@
     "test:visual": "vitest run -c vitest.visual.config.ts",
     "test:visual:update": "vitest run -c vitest.visual.config.ts -u",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build -o dist/storybook"
+    "build-storybook": "storybook build -o storybook-static"
   },
   "dependencies": {
     "coi-serviceworker": "^0.1.7",
