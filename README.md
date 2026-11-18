@@ -171,9 +171,9 @@ For instructions on contributing, build commands, security standards, and the te
 
 If you find this tool helpful, please consider supporting its development:
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/GehDoc)
+[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors)](https://github.com/sponsors/GehDoc)
 
-Your support helps cover maintenance and further development of the tool. Thank you!
+Your support directly fuels my agentic engineering harness and helps keep this tool free, secure, and privacy-first. Thank you!
 
 ---
 
