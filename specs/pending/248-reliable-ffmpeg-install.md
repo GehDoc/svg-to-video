@@ -93,6 +93,7 @@ Just as Puppeteer is bundled as an npm package with support for `PUPPETEER_EXECU
 - [x] Audit `docs/SECURITY.md` (document binary resolution order and execution paths)
 - [x] Audit `docs/FAQ.md` (add FAQ entry for FFmpeg installation)
 - [x] Update `tests/pack.spec.ts` (include `dist/src/utils/ffmpegResolver.js` in package files)
+- [x] Implement generic CI benchmark script (`scripts/compare-ci.ts` & `npm run benchmark:ci`) and document in `CONTRIBUTING.md`
 
 ---
 
@@ -114,6 +115,7 @@ Just as Puppeteer is bundled as an npm package with support for `PUPPETEER_EXECU
   - Run `npm run test:mcp` (10 passing tests).
   - Run `npm run test:pack` (3 passing tests).
   - Run `npm run check:fast` (lint, prettier, type-check).
+  - Measured CI run durations: Web Studio E2E tests Setup step improved from 102s to 69s (-32.4%), Build & Deploy GitHub Pages Setup step improved from 74s to 58s (-21.1%).
 
 ---
 
@@ -123,3 +125,4 @@ Just as Puppeteer is bundled as an npm package with support for `PUPPETEER_EXECU
 - 2026-11-10: Aligned CI and Docker static FFmpeg provisioning on `mwader/static-ffmpeg:7.1` (via `COPY --from` in Dockerfile and `docker cp` in CI setup action), completely avoiding flaky `setup-ffmpeg@v3` and slow `apt-get` deb packages.
 - 2026-11-10: User confirmed strategy: mirror Puppeteer by adding `ffmpeg-static` as an optional dependency fallback, avoiding any custom manual runtime download scripts.
 - 2026-11-10: Implemented `src/utils/ffmpegResolver.ts`, integrated into `src/index.ts` and `tests/helpers/e2e.ts`, added unit & integration tests, updated Dockerfile and CI action, audited documentation and security.
+- 2026-11-18: Conducted CI duration benchmark comparing branch against average of 2 main runs. Documented answers to PR review comments (Chromium parity, optional dependencies, ffprobe separation). Created reusable `scripts/compare-ci.ts` (`npm run benchmark:ci`) and documented in `CONTRIBUTING.md`.

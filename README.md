@@ -73,7 +73,7 @@ For automated or batch processing, use the CLI tool. It is built to run in a hea
 
 ### Quick Start
 
-Ensure [Node.js](https://nodejs.org/) is installed. System [FFmpeg](https://ffmpeg.org/) is used if available, or a bundled static fallback is automatically used. You can also override the binary path via `--ffmpeg-path <path>` or the `FFMPEG_PATH` environment variable.
+Ensure [Node.js](https://nodejs.org/) is installed. Chrome/Chromium is managed automatically by Puppeteer (override via `PUPPETEER_EXECUTABLE_PATH`). System [FFmpeg](https://ffmpeg.org/) is used if available, or a bundled static fallback is automatically used (override via `--ffmpeg-path <path>` or the `FFMPEG_PATH` environment variable).
 
 ```bash
 # Node.js (auto-detected duration)
