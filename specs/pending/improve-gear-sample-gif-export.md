@@ -27,12 +27,16 @@ Fix the mechanical gear animation loop synchronization to eliminate rotational h
 ### 2. Web Studio GIF Palette Optimization (`GifEncoder.ts`)
 
 - **Flickering & Palette Degradation Cause**: When `isTransparent = true`, `GifEncoder` previously passed `format: 'rgba4444'` to `quantize(allPixels, 255)`. In `pnnquant2`, `rgba4444` quantizes alpha as a 4-bit channel, squandering over 70% of the 255 palette slots on intermediate translucent alpha values ($a = 1 \dots 254$). Since GIF89a only supports binary 1-bit transparency (a single transparent color index), all non-zero alpha palette entries are rendered completely opaque. Anti-aliased edge pixels randomly matched these intermediate palette entries, causing severe edge flickering and speckling between frames. Moreover, solid gradient colors were restricted to 4 bits per RGB channel, causing banding and color jumping.
+- **Narrow Gradient Banding & Ordered Dithering**:
+  - In animations with subtle or narrow color gradients (such as the gear sample's blue gradient with $\approx 40$ distinct 24-bit RGB values), standard nearest-color matching quantizes pixels into only $\sim 15$ discrete color steps. As the gear rotates, pixels continuously cross quantization boundaries, causing noticeable contour shimmering / flutter.
+  - Furthermore, `objectBoundingBox` gradients defined on individual teeth produced mismatched local coordinates against the gear circle.
 - **Optimal Palette Pipeline**:
   - Separate transparent pixels ($\alpha < 128$) from opaque pixels ($\alpha \ge 128$) across frames.
   - Quantize opaque pixels using high-precision `rgb565` (16-bit color, 65,536 histogram bins) into up to 255 colors.
   - Prepend index 0 as transparent: `[0, 0, 0, 0]`.
-  - Frame encoding: Map pixels with $\alpha < 128$ directly to index 0 (`transparentIndex`), and map pixels with $\alpha \ge 128$ to the 255-color `rgb565` palette (offset by +1).
-  - For non-transparent GIFs: Quantize all 256 colors with `rgb565`.
+  - Frame encoding: Apply deterministic 8x8 Bayer ordered dithering (`applyBayerPalette`) with RGB color caching. Dithering smooths transitions across quantization steps without introducing temporal noise. Map pixels with $\alpha < 128$ cleanly to index 0 (`transparentIndex`).
+  - For non-transparent GIFs: Quantize all 256 colors with `rgb565` and apply 8x8 Bayer ordered dithering.
+  - In `gear.svg`, use `gradientUnits="userSpaceOnUse"` so teeth and gear circle bodies share identical, continuous gradient coordinates.
 
 ### 3. CLI / MCP / Docker GIF Rendering Pipeline (`GifFormatGenerator.ts`)
 
@@ -47,13 +51,15 @@ Fix the mechanical gear animation loop synchronization to eliminate rotational h
   - [x] Commit initial spec and open Draft Pull Request via `gh pr create`
 - [x] **Gear Sample Animation Fix**
   - [x] Correct gear animation periods in `web/src/assets/samples/gear.svg` ($T_1 = 2$s for large gear, $T_2 = 1.5$s for small gear)
-  - [x] Fix tooth placement and angular spacing for small gear (6 teeth evenly spaced at $60^\circ$ increments around center `(265, 255)`)
+  - [x] Fix tooth placement and angular spacing for small gear while preserving kawaii missing-teeth gaps
+  - [x] Set `gradientUnits="userSpaceOnUse"` on `gearGrad1` and `gearGrad2` to eliminate boundary seams between teeth and gear circle
   - [x] Verify seamless meshing and check rotation continuity across loop boundary
   - [x] Verify `analyzeSvgAnimation` returns 6s for the updated `gear.svg`
 - [x] **Web Studio GIF Encoder Enhancement**
   - [x] Refactor `web/src/utils/encoders/GifEncoder.ts` to separate opaque pixels and quantize using `rgb565` with dedicated transparent index 0
+  - [x] Implement deterministic 8x8 Bayer ordered dithering (`applyBayerPalette`) with RGB color caching in `GifEncoder.ts` to disperse quantization steps and eliminate color zone flickering
   - [x] Update frame index mapping in `GifEncoder.ts` to cleanly map transparent pixels ($\alpha < 128$) to index 0 and opaque pixels to `rgb565` palette
-  - [x] Update unit tests in `web/src/utils/encoders/GifEncoder.test.ts`
+  - [x] Update unit tests in `web/src/utils/encoders/GifEncoder.test.ts` for Bayer dithering and transparency mapping
 - [x] **CLI GIF Generator Parity**
   - [x] Update FFmpeg `paletteuse` filter arguments in `src/formats/generators/GifFormatGenerator.ts` to use deterministic dithering (`dither=bayer:bayer_scale=3`)
   - [x] Update CLI format generator unit tests in `src/formats/registry.test.ts`

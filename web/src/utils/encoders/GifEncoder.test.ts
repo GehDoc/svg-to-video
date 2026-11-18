@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GifEncoder, injectGifMetadata } from './GifEncoder';
+import { GifEncoder, injectGifMetadata, applyBayerPalette } from './GifEncoder';
 import * as gifenc from 'gifenc';
 
 const mockGifHeader = new Uint8Array([
@@ -223,5 +223,77 @@ describe('GifEncoder', () => {
     // Content check: "Hello - World"
     const text = new TextDecoder().decode(resultBuffer);
     expect(text).toContain('Hello - World');
+  });
+});
+
+describe('applyBayerPalette', () => {
+  it('should map transparent pixels to index 0 when isTransparent is true', () => {
+    const palette = [
+      [0, 0, 0, 0],
+      [255, 0, 0],
+    ];
+    // 2x2 image: pixel 0 transparent, pixel 1 opaque red
+    const frameData = new Uint8ClampedArray([
+      0,
+      0,
+      0,
+      0, // transparent
+      255,
+      0,
+      0,
+      255, // red
+      0,
+      0,
+      0,
+      50, // transparent (< 128)
+      255,
+      0,
+      0,
+      200, // red (>= 128)
+    ]);
+    const colorCache = new Map<number, number>();
+    const indices = applyBayerPalette(
+      frameData,
+      2,
+      2,
+      palette,
+      true,
+      colorCache
+    );
+
+    expect(indices[0]).toBe(0);
+    expect(indices[1]).toBe(1);
+    expect(indices[2]).toBe(0);
+    expect(indices[3]).toBe(1);
+  });
+
+  it('should apply ordered dithering to smooth gradients', () => {
+    const palette = [
+      [0, 0, 0],
+      [255, 255, 255],
+    ];
+    // A mid-gray image (128, 128, 128)
+    const frameData = new Uint8ClampedArray(8 * 8 * 4);
+    for (let i = 0; i < frameData.length; i += 4) {
+      frameData[i] = 128;
+      frameData[i + 1] = 128;
+      frameData[i + 2] = 128;
+      frameData[i + 3] = 255;
+    }
+    const colorCache = new Map<number, number>();
+    const indices = applyBayerPalette(
+      frameData,
+      8,
+      8,
+      palette,
+      false,
+      colorCache
+    );
+
+    // Dithering creates a pattern containing both index 0 (black) and index 1 (white)
+    const hasZero = indices.some((idx) => idx === 0);
+    const hasOne = indices.some((idx) => idx === 1);
+    expect(hasZero).toBe(true);
+    expect(hasOne).toBe(true);
   });
 });

@@ -18,11 +18,11 @@
         animation: rotateCounter 1.5s linear infinite;
       }
     </style>
-    <linearGradient id="gearGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="gearGrad1" gradientUnits="userSpaceOnUse" x1="80" y1="90" x2="240" y2="250">
       <stop offset="0%" stop-color="#3b82f6"/>
       <stop offset="100%" stop-color="#1d4ed8"/>
     </linearGradient>
-    <linearGradient id="gearGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="gearGrad2" gradientUnits="userSpaceOnUse" x1="210" y1="200" x2="320" y2="310">
       <stop offset="0%" stop-color="#06b6d4"/>
       <stop offset="100%" stop-color="#0e7490"/>
     </linearGradient>
