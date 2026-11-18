@@ -1,7 +1,8 @@
 # Spec: Deliver Seamless Mechanical Gear GIF Export with Flicker-Free High-Fidelity Palette
 
 **GitHub Issue**: None
-**Status**: 🟠 Pending
+**Follow-up Issue**: [#265](https://github.com/GehDoc/svg-to-video/issues/265)
+**Status**: 🟡 To be reviewed
 
 ## 🎯 Objective
 
@@ -41,41 +42,42 @@ Fix the mechanical gear animation loop synchronization to eliminate rotational h
 
 ## ✅ Task List
 
-- [ ] **Infrastructure & Branching**
+- [x] **Infrastructure & Branching**
   - [x] Create feature branch `feat/improve-gear-sample-gif-export`
-  - [ ] Commit initial spec and open Draft Pull Request via `gh pr create`
-- [ ] **Gear Sample Animation Fix**
-  - [ ] Correct gear animation periods in `web/src/assets/samples/gear.svg` ($T_1 = 2$s for large gear, $T_2 = 1.5$s for small gear)
-  - [ ] Fix tooth placement and angular spacing for small gear (6 teeth evenly spaced at $60^\circ$ increments around center `(265, 255)`)
-  - [ ] Verify seamless meshing and check rotation continuity across loop boundary
-  - [ ] Verify `analyzeSvgAnimation` returns 6s for the updated `gear.svg`
-- [ ] **Web Studio GIF Encoder Enhancement**
-  - [ ] Refactor `web/src/utils/encoders/GifEncoder.ts` to separate opaque pixels and quantize using `rgb565` with dedicated transparent index 0
-  - [ ] Update frame index mapping in `GifEncoder.ts` to cleanly map transparent pixels ($\alpha < 128$) to index 0 and opaque pixels to `rgb565` palette
-  - [ ] Update unit tests in `web/src/utils/encoders/GifEncoder.test.ts`
-- [ ] **CLI GIF Generator Parity**
-  - [ ] Update FFmpeg `paletteuse` filter arguments in `src/formats/generators/GifFormatGenerator.ts` to use deterministic dithering (`dither=bayer:bayer_scale=3`)
-  - [ ] Update CLI format generator unit tests in `src/formats/registry.test.ts`
-- [ ] **Documentation, Security & SEO Pre-Flight**
-  - [ ] Audit `README.md` & `docs/ARCHITECTURE.md`
-  - [ ] Audit `docs/SECURITY.md`
-  - [ ] Check `docs/ANALYTICS.md`
-  - [ ] Check `web/src/app/layout.tsx` & `web/src/components/SeoFallback.tsx`
-  - [ ] Run full test suites (`npm test`, `npm run lint`)
-- [ ] **Review Handover**
-  - [ ] Mark spec as `🟡 To be reviewed`
-  - [ ] Push branch and update PR
+  - [x] Commit initial spec and open Draft Pull Request via `gh pr create`
+- [x] **Gear Sample Animation Fix**
+  - [x] Correct gear animation periods in `web/src/assets/samples/gear.svg` ($T_1 = 2$s for large gear, $T_2 = 1.5$s for small gear)
+  - [x] Fix tooth placement and angular spacing for small gear (6 teeth evenly spaced at $60^\circ$ increments around center `(265, 255)`)
+  - [x] Verify seamless meshing and check rotation continuity across loop boundary
+  - [x] Verify `analyzeSvgAnimation` returns 6s for the updated `gear.svg`
+- [x] **Web Studio GIF Encoder Enhancement**
+  - [x] Refactor `web/src/utils/encoders/GifEncoder.ts` to separate opaque pixels and quantize using `rgb565` with dedicated transparent index 0
+  - [x] Update frame index mapping in `GifEncoder.ts` to cleanly map transparent pixels ($\alpha < 128$) to index 0 and opaque pixels to `rgb565` palette
+  - [x] Update unit tests in `web/src/utils/encoders/GifEncoder.test.ts`
+- [x] **CLI GIF Generator Parity**
+  - [x] Update FFmpeg `paletteuse` filter arguments in `src/formats/generators/GifFormatGenerator.ts` to use deterministic dithering (`dither=bayer:bayer_scale=3`)
+  - [x] Update CLI format generator unit tests in `src/formats/registry.test.ts`
+- [x] **Documentation, Security & SEO Pre-Flight**
+  - [x] Audit `README.md` & `docs/ARCHITECTURE.md`
+  - [x] Audit `docs/SECURITY.md`
+  - [x] Check `docs/ANALYTICS.md`
+  - [x] Check `web/src/app/layout.tsx` & `web/src/components/SeoFallback.tsx`
+  - [x] Run full test suites (`npm test`, `npm run lint`)
+- [x] **Review Handover**
+  - [x] Mark spec as `🟡 To be reviewed`
+  - [x] Push branch and update PR
 
 ## 🧪 Verification Plan
 
-- [ ] Automated Tests:
+- [x] Automated Tests:
   - `npm test` (root test suite including CLI format generator)
   - `npm run test:unit -w web` (web studio unit tests including `GifEncoder.test.ts`)
   - `npm run lint` & `npm run type-check -w web`
-- [ ] Visual & Functional Verification:
+- [x] Visual & Functional Verification:
   - Export `gear.svg` to GIF via CLI and verify zero edge flickering, clean transparency, and seamless loop.
   - Export `gear.svg` to GIF via Web Studio logic and verify pristine palette (255 colors in `rgb565`), no edge noise, and seamless loop.
 
 ## 📝 Change Log
 
 - 2026-11-18: Initial spec created by Antigravity.
+- 2026-11-18: Implemented gear rotation synchronization ($T_1 = 2$s, $T_2 = 1.5$s), optimized Web Studio `GifEncoder.ts` with opaque pixel separation and `rgb565` quantization, synchronized CLI FFmpeg `paletteuse` with deterministic `bayer` dithering, created follow-up issue #265, and verified all tests pass. Spec marked `🟡 To be reviewed`.

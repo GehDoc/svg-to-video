@@ -96,5 +96,5 @@
       "answerHtml": "No. The CLI automatically uses system FFmpeg if present on your <code>$PATH</code>, or falls back to a bundled static FFmpeg binary out of the box. You can also specify a custom binary path using <code>--ffmpeg-path &lt;path&gt;</code> or the <code>FFMPEG_PATH</code> environment variable."
     }
   ],
-  "lastUpdated": "2026-11-10T22:04:41.303Z"
+  "lastUpdated": "2026-11-18T21:00:45.378Z"
 }

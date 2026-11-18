@@ -91,7 +91,7 @@ describe('CLIFormatRegistry', () => {
     }
   });
 
-  test('should build correct FFmpeg args for GIF with transparency', () => {
+  test('should build correct FFmpeg args for GIF with transparency and deterministic dithering', () => {
     const gifGen = formatRegistry.get('gif')!;
     const args = gifGen.buildFfmpegArgs({
       ...baseOptions,
@@ -101,6 +101,9 @@ describe('CLIFormatRegistry', () => {
     assert.ok(args.includes('-filter_complex'));
     const filterIdx = args.indexOf('-filter_complex') + 1;
     assert.ok(args[filterIdx].includes('reserve_transparent=1'));
+    assert.ok(
+      args[filterIdx].includes('paletteuse=dither=bayer:bayer_scale=3')
+    );
   });
 
   test('should build correct FFmpeg args for aPNG with transparency', () => {

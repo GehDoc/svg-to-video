@@ -38,50 +38,93 @@ export class GifEncoder implements VideoEncoder {
     const { width, height, isTransparent, metadata } = this.options;
     const encoder = GIFEncoder();
 
-    const format = isTransparent ? 'rgba4444' : 'rgb565';
-
-    // Combine all frames to build a comprehensive palette
-    const allPixels = new Uint8ClampedArray(
-      this.frames.length * width * height * 4
-    );
-    this.frames.forEach((f, i) =>
-      allPixels.set(f.data, i * width * height * 4)
-    );
-
-    // 1. Generate palette
-    const colorCount = isTransparent ? 255 : 256;
-    const palette = quantize(allPixels, colorCount, { format });
-    let transparentIndex = isTransparent
-      ? palette.findIndex(([_r, _g, _b, a]) => a === 0)
-      : -1;
-
-    if (isTransparent && transparentIndex === -1) {
-      // If we need transparency but none was found in the palette (quantization might have merged it away),
-      // we must force one. Since we quantized for 255 colors, we can safely add the 256th.
-      palette.push([0, 0, 0, 0]);
-      transparentIndex = palette.length - 1;
-    }
-
-    // 2. Encode frames
-    for (let i = 0; i < this.frames.length; i++) {
-      const frame = this.frames[i];
-
-      const index = applyPalette(frame.data, palette, format);
-
-      const options: WriteFrameOpts = {
-        delay: Math.round(frame.delay),
-      };
-
-      if (isTransparent) {
-        options.transparent = true;
-        options.transparentIndex = transparentIndex;
+    if (isTransparent) {
+      // 1. Separate opaque pixels across all frames to dedicate the palette to visible colors
+      let totalOpaque = 0;
+      for (const f of this.frames) {
+        for (let i = 3; i < f.data.length; i += 4) {
+          if (f.data[i] >= 128) totalOpaque++;
+        }
       }
 
-      if (i === 0) {
-        options.palette = palette;
+      let palette: number[][];
+      let opaquePalette: number[][] = [];
+      const transparentIndex = 0;
+
+      if (totalOpaque > 0) {
+        const opaquePixels = new Uint8ClampedArray(totalOpaque * 4);
+        let offset = 0;
+        for (const f of this.frames) {
+          for (let i = 0; i < f.data.length; i += 4) {
+            if (f.data[i + 3] >= 128) {
+              opaquePixels[offset++] = f.data[i];
+              opaquePixels[offset++] = f.data[i + 1];
+              opaquePixels[offset++] = f.data[i + 2];
+              opaquePixels[offset++] = 255;
+            }
+          }
+        }
+        opaquePalette = quantize(opaquePixels, 255, { format: 'rgb565' });
+        palette = [[0, 0, 0, 0], ...opaquePalette];
+      } else {
+        palette = [[0, 0, 0, 0]];
       }
 
-      encoder.writeFrame(index, width, height, options);
+      // 2. Encode frames with clean 1-bit transparency mapping
+      const numPixels = width * height;
+      for (let i = 0; i < this.frames.length; i++) {
+        const frame = this.frames[i];
+        const index = new Uint8Array(numPixels);
+        const colorIndices =
+          opaquePalette.length > 0
+            ? applyPalette(frame.data, opaquePalette, 'rgb565')
+            : new Uint8Array(numPixels);
+
+        for (let p = 0; p < numPixels; p++) {
+          if (frame.data[p * 4 + 3] < 128) {
+            index[p] = transparentIndex;
+          } else {
+            index[p] = colorIndices[p] + 1; // offset by 1 because index 0 is transparent
+          }
+        }
+
+        const options: WriteFrameOpts = {
+          delay: Math.round(frame.delay),
+          transparent: true,
+          transparentIndex,
+        };
+
+        if (i === 0) {
+          options.palette = palette;
+        }
+
+        encoder.writeFrame(index, width, height, options);
+      }
+    } else {
+      // Non-transparent: Combine all frames to build a full 256-color palette
+      const allPixels = new Uint8ClampedArray(
+        this.frames.length * width * height * 4
+      );
+      this.frames.forEach((f, i) =>
+        allPixels.set(f.data, i * width * height * 4)
+      );
+
+      const palette = quantize(allPixels, 256, { format: 'rgb565' });
+
+      for (let i = 0; i < this.frames.length; i++) {
+        const frame = this.frames[i];
+        const index = applyPalette(frame.data, palette, 'rgb565');
+
+        const options: WriteFrameOpts = {
+          delay: Math.round(frame.delay),
+        };
+
+        if (i === 0) {
+          options.palette = palette;
+        }
+
+        encoder.writeFrame(index, width, height, options);
+      }
     }
 
     encoder.finish();
