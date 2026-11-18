@@ -48,13 +48,13 @@
   <!-- Small Gear Centered at 265, 255 -->
   <g class="gear-small">
     <circle cx="265" cy="255" r="42" fill="url(#gearGrad2)" />
-    <!-- 6 teeth evenly spaced every 60 degrees around (265, 255) with 15deg phase for interlocking mesh -->
-    <rect x="257" y="202" width="16" height="18" rx="3" transform="rotate(15 265 255)" fill="url(#gearGrad2)" />
-    <rect x="257" y="202" width="16" height="18" rx="3" transform="rotate(75 265 255)" fill="url(#gearGrad2)" />
-    <rect x="257" y="202" width="16" height="18" rx="3" transform="rotate(135 265 255)" fill="url(#gearGrad2)" />
-    <rect x="257" y="202" width="16" height="18" rx="3" transform="rotate(195 265 255)" fill="url(#gearGrad2)" />
-    <rect x="257" y="202" width="16" height="18" rx="3" transform="rotate(255 265 255)" fill="url(#gearGrad2)" />
-    <rect x="257" y="202" width="16" height="18" rx="3" transform="rotate(315 265 255)" fill="url(#gearGrad2)" />
+    <!-- 6 teeth with charming missing teeth gaps -->
+    <rect x="257" y="202" width="16" height="18" rx="3" fill="url(#gearGrad2)" />
+    <rect x="257" y="290" width="16" height="18" rx="3" fill="url(#gearGrad2)" />
+    <rect x="212" y="247" width="18" height="16" rx="3" fill="url(#gearGrad2)" />
+    <rect x="300" y="247" width="18" height="16" rx="3" fill="url(#gearGrad2)" />
+    <rect x="224" y="214" width="16" height="18" rx="3" transform="rotate(60 232 223)" fill="url(#gearGrad2)" />
+    <rect x="288" y="278" width="16" height="18" rx="3" transform="rotate(60 296 287)" fill="url(#gearGrad2)" />
     <!-- Center Hole -->
     <circle cx="265" cy="255" r="16" fill="#ffffff" />
     <circle cx="265" cy="255" r="8" fill="#94a3b8" />
