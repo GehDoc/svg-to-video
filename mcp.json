@@ -56,6 +56,12 @@
           "description": "Additional command-line flags to pass to the Puppeteer Chromium instance.",
           "isRequired": false,
           "format": "string"
+        },
+        {
+          "name": "FFMPEG_PATH",
+          "description": "Custom file path to an FFmpeg binary executable (overrides system PATH).",
+          "isRequired": false,
+          "format": "filepath"
         }
       ],
       "transport": {
@@ -98,6 +104,12 @@
           "description": "Additional command-line flags to pass to the Puppeteer Chromium instance.",
           "isRequired": false,
           "format": "string"
+        },
+        {
+          "name": "FFMPEG_PATH",
+          "description": "Custom file path to an FFmpeg binary executable (overrides system PATH).",
+          "isRequired": false,
+          "format": "filepath"
         }
       ],
       "transport": {

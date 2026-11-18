@@ -310,4 +310,9 @@ Puppeteer (headless Chrome)
 6. **`postProcess` hook** — called after FFmpeg exits cleanly (exit code 0). Used by the GIF generator to inject metadata via `injectGifMetadata`.
 
 > [!NOTE]
-> The bundled system FFmpeg binary (on `$PATH`) is used directly. Zero-install fallback via `ffmpeg-static` is tracked in issue [#248](https://github.com/GehDoc/svg-to-video/issues/248).
+> **FFmpeg Resolution Architecture**: Executable resolution follows a Puppeteer-style priority:
+>
+> 1. Explicit CLI `--ffmpeg-path <path>` or `process.env.FFMPEG_PATH` override.
+> 2. System FFmpeg binary discovered on `$PATH` (`ffmpeg -version`).
+> 3. Bundled static binary fallback via `ffmpeg-static` optional dependency.
+>    In Docker and CI, high-performance static binaries are provisioned directly from `mwader/static-ffmpeg:7.1`.

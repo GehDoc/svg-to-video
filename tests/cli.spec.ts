@@ -436,6 +436,25 @@ describe('CLI Functionality', () => {
       assert.match(result.stderr, /Invalid format "invalidformat"/);
     });
 
+    test('should fail when an invalid --ffmpeg-path is specified', () => {
+      const { inputFile } = getTestPaths('font-test');
+      const result = runCli([
+        inputFile,
+        '24',
+        outputDir,
+        '-d',
+        '1',
+        '--ffmpeg-path',
+        '/non/existent/ffmpeg/binary',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 1);
+      assert.match(
+        result.stderr,
+        /Configured FFmpeg path not found or not executable/
+      );
+    });
+
     test('should fail when transparent is used with a format without alpha support (e.g. mp4)', () => {
       const { inputFile } = getTestPaths('font-test');
       const result = runCli([

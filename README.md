@@ -73,7 +73,7 @@ For automated or batch processing, use the CLI tool. It is built to run in a hea
 
 ### Quick Start
 
-Ensure [Node.js](https://nodejs.org/) and [FFmpeg](https://ffmpeg.org/) are installed.
+Ensure [Node.js](https://nodejs.org/) is installed. System [FFmpeg](https://ffmpeg.org/) is used if available, or a bundled static fallback is automatically used. You can also override the binary path via `--ffmpeg-path <path>` or the `FFMPEG_PATH` environment variable.
 
 ```bash
 # Node.js (auto-detected duration)
