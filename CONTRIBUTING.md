@@ -298,24 +298,24 @@ The Web Studio, Storybook Gallery, and demo assets deploy automatically when cha
 
 The workflow assembles these production outputs separately from Next.js build and development caches before publishing them to `gh-pages`.
 
-#### Branch history and rollback
+#### Branch History and Rollback
 
-After the `force_orphan: true` deployment setting is merged, each successful deployment will publish `gh-pages` as a fresh, orphaned commit. This keeps old deployment files and commit history from accumulating on that branch. Keep source changes and release tags on `main`, not `gh-pages`.
+Each successful deployment publishes `gh-pages` as a single, fresh commit (configured via `single-commit: true` in the deployment action). This prevents old build artifacts, intermediate assets, and Git history from accumulating indefinitely on the deployment branch. Keep source code changes and release tags strictly on `main`, never on `gh-pages`.
 
-The workflow also uploads the assembled Pages site as an artifact named `pages-<commit-sha>`, retained for seven days.
+The workflow also uploads the assembled Pages site as an artifact named `pages-<commit-sha>`, retained for 7 days.
 
-##### Roll back
+##### Roll Back
 
-The current workflow does not automatically redeploy a downloaded artifact. To restore a snapshot, publish its contents to `gh-pages` using an available deployment process:
+The CI workflow does not automatically redeploy past artifacts. To restore a previous deployment snapshot:
 
 1. Open the GitHub Actions run for the commit you want to restore.
 2. Download the `pages-<sha>` artifact.
-3. Extract the artifact to a clean directory.
-4. Redeploy that directory using a deployment workflow or restore it manually.
+3. Extract the artifact contents to a clean directory.
+4. Deploy the extracted directory to `gh-pages` (e.g., via `git push --force origin HEAD:gh-pages` or through a manual workflow).
 
-##### Refresh stale local references
+##### Refresh Stale Local References
 
-If this process replaces the local `gh-pages` branch, refresh stale local references with:
+Because each deployment replaces `gh-pages` with a single commit, local clones tracking `gh-pages` will see non-fast-forward updates. Refresh stale local references with:
 
 ```bash
 git switch main
