@@ -1,9 +1,8 @@
-import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
+import { useCallback, useMemo, useRef, useEffect } from 'react';
 import type { RendererHandle } from './SvgRenderer/index';
 import {
   useRenderer,
   calculateFinalDimensions,
-  type ResolutionPreset,
   type RenderSettings,
 } from '../hooks/useRenderer';
 import { getMimeTypeById } from '../utils/discoverFormats';
@@ -11,7 +10,6 @@ import {
   analyzeSvgAnimation,
   parseSvgDimensions,
 } from '@shared/analyzeSvgAnimation.js';
-import type { VideoMetadata } from '@shared/metadata';
 import type { SamplePreset } from '../utils/samples';
 import { formatRegistry } from '../utils/encoders/Registry';
 import { Header } from './Header';
@@ -20,41 +18,49 @@ import { MonitorPanel } from './MonitorPanel';
 import { SampleModal } from './SampleModal/SampleModal';
 import { trackEvent } from '../utils/analytics';
 import { trackFileLoad } from '../utils/tracking/fileTracking';
+import { useStudioState } from '../hooks/useStudioState';
 
 export const Studio = () => {
   const rendererRef = useRef<RendererHandle>(null);
+  const {
+    state: studioState,
+    resetStudio,
+    updateConfig,
+    setFileName,
+    loadSource,
+    loadSample,
+    setRenderResult,
+    setSampleModalOpen,
+    setIsDragging,
+    setSupportError,
+  } = useStudioState();
 
-  const [svgContent, setSvgContent] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string>('animation.mp4');
-  const [duration, setDuration] = useState(5);
-  const [hold, setHold] = useState(0);
-  const [fps, setFps] = useState(24);
-  const [preset, setPreset] = useState<ResolutionPreset>('original');
-  const [scale, setScale] = useState(1);
-  const [backgroundColor, setBackgroundColor] = useState('#ffffff');
-  const [format, setFormat] = useState<string>('mp4');
-  const [isTransparent, setIsTransparent] = useState(false);
-  const [captureMethod, setCaptureMethod] = useState<
-    'optimal' | 'high-fidelity'
-  >('high-fidelity');
-  const [isDragging, setIsDragging] = useState(false);
-  const [renderedUrl, setRenderedUrl] = useState<string | null>(null);
-  const [fileSize, setFileSize] = useState<string | null>(null);
-  const [isSampleModalOpen, setIsSampleModalOpen] = useState(false);
-  const [metadata, setMetadata] = useState<VideoMetadata>({
-    title: '',
-    comment: '',
-  });
+  const {
+    source,
+    config,
+    renderedUrl,
+    fileSize,
+    isSampleModalOpen,
+    isDragging,
+    supportError,
+  } = studioState;
+  const { svgContent, fileName, originalDim } = source;
+  const {
+    duration,
+    hold,
+    fps,
+    preset,
+    scale,
+    backgroundColor,
+    format,
+    isTransparent,
+    captureMethod,
+    metadata,
+  } = config;
 
   const { render, cancel, clearError, state } = useRenderer(rendererRef);
 
   const mimeType = useMemo(() => getMimeTypeById(format), [format]);
-
-  const [originalDim, setOriginalDim] = useState<{
-    width: number;
-    height: number;
-    isDimensionsDetected: boolean;
-  }>({ width: 0, height: 0, isDimensionsDetected: false });
 
   const targetDim = useMemo(() => {
     return calculateFinalDimensions(originalDim.width, originalDim.height, {
@@ -62,8 +68,6 @@ export const Studio = () => {
       scale,
     });
   }, [originalDim, preset, scale]);
-
-  const [supportError, setSupportError] = useState<string | null>(null);
 
   useEffect(() => {
     let ignore = false;
@@ -97,7 +101,7 @@ export const Studio = () => {
     return () => {
       ignore = true;
     };
-  }, [format, targetDim, svgContent, supportError]);
+  }, [format, targetDim, svgContent, supportError, setSupportError]);
 
   const validationError = useMemo(() => {
     if (!svgContent) return null;
@@ -109,8 +113,7 @@ export const Studio = () => {
 
   const handleStartRender = useCallback(async () => {
     if (!svgContent || validationError) return;
-    setRenderedUrl(null);
-    setFileSize(null);
+    setRenderResult(null, null);
 
     const settings: RenderSettings = {
       duration,
@@ -127,10 +130,9 @@ export const Studio = () => {
     try {
       const url = await render(svgContent, settings);
       if (url) {
-        setRenderedUrl(url);
         const response = await fetch(url);
         const blob = await response.blob();
-        setFileSize(`${(blob.size / (1024 * 1024)).toFixed(2)} MB`);
+        setRenderResult(url, `${(blob.size / (1024 * 1024)).toFixed(2)} MB`);
       }
     } catch {
       /* error handled by state */
@@ -149,6 +151,7 @@ export const Studio = () => {
     hold,
     render,
     metadata,
+    setRenderResult,
   ]);
 
   const handleDownload = useCallback(() => {
@@ -163,8 +166,8 @@ export const Studio = () => {
 
   const handleBack = useCallback(() => {
     trackEvent('back-to-studio', { format, isTransparent });
-    setRenderedUrl(null);
-  }, [format, isTransparent]);
+    setRenderResult(null, null);
+  }, [format, isTransparent, setRenderResult]);
 
   const handleHome = useCallback(
     (location: 'header' | 'config' | 'monitor' = 'header') => {
@@ -173,68 +176,66 @@ export const Studio = () => {
         cancel();
       }
       clearError();
-      setSvgContent(null);
-      setRenderedUrl(null);
-      setFileSize(null);
-      setFileName('animation.mp4');
-      setDuration(5);
-      setHold(0);
-      setFps(24);
-      setPreset('original');
-      setScale(1);
-      setBackgroundColor('#ffffff');
-      setFormat('mp4');
-      setIsTransparent(false);
-      setCaptureMethod('high-fidelity');
-      setOriginalDim({ width: 0, height: 0, isDimensionsDetected: false });
-      setSupportError(null);
-      setMetadata({ title: '', comment: '' });
-      setIsSampleModalOpen(false);
+      resetStudio();
     },
-    [state.isRendering, cancel, clearError]
+    [state.isRendering, cancel, clearError, resetStudio]
   );
 
   const handleOpenSamples = useCallback(
     (location: 'config' | 'monitor' = 'config') => {
       trackEvent('open-samples', { location });
-      setIsSampleModalOpen(true);
+      setSampleModalOpen(true);
     },
-    []
+    [setSampleModalOpen]
   );
 
   const handleCloseSamples = useCallback(() => {
-    setIsSampleModalOpen(false);
-  }, []);
+    setSampleModalOpen(false);
+  }, [setSampleModalOpen]);
 
-  const handleSelectSample = useCallback((sample: SamplePreset) => {
-    // 1. Load SVG and auto-detect intrinsic properties as for a File
-    setSvgContent(sample.svgContent);
-    setFileName(`${sample.id}.${sample.format}`);
+  const handleSelectSample = useCallback(
+    (sample: SamplePreset) => {
+      let dim;
+      try {
+        dim = parseSvgDimensions(sample.svgContent);
+      } catch {
+        dim = {
+          width: 0,
+          height: 0,
+          isDimensionsDetected: false,
+        };
+      }
 
-    let dim = { width: 0, height: 0, isDimensionsDetected: false };
-    try {
-      dim = parseSvgDimensions(sample.svgContent);
-      setOriginalDim(dim);
-    } catch {
-      setOriginalDim({
-        width: 0,
-        height: 0,
-        isDimensionsDetected: false,
-      });
-    }
+      const detectedDuration = analyzeSvgAnimation(sample.svgContent);
+      loadSample(sample, dim);
+      trackFileLoad('sample', dim, detectedDuration ?? sample.duration);
+    },
+    [loadSample]
+  );
 
-    const detectedDuration = analyzeSvgAnimation(sample.svgContent);
+  const handleSvgContentChange = useCallback(
+    (
+      content: string,
+      name: string,
+      method: 'file-picker' | 'drag-and-drop'
+    ) => {
+      let dim;
+      try {
+        dim = parseSvgDimensions(content);
+      } catch {
+        dim = {
+          width: 0,
+          height: 0,
+          isDimensionsDetected: false,
+        };
+      }
 
-    // 2. Apply target capture settings defined by the sample
-    setDuration(sample.duration);
-    setFps(sample.fps);
-    setFormat(sample.format);
-    setIsTransparent(sample.isTransparent);
-    setPreset(sample.preset ?? 'original');
-    setScale(sample.scale ?? 1);
-
-    trackFileLoad('sample', dim, detectedDuration ?? sample.duration);
-  }, []);
+      const detectedDuration = analyzeSvgAnimation(content);
+      loadSource(content, name, dim, detectedDuration);
+      trackFileLoad(method, dim, detectedDuration);
+    },
+    [loadSource]
+  );
 
   return (
     <div className="app-container">
@@ -242,49 +243,27 @@ export const Studio = () => {
       <main className="studio-layout">
         <ConfigPanel
           svgContent={svgContent}
-          onSvgContentChange={(content, name, method) => {
-            setSvgContent(content);
-            setFileName(name);
-
-            let dim = { width: 0, height: 0, isDimensionsDetected: false };
-            try {
-              dim = parseSvgDimensions(content);
-              setOriginalDim(dim);
-            } catch {
-              setOriginalDim({
-                width: 0,
-                height: 0,
-                isDimensionsDetected: false,
-              });
-            }
-
-            const detectedDuration = analyzeSvgAnimation(content);
-            if (detectedDuration !== undefined && detectedDuration > 0) {
-              setDuration(detectedDuration);
-            }
-
-            trackFileLoad(method, dim, detectedDuration);
-          }}
+          onSvgContentChange={handleSvgContentChange}
           fileName={fileName}
           onFileNameChange={setFileName}
           duration={duration}
-          onDurationChange={setDuration}
+          onDurationChange={(d) => updateConfig({ duration: d })}
           hold={hold}
-          onHoldChange={setHold}
+          onHoldChange={(h) => updateConfig({ hold: h })}
           fps={fps}
-          onFpsChange={setFps}
+          onFpsChange={(f) => updateConfig({ fps: f })}
           preset={preset}
-          onPresetChange={setPreset}
+          onPresetChange={(p) => updateConfig({ preset: p })}
           scale={scale}
-          onScaleChange={setScale}
+          onScaleChange={(s) => updateConfig({ scale: s })}
           backgroundColor={backgroundColor}
-          onBackgroundColorChange={setBackgroundColor}
+          onBackgroundColorChange={(c) => updateConfig({ backgroundColor: c })}
           format={format}
-          onFormatChange={setFormat}
+          onFormatChange={(f) => updateConfig({ format: f })}
           isTransparent={isTransparent}
-          onIsTransparentChange={setIsTransparent}
+          onIsTransparentChange={(t) => updateConfig({ isTransparent: t })}
           captureMethod={captureMethod}
-          onCaptureMethodChange={setCaptureMethod}
+          onCaptureMethodChange={(m) => updateConfig({ captureMethod: m })}
           isDragging={isDragging}
           onIsDraggingChange={setIsDragging}
           state={state}
@@ -294,7 +273,7 @@ export const Studio = () => {
           targetDim={targetDim}
           renderedUrl={renderedUrl}
           metadata={metadata}
-          onMetadataChange={setMetadata}
+          onMetadataChange={(m) => updateConfig({ metadata: m })}
           onOpenSamples={() => handleOpenSamples('config')}
           onClearSvg={() => handleHome('config')}
         />

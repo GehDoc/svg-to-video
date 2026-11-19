@@ -48,6 +48,17 @@ Improve navigation within the Web Studio by enabling seamless return to the init
 - Ensure sample modal/picker has proper ARIA attributes (`role="dialog"`, `aria-modal="true"`, `aria-labelledby`, focus trapping and Escape key dismissal).
 - Adhere to SCSS module rules (no inline styles, theme variables from `web/src/styles/`).
 
+### 5. Single-Source-of-Truth State Architecture & CSS Streamlining
+
+- **State Consolidation**: Replace 15+ decoupled `useState` hooks in `Studio.tsx` with a typed reducer hook `useStudioState` and an immutable `DEFAULT_STUDIO_CONFIG` contract.
+  - The form reset in `handleHome` becomes an atomic 1-line call: `resetStudio()`.
+  - Guarantees zero configuration drift between initial studio load and reset.
+  - Automatically resets newly added configuration parameters without manual maintenance in reset handlers.
+- **CSS Cleanliness & Maintainability**:
+  - Add `@mixin sr-only` in `web/src/styles/_mixins.scss` to eliminate 11 lines of clip/rect boilerplate in `Dropzone.scss`.
+  - Streamline `Button.scss` by using `pointer-events: none` on `:disabled`, eliminating all 9 `!important` declarations and 4 redundant `:disabled:hover` override blocks.
+  - Leverage CSS custom properties (`var(--card)`, `var(--border)`, `var(--text)`, `var(--text-muted)`) directly, removing redundant dark mode media query duplicates.
+
 ## ✅ Task List
 
 - [x] **Infrastructure & Telemetry Schema**
@@ -66,6 +77,12 @@ Improve navigation within the Web Studio by enabling seamless return to the init
   - [x] Replace native `<input type="file">` file picker button in Dropzone with unified custom button
   - [x] Refine button styles in `Button.scss`, `ConfigPanel.scss`, and `SuccessView.scss` for high contrast and consistent active/disabled cues (strictly without bouncing/bumping animations)
   - [x] Update tests to verify always-present Clear SVG button and custom file upload trigger
+- [x] **Architectural Refactoring: Single Source of Truth & CSS Streamlining**
+  - [x] Define `DEFAULT_STUDIO_CONFIG` and `DEFAULT_SOURCE_STATE` in `web/src/types/studio.ts`
+  - [x] Implement `useStudioState` hook in `web/src/hooks/useStudioState.ts`
+  - [x] Refactor `Studio.tsx` to use `useStudioState`, turning `handleHome` into an atomic 1-line reset
+  - [x] Streamline `Button.scss`: eliminate `!important` tags, leverage `pointer-events: none` on `:disabled`, and use CSS custom properties cleanly
+  - [x] Add `@mixin sr-only` to `web/src/styles/_mixins.scss` and adopt in `Dropzone.scss`
 - [x] **Testing & Quality Assurance**
   - [x] Unit tests for `Header` with `onHome` callback and keyboard events
   - [x] Unit tests for `Studio` reset / home navigation flow
@@ -89,4 +106,5 @@ Improve navigation within the Web Studio by enabling seamless return to the init
 
 - 2026-11-19: Initial spec created for studio navigation and sample re-access.
 - 2026-11-19: Implementation and tests completed. Status changed to 🟡 To be reviewed.
-- 2026-11-19: Refined button styling with high contrast borders and solid backgrounds; made Clear SVG permanently present (disabled when empty); replaced native file input with custom button in Dropzone; removed sample button from ProgressOverlay; removed all bouncing/bumping transform hover effects across all buttons and inputs. Status: 🟡 To be reviewed.
+- 2026-11-19: Refined button styling with high contrast borders and solid backgrounds; made Clear SVG permanently present (disabled when empty); replaced native file input with custom button in Dropzone; removed sample button from ProgressOverlay; removed all bouncing/bumping transform hover effects across all buttons and inputs.
+- 2026-11-19: Architecture refactoring: consolidated studio state with `useStudioState` reducer and immutable `DEFAULT_STUDIO_CONFIG` contract for atomic form reset; streamlined CSS by eliminating all `!important` rules in `Button.scss`, adding `@mixin sr-only` in `_mixins.scss`, and unifying tokens via `--border-btn`. Status changed to 🟡 To be reviewed.

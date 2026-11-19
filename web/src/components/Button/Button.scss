@@ -12,12 +12,12 @@
   gap: 0.4rem;
   line-height: 1.25;
 
-  &:disabled,
-  &:disabled:hover {
+  &:disabled {
     opacity: 0.45;
     cursor: not-allowed;
     filter: grayscale(0.85);
-    box-shadow: none !important;
+    box-shadow: none;
+    pointer-events: none;
   }
 }
 
@@ -28,7 +28,7 @@
   font-size: 1rem;
   border-color: var(--primary);
 
-  &:hover:not(:disabled) {
+  &:hover {
     background-color: var(--primary-hover);
     border-color: var(--primary-hover);
     box-shadow: 0 4px 12px rgba(94, 97, 230, 0.25);
@@ -38,41 +38,20 @@
 .btn--secondary {
   background: var(--card);
   color: var(--text);
-  border: 1px solid #94a3b8;
+  border: 1px solid var(--border-btn);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
-  &:hover:not(:disabled) {
+  &:hover {
     background: var(--panel);
     color: var(--primary);
     border-color: var(--primary);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   }
 
-  &:disabled,
-  &:disabled:hover {
-    background: transparent !important;
-    border-color: var(--border) !important;
-    color: var(--text-muted) !important;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .btn--secondary {
-    border-color: #64748b;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-
-    &:hover:not(:disabled) {
-      border-color: var(--primary-text);
-      color: var(--primary-text);
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    &:disabled,
-    &:disabled:hover {
-      background: transparent !important;
-      border-color: var(--border) !important;
-      color: var(--text-muted) !important;
-    }
+  &:disabled {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text-muted);
   }
 }
 
@@ -82,18 +61,17 @@
   border: 1.5px solid var(--primary);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
-  &:hover:not(:disabled) {
+  &:hover {
     background: var(--primary);
     color: #ffffff;
     border-color: var(--primary);
     box-shadow: 0 2px 6px rgba(94, 97, 230, 0.2);
   }
 
-  &:disabled,
-  &:disabled:hover {
-    background: transparent !important;
-    border-color: var(--border) !important;
-    color: var(--text-muted) !important;
+  &:disabled {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text-muted);
   }
 }
 
@@ -104,7 +82,7 @@
   font-size: 0.75rem;
   border-color: var(--error);
 
-  &:hover:not(:disabled) {
+  &:hover {
     filter: brightness(1.1);
   }
 }
