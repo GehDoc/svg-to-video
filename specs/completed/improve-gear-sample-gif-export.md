@@ -2,7 +2,7 @@
 
 **GitHub Issue**: None
 **Follow-up Issue**: [#265](https://github.com/GehDoc/svg-to-video/issues/265)
-**Status**: 🟡 To be reviewed
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -87,3 +87,4 @@ Fix the mechanical gear animation loop synchronization to eliminate rotational h
 
 - 2026-11-18: Initial spec created by Antigravity.
 - 2026-11-18: Implemented gear rotation synchronization ($T_1 = 2$s, $T_2 = 1.5$s), optimized Web Studio `GifEncoder.ts` with opaque pixel separation and `rgb565` quantization, synchronized CLI FFmpeg `paletteuse` with deterministic `bayer` dithering, created follow-up issue #265, and verified all tests pass. Spec marked `🟡 To be reviewed`.
+- 2026-11-19: PR #264 approved by human reviewer. Version bumped to 0.36.0, spec marked `🟢 Completed` and archived to `specs/completed/`.
