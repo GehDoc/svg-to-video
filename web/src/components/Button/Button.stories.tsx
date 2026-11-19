@@ -52,3 +52,11 @@ export const Disabled: Story = {
     children: 'Disabled Button',
   },
 };
+
+export const DisabledSecondary: Story = {
+  args: {
+    variant: 'secondary',
+    disabled: true,
+    children: 'Disabled Secondary',
+  },
+};

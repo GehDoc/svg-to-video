@@ -19,16 +19,20 @@ Improve navigation within the Web Studio by enabling seamless return to the init
   - Clears errors via `clearError()`.
   - Dispatches `trackEvent('click-home', { location: 'header' })`.
   - Instantly reveals `LandingView` inside `MonitorPanel` without any page reload or splash screen flicker.
-- In `ConfigPanel` / `Dropzone`: Provide a clear "Reset / Clear SVG" action when a file is loaded so users can return to the initial landing view directly from the source panel, dispatching `trackEvent('click-home', { location: 'config' })`.
+- In `ConfigPanel` / `Dropzone`:
+  - Always render both "Browse Samples" and "Clear SVG" buttons in the Source section. When no SVG is loaded (`!svgContent`) or during render, "Clear SVG" is rendered in a disabled state (`disabled={!svgContent || isRenderingOrSuccess}`), ensuring stable layout without layout shift.
+  - Redesign Source action buttons and custom file upload button to eliminate ambiguous greyish borders. Ensure active buttons have prominent, crisp styling that reads distinctly as clickable buttons, with an unambiguous disabled state.
+  - Replace the native browser `<input type="file">` button with a custom-styled button/trigger aligned with the studio button design tokens.
+  - Keep button styles aligned with `SuccessView` actions and global `Button.scss`.
 
 ### 2. SVG Sample Gallery Re-Access (Action 2)
 
 - Currently, once an SVG file or sample is loaded, `MonitorPanel` is replaced by `RenderingView`, hiding `LandingView` and its interactive sample cards. Users have no clean way to browse or try other samples.
 - In `ConfigPanel` (Section 1: Source):
-  - Below/alongside `Dropzone`, add an accessible "Browse Samples" / "Try a Sample" action button.
-  - Clicking this opens an accessible Samples Modal / Drawer (or sample selector dialog) displaying the full interactive sample cards (`SampleCard`), allowing users to preview and click "Try This Sample" on another sample immediately.
-  - Alternatively / additionally: in `RenderingView` or `MonitorPanel`, offer a quick "Samples" switch / button.
-  - When the sample modal/drawer is opened, dispatch `trackEvent('open-samples', { location: 'config' })` (or appropriate location).
+  - Below `Dropzone`, provide accessible side-by-side action buttons: "Browse Samples" and "Clear SVG".
+  - The progress pane / overlay stays focused strictly on rendering status, percentage, and cancel action (no sample button in the progress overlay).
+  - Clicking "Browse Samples" opens an accessible Samples Modal dialog displaying the full interactive sample cards (`SampleCard`), allowing users to preview and click "Try This Sample" on another sample immediately.
+  - When the sample modal is opened, dispatch `trackEvent('open-samples', { location: 'config' })`.
   - When a sample is selected from this view, it uses `handleSelectSample`, which automatically tracks `file-load` with `method: 'sample'`.
 
 ### 3. Analytics & Telemetry Schema Updates
@@ -56,7 +60,12 @@ Improve navigation within the Web Studio by enabling seamless return to the init
 - [x] **Sample Gallery Re-Access UI**
   - [x] Create `SampleModal` (or sample picker component) reusable across views
   - [x] Integrate "Browse Samples" button into `ConfigPanel` Source section
-  - [x] Add "Clear SVG / Back to Home" button in `ConfigPanel` Source section when SVG is active
+  - [x] Add "Clear SVG / Back to Home" button in `ConfigPanel` Source section
+- [x] **Source Section & Button Styling Alignment**
+  - [x] Make "Clear SVG" always present and disabled when inactive (`!svgContent`)
+  - [x] Replace native `<input type="file">` file picker button in Dropzone with unified custom button
+  - [x] Refine button styles in `Button.scss`, `ConfigPanel.scss`, and `SuccessView.scss` for high contrast and consistent active/disabled cues (strictly without bouncing/bumping animations)
+  - [x] Update tests to verify always-present Clear SVG button and custom file upload trigger
 - [x] **Testing & Quality Assurance**
   - [x] Unit tests for `Header` with `onHome` callback and keyboard events
   - [x] Unit tests for `Studio` reset / home navigation flow
@@ -70,8 +79,8 @@ Improve navigation within the Web Studio by enabling seamless return to the init
 
 ## 🧪 Verification Plan
 
-- [x] Unit Tests: `npm run test:unit -w web` (23 test files, 89 passed)
-- [x] Storybook Tests: `npm run test:storybook -w web` (18 test files, 48 passed)
+- [x] Unit Tests: `npm run test:unit -w web` (23 test files, 90 passed)
+- [x] Storybook Tests: `npm run test:storybook -w web` (18 test files, 49 passed)
 - [x] Visual Regression Tests: `npm run test:visual -w web` (3 test files, 14 passed)
 - [x] E2E Smoke Tests: `npm run test:web -w web -- tests/smoke.spec.ts` (10 passed)
 - [x] Type Checking & Linting: `npm run check:fast` (0 errors, 0 warnings)
@@ -80,3 +89,4 @@ Improve navigation within the Web Studio by enabling seamless return to the init
 
 - 2026-11-19: Initial spec created for studio navigation and sample re-access.
 - 2026-11-19: Implementation and tests completed. Status changed to 🟡 To be reviewed.
+- 2026-11-19: Refined button styling with high contrast borders and solid backgrounds; made Clear SVG permanently present (disabled when empty); replaced native file input with custom button in Dropzone; removed sample button from ProgressOverlay; removed all bouncing/bumping transform hover effects across all buttons and inputs. Status: 🟡 To be reviewed.

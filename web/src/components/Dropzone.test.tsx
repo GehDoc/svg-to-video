@@ -63,6 +63,31 @@ test('Dropzone triggers file input click on container click', () => {
   expect(clickSpy).toHaveBeenCalledTimes(1);
 });
 
+test('Dropzone triggers file input click on custom browse button click', () => {
+  render(
+    <Dropzone
+      svgContent={null}
+      isDragging={false}
+      setIsDragging={vi.fn()}
+      onFileChange={vi.fn()}
+      onDrop={vi.fn()}
+    />
+  );
+
+  const browseBtn = screen.getByRole('button', {
+    name: /browse svg file to upload/i,
+  });
+  expect(browseBtn).toBeInTheDocument();
+
+  const fileInput = document.querySelector(
+    'input[type="file"]'
+  ) as HTMLInputElement;
+  const clickSpy = vi.spyOn(fileInput, 'click');
+
+  fireEvent.click(browseBtn);
+  expect(clickSpy).toHaveBeenCalledTimes(1);
+});
+
 test('Dropzone displays ErrorView popup when a non-SVG file is dropped or selected', () => {
   const mockOnDrop = vi.fn();
   const mockOnFileChange = vi.fn();

@@ -5,6 +5,8 @@ import {
   type DragEvent,
   type MouseEvent,
 } from 'react';
+import { Button } from './Button/Button';
+import { FaUpload, FaFolderOpen } from 'react-icons/fa';
 import { ErrorView } from './ErrorView';
 import { isSvgFile } from '../utils/isSvgFile';
 import './Dropzone.scss';
@@ -42,13 +44,20 @@ export const Dropzone = ({
 
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     if (disabled) return;
-    // Prevent double trigger if clicking directly on label or file input element
+    // Prevent double trigger if clicking directly on label, native input, or custom button
     if (
       e.target === fileInputRef.current ||
-      (e.target as HTMLElement).tagName === 'LABEL'
+      (e.target as HTMLElement).tagName === 'LABEL' ||
+      (e.target as HTMLElement).closest('button')
     ) {
       return;
     }
+    fileInputRef.current?.click();
+  };
+
+  const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    if (disabled) return;
     fileInputRef.current?.click();
   };
 
@@ -92,20 +101,37 @@ export const Dropzone = ({
         onDragLeave={handleDrag}
         onDrop={handleInternalDrop}
       >
-        <div className="input-group" style={{ marginBottom: 0 }}>
-          <label htmlFor="svg-upload">
+        <div className="dropzone__content">
+          <FaUpload className="dropzone__icon" aria-hidden="true" />
+          <label htmlFor="svg-upload" className="dropzone__label">
             {svgContent ? 'Change SVG' : 'Drop SVG here or click to upload'}
           </label>
-          <div className="file-input-wrapper">
-            <input
-              type="file"
-              id="svg-upload"
-              ref={fileInputRef}
-              accept=".svg,image/svg+xml"
-              onChange={handleInternalFileChange}
+          <div className="dropzone__action">
+            <Button
+              variant="secondary"
+              className="dropzone__btn"
               disabled={disabled}
-            />
+              type="button"
+              onClick={handleButtonClick}
+              aria-label={
+                svgContent
+                  ? 'Choose another SVG file'
+                  : 'Browse SVG file to upload'
+              }
+            >
+              <FaFolderOpen className="btn-icon" aria-hidden="true" />
+              {svgContent ? 'Choose Another File' : 'Browse Files'}
+            </Button>
           </div>
+          <input
+            type="file"
+            id="svg-upload"
+            ref={fileInputRef}
+            accept=".svg,image/svg+xml"
+            onChange={handleInternalFileChange}
+            disabled={disabled}
+            className="dropzone__native-input"
+          />
         </div>
       </div>
       {errorMessage && (

@@ -316,7 +316,6 @@ export const Studio = () => {
           mimeType={mimeType}
           format={format}
           onSelectSample={handleSelectSample}
-          onOpenSamples={() => handleOpenSamples('monitor')}
         />
       </main>
       <SampleModal

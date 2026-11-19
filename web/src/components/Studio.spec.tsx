@@ -196,6 +196,12 @@ test('Studio resets state and returns to landing view when clicking Clear SVG in
 
   render(<Studio />);
 
+  // Clear SVG button is initially present but disabled
+  const initialClearBtn = screen.getByRole('button', {
+    name: /clear active svg and return to home screen/i,
+  });
+  expect(initialClearBtn).toBeDisabled();
+
   // Select sample
   const rocketBtn = screen.getByRole('button', {
     name: /Test Rocket Launch sample/i,

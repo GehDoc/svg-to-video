@@ -122,7 +122,7 @@ test.describe('SVG to Video Web Smoke Test', () => {
     const clearBtn = page.getByRole('button', {
       name: /Clear active SVG and return to home screen/i,
     });
-    await expect(clearBtn).toBeVisible();
+    await expect(clearBtn).toBeEnabled();
 
     // 5. Click Header Home link to reset back to LandingView
     const homeLink = page.getByRole('button', {
@@ -132,7 +132,7 @@ test.describe('SVG to Video Web Smoke Test', () => {
 
     // 6. LandingView is restored without full page reload
     await expect(landingView).toBeVisible();
-    await expect(clearBtn).toBeHidden();
+    await expect(clearBtn).toBeDisabled();
   });
 
   test('should allow clearing loaded SVG via ConfigPanel clear button', async ({
@@ -142,6 +142,11 @@ test.describe('SVG to Video Web Smoke Test', () => {
     const landingView = page.locator('.landing-view');
     await expect(landingView).toBeVisible();
 
+    const clearBtn = page.getByRole('button', {
+      name: /Clear active SVG and return to home screen/i,
+    });
+    await expect(clearBtn).toBeDisabled();
+
     // Select sample from LandingView
     const rocketBtn = page.getByRole('button', {
       name: /Test Rocket Launch sample/i,
@@ -149,16 +154,13 @@ test.describe('SVG to Video Web Smoke Test', () => {
     await rocketBtn.click();
 
     await expect(landingView).toBeHidden();
-    const clearBtn = page.getByRole('button', {
-      name: /Clear active SVG and return to home screen/i,
-    });
-    await expect(clearBtn).toBeVisible();
+    await expect(clearBtn).toBeEnabled();
 
     // Click clear button
     await clearBtn.click();
 
     // LandingView is restored
     await expect(landingView).toBeVisible();
-    await expect(clearBtn).toBeHidden();
+    await expect(clearBtn).toBeDisabled();
   });
 });

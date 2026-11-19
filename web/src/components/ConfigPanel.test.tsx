@@ -222,20 +222,20 @@ test('ConfigPanel renders Browse Samples button and triggers onOpenSamples', asy
   expect(onOpenSamples).toHaveBeenCalledTimes(1);
 });
 
-test('ConfigPanel renders Clear SVG button only when svgContent is present, and triggers onClearSvg', async () => {
+test('ConfigPanel renders Clear SVG button, disabled when svgContent is absent and enabled when present', async () => {
   const onClearSvg = vi.fn();
 
-  // 1. Without svgContent
+  // 1. Without svgContent: button is present but disabled
   const { rerender } = render(
     <ConfigPanel {...defaultProps} svgContent={null} onClearSvg={onClearSvg} />
   );
-  expect(
-    screen.queryByRole('button', {
-      name: /clear active svg and return to home screen/i,
-    })
-  ).not.toBeInTheDocument();
+  const clearBtn = screen.getByRole('button', {
+    name: /clear active svg and return to home screen/i,
+  });
+  expect(clearBtn).toBeInTheDocument();
+  expect(clearBtn).toBeDisabled();
 
-  // 2. With svgContent
+  // 2. With svgContent: button is enabled and actionable
   rerender(
     <ConfigPanel
       {...defaultProps}
@@ -243,10 +243,7 @@ test('ConfigPanel renders Clear SVG button only when svgContent is present, and 
       onClearSvg={onClearSvg}
     />
   );
-  const clearBtn = screen.getByRole('button', {
-    name: /clear active svg and return to home screen/i,
-  });
-  expect(clearBtn).toBeInTheDocument();
+  expect(clearBtn).not.toBeDisabled();
 
   fireEvent.click(clearBtn);
   expect(onClearSvg).toHaveBeenCalledTimes(1);

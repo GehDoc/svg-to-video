@@ -69,11 +69,10 @@
       }
 
       &--clear {
-        color: var(--text-muted);
-
         &:hover:not(:disabled) {
           color: var(--error);
           border-color: var(--error);
+          background: rgba(220, 38, 38, 0.06);
         }
       }
     }

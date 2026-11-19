@@ -4,7 +4,7 @@
   position: relative;
   border: 2px dashed var(--border);
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: 1.25rem 1rem;
   text-align: center;
   transition: all 0.2s ease;
   cursor: pointer;
@@ -13,13 +13,17 @@
   user-select: none;
 
   @media (max-width: $mobile-breakpoint) {
-    padding: 1rem;
+    padding: 1rem 0.75rem;
   }
 
   &:hover:not(.disabled) {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
     border-color: var(--primary);
     color: var(--text);
+
+    .dropzone__icon {
+      color: var(--primary);
+    }
   }
 
   &:focus-visible:not(.disabled) {
@@ -34,7 +38,7 @@
     background: var(--panel);
 
     label,
-    input {
+    .dropzone__icon {
       cursor: not-allowed;
     }
   }
@@ -42,7 +46,6 @@
   &.dragging:not(.disabled) {
     background: rgba(99, 102, 241, 0.1);
     border-color: var(--primary);
-    transform: scale(1.02);
   }
 
   &.has-content:not(.disabled) {
@@ -51,16 +54,54 @@
     background: var(--panel);
   }
 
-  label {
-    cursor: pointer;
-    font-size: 0.95rem;
-    color: var(--text);
+  .dropzone__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
   }
 
-  input[type='file'] {
-    margin-top: 0.5rem;
-    width: 100%;
-    font-size: 0.95rem;
+  .dropzone__icon {
+    font-size: 1.4rem;
     color: var(--text-muted);
+    transition: all 0.2s ease;
+  }
+
+  .dropzone__label {
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .dropzone__action {
+    margin-top: 0.15rem;
+  }
+
+  .dropzone__btn {
+    font-size: 0.8rem;
+    padding: 0.45rem 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    .btn-icon {
+      font-size: 0.75rem;
+    }
+  }
+
+  .dropzone__native-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+    opacity: 0;
   }
 }

@@ -1,12 +1,10 @@
 import { Button } from './Button/Button';
-import { FaLayerGroup } from 'react-icons/fa';
 import './ProgressOverlay.scss';
 
 interface ProgressOverlayProps {
   status?: string;
   progress?: number;
   onCancel?: () => void;
-  onOpenSamples?: () => void;
   children?: React.ReactNode;
 }
 
@@ -14,7 +12,6 @@ export const ProgressOverlay = ({
   status,
   progress,
   onCancel,
-  onOpenSamples,
   children,
 }: ProgressOverlayProps) => {
   return (
@@ -25,16 +22,6 @@ export const ProgressOverlay = ({
           {onCancel ? (
             <Button variant="error" onClick={onCancel}>
               Cancel
-            </Button>
-          ) : onOpenSamples ? (
-            <Button
-              variant="secondary"
-              className="progress-samples-btn"
-              onClick={onOpenSamples}
-              type="button"
-              aria-label="Browse sample SVG animations"
-            >
-              <FaLayerGroup size={11} className="btn-icon" /> Samples
             </Button>
           ) : (
             <div className="invisible">

@@ -213,12 +213,12 @@ export const ConfigPanel = ({
                 <FaLayerGroup size={12} className="btn-icon" /> Browse Samples
               </Button>
             )}
-            {svgContent && onClearSvg && (
+            {onClearSvg && (
               <Button
                 variant="secondary"
                 className="source-action-btn source-action-btn--clear"
                 onClick={onClearSvg}
-                disabled={isRenderingOrSuccess}
+                disabled={!svgContent || isRenderingOrSuccess}
                 type="button"
                 aria-label="Clear active SVG and return to home screen"
               >
