@@ -311,7 +311,7 @@ The current workflow does not automatically redeploy a downloaded artifact. To r
 1. Open the GitHub Actions run for the commit you want to restore.
 2. Download the `pages-<sha>` artifact.
 3. Extract the artifact to a clean directory.
-4. Redeploy that directory through the Pages workflow or rerun the workflow with the rollback snapshot as its publish input.
+4. Redeploy that directory using a deployment workflow or restore it manually.
 
 ##### Refresh stale local references
 
