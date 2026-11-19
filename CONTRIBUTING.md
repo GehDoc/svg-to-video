@@ -289,11 +289,41 @@ docker run --rm --user $(id -u):$(id -g) --shm-size=2gb -v $(pwd):/data:Z gehdoc
 
 ### 🚀 GitHub Pages Deployment
 
-The Web Studio and Storybook Gallery deploy automatically to **GitHub Pages** on merges to `main`:
+The Web Studio, Storybook Gallery, and demo assets deploy automatically when changes are pushed to `main`:
 
 - **Web Studio**: [https://gehdoc.github.io/svg-to-video/](https://gehdoc.github.io/svg-to-video/)
 - **Storybook Gallery**: [https://gehdoc.github.io/svg-to-video/storybook/](https://gehdoc.github.io/svg-to-video/storybook/)
-- **Asset Pathing**: Next.js uses an environment-aware `basePath: '/svg-to-video'` in `web/next.config.js`.
+- **Demo GIF**: [https://gehdoc.github.io/svg-to-video/assets/demo.gif](https://gehdoc.github.io/svg-to-video/assets/demo.gif)
+- **Asset pathing**: Next.js uses an environment-aware `basePath: '/svg-to-video'` in `web/next.config.js`.
+
+The workflow assembles these production outputs separately from Next.js build and development caches before publishing them to `gh-pages`.
+
+#### Branch history and rollback
+
+After the `force_orphan: true` deployment setting is merged, each successful deployment will publish `gh-pages` as a fresh, orphaned commit. This keeps old deployment files and commit history from accumulating on that branch. Keep source changes and release tags on `main`, not `gh-pages`.
+
+The workflow also uploads the assembled Pages site as an artifact named `pages-<commit-sha>`, retained for seven days.
+
+##### Roll back
+
+The current workflow does not automatically redeploy a downloaded artifact. To restore a snapshot, publish its contents to `gh-pages` using an available deployment process:
+
+1. Open the GitHub Actions run for the commit you want to restore.
+2. Download the `pages-<sha>` artifact.
+3. Extract the artifact to a clean directory.
+4. Redeploy that directory using a deployment workflow or restore it manually.
+
+##### Refresh stale local references
+
+If this process replaces the local `gh-pages` branch, refresh stale local references with:
+
+```bash
+git switch main
+git fetch origin --prune
+git branch -D gh-pages 2>/dev/null || true
+git reflog expire --expire=now --all
+git gc --prune=now
+```
 
 ### 📊 Analytics (Umami Telemetry)
 
