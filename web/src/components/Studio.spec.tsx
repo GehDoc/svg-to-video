@@ -5,6 +5,7 @@ import {
   waitFor,
   screen,
   fireEvent,
+  within,
 } from '@testing-library/react';
 import { test, expect, vi, afterEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
@@ -137,5 +138,129 @@ test('Studio applies sample target capture settings and preserves defined captur
       /Resolution/i
     ) as HTMLSelectElement;
     expect(resolutionSelect.value).toBe('original');
+  });
+});
+
+test('Studio resets state and returns to landing view when clicking header home button', async () => {
+  const trackMock = vi.fn();
+  (window as unknown as { umami?: { track: typeof trackMock } }).umami = {
+    track: trackMock,
+  };
+
+  render(<Studio />);
+
+  // 1. Initially LandingView is shown
+  expect(
+    screen.getByText(/Welcome to SVG to Video Studio/i)
+  ).toBeInTheDocument();
+
+  // 2. Select a sample to transition to RenderingView
+  const rocketBtn = screen.getByRole('button', {
+    name: /Test Rocket Launch sample/i,
+  });
+  fireEvent.click(rocketBtn);
+
+  await waitFor(() => {
+    expect(screen.getByTestId('mock-svg-renderer')).toBeInTheDocument();
+  });
+  expect(
+    screen.queryByText(/Welcome to SVG to Video Studio/i)
+  ).not.toBeInTheDocument();
+
+  // 3. Click the header home button
+  const homeBtn = screen.getByRole('button', { name: /svg to video home/i });
+  fireEvent.click(homeBtn);
+
+  // 4. Verify landing view is restored and mock renderer is gone
+  await waitFor(() => {
+    expect(
+      screen.getByText(/Welcome to SVG to Video Studio/i)
+    ).toBeInTheDocument();
+  });
+  expect(screen.queryByTestId('mock-svg-renderer')).not.toBeInTheDocument();
+
+  // 5. Verify telemetry
+  expect(trackMock).toHaveBeenCalledWith(
+    'click-home',
+    expect.objectContaining({
+      location: 'header',
+    })
+  );
+});
+
+test('Studio resets state and returns to landing view when clicking Clear SVG in config panel', async () => {
+  const trackMock = vi.fn();
+  (window as unknown as { umami?: { track: typeof trackMock } }).umami = {
+    track: trackMock,
+  };
+
+  render(<Studio />);
+
+  // Select sample
+  const rocketBtn = screen.getByRole('button', {
+    name: /Test Rocket Launch sample/i,
+  });
+  fireEvent.click(rocketBtn);
+
+  await waitFor(() => {
+    expect(screen.getByTestId('mock-svg-renderer')).toBeInTheDocument();
+  });
+
+  // Click Clear SVG button
+  const clearBtn = screen.getByRole('button', {
+    name: /clear active svg and return to home screen/i,
+  });
+  fireEvent.click(clearBtn);
+
+  await waitFor(() => {
+    expect(
+      screen.getByText(/Welcome to SVG to Video Studio/i)
+    ).toBeInTheDocument();
+  });
+  expect(screen.queryByTestId('mock-svg-renderer')).not.toBeInTheDocument();
+
+  // Verify telemetry
+  expect(trackMock).toHaveBeenCalledWith(
+    'click-home',
+    expect.objectContaining({
+      location: 'config',
+    })
+  );
+});
+
+test('Studio opens SampleModal via Browse Samples and loads selected sample', async () => {
+  const trackMock = vi.fn();
+  (window as unknown as { umami?: { track: typeof trackMock } }).umami = {
+    track: trackMock,
+  };
+
+  render(<Studio />);
+
+  // 1. Click Browse Samples button in ConfigPanel
+  const browseBtn = screen.getByRole('button', {
+    name: /browse sample svg animations/i,
+  });
+  fireEvent.click(browseBtn);
+
+  // 2. Verify modal opened and open-samples event tracked
+  const dialog = screen.getByRole('dialog', { name: /sample animations/i });
+  expect(dialog).toBeInTheDocument();
+  expect(trackMock).toHaveBeenCalledWith(
+    'open-samples',
+    expect.objectContaining({
+      location: 'config',
+    })
+  );
+
+  // 3. Select a sample from within the modal
+  const radarBtn = within(dialog).getByRole('button', {
+    name: /Test Radar Scanner sample/i,
+  });
+  fireEvent.click(radarBtn);
+
+  // 4. Verify modal closed and sample loaded into preview
+  await waitFor(() => {
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByTestId('mock-svg-renderer')).toBeInTheDocument();
   });
 });

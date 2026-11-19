@@ -91,4 +91,74 @@ test.describe('SVG to Video Web Smoke Test', () => {
     // Verify computed style for mobile breakpoint
     await expect(layout).toHaveCSS('flex-direction', 'column');
   });
+
+  test('should allow opening sample modal, selecting a sample, and resetting via header home link', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const landingView = page.locator('.landing-view');
+    await expect(landingView).toBeVisible();
+
+    // 1. Click Browse Samples button in ConfigPanel
+    const browseBtn = page.getByRole('button', {
+      name: /Browse sample SVG animations/i,
+    });
+    await expect(browseBtn).toBeVisible();
+    await browseBtn.click();
+
+    // 2. Sample modal should be open
+    const modal = page.getByRole('dialog', { name: /Sample Animations/i });
+    await expect(modal).toBeVisible();
+
+    // 3. Select a sample from within the modal
+    const sampleBtn = modal.getByRole('button', {
+      name: /Test Radar Scanner sample/i,
+    });
+    await sampleBtn.click();
+
+    // 4. Modal closes and RenderingView / preview monitor is visible
+    await expect(modal).toBeHidden();
+    await expect(landingView).toBeHidden();
+    const clearBtn = page.getByRole('button', {
+      name: /Clear active SVG and return to home screen/i,
+    });
+    await expect(clearBtn).toBeVisible();
+
+    // 5. Click Header Home link to reset back to LandingView
+    const homeLink = page.getByRole('button', {
+      name: /SVG to Video Home/i,
+    });
+    await homeLink.click();
+
+    // 6. LandingView is restored without full page reload
+    await expect(landingView).toBeVisible();
+    await expect(clearBtn).toBeHidden();
+  });
+
+  test('should allow clearing loaded SVG via ConfigPanel clear button', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const landingView = page.locator('.landing-view');
+    await expect(landingView).toBeVisible();
+
+    // Select sample from LandingView
+    const rocketBtn = page.getByRole('button', {
+      name: /Test Rocket Launch sample/i,
+    });
+    await rocketBtn.click();
+
+    await expect(landingView).toBeHidden();
+    const clearBtn = page.getByRole('button', {
+      name: /Clear active SVG and return to home screen/i,
+    });
+    await expect(clearBtn).toBeVisible();
+
+    // Click clear button
+    await clearBtn.click();
+
+    // LandingView is restored
+    await expect(landingView).toBeVisible();
+    await expect(clearBtn).toBeHidden();
+  });
 });

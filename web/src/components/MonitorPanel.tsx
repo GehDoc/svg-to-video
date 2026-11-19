@@ -24,6 +24,7 @@ interface MonitorPanelProps {
   onCancel: () => void;
   onClearError: () => void;
   onSelectSample?: (sample: SamplePreset) => void;
+  onOpenSamples?: () => void;
 }
 
 export const MonitorPanel = ({
@@ -44,6 +45,7 @@ export const MonitorPanel = ({
   onCancel,
   onClearError,
   onSelectSample,
+  onOpenSamples,
 }: MonitorPanelProps) => {
   return (
     <section className="monitor-panel">
@@ -69,6 +71,7 @@ export const MonitorPanel = ({
           isTransparent={isTransparent}
           onCancel={onCancel}
           onClearError={onClearError}
+          onOpenSamples={onOpenSamples}
         />
       ) : (
         <LandingView onSelectSample={onSelectSample} />

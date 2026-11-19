@@ -1,7 +1,7 @@
 # Spec: Studio Navigation Improvements and Sample Re-Access
 
 **GitHub Issue**: N/A (Unlinked)
-**Status**: 🟠 Pending
+**Status**: 🟡 To be reviewed
 
 ## 🎯 Objective
 
@@ -46,34 +46,37 @@ Improve navigation within the Web Studio by enabling seamless return to the init
 
 ## ✅ Task List
 
-- [ ] **Infrastructure & Telemetry Schema**
-  - [ ] Add `'click-home'` and `'open-samples'` event types to `shared/analytics-schema.ts`
-  - [ ] Update `docs/ANALYTICS.md` with new event definitions
-- [ ] **Core Navigation Logic**
-  - [ ] Add `handleHome` / `handleReset` in `web/src/components/Studio.tsx`
-  - [ ] Refactor `web/src/components/Header.tsx` to accept `onHome` prop and eliminate `window.location.reload()`
-  - [ ] Add keyboard navigation (Enter/Space) and ARIA attributes to Header home link
-- [ ] **Sample Gallery Re-Access UI**
-  - [ ] Create `SampleModal` (or sample picker component) reusable across views
-  - [ ] Integrate "Browse Samples" button into `ConfigPanel` Source section
-  - [ ] Add "Clear SVG / Back to Home" button in `ConfigPanel` Source section when SVG is active
-- [ ] **Testing & Quality Assurance**
-  - [ ] Unit tests for `Header` with `onHome` callback and keyboard events
-  - [ ] Unit tests for `Studio` reset / home navigation flow
-  - [ ] Unit tests for `SampleModal` / sample picker open & select flows
-  - [ ] Verify Umami analytics tracking for `'click-home'` and `'open-samples'`
-- [ ] **Documentation & SEO Pre-Flight**
-  - [ ] Update `README.md` & `docs/ARCHITECTURE.md`
-  - [ ] Audit `docs/ANALYTICS.md`
-  - [ ] Verify SEO keywords & JSON-LD in `web/src/app/layout.tsx`
-  - [ ] Verify static fallback description in `web/src/components/SeoFallback.tsx`
+- [x] **Infrastructure & Telemetry Schema**
+  - [x] Add `'click-home'` and `'open-samples'` event types to `shared/analytics-schema.ts`
+  - [x] Update `docs/ANALYTICS.md` with new event definitions
+- [x] **Core Navigation Logic**
+  - [x] Add `handleHome` / `handleReset` in `web/src/components/Studio.tsx`
+  - [x] Refactor `web/src/components/Header.tsx` to accept `onHome` prop and eliminate `window.location.reload()`
+  - [x] Add keyboard navigation (Enter/Space) and ARIA attributes to Header home link
+- [x] **Sample Gallery Re-Access UI**
+  - [x] Create `SampleModal` (or sample picker component) reusable across views
+  - [x] Integrate "Browse Samples" button into `ConfigPanel` Source section
+  - [x] Add "Clear SVG / Back to Home" button in `ConfigPanel` Source section when SVG is active
+- [x] **Testing & Quality Assurance**
+  - [x] Unit tests for `Header` with `onHome` callback and keyboard events
+  - [x] Unit tests for `Studio` reset / home navigation flow
+  - [x] Unit tests for `SampleModal` / sample picker open & select flows
+  - [x] Verify Umami analytics tracking for `'click-home'` and `'open-samples'`
+- [x] **Documentation & SEO Pre-Flight**
+  - [x] Update `README.md` & `docs/ARCHITECTURE.md`
+  - [x] Audit `docs/ANALYTICS.md`
+  - [x] Verify SEO keywords & JSON-LD in `web/src/app/layout.tsx`
+  - [x] Verify static fallback description in `web/src/components/SeoFallback.tsx`
 
 ## 🧪 Verification Plan
 
-- [ ] Unit Tests: `npm run test:unit -w web`
-- [ ] Integration & Accessibility Tests: Verify dialog accessibility and focus management
-- [ ] Type Checking & Linting: `npm run check:fast`
+- [x] Unit Tests: `npm run test:unit -w web` (23 test files, 89 passed)
+- [x] Storybook Tests: `npm run test:storybook -w web` (18 test files, 48 passed)
+- [x] Visual Regression Tests: `npm run test:visual -w web` (3 test files, 14 passed)
+- [x] E2E Smoke Tests: `npm run test:web -w web -- tests/smoke.spec.ts` (10 passed)
+- [x] Type Checking & Linting: `npm run check:fast` (0 errors, 0 warnings)
 
 ## 📝 Change Log
 
 - 2026-11-19: Initial spec created for studio navigation and sample re-access.
+- 2026-11-19: Implementation and tests completed. Status changed to 🟡 To be reviewed.

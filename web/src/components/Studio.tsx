@@ -17,6 +17,7 @@ import { formatRegistry } from '../utils/encoders/Registry';
 import { Header } from './Header';
 import { ConfigPanel } from './ConfigPanel';
 import { MonitorPanel } from './MonitorPanel';
+import { SampleModal } from './SampleModal/SampleModal';
 import { trackEvent } from '../utils/analytics';
 import { trackFileLoad } from '../utils/tracking/fileTracking';
 
@@ -39,6 +40,7 @@ export const Studio = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [renderedUrl, setRenderedUrl] = useState<string | null>(null);
   const [fileSize, setFileSize] = useState<string | null>(null);
+  const [isSampleModalOpen, setIsSampleModalOpen] = useState(false);
   const [metadata, setMetadata] = useState<VideoMetadata>({
     title: '',
     comment: '',
@@ -164,6 +166,46 @@ export const Studio = () => {
     setRenderedUrl(null);
   }, [format, isTransparent]);
 
+  const handleHome = useCallback(
+    (location: 'header' | 'config' | 'monitor' = 'header') => {
+      trackEvent('click-home', { location });
+      if (state.isRendering) {
+        cancel();
+      }
+      clearError();
+      setSvgContent(null);
+      setRenderedUrl(null);
+      setFileSize(null);
+      setFileName('animation.mp4');
+      setDuration(5);
+      setHold(0);
+      setFps(24);
+      setPreset('original');
+      setScale(1);
+      setBackgroundColor('#ffffff');
+      setFormat('mp4');
+      setIsTransparent(false);
+      setCaptureMethod('high-fidelity');
+      setOriginalDim({ width: 0, height: 0, isDimensionsDetected: false });
+      setSupportError(null);
+      setMetadata({ title: '', comment: '' });
+      setIsSampleModalOpen(false);
+    },
+    [state.isRendering, cancel, clearError]
+  );
+
+  const handleOpenSamples = useCallback(
+    (location: 'config' | 'monitor' = 'config') => {
+      trackEvent('open-samples', { location });
+      setIsSampleModalOpen(true);
+    },
+    []
+  );
+
+  const handleCloseSamples = useCallback(() => {
+    setIsSampleModalOpen(false);
+  }, []);
+
   const handleSelectSample = useCallback((sample: SamplePreset) => {
     // 1. Load SVG and auto-detect intrinsic properties as for a File
     setSvgContent(sample.svgContent);
@@ -196,7 +238,7 @@ export const Studio = () => {
 
   return (
     <div className="app-container">
-      <Header />
+      <Header onHome={() => handleHome('header')} />
       <main className="studio-layout">
         <ConfigPanel
           svgContent={svgContent}
@@ -253,6 +295,8 @@ export const Studio = () => {
           renderedUrl={renderedUrl}
           metadata={metadata}
           onMetadataChange={setMetadata}
+          onOpenSamples={() => handleOpenSamples('config')}
+          onClearSvg={() => handleHome('config')}
         />
         <MonitorPanel
           svgContent={svgContent}
@@ -272,8 +316,14 @@ export const Studio = () => {
           mimeType={mimeType}
           format={format}
           onSelectSample={handleSelectSample}
+          onOpenSamples={() => handleOpenSamples('monitor')}
         />
       </main>
+      <SampleModal
+        isOpen={isSampleModalOpen}
+        onClose={handleCloseSamples}
+        onSelectSample={handleSelectSample}
+      />
     </div>
   );
 };

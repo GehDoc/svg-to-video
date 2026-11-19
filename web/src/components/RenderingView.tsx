@@ -16,6 +16,7 @@ interface RenderingViewProps {
   isTransparent: boolean;
   onCancel: () => void;
   onClearError: () => void;
+  onOpenSamples?: () => void;
 }
 
 export const RenderingView = ({
@@ -28,6 +29,7 @@ export const RenderingView = ({
   isTransparent,
   onCancel,
   onClearError,
+  onOpenSamples,
 }: RenderingViewProps) => {
   const isError = state.status.startsWith('Error:');
 
@@ -51,6 +53,7 @@ export const RenderingView = ({
             status={state.isRendering ? state.status : 'Ready to Export'}
             progress={state.isRendering ? state.progress : undefined}
             onCancel={state.isRendering ? onCancel : undefined}
+            onOpenSamples={onOpenSamples}
           >
             <MetaDisplay
               meta={state.meta}

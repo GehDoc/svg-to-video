@@ -206,3 +206,48 @@ test('ConfigPanel: displays Capture Method helper text for Optimal and High Fide
     screen.getByText(/High Fidelity \(Slow\): Bakes all computed SVG/i)
   ).toBeInTheDocument();
 });
+
+test('ConfigPanel renders Browse Samples button and triggers onOpenSamples', async () => {
+  const onOpenSamples = vi.fn();
+  await act(async () => {
+    render(<ConfigPanel {...defaultProps} onOpenSamples={onOpenSamples} />);
+  });
+
+  const browseBtn = screen.getByRole('button', {
+    name: /browse sample svg animations/i,
+  });
+  expect(browseBtn).toBeInTheDocument();
+
+  fireEvent.click(browseBtn);
+  expect(onOpenSamples).toHaveBeenCalledTimes(1);
+});
+
+test('ConfigPanel renders Clear SVG button only when svgContent is present, and triggers onClearSvg', async () => {
+  const onClearSvg = vi.fn();
+
+  // 1. Without svgContent
+  const { rerender } = render(
+    <ConfigPanel {...defaultProps} svgContent={null} onClearSvg={onClearSvg} />
+  );
+  expect(
+    screen.queryByRole('button', {
+      name: /clear active svg and return to home screen/i,
+    })
+  ).not.toBeInTheDocument();
+
+  // 2. With svgContent
+  rerender(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      onClearSvg={onClearSvg}
+    />
+  );
+  const clearBtn = screen.getByRole('button', {
+    name: /clear active svg and return to home screen/i,
+  });
+  expect(clearBtn).toBeInTheDocument();
+
+  fireEvent.click(clearBtn);
+  expect(onClearSvg).toHaveBeenCalledTimes(1);
+});
