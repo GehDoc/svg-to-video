@@ -267,6 +267,36 @@ describe('applyBayerPalette', () => {
     expect(indices[3]).toBe(1);
   });
 
+  it('should strictly test alpha threshold boundary at 127 vs 128', () => {
+    const palette = [
+      [0, 0, 0, 0],
+      [255, 0, 0],
+    ];
+    // 2x1 image: pixel 0 with alpha=127 (transparent), pixel 1 with alpha=128 (opaque)
+    const frameData = new Uint8ClampedArray([
+      255,
+      0,
+      0,
+      127, // boundary: < 128 should map to 0
+      255,
+      0,
+      0,
+      128, // boundary: >= 128 should map to 1
+    ]);
+    const colorCache = new Map<number, number>();
+    const indices = applyBayerPalette(
+      frameData,
+      2,
+      1,
+      palette,
+      true,
+      colorCache
+    );
+
+    expect(indices[0]).toBe(0);
+    expect(indices[1]).toBe(1);
+  });
+
   it('should apply ordered dithering to smooth gradients', () => {
     const palette = [
       [0, 0, 0],

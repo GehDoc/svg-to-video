@@ -21,7 +21,7 @@ Fix the mechanical gear animation loop synchronization to eliminate rotational h
   - Large gear ($N_1 = 8$ teeth): Period $T_1 = 2$s ($3$ full revolutions in $6$s).
   - Small gear ($N_2 = 6$ teeth): Period $T_2 = 1.5$s ($4$ full revolutions in $6$s).
   - Pitch meshing: $8 \times 3 = 24$ teeth mesh against $6 \times 4 = 24$ teeth in 6s. The speed ratio is $\omega_2 / \omega_1 = 4 / 3 = N_1 / N_2$, matching physical gear kinematics.
-  - Symmetrical geometry: Correct the small gear's 6 teeth to use exact $60^\circ$ radial increments around its center `(265, 255)` with appropriate mesh phase alignment.
+  - Kawaii teeth geometry: Retain the distinctive, charming missing-teeth tooth gaps on the small gear while synchronizing angular meshing and kinematics.
   - Duration auto-detection: `analyzeSvgAnimation` computes $\operatorname{LCM}(2000, 1500) = 6000$ ms ($6$ seconds), which automatically synchronizes with the sample's preset duration of $6$s.
 
 ### 2. Web Studio GIF Palette Optimization (`GifEncoder.ts`)

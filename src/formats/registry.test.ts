@@ -106,6 +106,21 @@ describe('CLIFormatRegistry', () => {
     );
   });
 
+  test('should build correct FFmpeg args for GIF without transparency and deterministic dithering', () => {
+    const gifGen = formatRegistry.get('gif')!;
+    const args = gifGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.gif',
+      transparent: false,
+    });
+    assert.ok(args.includes('-filter_complex'));
+    const filterIdx = args.indexOf('-filter_complex') + 1;
+    assert.ok(args[filterIdx].includes('reserve_transparent=0'));
+    assert.ok(
+      args[filterIdx].includes('paletteuse=dither=bayer:bayer_scale=3')
+    );
+  });
+
   test('should build correct FFmpeg args for aPNG with transparency', () => {
     const apngGen = formatRegistry.get('apng')!;
     const args = apngGen.buildFfmpegArgs({

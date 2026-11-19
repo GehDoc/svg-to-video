@@ -14,6 +14,14 @@ export const BAYER_8X8 = [
   [63, 31, 55, 23, 61, 29, 53, 21],
 ];
 
+export const BAYER_SPREAD = 12; // dither amplitude
+export const BAYER_OFFSETS = new Float32Array(64);
+for (let y = 0; y < 8; y++) {
+  for (let x = 0; x < 8; x++) {
+    BAYER_OFFSETS[(y << 3) | x] = (BAYER_8X8[y][x] / 64 - 0.5) * BAYER_SPREAD;
+  }
+}
+
 export function applyBayerPalette(
   frameData: Uint8ClampedArray,
   width: number,
@@ -24,13 +32,12 @@ export function applyBayerPalette(
 ): Uint8Array {
   const numPixels = width * height;
   const index = new Uint8Array(numPixels);
-  const spread = 12; // dither amplitude
 
   // For transparent images, palette[0] is [0, 0, 0, 0] and palette[1..] are opaque colors.
   const searchStart = isTransparent ? 1 : 0;
 
   for (let y = 0; y < height; y++) {
-    const y8 = y % 8;
+    const yRowOffset = (y % 8) << 3;
     for (let x = 0; x < width; x++) {
       const p = y * width + x;
       const offset = p * 4;
@@ -40,8 +47,7 @@ export function applyBayerPalette(
         continue;
       }
 
-      const threshold = BAYER_8X8[y8][x % 8] / 64 - 0.5;
-      const dither = threshold * spread;
+      const dither = BAYER_OFFSETS[yRowOffset | (x & 7)];
 
       const r = Math.min(
         255,
@@ -218,6 +224,7 @@ export class GifEncoder implements VideoEncoder {
       gifBytes = injectGifMetadata(gifBytes, metadata);
     }
 
+    this.frames = [];
     return new Blob([gifBytes], { type: 'image/gif' });
   }
 
