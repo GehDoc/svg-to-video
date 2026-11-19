@@ -20,7 +20,7 @@
     },
     {
       "title": "Universal Animated Formats",
-      "descriptionHtml": "Beyond video, generate lightweight <strong>Animated PNGs (aPNG)</strong> and <strong>GIFs</strong> perfect for documentation, Slack, or GitHub, with full control over background transparency."
+      "descriptionHtml": "Beyond video, generate lightweight <strong>Animated PNGs (aPNG)</strong> and <strong>GIFs</strong> with deterministic 8x8 Bayer ordered dithering to eliminate temporal fluttering on animated gradients, with full control over background transparency."
     },
     {
       "title": "Copy to Clipboard",
@@ -94,7 +94,11 @@
     {
       "question": "Do I need to manually install FFmpeg to use the CLI?",
       "answerHtml": "No. The CLI automatically uses system FFmpeg if present on your <code>$PATH</code>, or falls back to a bundled static FFmpeg binary out of the box. You can also specify a custom binary path using <code>--ffmpeg-path &lt;path&gt;</code> or the <code>FFMPEG_PATH</code> environment variable."
+    },
+    {
+      "question": "How does the Web Studio render high-quality, flicker-free GIFs without a server?",
+      "answerHtml": "Most browser-based GIF tools either snap colors coarsely (causing color banding) or use error diffusion dithering (which produces moving, noisy speckles across frames). The Web Studio features an in-browser encoder with custom 8x8 Bayer ordered dithering and 16-bit <code>rgb565</code> palette quantization. This disperses narrow color transitions smoothly without temporal fluttering, delivering FFmpeg-grade GIF quality directly inside your browser."
     }
   ],
-  "lastUpdated": "2026-11-10T22:04:41.303Z"
+  "lastUpdated": "2026-11-18T22:01:40.036Z"
 }

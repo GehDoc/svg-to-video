@@ -55,9 +55,9 @@ export class GifFormatGenerator extends BaseCLIFormatGenerator {
     const reserveTrans = transparent ? 1 : 0;
     let filterComplex: string;
     if (filters.length > 0) {
-      filterComplex = `${filters.join(',')},split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}[p];[b][p]paletteuse`;
+      filterComplex = `${filters.join(',')},split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}[p];[b][p]paletteuse=dither=bayer:bayer_scale=3`;
     } else {
-      filterComplex = `split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}[p];[b][p]paletteuse`;
+      filterComplex = `split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}[p];[b][p]paletteuse=dither=bayer:bayer_scale=3`;
     }
 
     args.push('-filter_complex', filterComplex);

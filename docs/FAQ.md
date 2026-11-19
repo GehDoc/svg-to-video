@@ -19,3 +19,7 @@ Select **WebM**, **aPNG**, or **GIF** as your output format, check the "Transpar
 ## Q: Do I need to manually install FFmpeg to use the CLI?
 
 No. The CLI automatically uses system FFmpeg if present on your `$PATH`, or falls back to a bundled static FFmpeg binary out of the box. You can also specify a custom binary path using `--ffmpeg-path <path>` or the `FFMPEG_PATH` environment variable.
+
+## Q: How does the Web Studio render high-quality, flicker-free GIFs without a server?
+
+Most browser-based GIF tools either snap colors coarsely (causing color banding) or use error diffusion dithering (which produces moving, noisy speckles across frames). The Web Studio features an in-browser encoder with custom 8x8 Bayer ordered dithering and 16-bit `rgb565` palette quantization. This disperses narrow color transitions smoothly without temporal fluttering, delivering FFmpeg-grade GIF quality directly inside your browser.

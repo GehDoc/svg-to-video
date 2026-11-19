@@ -1,7 +1,91 @@
-import { GIFEncoder, quantize, applyPalette, WriteFrameOpts } from 'gifenc';
+import { GIFEncoder, quantize, WriteFrameOpts } from 'gifenc';
 import { VideoEncoder, EncoderOptions, BaseFormat } from './types';
 import { injectGifMetadata as sharedInjectGifMetadata } from '@shared/gifMetadataInjector';
 import pkg from '../../../../package.json';
+
+export const BAYER_8X8 = [
+  [0, 32, 8, 40, 2, 34, 10, 42],
+  [48, 16, 56, 24, 50, 18, 58, 26],
+  [12, 44, 4, 36, 14, 46, 6, 38],
+  [60, 28, 52, 20, 62, 30, 54, 22],
+  [3, 35, 11, 43, 1, 33, 9, 41],
+  [51, 19, 59, 27, 49, 17, 57, 25],
+  [15, 47, 7, 39, 13, 45, 5, 37],
+  [63, 31, 55, 23, 61, 29, 53, 21],
+];
+
+export const BAYER_SPREAD = 12; // dither amplitude
+export const BAYER_OFFSETS = new Float32Array(64);
+for (let y = 0; y < 8; y++) {
+  for (let x = 0; x < 8; x++) {
+    BAYER_OFFSETS[(y << 3) | x] = (BAYER_8X8[y][x] / 64 - 0.5) * BAYER_SPREAD;
+  }
+}
+
+export function applyBayerPalette(
+  frameData: Uint8ClampedArray,
+  width: number,
+  height: number,
+  palette: number[][],
+  isTransparent: boolean,
+  colorCache: Map<number, number>
+): Uint8Array {
+  const numPixels = width * height;
+  const index = new Uint8Array(numPixels);
+
+  // For transparent images, palette[0] is [0, 0, 0, 0] and palette[1..] are opaque colors.
+  const searchStart = isTransparent ? 1 : 0;
+
+  for (let y = 0; y < height; y++) {
+    const yRowOffset = (y % 8) << 3;
+    for (let x = 0; x < width; x++) {
+      const p = y * width + x;
+      const offset = p * 4;
+
+      if (isTransparent && frameData[offset + 3] < 128) {
+        index[p] = 0;
+        continue;
+      }
+
+      const dither = BAYER_OFFSETS[yRowOffset | (x & 7)];
+
+      const r = Math.min(
+        255,
+        Math.max(0, Math.round(frameData[offset] + dither))
+      );
+      const g = Math.min(
+        255,
+        Math.max(0, Math.round(frameData[offset + 1] + dither))
+      );
+      const b = Math.min(
+        255,
+        Math.max(0, Math.round(frameData[offset + 2] + dither))
+      );
+
+      const key = (r << 16) | (g << 8) | b;
+      let bestIdx = colorCache.get(key);
+      if (bestIdx === undefined) {
+        let bestDist = Infinity;
+        bestIdx = searchStart;
+        for (let i = searchStart; i < palette.length; i++) {
+          const pal = palette[i];
+          const dr = pal[0] - r;
+          const dg = pal[1] - g;
+          const db = pal[2] - b;
+          const dist = dr * dr + dg * dg + db * db;
+          if (dist < bestDist) {
+            bestDist = dist;
+            bestIdx = i;
+          }
+        }
+        colorCache.set(key, bestIdx);
+      }
+      index[p] = bestIdx;
+    }
+  }
+
+  return index;
+}
 
 export class GifEncoder implements VideoEncoder {
   private frames: { data: Uint8ClampedArray; delay: number }[] = [];
@@ -38,50 +122,99 @@ export class GifEncoder implements VideoEncoder {
     const { width, height, isTransparent, metadata } = this.options;
     const encoder = GIFEncoder();
 
-    const format = isTransparent ? 'rgba4444' : 'rgb565';
-
-    // Combine all frames to build a comprehensive palette
-    const allPixels = new Uint8ClampedArray(
-      this.frames.length * width * height * 4
-    );
-    this.frames.forEach((f, i) =>
-      allPixels.set(f.data, i * width * height * 4)
-    );
-
-    // 1. Generate palette
-    const colorCount = isTransparent ? 255 : 256;
-    const palette = quantize(allPixels, colorCount, { format });
-    let transparentIndex = isTransparent
-      ? palette.findIndex(([_r, _g, _b, a]) => a === 0)
-      : -1;
-
-    if (isTransparent && transparentIndex === -1) {
-      // If we need transparency but none was found in the palette (quantization might have merged it away),
-      // we must force one. Since we quantized for 255 colors, we can safely add the 256th.
-      palette.push([0, 0, 0, 0]);
-      transparentIndex = palette.length - 1;
-    }
-
-    // 2. Encode frames
-    for (let i = 0; i < this.frames.length; i++) {
-      const frame = this.frames[i];
-
-      const index = applyPalette(frame.data, palette, format);
-
-      const options: WriteFrameOpts = {
-        delay: Math.round(frame.delay),
-      };
-
-      if (isTransparent) {
-        options.transparent = true;
-        options.transparentIndex = transparentIndex;
+    if (isTransparent) {
+      // 1. Separate opaque pixels across all frames to dedicate the palette to visible colors
+      let totalOpaque = 0;
+      for (const f of this.frames) {
+        for (let i = 3; i < f.data.length; i += 4) {
+          if (f.data[i] >= 128) totalOpaque++;
+        }
       }
 
-      if (i === 0) {
-        options.palette = palette;
+      let palette: number[][];
+      let opaquePalette: number[][] = [];
+      const transparentIndex = 0;
+
+      if (totalOpaque > 0) {
+        const opaquePixels = new Uint8ClampedArray(totalOpaque * 4);
+        let offset = 0;
+        for (const f of this.frames) {
+          for (let i = 0; i < f.data.length; i += 4) {
+            if (f.data[i + 3] >= 128) {
+              opaquePixels[offset++] = f.data[i];
+              opaquePixels[offset++] = f.data[i + 1];
+              opaquePixels[offset++] = f.data[i + 2];
+              opaquePixels[offset++] = 255;
+            }
+          }
+        }
+        opaquePalette = quantize(opaquePixels, 255, { format: 'rgb565' });
+        palette = [[0, 0, 0, 0], ...opaquePalette];
+      } else {
+        palette = [[0, 0, 0, 0]];
       }
 
-      encoder.writeFrame(index, width, height, options);
+      // 2. Encode frames with clean 1-bit transparency mapping and Bayer dithering
+      const colorCache = new Map<number, number>();
+      for (let i = 0; i < this.frames.length; i++) {
+        const frame = this.frames[i];
+        const index =
+          opaquePalette.length > 0
+            ? applyBayerPalette(
+                frame.data,
+                width,
+                height,
+                palette,
+                true,
+                colorCache
+              )
+            : new Uint8Array(width * height);
+
+        const options: WriteFrameOpts = {
+          delay: Math.round(frame.delay),
+          transparent: true,
+          transparentIndex,
+        };
+
+        if (i === 0) {
+          options.palette = palette;
+        }
+
+        encoder.writeFrame(index, width, height, options);
+      }
+    } else {
+      // Non-transparent: Combine all frames to build a full 256-color palette
+      const allPixels = new Uint8ClampedArray(
+        this.frames.length * width * height * 4
+      );
+      this.frames.forEach((f, i) =>
+        allPixels.set(f.data, i * width * height * 4)
+      );
+
+      const palette = quantize(allPixels, 256, { format: 'rgb565' });
+      const colorCache = new Map<number, number>();
+
+      for (let i = 0; i < this.frames.length; i++) {
+        const frame = this.frames[i];
+        const index = applyBayerPalette(
+          frame.data,
+          width,
+          height,
+          palette,
+          false,
+          colorCache
+        );
+
+        const options: WriteFrameOpts = {
+          delay: Math.round(frame.delay),
+        };
+
+        if (i === 0) {
+          options.palette = palette;
+        }
+
+        encoder.writeFrame(index, width, height, options);
+      }
     }
 
     encoder.finish();
@@ -91,6 +224,7 @@ export class GifEncoder implements VideoEncoder {
       gifBytes = injectGifMetadata(gifBytes, metadata);
     }
 
+    this.frames = [];
     return new Blob([gifBytes], { type: 'image/gif' });
   }
 

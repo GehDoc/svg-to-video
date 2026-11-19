@@ -28,7 +28,7 @@ A high-fidelity tool to transform your CSS- and SMIL-animated SVGs into high-qua
 - **Privacy-First**: The Web Studio runs entirely in your browser—your SVG files never leave your computer.
 - **Frame-Accurate**: Our engine scrubs both the **Web Animations API** and native **SVG SMIL**, ensuring every frame is captured exactly as rendered.
 - **AI Agent Native**: Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support indexed on the official [MCP Registry](https://registry.modelcontextprotocol.io/) (`mcp.json`) and hosted live on [HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp).
-- **Universal Animated Formats**: Beyond video, generate lightweight **Animated PNGs (aPNG)** and **GIFs** perfect for documentation, Slack, or GitHub, with full control over background transparency.
+- **Universal Animated Formats**: Beyond video, generate lightweight **Animated PNGs (aPNG)** and **GIFs** with deterministic 8x8 Bayer ordered dithering to eliminate temporal fluttering on animated gradients, with full control over background transparency.
 - **Copy to Clipboard**: Instant export to **Base64 Data URL**—copy your video and embed it directly into your HTML, CSS, or JS code without manual downloads. Perfect for rapid prototyping and developers.
 - **Metadata Injection**: Support for custom titles and comments across video (MP4, WebM, MKV, MOV) and animated image (aPNG, GIF) formats.
 - **Versatile**: Whether you need an accessible [Web Studio](#-web-studio) for quick conversions or a powerful [CLI tool](#-cli--docker-tool) for batch automation and CI/CD pipelines, this project has you covered.
@@ -49,7 +49,7 @@ Choose the entry point that matches your needs:
 
 **[🚀 Try the Web Studio](https://gehdoc.github.io/svg-to-video/)**
 
-Our **Web Studio** is a serverless, client-side rendering tool. It runs entirely in your browser using **WebCodecs**—your SVG files never leave your computer, ensuring absolute privacy. The interface is optimized for high-productivity on screens starting from **720p resolution**.
+Our **Web Studio** is a serverless, client-side rendering tool. It runs entirely in your browser using **WebCodecs** and custom browser encoders—featuring 16-bit `rgb565` quantization and 8x8 Bayer dithering for flicker-free GIFs—ensuring your SVG files never leave your computer for absolute privacy. The interface is optimized for high-productivity on screens starting from **720p resolution**.
 
 > **Automated Demo**: The demo video at the top of this README is automatically generated and updated by our CI/CD pipeline using Playwright and Driver.js, ensuring it always reflects the latest UI changes.
 
