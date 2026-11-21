@@ -452,15 +452,15 @@ In the Spec-Driven Development cycle, version bumping is performed in **Step 6: 
 Releases strictly adhere to the **Purpose-Driven Principle** and **Result-Oriented Focus**:
 
 - **Release Title Format**: `X.Y.Z - [Purpose-Driven Title]` (e.g., `0.22.0 - Standalone CLI Package & Automated Release Pipeline`). Do **NOT** prefix titles with `"Release "`.
-- **Result-Oriented Focus**: Focus strictly on end-user value, new capabilities, and final system results. Do **NOT** list internal development commits or refactor steps.
+- **Result-Oriented Focus**: Focus strictly on end-user value, new capabilities, and final system results. Do **NOT** list internal development commits, refactor steps, or routine test pass tallies (e.g., "10 tests passed", "100% test pass rate"—passing CI is an invariant baseline for merging, not a release feature).
 - **Generation & PR Posting Workflow**: Release notes are drafted directly from the active spec's **Objective**, **Task List**, and **Change Log**. Upon human approval of the PR, post the finalized Release Title and Release Notes as a structured comment on the Pull Request (prefixed with `## 🚀 Release vX.Y.Z`). Release notes should **never** be committed as `.md` files in git—the PR comment serves as the canonical source text when publishing the GitHub Release (`gh release create vX.Y.Z`).
 - **Release Note Structure**:
   - **Punchline**: A 2-3 sentence summary explaining the primary user value.
-  - **Structured Categories**:
-    - **🚀 New Features**
-    - **🛠 Improvements**
-    - **🧪 Testing & Quality**
-    - **📝 Documentation & SEO**
+  - **Structured Categories** (omit any category if nothing notable or relevant applies):
+    - **🚀 New Features**: New user-facing capabilities, CLI options, formats, or UI features.
+    - **🛠 Improvements**: Performance, ergonomics, bug fixes, accessibility, or architectural enhancements.
+    - **🧪 Testing & Quality** _(Optional)_: Only include major new testing frameworks, harness migrations, or notable test infrastructure additions. Never report routine test pass metrics. Omit entirely if no major test infrastructure changes occurred.
+    - **📝 Documentation & SEO** _(Optional)_: Major new public guides, architectural specs, or SEO enhancements. Omit if no significant documentation was added.
 
 > **Example Release Note:**
 >
