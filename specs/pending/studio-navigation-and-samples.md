@@ -38,9 +38,10 @@ Improve navigation within the Web Studio by enabling seamless return to the init
 ### 3. Analytics & Telemetry Schema Updates
 
 - Update `shared/analytics-schema.ts`:
-  - Add `'click-home'`: `{ location: 'header' | 'config' | 'monitor' }`
-  - Add `'open-samples'`: `{ location: 'config' | 'monitor' }`
-- Update `docs/ANALYTICS.md` event schema table with triggers, properties, and interface references.
+  - `'click-home'`: `{ location: 'header' | 'config-source' }`
+  - `'open-samples'`: `{ location: 'config-source' }`
+  - Completely remove `'monitor'` from both schemas as sample modal is strictly invoked from `config-source`.
+- Update `docs/ANALYTICS.md` with a dedicated **Telemetry Locations Reference Table** documenting all location tokens (`header`, `header-menu`, `config-source`, `success-view`), their corresponding UI components, and descriptions.
 
 ### 4. Accessibility & UI Consistency
 
@@ -58,6 +59,12 @@ Improve navigation within the Web Studio by enabling seamless return to the init
   - Add `@mixin sr-only` in `web/src/styles/_mixins.scss` to eliminate 11 lines of clip/rect boilerplate in `Dropzone.scss`.
   - Streamline `Button.scss` by using `pointer-events: none` on `:disabled`, eliminating all 9 `!important` declarations and 4 redundant `:disabled:hover` override blocks.
   - Leverage CSS custom properties (`var(--card)`, `var(--border)`, `var(--text)`, `var(--text-muted)`) directly, removing redundant dark mode media query duplicates.
+
+### 6. Progress Overlay Cancel Button Stability
+
+- Eliminate the `.invisible` wrapper and DOM swapping in `ProgressOverlay.tsx`.
+- Always render the Cancel button: `<Button variant="error" disabled={!onCancel} onClick={onCancel || (() => {})}>Cancel</Button>`.
+- Remove `.invisible` class from `ProgressOverlay.scss`. When idle ("Ready to Export"), the button is visible but cleanly disabled; when rendering starts, it activates, preserving layout stability without CLS.
 
 ## ✅ Task List
 
@@ -83,6 +90,11 @@ Improve navigation within the Web Studio by enabling seamless return to the init
   - [x] Refactor `Studio.tsx` to use `useStudioState`, turning `handleHome` into an atomic 1-line reset
   - [x] Streamline `Button.scss`: eliminate `!important` tags, leverage `pointer-events: none` on `:disabled`, and use CSS custom properties cleanly
   - [x] Add `@mixin sr-only` to `web/src/styles/_mixins.scss` and adopt in `Dropzone.scss`
+- [x] **PR Review Iteration: Precise Locations & Cancel Button Stability**
+  - [x] Rename location `'config'` to `'config-source'` and remove `'monitor'` from `shared/analytics-schema.ts`
+  - [x] Add Telemetry Locations Reference Table in `docs/ANALYTICS.md`
+  - [x] Keep Cancel button persistently rendered in `ProgressOverlay.tsx` (`disabled={!onCancel}`) and remove `.invisible` CSS
+  - [x] Update call sites in `Studio.tsx` and test assertions in `Studio.spec.tsx`
 - [x] **Testing & Quality Assurance**
   - [x] Unit tests for `Header` with `onHome` callback and keyboard events
   - [x] Unit tests for `Studio` reset / home navigation flow
@@ -97,7 +109,7 @@ Improve navigation within the Web Studio by enabling seamless return to the init
 ## 🧪 Verification Plan
 
 - [x] Unit Tests: `npm run test:unit -w web` (23 test files, 90 passed)
-- [x] Storybook Tests: `npm run test:storybook -w web` (18 test files, 49 passed)
+- [x] Storybook Tests: `npm run test:storybook -w web` (18 test files, 50 passed)
 - [x] Visual Regression Tests: `npm run test:visual -w web` (3 test files, 14 passed)
 - [x] E2E Smoke Tests: `npm run test:web -w web -- tests/smoke.spec.ts` (10 passed)
 - [x] Type Checking & Linting: `npm run check:fast` (0 errors, 0 warnings)
@@ -108,3 +120,4 @@ Improve navigation within the Web Studio by enabling seamless return to the init
 - 2026-11-19: Implementation and tests completed. Status changed to 🟡 To be reviewed.
 - 2026-11-19: Refined button styling with high contrast borders and solid backgrounds; made Clear SVG permanently present (disabled when empty); replaced native file input with custom button in Dropzone; removed sample button from ProgressOverlay; removed all bouncing/bumping transform hover effects across all buttons and inputs.
 - 2026-11-19: Architecture refactoring: consolidated studio state with `useStudioState` reducer and immutable `DEFAULT_STUDIO_CONFIG` contract for atomic form reset; streamlined CSS by eliminating all `!important` rules in `Button.scss`, adding `@mixin sr-only` in `_mixins.scss`, and unifying tokens via `--border-btn`. Status changed to 🟡 To be reviewed.
+- 2026-11-21: PR review iteration: addressed comments on PR #267 by clarifying telemetry locations (`'config-source'` instead of `'config'`, dropped unused `'monitor'`), added Telemetry Locations Reference table in `docs/ANALYTICS.md`, stabilized Cancel button in `ProgressOverlay` with persistent rendering (`disabled={!onCancel}`) adhering to layout stability guidelines, and added `Idle` Storybook story. Status changed to 🟡 To be reviewed.

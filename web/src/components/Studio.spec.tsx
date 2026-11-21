@@ -229,7 +229,7 @@ test('Studio resets state and returns to landing view when clicking Clear SVG in
   expect(trackMock).toHaveBeenCalledWith(
     'click-home',
     expect.objectContaining({
-      location: 'config',
+      location: 'config-source',
     })
   );
 });
@@ -254,7 +254,7 @@ test('Studio opens SampleModal via Browse Samples and loads selected sample', as
   expect(trackMock).toHaveBeenCalledWith(
     'open-samples',
     expect.objectContaining({
-      location: 'config',
+      location: 'config-source',
     })
   );
 

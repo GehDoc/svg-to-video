@@ -17,10 +17,21 @@ Note: All events automatically include the application `version` tag (e.g. `vers
 | `copy-data-url`      | User clicks "Copy Data URL"            | `success`, `format`, `isTransparent`                                                                                                                                                    | Web Studio           |
 | `download-result`    | User clicks "Download"                 | `format`, `isTransparent`                                                                                                                                                               | Web Studio           |
 | `back-to-studio`     | User clicks "Back to Studio"           | `format`, `isTransparent`                                                                                                                                                               | Web Studio           |
-| `click-home`         | User clicks Home / Logo or Reset SVG   | `location` (`header` \| `config` \| `monitor`)                                                                                                                                          | Web Studio           |
-| `open-samples`       | User opens the SVG sample picker       | `location` (`config` \| `monitor`)                                                                                                                                                      | Web Studio           |
+| `click-home`         | User clicks Home / Logo or Reset SVG   | `location` (`header` \| `config-source`)                                                                                                                                                | Web Studio           |
+| `open-samples`       | User opens the SVG sample picker       | `location` (`config-source`)                                                                                                                                                            | Web Studio           |
 | `click-issue-report` | User clicks "Report an Issue" in menu  | N/A                                                                                                                                                                                     | Web Studio           |
 | `click-source-code`  | User clicks "View Source Code" in menu | N/A                                                                                                                                                                                     | Web Studio           |
+
+### Telemetry Locations Reference
+
+For events carrying a `location` property (`click-sponsor`, `click-home`, `open-samples`), the following standardized location tokens identify the originating UI surface:
+
+| Location Token  | UI Component         | Landmark & Context                                                                                 | Associated Events             |
+| :-------------- | :------------------- | :------------------------------------------------------------------------------------------------- | :---------------------------- |
+| `header`        | `Header.tsx`         | Top application header bar (clicking title/logo home button or header sponsor link)                | `click-home`, `click-sponsor` |
+| `dropdown`      | `HeaderDropdown.tsx` | Dropdown menu toggled from the header hamburger action (clicking sponsor link)                     | `click-sponsor`               |
+| `config-source` | `ConfigPanel.tsx`    | Section 1 (_Source_) of the Configuration Panel (clicking "Browse Samples" or "Clear SVG" buttons) | `click-home`, `open-samples`  |
+| `success-view`  | `SuccessView.tsx`    | Post-render completion screen (clicking GitHub sponsor link)                                       | `click-sponsor`               |
 
 ## TypeScript Type Safety & Contract
 

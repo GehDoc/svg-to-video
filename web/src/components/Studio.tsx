@@ -170,7 +170,7 @@ export const Studio = () => {
   }, [format, isTransparent, setRenderResult]);
 
   const handleHome = useCallback(
-    (location: 'header' | 'config' | 'monitor' = 'header') => {
+    (location: 'header' | 'config-source' = 'header') => {
       trackEvent('click-home', { location });
       if (state.isRendering) {
         cancel();
@@ -182,7 +182,7 @@ export const Studio = () => {
   );
 
   const handleOpenSamples = useCallback(
-    (location: 'config' | 'monitor' = 'config') => {
+    (location: 'config-source' = 'config-source') => {
       trackEvent('open-samples', { location });
       setSampleModalOpen(true);
     },
@@ -274,8 +274,8 @@ export const Studio = () => {
           renderedUrl={renderedUrl}
           metadata={metadata}
           onMetadataChange={(m) => updateConfig({ metadata: m })}
-          onOpenSamples={() => handleOpenSamples('config')}
-          onClearSvg={() => handleHome('config')}
+          onOpenSamples={() => handleOpenSamples('config-source')}
+          onClearSvg={() => handleHome('config-source')}
         />
         <MonitorPanel
           svgContent={svgContent}

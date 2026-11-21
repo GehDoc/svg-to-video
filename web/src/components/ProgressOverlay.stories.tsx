@@ -26,3 +26,10 @@ export const NoStatus: Story = {
     progress: 10,
   },
 };
+
+export const Idle: Story = {
+  args: {
+    status: 'Ready to Export',
+    onCancel: undefined,
+  },
+};

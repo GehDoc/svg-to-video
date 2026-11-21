@@ -19,15 +19,14 @@ export const ProgressOverlay = ({
       <div className="progress-header">
         <span className="status-text">{status || 'Ready'}</span>
         <div className="progress-actions">
-          {onCancel ? (
-            <Button variant="error" onClick={onCancel}>
-              Cancel
-            </Button>
-          ) : (
-            <div className="invisible">
-              <Button variant="error">Cancel</Button>
-            </div>
-          )}
+          <Button
+            variant="error"
+            disabled={!onCancel}
+            onClick={onCancel || (() => {})}
+            aria-label="Cancel render process"
+          >
+            Cancel
+          </Button>
         </div>
         <span className="progress-percentage">
           {progress !== undefined ? `${progress}%` : '--%'}

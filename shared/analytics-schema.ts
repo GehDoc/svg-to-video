@@ -74,11 +74,11 @@ export interface BackToStudioEventProperties {
 }
 
 export interface ClickHomeEventProperties {
-  location: 'header' | 'config' | 'monitor';
+  location: 'header' | 'config-source';
 }
 
 export interface OpenSamplesEventProperties {
-  location: 'config' | 'monitor';
+  location: 'config-source';
 }
 
 export type EmptyEventProperties = Record<string, never> | void;
