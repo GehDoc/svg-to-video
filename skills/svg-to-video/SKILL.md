@@ -34,7 +34,8 @@ When asked to generate a video or GIF from an SVG animation:
    npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --resolution 1080x1920 --format webm --transparent --json
    ```
 
-3. **Option C: Via Docker**:
+3. **Option C: Via Docker (Containerized SSE Server)**:
    ```bash
-   docker run --rm -p 8080:8080 --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp
+   docker run --rm -p 8080:8080 --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video mcp
    ```
+   Connect your MCP client to `http://localhost:8080/sse`. Both `mcp` and `--mcp` flags are supported.
