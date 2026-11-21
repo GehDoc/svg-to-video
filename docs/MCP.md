@@ -69,11 +69,14 @@ Open **Cursor Settings > Features > MCP**:
 For cloud agents or sandbox environments without local Chromium or FFmpeg pre-installed:
 
 ```bash
-# Containerized SSE MCP Server mode
-docker run --rm -p 8080:8080 --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp
+# Containerized SSE MCP Server mode (recommended for Docker)
+docker run --rm -p 8080:8080 --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video mcp
+
+# Containerized Stdio fallback (for headless pipe/CI automation)
+docker run -i --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video mcp:stdio
 ```
 
-> **Note**: Chromium memory constraints in containerized environments require passing `--shm-size=2gb` and `-e PUPPETEER_ARGS="--no-sandbox"` to prevent browser crashes during heavy rendering.
+> **Note**: Chromium memory constraints in containerized environments require passing `--shm-size=2gb` and `-e PUPPETEER_ARGS="--no-sandbox"` to prevent browser crashes during heavy rendering. In SSE mode, the port defaults to `8080` (or dynamically matches `$PORT` if set by cloud container hosts). Both `mcp` and `--mcp` flags are supported.
 
 ### 🛠 Local Development & Building (Contributors)
 
@@ -157,7 +160,7 @@ npx -y @modelcontextprotocol/inspector node dist/src/mcp.js
 ### Dockerized MCP Inspector Test
 
 ```bash
-docker run --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp &
+docker run --rm -p 8080:8080 --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp &
 npx -y @modelcontextprotocol/inspector
 ```
 
