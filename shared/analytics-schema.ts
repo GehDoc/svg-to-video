@@ -73,6 +73,14 @@ export interface BackToStudioEventProperties {
   isTransparent?: boolean;
 }
 
+export interface ClickHomeEventProperties {
+  location: 'header' | 'config-source';
+}
+
+export interface OpenSamplesEventProperties {
+  location: 'config-source';
+}
+
 export type EmptyEventProperties = Record<string, never> | void;
 
 export interface AnalyticsEventMap {
@@ -85,6 +93,8 @@ export interface AnalyticsEventMap {
   'copy-data-url': CopyDataUrlEventProperties;
   'download-result': DownloadResultEventProperties;
   'back-to-studio': BackToStudioEventProperties;
+  'click-home': ClickHomeEventProperties;
+  'open-samples': OpenSamplesEventProperties;
   'click-issue-report'?: EmptyEventProperties;
   'click-source-code'?: EmptyEventProperties;
 }

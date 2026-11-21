@@ -36,7 +36,7 @@
     }
   ],
   "quickStartSteps": [
-    "Open the <a href=\"https://gehdoc.github.io/svg-to-video/\">Web Studio</a>.",
+    "Open the <a href=\"https://gehdoc.github.io/svg-to-video/?utm_source=readme\">Web Studio</a>.",
     "Drag and drop your <code>.svg</code> file, or test the engine instantly with 1-click built-in samples.",
     "Adjust resolution, duration, and FPS.",
     "Select your format, toggle <strong>Transparent Background</strong> if needed, and ensure <strong>High-Fidelity Capture</strong> is enabled for best results.",
@@ -100,5 +100,5 @@
       "answerHtml": "Most browser-based GIF tools either snap colors coarsely (causing color banding) or use error diffusion dithering (which produces moving, noisy speckles across frames). The Web Studio features an in-browser encoder with custom 8x8 Bayer ordered dithering and 16-bit <code>rgb565</code> palette quantization. This disperses narrow color transitions smoothly without temporal fluttering, delivering FFmpeg-grade GIF quality directly inside your browser."
     }
   ],
-  "lastUpdated": "2026-11-18T22:01:40.036Z"
+  "lastUpdated": "2026-11-21T01:21:03.880Z"
 }

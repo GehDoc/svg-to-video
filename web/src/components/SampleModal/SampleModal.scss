@@ -1,0 +1,128 @@
+@use '../../styles/breakpoints' as *;
+
+.sample-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  box-sizing: border-box;
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 0.75rem;
+  }
+}
+
+.sample-modal {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  max-width: 960px;
+  width: 100%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  animation: sample-modal-fade-in 0.2s ease-out;
+
+  @media (max-width: $mobile-breakpoint) {
+    max-height: 92vh;
+    border-radius: 12px;
+  }
+}
+
+@keyframes sample-modal-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.sample-modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: var(--panel);
+  gap: 1rem;
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 1rem;
+  }
+}
+
+.sample-modal-heading {
+  display: flex;
+  flex-direction: column;
+}
+
+.sample-modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-h);
+  letter-spacing: -0.01em;
+
+  @media (max-width: $mobile-breakpoint) {
+    font-size: 1.1rem;
+  }
+}
+
+.sample-modal-subtitle {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+
+  @media (max-width: $mobile-breakpoint) {
+    font-size: 0.8rem;
+  }
+}
+
+.sample-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+  flex-shrink: 0;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--border);
+    color: var(--text-h);
+    outline: none;
+  }
+}
+
+.sample-modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+  background: var(--bg);
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 1rem;
+  }
+}

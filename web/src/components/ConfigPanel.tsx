@@ -20,6 +20,7 @@ import { Dropzone } from './Dropzone';
 import type { VideoMetadata } from '../../../shared/metadata';
 import { Button } from './Button/Button';
 import { FormatSelector } from './FormatSelector/FormatSelector';
+import { FaLayerGroup, FaTimes } from 'react-icons/fa';
 import './ConfigPanel.scss';
 
 interface ConfigPanelProps {
@@ -63,6 +64,8 @@ interface ConfigPanelProps {
   renderedUrl: string | null;
   metadata: VideoMetadata;
   onMetadataChange: (m: VideoMetadata) => void;
+  onOpenSamples?: () => void;
+  onClearSvg?: () => void;
 }
 
 export const ConfigPanel = ({
@@ -98,6 +101,8 @@ export const ConfigPanel = ({
   renderedUrl,
   metadata,
   onMetadataChange,
+  onOpenSamples,
+  onClearSvg,
 }: ConfigPanelProps) => {
   const [formats, setFormats] = useState<VideoFormat[]>([]);
 
@@ -195,6 +200,32 @@ export const ConfigPanel = ({
             onDrop={handleDrop}
             disabled={isRenderingOrSuccess}
           />
+          <div className="source-actions">
+            {onOpenSamples && (
+              <Button
+                variant="secondary"
+                className="source-action-btn"
+                onClick={onOpenSamples}
+                disabled={isRenderingOrSuccess}
+                type="button"
+                aria-label="Browse sample SVG animations"
+              >
+                <FaLayerGroup size={12} className="btn-icon" /> Browse Samples
+              </Button>
+            )}
+            {onClearSvg && (
+              <Button
+                variant="secondary"
+                className="source-action-btn source-action-btn--clear"
+                onClick={onClearSvg}
+                disabled={!svgContent || isRenderingOrSuccess}
+                type="button"
+                aria-label="Clear active SVG and return to home screen"
+              >
+                <FaTimes size={12} className="btn-icon" /> Clear SVG
+              </Button>
+            )}
+          </div>
         </section>
 
         <section
