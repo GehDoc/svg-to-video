@@ -403,6 +403,10 @@ describe('mcp.json Manifest Contract Verification', () => {
     assert.strictEqual(npmPkg.registryBaseUrl, undefined);
     assert.strictEqual(npmPkg.transport?.type, 'stdio');
     assert.strictEqual(npmPkg.runtimeHint, 'npx');
+    assert.strictEqual(npmPkg.runtimeArguments, undefined);
+    assert.deepStrictEqual(npmPkg.packageArguments, [
+      { type: 'positional', value: 'mcp' },
+    ]);
 
     const ociPkg = mcp.packages.find(
       (p: { registryType: string }) => p.registryType === 'oci'
@@ -414,8 +418,16 @@ describe('mcp.json Manifest Contract Verification', () => {
       'oci package identifier in source control must use placeholder tag 0.0.0-0'
     );
     assert.strictEqual(ociPkg.registryBaseUrl, undefined);
-    assert.strictEqual(ociPkg.transport?.type, 'stdio');
+    assert.strictEqual(ociPkg.transport?.type, 'sse');
+    assert.strictEqual(ociPkg.transport?.url, 'http://localhost:8080/sse');
     assert.strictEqual(ociPkg.runtimeHint, 'docker');
+    assert.deepStrictEqual(ociPkg.packageArguments, [
+      { type: 'positional', value: 'mcp' },
+    ]);
+    assert.deepStrictEqual(ociPkg.runtimeArguments, [
+      { type: 'named', name: '-p', value: '8080:8080' },
+      { type: 'named', name: '--shm-size', value: '2gb' },
+    ]);
 
     // Environment variables checks
     const expectedEnvs = [

@@ -24,7 +24,7 @@
       "identifier": "@gehdoc/svg-to-video",
       "version": "0.0.0-0",
       "runtimeHint": "npx",
-      "runtimeArguments": [
+      "packageArguments": [
         {
           "type": "positional",
           "value": "mcp"
@@ -72,6 +72,18 @@
       "registryType": "oci",
       "identifier": "docker.io/gehdoc/svg-to-video:0.0.0-0",
       "runtimeHint": "docker",
+      "runtimeArguments": [
+        {
+          "type": "named",
+          "name": "-p",
+          "value": "8080:8080"
+        },
+        {
+          "type": "named",
+          "name": "--shm-size",
+          "value": "2gb"
+        }
+      ],
       "packageArguments": [
         {
           "type": "positional",
@@ -113,7 +125,8 @@
         }
       ],
       "transport": {
-        "type": "stdio"
+        "type": "sse",
+        "url": "http://localhost:8080/sse"
       }
     }
   ]

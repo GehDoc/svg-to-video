@@ -94,7 +94,7 @@ To test a local checkout of the repository as an MCP server:
 
 ### 🔒 Security, Telemetry & Privacy
 
-- **Stdio & SSE Transports**: The MCP server supports standard `stdio` or containerized HTTP/SSE mode via `supergateway`.
+- **Stdio & SSE Transports**: The MCP server supports standard `stdio` (preferred for local shells and agents via `npx` or `node` for lightweight, zero-port execution) or containerized HTTP/SSE mode via `supergateway` (preferred for Docker to prevent stdio stream corruption, accessible at `http://localhost:8080/sse`).
 - **Hosted Sandboxing (`MCP_HOSTED=true` / `--hosted`)**: Enforces path traversal security by omitting local filesystem parameters (`svgFilePath` and `outDir`) from tool schemas and rejecting any local path arguments in multi-tenant or web environments, ensuring pure in-band media delivery. Activated via `MCP_HOSTED=true` environment variable or `--hosted` CLI flag. For details, see **[docs/SECURITY.md](./SECURITY.md)**.
 - **Anonymous Telemetry**: Standard usage events (`file-load`, `conversion-start`, `conversion-success`) are reported anonymously to Umami for feature improvement without collecting file contents or PII. To opt out, set `DO_NOT_TRACK=1` in your environment. See **[docs/ANALYTICS.md](./ANALYTICS.md)** for full event schemas and opt-out details.
 

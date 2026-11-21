@@ -1,7 +1,7 @@
 # Spec: Streamline MCP Registry Commands & Docker SSE Transport
 
 **Pull Request**: [#269](https://github.com/GehDoc/svg-to-video/pull/269)
-**Status**: 🟠 Pending
+**Status**: 🟡 To be reviewed
 
 ## 🎯 Objective
 
@@ -23,24 +23,24 @@ Align official Model Context Protocol (MCP) registry manifest (`mcp.json`) execu
 
 ## ✅ Task List
 
-- [ ] **Infrastructure & Manifest Alignment**
-  - [ ] Fix `mcp.json` npm entry: move `"mcp"` from `runtimeArguments` to `packageArguments` with `transport: { type: "stdio" }`
-  - [ ] Update `mcp.json` OCI entry: declare `transport: { type: "sse", url: "http://localhost:8080/sse" }` with runtimeArguments (`-p 8080:8080`, `--shm-size 2gb`) and packageArguments (`mcp`)
-  - [ ] Update [docker-entrypoint.sh](file:///home/ge/Documents/Takako/universite/boite-noire/svg-to-video/docker-entrypoint.sh) to cleanly route `mcp`, `--mcp`, and `mcp:sse` to Supergateway SSE
-- [ ] **Contract Tests & Validation**
-  - [ ] Update `tests/mcp.spec.ts` contract tests to assert both npm (stdio) and OCI (SSE) package transport schemas in `mcp.json`
-  - [ ] Verify test suite passes (`npm run test:mcp`)
-- [ ] **Documentation, Security & SEO Pre-Flight**
-  - [ ] Audit and update `docs/MCP.md` (clarify local stdio vs containerized SSE, schema execution paths)
-  - [ ] Audit and update `docs/SECURITY.md` (document containerized SSE sandboxing and path-traversal protections)
-  - [ ] Audit `README.md` and `skills/svg-to-video/SKILL.md` (verify Docker and npx invocation snippets)
-  - [ ] Verify `CONTRIBUTING.md` pre-flight checklists
+- [x] **Infrastructure & Manifest Alignment**
+  - [x] Fix `mcp.json` npm entry: move `"mcp"` from `runtimeArguments` to `packageArguments` with `transport: { type: "stdio" }`
+  - [x] Update `mcp.json` OCI entry: declare `transport: { type: "sse", url: "http://localhost:8080/sse" }` with runtimeArguments (`-p 8080:8080`, `--shm-size 2gb`) and packageArguments (`mcp`)
+  - [x] Update [docker-entrypoint.sh](file:///home/ge/Documents/Takako/universite/boite-noire/svg-to-video/docker-entrypoint.sh) to cleanly route `mcp`, `--mcp`, and `mcp:sse` to Supergateway SSE
+- [x] **Contract Tests & Validation**
+  - [x] Update `tests/mcp.spec.ts` contract tests to assert both npm (stdio) and OCI (SSE) package transport schemas in `mcp.json`
+  - [x] Verify test suite passes (`npm run test:mcp`)
+- [x] **Documentation, Security & SEO Pre-Flight**
+  - [x] Audit and update `docs/MCP.md` (clarify local stdio vs containerized SSE, schema execution paths)
+  - [x] Audit and update `docs/SECURITY.md` (document containerized SSE sandboxing and path-traversal protections)
+  - [x] Audit `README.md` and `skills/svg-to-video/SKILL.md` (verify Docker and npx invocation snippets)
+  - [x] Verify `CONTRIBUTING.md` pre-flight checklists
 
 ## 🧪 Verification Plan
 
-- [ ] Automated Test: `npm run test:mcp` (verifies MCP tools, sandboxing, and `mcp.json` registry schema contract)
-- [ ] Package / Build Integrity: `npm run build && npm run check:fast`
-- [ ] Docker Entrypoint Inspection: verify shell script routing for both `mcp`, `--mcp`, and CLI arguments
+- [x] Automated Test: `npm run test:mcp` (verifies MCP tools, sandboxing, and `mcp.json` registry schema contract)
+- [x] Package / Build Integrity: `npm run check:fast`
+- [x] Docker Entrypoint Inspection: verify shell script routing for both `mcp`, `--mcp`, and CLI arguments
 
 ## 📝 Change Log
 
