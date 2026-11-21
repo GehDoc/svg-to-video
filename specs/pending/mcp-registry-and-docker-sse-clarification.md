@@ -1,6 +1,6 @@
 # Spec: Streamline MCP Registry Commands & Docker SSE Transport
 
-**GitHub Issue**: N/A (Direct feature enhancement)
+**Pull Request**: [#269](https://github.com/GehDoc/svg-to-video/pull/269)
 **Status**: 🟠 Pending
 
 ## 🎯 Objective
