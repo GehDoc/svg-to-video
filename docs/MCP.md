@@ -69,11 +69,14 @@ Open **Cursor Settings > Features > MCP**:
 For cloud agents or sandbox environments without local Chromium or FFmpeg pre-installed:
 
 ```bash
-# Containerized SSE MCP Server mode
-docker run --rm -p 8080:8080 --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp
+# Containerized SSE MCP Server mode (recommended for Docker)
+docker run --rm -p 8080:8080 --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video mcp
+
+# Containerized Stdio fallback (for headless pipe/CI automation)
+docker run -i --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video mcp:stdio
 ```
 
-> **Note**: Chromium memory constraints in containerized environments require passing `--shm-size=2gb` and `-e PUPPETEER_ARGS="--no-sandbox"` to prevent browser crashes during heavy rendering.
+> **Note**: Chromium memory constraints in containerized environments require passing `--shm-size=2gb` and `-e PUPPETEER_ARGS="--no-sandbox"` to prevent browser crashes during heavy rendering. In SSE mode, the port defaults to `8080` (or dynamically matches `$PORT` if set by cloud container hosts). Both `mcp` and `--mcp` flags are supported.
 
 ### 🛠 Local Development & Building (Contributors)
 
@@ -94,7 +97,7 @@ To test a local checkout of the repository as an MCP server:
 
 ### 🔒 Security, Telemetry & Privacy
 
-- **Stdio & SSE Transports**: The MCP server supports standard `stdio` or containerized HTTP/SSE mode via `supergateway`.
+- **Stdio & SSE Transports**: The MCP server supports standard `stdio` (preferred for local shells and agents via `npx` or `node` for lightweight, zero-port execution) or containerized HTTP/SSE mode via `supergateway` (preferred for Docker to prevent stdio stream corruption, accessible at `http://localhost:8080/sse`).
 - **Hosted Sandboxing (`MCP_HOSTED=true` / `--hosted`)**: Enforces path traversal security by omitting local filesystem parameters (`svgFilePath` and `outDir`) from tool schemas and rejecting any local path arguments in multi-tenant or web environments, ensuring pure in-band media delivery. Activated via `MCP_HOSTED=true` environment variable or `--hosted` CLI flag. For details, see **[docs/SECURITY.md](./SECURITY.md)**.
 - **Anonymous Telemetry**: Standard usage events (`file-load`, `conversion-start`, `conversion-success`) are reported anonymously to Umami for feature improvement without collecting file contents or PII. To opt out, set `DO_NOT_TRACK=1` in your environment. See **[docs/ANALYTICS.md](./ANALYTICS.md)** for full event schemas and opt-out details.
 
@@ -157,7 +160,7 @@ npx -y @modelcontextprotocol/inspector node dist/src/mcp.js
 ### Dockerized MCP Inspector Test
 
 ```bash
-docker run --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp &
+docker run --rm -p 8080:8080 --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" gehdoc/svg-to-video --mcp &
 npx -y @modelcontextprotocol/inspector
 ```
 

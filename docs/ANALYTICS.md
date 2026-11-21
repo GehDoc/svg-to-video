@@ -123,6 +123,8 @@ When adding or updating links pointing to our web apps/demos (such as `svg-to-vi
 | GitHub repository "About" link            | `github_repo_about`    | —                       |
 | GitHub Sponsors page                      | `github_sponsors`      | —                       |
 | Repository `README.md`                    | `readme`               | `docs`                  |
+| Docker Hub repository Overview            | `dockerhub`            | `readme`                |
+| Hugging Face Space Overview               | `huggingface`          | `space`                 |
 
 ### Examples
 
@@ -130,3 +132,5 @@ When adding or updating links pointing to our web apps/demos (such as `svg-to-vi
 - `https://gehdoc.github.io/svg-to-video/?utm_source=github_repo_about`
 - `https://gehdoc.github.io/svg-to-video/?utm_source=github_sponsors`
 - `https://gehdoc.github.io/svg-to-video/?utm_source=readme&utm_medium=docs`
+- `https://gehdoc.github.io/svg-to-video/?utm_source=dockerhub&utm_medium=readme`
+- `https://gehdoc.github.io/svg-to-video/?utm_source=huggingface&utm_medium=space`
