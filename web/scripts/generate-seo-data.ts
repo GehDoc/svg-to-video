@@ -181,6 +181,22 @@ try {
     lastUpdated: new Date().toISOString(),
   };
 
+  if (fs.existsSync(outputPath)) {
+    try {
+      const existing = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+      const { lastUpdated: _currentDate, ...currentData } = seoData;
+      const { lastUpdated: _existingDate, ...existingData } = existing;
+      if (JSON.stringify(currentData) === JSON.stringify(existingData)) {
+        console.log(
+          `[SEO Data Extractor] Content unchanged; skipping write for ${outputPath}`
+        );
+        process.exit(0);
+      }
+    } catch {
+      // If reading/parsing fails, proceed to rewrite below
+    }
+  }
+
   fs.writeFileSync(outputPath, JSON.stringify(seoData, null, 2) + '\n', 'utf8');
   console.log(`[SEO Data Extractor] Successfully generated ${outputPath}`);
 } catch (error) {
