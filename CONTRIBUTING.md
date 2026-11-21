@@ -452,15 +452,15 @@ In the Spec-Driven Development cycle, version bumping is performed in **Step 6: 
 Releases strictly adhere to the **Purpose-Driven Principle** and **Result-Oriented Focus**:
 
 - **Release Title Format**: `X.Y.Z - [Purpose-Driven Title]` (e.g., `0.22.0 - Standalone CLI Package & Automated Release Pipeline`). Do **NOT** prefix titles with `"Release "`.
-- **Result-Oriented Focus**: Focus strictly on end-user value, new capabilities, and final system results. Do **NOT** list internal development commits or refactor steps.
+- **Result-Oriented Focus**: Focus strictly on end-user value, new capabilities, and final system results. Do **NOT** list internal development commits, refactor steps, or routine test pass tallies (e.g., "10 tests passed", "100% test pass rate"—passing CI is an invariant baseline for merging, not a release feature).
 - **Generation & PR Posting Workflow**: Release notes are drafted directly from the active spec's **Objective**, **Task List**, and **Change Log**. Upon human approval of the PR, post the finalized Release Title and Release Notes as a structured comment on the Pull Request (prefixed with `## 🚀 Release vX.Y.Z`). Release notes should **never** be committed as `.md` files in git—the PR comment serves as the canonical source text when publishing the GitHub Release (`gh release create vX.Y.Z`).
 - **Release Note Structure**:
   - **Punchline**: A 2-3 sentence summary explaining the primary user value.
-  - **Structured Categories**:
-    - **🚀 New Features**
-    - **🛠 Improvements**
-    - **🧪 Testing & Quality**
-    - **📝 Documentation & SEO**
+  - **Structured Categories** (omit any category if nothing notable or relevant applies):
+    - **🚀 New Features**: New user-facing capabilities, CLI options, formats, or UI features.
+    - **🛠 Improvements**: Performance, ergonomics, bug fixes, accessibility, or architectural enhancements.
+    - **🧪 Testing & Quality** _(Optional)_: Only include major new testing frameworks, harness migrations, or notable test infrastructure additions. Never report routine test pass metrics. Omit entirely if no major test infrastructure changes occurred.
+    - **📝 Documentation & SEO** _(Optional)_: Major new public guides, architectural specs, or SEO enhancements. Omit if no significant documentation was added.
 
 > **Example Release Note:**
 >
@@ -593,6 +593,7 @@ When adding new features or core capabilities, systematically update public-faci
    - The script (`web/scripts/generate-seo-data.ts`) parses this file at `predev`/`prebuild` and converts answers to HTML via `marked.parseInline()`.
 4. **`docs/ANALYTICS.md`**:
    - Audit and update telemetry documentation if any Umami event payloads, tracking methods, properties, or triggers changed.
+   - Reference and update inbound traffic UTM guidelines whenever new distribution channels or link placements are introduced.
 5. **`web/scripts/generate-seo-data.ts`** (hardcoded UI copy):
    - `headline` and `tagline` are string literals in this script — update them here when landing page copy changes (intentionally not sourced from `package.json`).
    - `formatComparisons[]` is also hardcoded inline — update the array here until a `docs/FORMATS.md` source file is introduced.
@@ -604,9 +605,10 @@ When adding new features or core capabilities, systematically update public-faci
    - Ensure `packages` identifiers, transport configurations, registry base URLs (`https://registry.npmjs.org`, `https://docker.io`), and runtime hints reflect published package distributions.
    - Verify changes using `npm run test:mcp`, which enforces automated contract assertions on `mcp.json` schema compliance.
 7. **`README.md`**:
-   - Update feature summaries, installation options, and CLI/web quick start usage blocks.
+   - Update feature summaries, installation options, and CLI/web quick start usage blocks. Ensure links pointing to the Web Studio include UTM tracking parameters (`?utm_source=readme&utm_medium=docs`) per the [Inbound Traffic & UTM Tracking Guidelines in docs/ANALYTICS.md](./docs/ANALYTICS.md#-inbound-traffic--utm-tracking-guidelines).
 8. **GitHub Repository Metadata**:
    - Update repository **Description** in GitHub repository settings.
+   - Update repository **Website/About** URL with UTM tracking (`https://gehdoc.github.io/svg-to-video/?utm_source=github_repo_about`) per [docs/ANALYTICS.md](./docs/ANALYTICS.md#-inbound-traffic--utm-tracking-guidelines).
    - Update repository **Topics** (tags) via GitHub Web UI or GitHub CLI:
      ```bash
      gh repo edit \
@@ -617,3 +619,18 @@ When adding new features or core capabilities, systematically update public-faci
    - Manually update the repository **Overview** text and **Short Description** on Docker Hub ([hub.docker.com/r/gehdoc/svg-to-video](https://hub.docker.com/r/gehdoc/svg-to-video)) via the web UI whenever releasing new features or updating documentation.
 10. **HuggingFace Space README** _(manual)_:
     - If the MCP interface, setup instructions, or environment variables changed, update the README in the [`GehDoc/svg-to-video-mcp`](https://huggingface.co/GehDoc/svg-to-video-mcp) HuggingFace repository. The Space is backed by a Python wrapper (not a Dockerfile) and requires **Python development** for any hosting-layer changes.
+
+---
+
+### 🎯 Analytics & UTM Tracking Guidelines
+
+<a id="analytics--utm-tracking-guidelines"></a>
+<a id="-analytics--utm-tracking-guidelines"></a>
+
+When adding or updating links pointing to our web apps/demos (such as `svg-to-video`), always include consistent UTM query parameters so inbound traffic attribution remains accurate in Umami.
+
+To maintain a Single Source of Truth and avoid documentation drift, refer directly to **[`docs/ANALYTICS.md`](./docs/ANALYTICS.md#-inbound-traffic--utm-tracking-guidelines)** for the authoritative reference on:
+
+- **Naming Conventions**: Format rules (`snake_case`, platform-agnostic `utm_source=readme`).
+- **Standard Values Table**: Approved `utm_source` and optional `utm_medium` tokens by surface (GitHub Pages profile, repo about, sponsors, documentation).
+- **Canonical Examples**: Full copy-pasteable URLs for each distribution channel.

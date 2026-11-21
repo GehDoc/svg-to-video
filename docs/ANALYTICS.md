@@ -105,3 +105,28 @@ This pattern encapsulates timing measurement (`performance.now()` / `Date.now()`
 - **Do Not Track (`DO_NOT_TRACK`)**: All interfaces respect standard privacy signals. Setting the `DO_NOT_TRACK` environment variable to `1` or `true` (e.g. `DO_NOT_TRACK=1 svg-to-video ...`) completely disables telemetry collection.
 - **CI/CD & Test Automation**: Telemetry is automatically disabled when running in CI pipelines (`process.env.CI`) or test runners (`process.env.NODE_ENV === 'test'`).
 - **No PII**: Tracking is cookie-less and never collects SVG file contents, file paths, file names, or personally identifiable information (PII).
+
+---
+
+## Inbound Traffic & UTM Tracking Guidelines
+
+When adding or updating links pointing to our web apps/demos (such as `svg-to-video`), please include consistent UTM query parameters so traffic sources remain accurate in Umami:
+
+- **Naming format**: Use lowercase `snake_case` (e.g., `github_pages_profile`, `readme`).
+- **Don't over-specify platform in READMEs**: Because `README.md` files are mirrored across platforms (GitHub, npm, etc.), use `utm_source=readme` rather than `github_readme`.
+
+### Standard Values
+
+| Location                                  | `utm_source`           | `utm_medium` (optional) |
+| :---------------------------------------- | :--------------------- | :---------------------- |
+| GitHub Pages profile (`gehdoc.github.io`) | `github_pages_profile` | `featured_project`      |
+| GitHub repository "About" link            | `github_repo_about`    | —                       |
+| GitHub Sponsors page                      | `github_sponsors`      | —                       |
+| Repository `README.md`                    | `readme`               | `docs`                  |
+
+### Examples
+
+- `https://gehdoc.github.io/svg-to-video/?utm_source=github_pages_profile&utm_medium=featured_project`
+- `https://gehdoc.github.io/svg-to-video/?utm_source=github_repo_about`
+- `https://gehdoc.github.io/svg-to-video/?utm_source=github_sponsors`
+- `https://gehdoc.github.io/svg-to-video/?utm_source=readme&utm_medium=docs`

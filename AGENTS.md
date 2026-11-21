@@ -44,7 +44,7 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
    - **Version Bump**: Increment version across root `package.json` and `web/package.json`, then run `npm install` for `package-lock.json` per [CONTRIBUTING.md](./CONTRIBUTING.md#-versioning-policy).
    - **Archive Spec**: Update spec status to `🟢 Completed` and move the file from `specs/pending/` to `specs/completed/`.
    - **Commit Archival**: Commit on the branch with `chore(release): bump version to X.Y.Z and archive spec`.
-   - **Post Release Notes**: Generate and post the Release Title and structured Release Notes as a PR comment per [CONTRIBUTING.md](./CONTRIBUTING.md#-release-note-best-practices).
+   - **Post Release Notes**: Generate and post the Release Title and structured Release Notes as a PR comment per [CONTRIBUTING.md](./CONTRIBUTING.md#-release-note-best-practices). Never report routine test pass counts, and omit any categories that have no relevant updates.
    - **Merge & Publish**: The PR can now be merged to `main`, and release tag `vX.Y.Z` published per [CONTRIBUTING.md](./CONTRIBUTING.md#-automated-release-pipeline).
 
 ## 🛠 How to Create a New Spec
