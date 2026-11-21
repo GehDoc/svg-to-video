@@ -604,9 +604,10 @@ When adding new features or core capabilities, systematically update public-faci
    - Ensure `packages` identifiers, transport configurations, registry base URLs (`https://registry.npmjs.org`, `https://docker.io`), and runtime hints reflect published package distributions.
    - Verify changes using `npm run test:mcp`, which enforces automated contract assertions on `mcp.json` schema compliance.
 7. **`README.md`**:
-   - Update feature summaries, installation options, and CLI/web quick start usage blocks.
+   - Update feature summaries, installation options, and CLI/web quick start usage blocks. Ensure links pointing to the Web Studio include UTM tracking parameters (`?utm_source=readme&utm_medium=docs`) per the [Analytics & UTM Tracking Guidelines](#-analytics--utm-tracking-guidelines).
 8. **GitHub Repository Metadata**:
    - Update repository **Description** in GitHub repository settings.
+   - Update repository **Website/About** URL with UTM tracking (`https://gehdoc.github.io/svg-to-video/?utm_source=github_repo_about`).
    - Update repository **Topics** (tags) via GitHub Web UI or GitHub CLI:
      ```bash
      gh repo edit \
@@ -617,3 +618,31 @@ When adding new features or core capabilities, systematically update public-faci
    - Manually update the repository **Overview** text and **Short Description** on Docker Hub ([hub.docker.com/r/gehdoc/svg-to-video](https://hub.docker.com/r/gehdoc/svg-to-video)) via the web UI whenever releasing new features or updating documentation.
 10. **HuggingFace Space README** _(manual)_:
     - If the MCP interface, setup instructions, or environment variables changed, update the README in the [`GehDoc/svg-to-video-mcp`](https://huggingface.co/GehDoc/svg-to-video-mcp) HuggingFace repository. The Space is backed by a Python wrapper (not a Dockerfile) and requires **Python development** for any hosting-layer changes.
+
+---
+
+### 🎯 Analytics & UTM Tracking Guidelines
+
+<a id="analytics--utm-tracking-guidelines"></a>
+<a id="-analytics--utm-tracking-guidelines"></a>
+
+When adding or updating links pointing to our web apps/demos (such as `svg-to-video`), please include consistent UTM query parameters so traffic sources remain accurate in Umami:
+
+- **Naming format**: Use lowercase `snake_case` (e.g., `github_pages_profile`, `readme`).
+- **Don't over-specify platform in READMEs**: Because `README.md` files are mirrored across platforms (GitHub, npm, etc.), use `utm_source=readme` rather than `github_readme`.
+
+#### Standard Values
+
+| Location                                  | `utm_source`           | `utm_medium` (optional) |
+| :---------------------------------------- | :--------------------- | :---------------------- |
+| GitHub Pages profile (`gehdoc.github.io`) | `github_pages_profile` | `featured_project`      |
+| GitHub repository "About" link            | `github_repo_about`    | —                       |
+| GitHub Sponsors page                      | `github_sponsors`      | —                       |
+| Repository `README.md`                    | `readme`               | `docs`                  |
+
+#### Examples
+
+- `https://gehdoc.github.io/svg-to-video/?utm_source=github_pages_profile&utm_medium=featured_project`
+- `https://gehdoc.github.io/svg-to-video/?utm_source=github_repo_about`
+- `https://gehdoc.github.io/svg-to-video/?utm_source=github_sponsors`
+- `https://gehdoc.github.io/svg-to-video/?utm_source=readme&utm_medium=docs`
