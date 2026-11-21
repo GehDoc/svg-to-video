@@ -593,6 +593,7 @@ When adding new features or core capabilities, systematically update public-faci
    - The script (`web/scripts/generate-seo-data.ts`) parses this file at `predev`/`prebuild` and converts answers to HTML via `marked.parseInline()`.
 4. **`docs/ANALYTICS.md`**:
    - Audit and update telemetry documentation if any Umami event payloads, tracking methods, properties, or triggers changed.
+   - Reference and update inbound traffic UTM guidelines whenever new distribution channels or link placements are introduced.
 5. **`web/scripts/generate-seo-data.ts`** (hardcoded UI copy):
    - `headline` and `tagline` are string literals in this script — update them here when landing page copy changes (intentionally not sourced from `package.json`).
    - `formatComparisons[]` is also hardcoded inline — update the array here until a `docs/FORMATS.md` source file is introduced.
@@ -604,10 +605,10 @@ When adding new features or core capabilities, systematically update public-faci
    - Ensure `packages` identifiers, transport configurations, registry base URLs (`https://registry.npmjs.org`, `https://docker.io`), and runtime hints reflect published package distributions.
    - Verify changes using `npm run test:mcp`, which enforces automated contract assertions on `mcp.json` schema compliance.
 7. **`README.md`**:
-   - Update feature summaries, installation options, and CLI/web quick start usage blocks. Ensure links pointing to the Web Studio include UTM tracking parameters (`?utm_source=readme&utm_medium=docs`) per the [Analytics & UTM Tracking Guidelines](#-analytics--utm-tracking-guidelines).
+   - Update feature summaries, installation options, and CLI/web quick start usage blocks. Ensure links pointing to the Web Studio include UTM tracking parameters (`?utm_source=readme&utm_medium=docs`) per the [Inbound Traffic & UTM Tracking Guidelines in docs/ANALYTICS.md](./docs/ANALYTICS.md#-inbound-traffic--utm-tracking-guidelines).
 8. **GitHub Repository Metadata**:
    - Update repository **Description** in GitHub repository settings.
-   - Update repository **Website/About** URL with UTM tracking (`https://gehdoc.github.io/svg-to-video/?utm_source=github_repo_about`).
+   - Update repository **Website/About** URL with UTM tracking (`https://gehdoc.github.io/svg-to-video/?utm_source=github_repo_about`) per [docs/ANALYTICS.md](./docs/ANALYTICS.md#-inbound-traffic--utm-tracking-guidelines).
    - Update repository **Topics** (tags) via GitHub Web UI or GitHub CLI:
      ```bash
      gh repo edit \
@@ -626,23 +627,10 @@ When adding new features or core capabilities, systematically update public-faci
 <a id="analytics--utm-tracking-guidelines"></a>
 <a id="-analytics--utm-tracking-guidelines"></a>
 
-When adding or updating links pointing to our web apps/demos (such as `svg-to-video`), please include consistent UTM query parameters so traffic sources remain accurate in Umami:
+When adding or updating links pointing to our web apps/demos (such as `svg-to-video`), always include consistent UTM query parameters so inbound traffic attribution remains accurate in Umami.
 
-- **Naming format**: Use lowercase `snake_case` (e.g., `github_pages_profile`, `readme`).
-- **Don't over-specify platform in READMEs**: Because `README.md` files are mirrored across platforms (GitHub, npm, etc.), use `utm_source=readme` rather than `github_readme`.
+To maintain a Single Source of Truth and avoid documentation drift, refer directly to **[`docs/ANALYTICS.md`](./docs/ANALYTICS.md#-inbound-traffic--utm-tracking-guidelines)** for the authoritative reference on:
 
-#### Standard Values
-
-| Location                                  | `utm_source`           | `utm_medium` (optional) |
-| :---------------------------------------- | :--------------------- | :---------------------- |
-| GitHub Pages profile (`gehdoc.github.io`) | `github_pages_profile` | `featured_project`      |
-| GitHub repository "About" link            | `github_repo_about`    | —                       |
-| GitHub Sponsors page                      | `github_sponsors`      | —                       |
-| Repository `README.md`                    | `readme`               | `docs`                  |
-
-#### Examples
-
-- `https://gehdoc.github.io/svg-to-video/?utm_source=github_pages_profile&utm_medium=featured_project`
-- `https://gehdoc.github.io/svg-to-video/?utm_source=github_repo_about`
-- `https://gehdoc.github.io/svg-to-video/?utm_source=github_sponsors`
-- `https://gehdoc.github.io/svg-to-video/?utm_source=readme&utm_medium=docs`
+- **Naming Conventions**: Format rules (`snake_case`, platform-agnostic `utm_source=readme`).
+- **Standard Values Table**: Approved `utm_source` and optional `utm_medium` tokens by surface (GitHub Pages profile, repo about, sponsors, documentation).
+- **Canonical Examples**: Full copy-pasteable URLs for each distribution channel.
