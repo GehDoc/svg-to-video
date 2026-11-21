@@ -1,7 +1,7 @@
 # Spec: Studio Navigation Improvements and Sample Re-Access
 
 **GitHub Issue**: N/A (Unlinked)
-**Status**: 🟡 To be reviewed
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -122,3 +122,4 @@ Improve navigation within the Web Studio by enabling seamless return to the init
 - 2026-11-19: Architecture refactoring: consolidated studio state with `useStudioState` reducer and immutable `DEFAULT_STUDIO_CONFIG` contract for atomic form reset; streamlined CSS by eliminating all `!important` rules in `Button.scss`, adding `@mixin sr-only` in `_mixins.scss`, and unifying tokens via `--border-btn`. Status changed to 🟡 To be reviewed.
 - 2026-11-21: PR review iteration: addressed comments on PR #267 by clarifying telemetry locations (`'config-source'` instead of `'config'`, dropped unused `'monitor'`), added Telemetry Locations Reference table in `docs/ANALYTICS.md`, stabilized Cancel button in `ProgressOverlay` with persistent rendering (`disabled={!onCancel}`) adhering to layout stability guidelines, and added `Idle` Storybook story. Status changed to 🟡 To be reviewed.
 - 2026-11-21: Disabled pointer refinement: removed `pointer-events: none` from `.btn:disabled` and guarded variant `:hover` with `&:not(:disabled):hover` in `Button.scss`, enabling dedicated `cursor: not-allowed` across all disabled buttons.
+- 2026-11-21: Release v0.37.0: PR #267 approved, bumped version to 0.37.0, and archived spec to `specs/completed/`.
