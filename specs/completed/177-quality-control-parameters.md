@@ -1,7 +1,7 @@
 # Spec: 177 - Quality Control Parameters for Video and Animated Image Exports
 
 **GitHub Issue**: [#177](https://github.com/GehDoc/svg-to-video/issues/177)
-**Status**: 🟡 To be reviewed
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -82,3 +82,4 @@ Expose bitrate, CRF, and quality parameters across CLI flags and MCP tool schema
 
 - 2026-11-22: Initialized spec for issue #177 on top of v0.37.1 (synced with main).
 - 2026-11-22: Implemented options, validation, generator FFmpeg logic, CLI/MCP wiring, tests, and documentation. All checks verified passing. Handover for review (`🟡 To be reviewed`).
+- 2026-11-22: Approved by user, released in v0.38.0 (`🟢 Completed`).
