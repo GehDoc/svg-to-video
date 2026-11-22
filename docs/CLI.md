@@ -40,22 +40,25 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 
 ## Options
 
-| Option                  | Description                                                                                                                                                                             |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `-d, --duration <secs>` | Desired animation duration in seconds. If omitted, duration is auto-detected.                                                                                                           |
-| `--format <format>`     | Output format: `mp4`, `webm`, `mkv`, `mov`, `gif`, `apng`, or `png`. (Default: `webm` if `--transparent`, otherwise `mp4`)                                                              |
-| `-h, --hold <seconds>`  | Number of seconds to freeze the last frame at the end of the video. (Default: `0`)                                                                                                      |
-| `-f, --force`           | Overwrite the output video if it already exists.                                                                                                                                        |
-| `--resolution <preset>` | Resolution preset (`720p`, `1080p`, `original`) or custom dimension string (`WIDTHxHEIGHT`, e.g., `1080x1920`, `1080x1080`). (Default: `original`)                                      |
-| `--scale <number>`      | Scale factor for original resolution (1-4). (Default: `1`) - Only used with `--resolution original`.                                                                                    |
-| `--transparent`         | Render with a transparent background (supported for `webm`, `gif`, `apng`, `mov`). Can be used with `--bg-color` for formats requiring color keying (e.g., `gif`).                      |
-| `--bg-color <hex>`      | Background color for the video (e.g., `#ffffff`, `#000000`). If omitted, no background fill is applied. Can be combined with `--transparent` for GIF color keying to remove edge halos. |
-| `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Mandatory attribution is automatically appended to the 'comment' tag for video and image exports.                           |
-| `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                                                                        |
-| `--ffmpeg-path <path>`  | Explicit path to custom FFmpeg binary executable (overrides system `PATH` and `FFMPEG_PATH`).                                                                                           |
-| `--bitrate <rate>`      | Target video bitrate (e.g. `5M`, `2000k`) for video formats (`mp4`, `webm`, `mkv`, `mov`).                                                                                              |
-| `--crf <value>`         | Constant Rate Factor (`0`-`63`) for video formats (e.g. `18`-`28`).                                                                                                                     |
-| `--quality <level>`     | Quality/compression level (`1`-`100`) for animated exports (`gif` palette max colors, `apng` zlib compression).                                                                         |
+| Option                  | Default                           | Description                                                                                                                                                                             |
+| ----------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-d, --duration <secs>` | _auto-detected_                   | Desired animation duration in seconds. If omitted, duration is auto-detected from SVG styles/attributes.                                                                                |
+| `--format <format>`     | `mp4` (`webm` if `--transparent`) | Output format: `mp4`, `webm`, `mkv`, `mov`, `gif`, `apng`, or `png`.                                                                                                                    |
+| `-h, --hold <seconds>`  | `0`                               | Number of seconds to freeze the last frame at the end of the video.                                                                                                                     |
+| `-f, --force`           | `false`                           | Overwrite the output video if it already exists.                                                                                                                                        |
+| `--resolution <preset>` | `original`                        | Resolution preset (`720p`, `1080p`, `original`) or custom dimension string (`WIDTHxHEIGHT`, e.g., `1080x1920`, `1080x1080`).                                                            |
+| `--scale <number>`      | `1`                               | Scale factor for original resolution (1-4). Only used with `--resolution original`.                                                                                                     |
+| `--transparent`         | `false`                           | Render with a transparent background (supported for `webm`, `gif`, `apng`, `mov`). Can be used with `--bg-color` for formats requiring color keying (e.g., `gif`).                      |
+| `--bg-color <hex>`      | _none_                            | Background color for the video (e.g., `#ffffff`, `#000000`). If omitted, no background fill is applied. Can be combined with `--transparent` for GIF color keying to remove edge halos. |
+| `--metadata <items...>` | _none_                            | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Mandatory attribution is automatically appended to the 'comment' tag for video and image exports.                           |
+| `--bitrate <rate>`      | _none_                            | Target video bitrate (e.g. `5M`, `2000k`) for video formats (`mp4`, `webm`, `mkv`, `mov`). When omitted, video encoders default to CRF constant quality mode.                           |
+| `--crf <value>`         | `20` (mp4/mkv/mov)                | Constant Rate Factor (`0`-`63`) for video formats (e.g. `18`-`28`). Ignored if `--bitrate` is explicitly set without `--crf`.                                                           |
+| `--quality <level>`     | `100` (gif)                       | Quality/compression level (`1`-`100`) for animated exports (`gif` palette max colors from 16 to 256, `apng` zlib compression from 1 to 9).                                              |
+| `--keep-frames`         | `false`                           | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                                                                        |
+| `--ffmpeg-path <path>`  | _auto_                            | Explicit path to custom FFmpeg binary executable (overrides system `PATH` and `FFMPEG_PATH`).                                                                                           |
+| `-q, --quiet`           | `false`                           | Suppress interactive progress output.                                                                                                                                                   |
+| `--silent`              | `false`                           | Alias for `--quiet`.                                                                                                                                                                    |
+| `--json`                | `false`                           | Output final conversion result as JSON (implies quiet mode).                                                                                                                            |
 
 ## Environment Variables
 
