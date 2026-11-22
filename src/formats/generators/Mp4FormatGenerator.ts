@@ -48,13 +48,19 @@ export class Mp4FormatGenerator extends BaseCLIFormatGenerator {
       args.push('-vf', filters.join(','));
     }
 
+    args.push('-metadata', `comment=${finalComment}`, '-c:v', 'libx264');
+
+    if (options.crf !== undefined) {
+      args.push('-crf', String(options.crf));
+    } else if (!options.bitrate) {
+      args.push('-crf', '20');
+    }
+
+    if (options.bitrate) {
+      args.push('-b:v', options.bitrate);
+    }
+
     args.push(
-      '-metadata',
-      `comment=${finalComment}`,
-      '-c:v',
-      'libx264',
-      '-crf',
-      '20',
       '-preset',
       'slow',
       '-pix_fmt',

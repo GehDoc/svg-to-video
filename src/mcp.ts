@@ -151,6 +151,21 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                 'Seconds to freeze the last frame at the end of the video.',
               default: 0,
             },
+            bitrate: {
+              type: 'string',
+              description:
+                'Target video bitrate (e.g. 5M, 2000k) for video formats (MP4, WebM, MOV, MKV).',
+            },
+            crf: {
+              type: 'number',
+              description:
+                'Constant Rate Factor (0-63) for video formats (e.g. 18-28).',
+            },
+            quality: {
+              type: 'number',
+              description:
+                'Quality level (1-100) for animated exports (GIF palette generation max colors, APNG compression).',
+            },
           },
           ...(isHosted
             ? { required: ['svgContent'] }
@@ -285,6 +300,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       scale?: number;
       bgColor?: string;
       hold?: number;
+      bitrate?: string;
+      crf?: number;
+      quality?: number;
     };
 
     if (isHosted && (params.svgFilePath || params.outDir)) {
@@ -368,6 +386,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
       if (params.hold) {
         cliArgs.push('-h', String(params.hold));
+      }
+      if (params.bitrate) {
+        cliArgs.push('--bitrate', params.bitrate);
+      }
+      if (params.crf !== undefined) {
+        cliArgs.push('--crf', String(params.crf));
+      }
+      if (params.quality !== undefined) {
+        cliArgs.push('--quality', String(params.quality));
       }
 
       const rawOutput = execFileSync(command, cliArgs, {

@@ -41,6 +41,9 @@ interface RunOptions {
   quiet: boolean;
   silent: boolean;
   json: boolean;
+  bitrate?: string;
+  crf?: number;
+  quality?: number;
 }
 
 function writeFrameToStdin(stdin: Writable, buffer: Buffer): Promise<void> {
@@ -131,6 +134,20 @@ Resources:
     .option(
       '--ffmpeg-path <path>',
       'custom path to ffmpeg executable (overrides system PATH and FFMPEG_PATH)'
+    )
+    .option(
+      '--bitrate <rate>',
+      'encoding bitrate for video formats (e.g. 5M, 2000k)'
+    )
+    .option(
+      '--crf <value>',
+      'constant rate factor (0-63) for video formats (e.g. 18-28)',
+      (val) => parseInt(val, 10)
+    )
+    .option(
+      '--quality <level>',
+      'quality/compression level (1-100) for animated exports',
+      (val) => parseInt(val, 10)
     )
     .option('-q, --quiet', 'suppress interactive progress output', false)
     .option('--silent', 'alias for --quiet', false)
@@ -241,7 +258,7 @@ async function run(
   logger.info(`  Target:     ${path.join(outDir, outputFileName)}`);
 
   logger.info(
-    `  Settings:   ${duration}s @ ${fps}fps (Format: ${format}, Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'})`
+    `  Settings:   ${duration}s @ ${fps}fps (Format: ${format}, Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'}${options.bitrate ? `, Bitrate: ${options.bitrate}` : ''}${options.crf !== undefined ? `, CRF: ${options.crf}` : ''}${options.quality !== undefined ? `, Quality: ${options.quality}` : ''})`
   );
   if (puppeteerArgs.length > 0) {
     logger.info(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
@@ -309,6 +326,9 @@ async function run(
       keepFrames: options.keepFrames,
       hold: options.hold,
       metadata: options.metadata,
+      bitrate: options.bitrate,
+      crf: options.crf,
+      quality: options.quality,
       generator,
       logger,
       onBrowserCreated: (b) => {
@@ -430,6 +450,9 @@ async function renderAndEncodeFrames(params: {
   keepFrames: boolean;
   hold: number;
   metadata?: string[];
+  bitrate?: string;
+  crf?: number;
+  quality?: number;
   generator: CLIFormatGenerator;
   logger: Logger;
   onBrowserCreated: (browser: Browser) => void;
@@ -454,6 +477,9 @@ async function renderAndEncodeFrames(params: {
     metadata: params.metadata,
     inputPattern: 'pipe:0',
     pkgVersion: pkg.version,
+    bitrate: params.bitrate,
+    crf: params.crf,
+    quality: params.quality,
   };
 
   const args = params.generator.buildFfmpegArgs(formatOptions);

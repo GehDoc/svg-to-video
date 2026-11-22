@@ -65,6 +65,9 @@ describe('MCP Server Integration', () => {
     assert.ok('svgFilePath' in renderProps);
     assert.ok('outDir' in renderProps);
     assert.ok('svgContent' in renderProps);
+    assert.ok('bitrate' in renderProps);
+    assert.ok('crf' in renderProps);
+    assert.ok('quality' in renderProps);
 
     const inspectTool = response.tools.find(
       (t) => t.name === 'inspect_svg_animation'
@@ -126,6 +129,29 @@ describe('MCP Server Integration', () => {
     assert.ok(
       typeof imageContent.data === 'string' && imageContent.data.length > 0
     );
+  });
+
+  test('should accept quality, crf, and bitrate parameters in render_svg_to_video tool', async () => {
+    const result = await client.callTool({
+      name: 'render_svg_to_video',
+      arguments: {
+        svgFilePath: exampleSvg,
+        outDir: outputDir,
+        fps: 12,
+        duration: 1,
+        format: 'mp4',
+        crf: 24,
+        bitrate: '1M',
+      },
+    });
+
+    assert.strictEqual(result.isError, undefined);
+    assert.ok(Array.isArray(result.content));
+    const contentText = result.content[0] as { type: string; text: string };
+    const data = JSON.parse(contentText.text);
+    assert.strictEqual(data.success, true);
+    assert.strictEqual(data.format, 'mp4');
+    assert.ok(fs.existsSync(data.outputFile));
   });
 
   test('should render SVG via render_svg_to_video tool in ephemeral mode when outDir is omitted', async () => {

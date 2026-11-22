@@ -1,7 +1,7 @@
 # Spec: 177 - Quality Control Parameters for Video and Animated Image Exports
 
 **GitHub Issue**: [#177](https://github.com/GehDoc/svg-to-video/issues/177)
-**Status**: 🔵 In Progress
+**Status**: 🟡 To be reviewed
 
 ## 🎯 Objective
 
@@ -48,36 +48,37 @@ Expose bitrate, CRF, and quality parameters across CLI flags and MCP tool schema
 
 ## ✅ Task List
 
-- [ ] **Core Options & Types**
-  - [ ] Extend `CLIFormatOptions` interface in `src/formats/types.ts`.
-  - [ ] Add option validation logic in `src/utils/validateOptions.ts` and test cases in `src/utils/validateOptions.test.ts`.
-- [ ] **Format Generators**
-  - [ ] Update `Mp4FormatGenerator` with conditional `-crf` and `-b:v`.
-  - [ ] Update `WebmFormatGenerator` with conditional `-crf` and `-b:v`.
-  - [ ] Update `MkvFormatGenerator` with conditional `-crf` and `-b:v`.
-  - [ ] Update `MovFormatGenerator` with conditional `-crf` and `-b:v`.
-  - [ ] Update `GifFormatGenerator` with `max_colors` in `palettegen`.
-  - [ ] Update `ApngFormatGenerator` with `-compression_level`.
-  - [ ] Update generator tests in `src/formats/registry.test.ts`.
-- [ ] **CLI & MCP Integration**
-  - [ ] Add CLI flags and thread options in `src/index.ts`.
-  - [ ] Expose schema properties and CLI forwarding in `src/mcp.ts`.
-  - [ ] Update tests in `tests/cli.spec.ts` and `tests/mcp.spec.ts`.
-- [ ] **Documentation, Security & Pre-Flight Audits**
-  - [ ] Update `README.md`, `docs/CLI.md`, `docs/MCP.md`, and `docs/ARCHITECTURE.md`.
-  - [ ] Audit `docs/SECURITY.md`.
-  - [ ] Run full test suites (`npm run check:fast`, `npm test`).
-  - [ ] Update spec status to `🟢 Completed` and move to `specs/completed/177-quality-control-parameters.md`.
+- [x] **Core Options & Types**
+  - [x] Extend `CLIFormatOptions` interface in `src/formats/types.ts`.
+  - [x] Add option validation logic in `src/utils/validateOptions.ts` and test cases in `src/utils/validateOptions.test.ts`.
+- [x] **Format Generators**
+  - [x] Update `Mp4FormatGenerator` with conditional `-crf` and `-b:v`.
+  - [x] Update `WebmFormatGenerator` with conditional `-crf` and `-b:v`.
+  - [x] Update `MkvFormatGenerator` with conditional `-crf` and `-b:v`.
+  - [x] Update `MovFormatGenerator` with conditional `-crf` and `-b:v`.
+  - [x] Update `GifFormatGenerator` with `max_colors` in `palettegen`.
+  - [x] Update `ApngFormatGenerator` with `-compression_level`.
+  - [x] Update generator tests in `src/formats/registry.test.ts`.
+- [x] **CLI & MCP Integration**
+  - [x] Add CLI flags and thread options in `src/index.ts`.
+  - [x] Expose schema properties and CLI forwarding in `src/mcp.ts`.
+  - [x] Update tests in `tests/cli.spec.ts` and `tests/mcp.spec.ts`.
+- [x] **Documentation, Security & Pre-Flight Audits**
+  - [x] Update `README.md`, `docs/CLI.md`, `docs/MCP.md`, and `docs/ARCHITECTURE.md`.
+  - [x] Audit `docs/SECURITY.md`.
+  - [x] Run full test suites (`npm run check:fast`, `npm test`).
+  - [x] Mark spec status as `🟡 To be reviewed` awaiting human developer approval.
 
 ## 🧪 Verification Plan
 
-- [ ] Fast checks: `npm run check:fast`
-- [ ] Unit & integration tests: `npm test`
-- [ ] Format generator tests: `npm run test:unit -- src/formats/registry.test.ts`
-- [ ] Validation tests: `npm run test:unit -- src/utils/validateOptions.test.ts`
-- [ ] CLI tests: `npx playwright test tests/cli.spec.ts`
-- [ ] MCP tests: `npx playwright test tests/mcp.spec.ts`
+- [x] Fast checks: `npm run check:fast`
+- [x] Unit tests: `npm run test:unit` (208 passed)
+- [x] CLI integration tests: `npm run test:cli` (27 passed)
+- [x] MCP integration tests: `npm run test:mcp` (11 passed)
+- [x] Pack verification: `npm run test:pack` (3 passed)
+- [x] Web E2E tests: `npm run test:web -w web` (24 passed)
 
 ## 📝 Change Log
 
 - 2026-11-22: Initialized spec for issue #177 on top of v0.37.1 (synced with main).
+- 2026-11-22: Implemented options, validation, generator FFmpeg logic, CLI/MCP wiring, tests, and documentation. All checks verified passing. Handover for review (`🟡 To be reviewed`).

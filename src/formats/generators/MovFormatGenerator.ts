@@ -54,16 +54,16 @@ export class MovFormatGenerator extends BaseCLIFormatGenerator {
     if (transparent) {
       args.push('-c:v', 'png', '-pix_fmt', 'rgba');
     } else {
-      args.push(
-        '-c:v',
-        'libx264',
-        '-crf',
-        '20',
-        '-preset',
-        'slow',
-        '-pix_fmt',
-        'yuv420p'
-      );
+      args.push('-c:v', 'libx264');
+      if (options.crf !== undefined) {
+        args.push('-crf', String(options.crf));
+      } else if (!options.bitrate) {
+        args.push('-crf', '20');
+      }
+      if (options.bitrate) {
+        args.push('-b:v', options.bitrate);
+      }
+      args.push('-preset', 'slow', '-pix_fmt', 'yuv420p');
     }
 
     const outputFullPath = path.join(outDir, outputFileName);

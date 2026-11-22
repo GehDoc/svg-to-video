@@ -53,6 +53,9 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 | `--metadata <items...>` | Metadata tags to inject (e.g., `--metadata title=MyVideo`). Mandatory attribution is automatically appended to the 'comment' tag for video and image exports.                           |
 | `--keep-frames`         | Prevents the automatic deletion of temporary `.png` frames after video creation.                                                                                                        |
 | `--ffmpeg-path <path>`  | Explicit path to custom FFmpeg binary executable (overrides system `PATH` and `FFMPEG_PATH`).                                                                                           |
+| `--bitrate <rate>`      | Target video bitrate (e.g. `5M`, `2000k`) for video formats (`mp4`, `webm`, `mkv`, `mov`).                                                                                              |
+| `--crf <value>`         | Constant Rate Factor (`0`-`63`) for video formats (e.g. `18`-`28`).                                                                                                                     |
+| `--quality <level>`     | Quality/compression level (`1`-`100`) for animated exports (`gif` palette max colors, `apng` zlib compression).                                                                         |
 
 ## Environment Variables
 
