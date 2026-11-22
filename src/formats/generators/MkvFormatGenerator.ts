@@ -52,18 +52,28 @@ export class MkvFormatGenerator extends BaseCLIFormatGenerator {
     args.push('-metadata', `comment=${finalComment}`);
 
     if (transparent) {
-      args.push('-c:v', 'libvpx-vp9', '-pix_fmt', 'yuva420p');
+      args.push('-c:v', 'libvpx-vp9');
+      if (options.crf !== undefined) {
+        args.push('-crf', String(options.crf));
+        if (!options.bitrate) {
+          args.push('-b:v', '0');
+        }
+      }
+      if (options.bitrate) {
+        args.push('-b:v', options.bitrate);
+      }
+      args.push('-pix_fmt', 'yuva420p');
     } else {
-      args.push(
-        '-c:v',
-        'libx264',
-        '-crf',
-        '20',
-        '-preset',
-        'slow',
-        '-pix_fmt',
-        'yuv420p'
-      );
+      args.push('-c:v', 'libx264');
+      if (options.crf !== undefined) {
+        args.push('-crf', String(options.crf));
+      } else if (!options.bitrate) {
+        args.push('-crf', '20');
+      }
+      if (options.bitrate) {
+        args.push('-b:v', options.bitrate);
+      }
+      args.push('-preset', 'slow', '-pix_fmt', 'yuv420p');
     }
 
     const outputFullPath = path.join(outDir, outputFileName);

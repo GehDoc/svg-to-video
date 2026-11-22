@@ -319,3 +319,20 @@ Puppeteer (headless Chrome)
 > 2. System FFmpeg binary discovered on `$PATH` (`ffmpeg -version`).
 > 3. Bundled static binary fallback via `ffmpeg-static` optional dependency.
 >    In Docker and CI, high-performance static binaries are provisioned directly from `mwader/static-ffmpeg:7.1`.
+
+### Encoding Quality & Rate Control Architecture
+
+The CLI format generators implement rate-control strategies suited to each output format:
+
+1. **H.264 Video (`MP4`, `MKV`, `MOV`)**:
+   - **Constant Rate Factor (CRF)**: Used by default (`-crf 20`) or when `--crf <val>` is set. Focuses on perceptual visual quality.
+   - **Target Bitrate**: When `--bitrate <rate>` is supplied without `--crf`, `-crf` is omitted and `-b:v <rate>` is emitted, allowing `libx264` to encode cleanly in target average bitrate mode without rate-control conflicts.
+2. **VP9 Video (`WebM`, `MKV`)**:
+   - **Constant Quality Mode**: When `--crf <val>` is supplied without bitrate, FFmpeg requires `-crf <val> -b:v 0` to uncap bitrate and enable true constant quality.
+   - **Target Bitrate / Constrained Quality**: When `--bitrate` is specified, `-b:v <rate>` is set. If both are passed, VP9 runs in standard Constrained Quality (CQ) mode.
+3. **GIF Quantization**:
+   - When `--quality <1-100>` is provided, `GifFormatGenerator` maps it to palette size: `Math.max(16, Math.min(256, Math.round((quality / 100) * 256)))`, passing `:max_colors=${colors}` to `palettegen`. This works alongside 8x8 Bayer ordered dithering (`paletteuse=dither=bayer:bayer_scale=3`) to prevent frame crawling.
+4. **aPNG Lossless Deflate**:
+   - Maps `--quality <1-100>` to zlib `-compression_level` (`1-9`).
+5. **Format Permissiveness**:
+   - Inapplicable parameters (e.g. `--quality` on MP4 or `--crf` on GIF) are safely ignored by individual format generators without causing FFmpeg errors.

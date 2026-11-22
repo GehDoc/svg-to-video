@@ -68,7 +68,102 @@ describe('CLIFormatRegistry', () => {
     });
     assert.ok(args.includes('-c:v'));
     assert.ok(args.includes('libx264'));
+    assert.ok(args.includes('-crf'));
+    assert.strictEqual(args[args.indexOf('-crf') + 1], '20');
     assert.ok(args[args.length - 1].includes('test.mp4'));
+  });
+
+  test('should build correct FFmpeg args for MP4 with custom CRF and bitrate', () => {
+    const mp4Gen = formatRegistry.get('mp4')!;
+    const args = mp4Gen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.mp4',
+      crf: 18,
+      bitrate: '5M',
+    });
+    assert.ok(args.includes('-c:v'));
+    assert.ok(args.includes('libx264'));
+    assert.ok(args.includes('-crf'));
+    assert.strictEqual(args[args.indexOf('-crf') + 1], '18');
+    assert.ok(args.includes('-b:v'));
+    assert.strictEqual(args[args.indexOf('-b:v') + 1], '5M');
+  });
+
+  test('should omit -crf for MP4 when only bitrate is specified', () => {
+    const mp4Gen = formatRegistry.get('mp4')!;
+    const args = mp4Gen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.mp4',
+      bitrate: '3M',
+    });
+    assert.ok(args.includes('-c:v'));
+    assert.ok(args.includes('libx264'));
+    assert.strictEqual(args.includes('-crf'), false);
+    assert.ok(args.includes('-b:v'));
+    assert.strictEqual(args[args.indexOf('-b:v') + 1], '3M');
+  });
+
+  test('should build correct FFmpeg args for WebM with CRF and Bitrate', () => {
+    const webmGen = formatRegistry.get('webm')!;
+    const args = webmGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.webm',
+      crf: 24,
+      bitrate: '2000k',
+    });
+    assert.ok(args.includes('-c:v'));
+    assert.ok(args.includes('libvpx-vp9'));
+    assert.ok(args.includes('-crf'));
+    assert.strictEqual(args[args.indexOf('-crf') + 1], '24');
+    assert.ok(args.includes('-b:v'));
+    assert.strictEqual(args[args.indexOf('-b:v') + 1], '2000k');
+  });
+
+  test('should build correct FFmpeg args for WebM with CRF only (-b:v 0 for constant quality)', () => {
+    const webmGen = formatRegistry.get('webm')!;
+    const args = webmGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.webm',
+      crf: 28,
+    });
+    assert.ok(args.includes('-c:v'));
+    assert.ok(args.includes('libvpx-vp9'));
+    assert.ok(args.includes('-crf'));
+    assert.strictEqual(args[args.indexOf('-crf') + 1], '28');
+    assert.ok(args.includes('-b:v'));
+    assert.strictEqual(args[args.indexOf('-b:v') + 1], '0');
+  });
+
+  test('should build correct FFmpeg args for GIF with transparency and quality', () => {
+    const gifGen = formatRegistry.get('gif')!;
+    const args = gifGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.gif',
+      transparent: true,
+      quality: 50,
+    });
+    assert.ok(args.includes('-filter_complex'));
+    const filterIdx = args.indexOf('-filter_complex') + 1;
+    assert.ok(args[filterIdx].includes('reserve_transparent=1:max_colors=128'));
+    assert.ok(
+      args[filterIdx].includes('paletteuse=dither=bayer:bayer_scale=3')
+    );
+  });
+
+  test('should build correct FFmpeg args for aPNG with transparency and quality', () => {
+    const apngGen = formatRegistry.get('apng')!;
+    const args = apngGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.apng',
+      transparent: true,
+      quality: 90,
+    });
+    assert.ok(args.includes('-f'));
+    assert.ok(args.includes('apng'));
+    assert.ok(args.includes('-pix_fmt'));
+    assert.ok(args.includes('rgba'));
+    assert.ok(args.includes('-compression_level'));
+    assert.strictEqual(args[args.indexOf('-compression_level') + 1], '8');
   });
 
   test('should include -f image2pipe when inputPattern is pipe:0', () => {

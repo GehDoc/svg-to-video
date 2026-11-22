@@ -53,11 +53,20 @@ export class GifFormatGenerator extends BaseCLIFormatGenerator {
     }
 
     const reserveTrans = transparent ? 1 : 0;
+    let maxColors = '';
+    if (options.quality !== undefined) {
+      const colors = Math.max(
+        16,
+        Math.min(256, Math.round((options.quality / 100) * 256))
+      );
+      maxColors = `:max_colors=${colors}`;
+    }
+
     let filterComplex: string;
     if (filters.length > 0) {
-      filterComplex = `${filters.join(',')},split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}[p];[b][p]paletteuse=dither=bayer:bayer_scale=3`;
+      filterComplex = `${filters.join(',')},split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}${maxColors}[p];[b][p]paletteuse=dither=bayer:bayer_scale=3`;
     } else {
-      filterComplex = `split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}[p];[b][p]paletteuse=dither=bayer:bayer_scale=3`;
+      filterComplex = `split[a][b];[a]palettegen=reserve_transparent=${reserveTrans}${maxColors}[p];[b][p]paletteuse=dither=bayer:bayer_scale=3`;
     }
 
     args.push('-filter_complex', filterComplex);

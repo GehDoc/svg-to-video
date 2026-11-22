@@ -535,4 +535,80 @@ describe('CLI Functionality', () => {
       );
     });
   });
+
+  describe('Encoding Quality & Bitrate Controls (--bitrate, --crf, --quality)', () => {
+    test('should pass validation and encode with custom bitrate and crf', () => {
+      const { inputFile, outputFile } = getTestPaths('loop-test');
+      const result = runCli([
+        inputFile,
+        '12',
+        outputDir,
+        '-d',
+        '1',
+        '--bitrate',
+        '2M',
+        '--crf',
+        '22',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+      assert.ok(result.stdout.includes('Bitrate: 2M'));
+      assert.ok(result.stdout.includes('CRF: 22'));
+    });
+
+    test('should fail when given invalid bitrate', () => {
+      const { inputFile } = getTestPaths('loop-test');
+      const result = runCli([
+        inputFile,
+        '12',
+        outputDir,
+        '-d',
+        '1',
+        '--bitrate',
+        'invalid_bitrate',
+        '--force',
+      ]);
+      assert.notStrictEqual(result.status, 0);
+      assert.match(result.stderr, /Invalid bitrate format/);
+    });
+
+    test('should fail when given out of bounds crf', () => {
+      const { inputFile } = getTestPaths('loop-test');
+      const result = runCli([
+        inputFile,
+        '12',
+        outputDir,
+        '-d',
+        '1',
+        '--crf',
+        '99',
+        '--force',
+      ]);
+      assert.notStrictEqual(result.status, 0);
+      assert.match(
+        result.stderr,
+        /CRF value must be a number between 0 and 63/
+      );
+    });
+
+    test('should encode GIF with quality parameter', () => {
+      const { inputFile, outputFile } = getTestPaths('loop-test', '.gif');
+      const result = runCli([
+        inputFile,
+        '12',
+        outputDir,
+        '-d',
+        '1',
+        '--format',
+        'gif',
+        '--quality',
+        '60',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+      assert.ok(result.stdout.includes('Quality: 60'));
+    });
+  });
 });
