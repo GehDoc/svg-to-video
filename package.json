@@ -126,13 +126,6 @@
     "web"
   ],
   "overrides": {
-    "vitest": "$vitest",
-    "@vitest/spy": "$vitest",
-    "@vitest/expect": "$vitest",
-    "@vitest/utils": "$vitest",
-    "@vitest/mocker": "$vitest",
-    "@vitest/runner": "$vitest",
-    "@vitest/snapshot": "$vitest",
     "@modelcontextprotocol/sdk": "$@modelcontextprotocol/sdk",
     "@modelcontextprotocol/client": "2.4.0",
     "@modelcontextprotocol/server": "2.4.0"
