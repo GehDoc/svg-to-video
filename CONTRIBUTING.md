@@ -605,7 +605,7 @@ When adding new features or core capabilities, systematically update public-faci
    - Ensure `packages` identifiers, transport configurations, registry base URLs (`https://registry.npmjs.org`, `https://docker.io`), and runtime hints reflect published package distributions.
    - Verify changes using `npm run test:mcp`, which enforces automated contract assertions on `mcp.json` schema compliance.
 7. **`README.md`**:
-   - Update feature summaries, installation options, and CLI/web quick start usage blocks. Ensure links pointing to the Web Studio include UTM tracking parameters (`?utm_source=readme&utm_medium=docs`) per the [Inbound Traffic & UTM Tracking Guidelines in docs/ANALYTICS.md](./docs/ANALYTICS.md#-inbound-traffic--utm-tracking-guidelines).
+   - Audit both the top-level value propositions and feature lists under **"🌟 Why SVG to Video?"** (highlighting user-facing capabilities like rate-control, transparency, formats) and the CLI/web quick start usage blocks and code examples. Ensure links pointing to the Web Studio include UTM tracking parameters (`?utm_source=readme&utm_medium=docs`) per the [Inbound Traffic & UTM Tracking Guidelines in docs/ANALYTICS.md](./docs/ANALYTICS.md#-inbound-traffic--utm-tracking-guidelines).
 8. **GitHub Repository Metadata**:
    - Update repository **Description** in GitHub repository settings.
    - Update repository **Website/About** URL with UTM tracking (`https://gehdoc.github.io/svg-to-video/?utm_source=github_repo_about`) per [docs/ANALYTICS.md](./docs/ANALYTICS.md#-inbound-traffic--utm-tracking-guidelines).
