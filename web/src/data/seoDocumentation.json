@@ -23,6 +23,10 @@
       "descriptionHtml": "Beyond video, generate lightweight <strong>Animated PNGs (aPNG)</strong> and <strong>GIFs</strong> with deterministic 8x8 Bayer ordered dithering to eliminate temporal fluttering on animated gradients, with full control over background transparency."
     },
     {
+      "title": "Granular Quality & Rate Control",
+      "descriptionHtml": "Fine-tune output file size and visual fidelity with custom target bitrates (<code>--bitrate</code>), Constant Rate Factor (<code>--crf 0-63</code>), and quality percentages (<code>--quality 1-100</code>) across video (MP4, WebM, MKV, MOV) and animated formats (GIF color quantization, aPNG compression)."
+    },
+    {
       "title": "Copy to Clipboard",
       "descriptionHtml": "Instant export to <strong>Base64 Data URL</strong>—copy your video and embed it directly into your HTML, CSS, or JS code without manual downloads. Perfect for rapid prototyping and developers."
     },
@@ -98,7 +102,11 @@
     {
       "question": "How does the Web Studio render high-quality, flicker-free GIFs without a server?",
       "answerHtml": "Most browser-based GIF tools either snap colors coarsely (causing color banding) or use error diffusion dithering (which produces moving, noisy speckles across frames). The Web Studio features an in-browser encoder with custom 8x8 Bayer ordered dithering and 16-bit <code>rgb565</code> palette quantization. This disperses narrow color transitions smoothly without temporal fluttering, delivering FFmpeg-grade GIF quality directly inside your browser."
+    },
+    {
+      "question": "How do I control output video quality and file size?",
+      "answerHtml": "You can fine-tune output size and visual fidelity in the CLI and MCP tools using <code>--bitrate &lt;rate&gt;</code> (e.g. <code>5M</code>, <code>2000k</code>), Constant Rate Factor <code>--crf &lt;0-63&gt;</code> (e.g. <code>18</code> for near-lossless, <code>20</code> by default, <code>28</code> for compact), or <code>--quality &lt;1-100&gt;</code> for animated GIF (color palette quantization) and aPNG (zlib compression)."
     }
   ],
-  "lastUpdated": "2026-11-22T00:50:19.361Z"
+  "lastUpdated": "2026-11-23T21:27:01.333Z"
 }

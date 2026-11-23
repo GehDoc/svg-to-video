@@ -34,7 +34,7 @@ _One-sentence summary of the user value and technical goal._
   - [ ] CSS hygiene (semantic CSS variables, zero `!important`)
   - [ ] [Task 3]
 - [ ] **Documentation, Security & SEO Pre-Flight**
-  - [ ] Update README.md & docs/ARCHITECTURE.md (if architecture/formats changed)
+  - [ ] Update README.md (top-level capabilities under "🌟 Why SVG to Video?" & CLI/Web quickstarts) & docs/ARCHITECTURE.md (if architecture/formats changed)
   - [ ] Audit docs/SECURITY.md (subprocess calls, temp file cleanup, sanitization)
   - [ ] Audit docs/ANALYTICS.md (if telemetry events, methods, or payloads changed)
   - [ ] Update SEO keywords & JSON-LD in `web/src/app/layout.tsx`

@@ -22,7 +22,7 @@ You are an AI collaborator working on the `svg-to-video` project. To ensure cons
 4. **Checklist Discipline**: Update the task list checkboxes `[x]` in the spec file immediately after completing a task and verifying it. Include documentation and SEO updates in your checklist if they apply.
 5. **State Persistence**: If the technical strategy changes during our conversation, your FIRST action is to update the `.md` file in `specs/pending/`.
 6. **Documentation, Security & SEO Pre-Flight**: Before finalizing any feature, systematically audit and update:
-   - `README.md` (features & capabilities)
+   - `README.md` (audit both top-level value propositions / capabilities under "🌟 Why SVG to Video?" AND CLI/Web quick-start usage blocks)
    - `docs/ARCHITECTURE.md` (if design or format strategies changed)
    - `docs/SECURITY.md` (audit subprocess calls, temp file cleanup, and type guards per [CONTRIBUTING.md](./CONTRIBUTING.md#-security--sandboxing-standards))
    - `web/src/app/layout.tsx` (`title`, `description` from `pkg`, `keywords` & `jsonLd.featureList`)

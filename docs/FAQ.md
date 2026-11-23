@@ -23,3 +23,7 @@ No. The CLI automatically uses system FFmpeg if present on your `$PATH`, or fall
 ## Q: How does the Web Studio render high-quality, flicker-free GIFs without a server?
 
 Most browser-based GIF tools either snap colors coarsely (causing color banding) or use error diffusion dithering (which produces moving, noisy speckles across frames). The Web Studio features an in-browser encoder with custom 8x8 Bayer ordered dithering and 16-bit `rgb565` palette quantization. This disperses narrow color transitions smoothly without temporal fluttering, delivering FFmpeg-grade GIF quality directly inside your browser.
+
+## Q: How do I control output video quality and file size?
+
+You can fine-tune output size and visual fidelity in the CLI and MCP tools using `--bitrate <rate>` (e.g. `5M`, `2000k`), Constant Rate Factor `--crf <0-63>` (e.g. `18` for near-lossless, `20` by default, `28` for compact), or `--quality <1-100>` for animated GIF (color palette quantization) and aPNG (zlib compression).

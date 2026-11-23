@@ -35,6 +35,9 @@ export const metadata: Metadata = {
     'cli apng export',
     'smil animation',
     'svg smil',
+    'bitrate control',
+    'video quality',
+    'crf',
     'web animations api',
     'browser-based converter',
     'mcp server',
@@ -86,6 +89,7 @@ const jsonLd = {
   featureList: [
     'High-fidelity SVG to video conversion (MP4, WebM, MKV, MOV)',
     'Optimized animated image export (aPNG, GIF)',
+    'Granular encoding quality & bitrate control (CRF, target bitrate, GIF/aPNG quality)',
     'Transparent background support (WebM, aPNG, GIF89a)',
     'Metadata embedding across video and animated images',
     'Frame-accurate Web Animations API scrubbing',
