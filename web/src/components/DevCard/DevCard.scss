@@ -80,55 +80,11 @@
   .dev-snippet {
     margin: 0;
     padding: 0.85rem 1rem;
-    background: #0f172a;
     font-family: var(--mono);
     font-size: 0.75rem;
     line-height: 1.45;
-    color: #f8fafc;
     overflow-x: auto;
     white-space: pre-wrap;
     word-break: break-all;
-
-    code {
-      background: transparent;
-      padding: 0;
-      color: inherit;
-    }
-
-    .token.comment {
-      color: #94a3b8;
-      font-style: italic;
-    }
-
-    .token.function,
-    .token.class-name {
-      color: #a5b4fc;
-      font-weight: 600;
-    }
-
-    .token.parameter,
-    .token.variable {
-      color: #38bdf8;
-    }
-
-    .token.string {
-      color: #34d399;
-    }
-
-    .token.keyword,
-    .token.property {
-      color: #c084fc;
-      font-weight: 600;
-    }
-
-    .token.punctuation,
-    .token.operator {
-      color: #cbd5e1;
-    }
-
-    .token.boolean,
-    .token.number {
-      color: #fbbf24;
-    }
   }
 }
