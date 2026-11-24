@@ -20,7 +20,9 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
   - Left alignment guide: align header logo, hero strip text, studio workspace, and site footer text to the same left padding guide (`1.5rem` / `24px`).
   - Hero strip subtitle: remove awkward line wraps before "transparency" by relaxing `max-width` to flow naturally across wide viewports.
   - Studio stage refinement: remove redundant "Welcome to SVG to Video Studio" heading from LandingView to save vertical space.
-  - Viewport-fitted studio workspace: configure `.studio-layout` height (`calc(100vh - 115px)`) so that Header + Hero + Workspace bottom bar fit completely within the initial screen fold without being truncated.
+  - Viewport-fitted studio fold: wrapped `<HeroStrip />` and `<main id="studio">` inside `.studio-viewport-fold` (`height: calc(100vh - var(--header-height))`), with `.hero-strip` (`flex-shrink: 0`) and `.studio-layout` (`flex: 1; min-height: 0`). This ensures that `site navigation bar + hero + workspace height === window height (100vh)` exactly, with the workspace bottom bar flush with the bottom of the window fold without truncation or empty gaps.
+  - Hero typography & spacing: configured hero headline `font-size: 1.35rem` with balanced vertical spacing using `margin-top: 1.75rem` on `h1` and `margin-bottom: 1.25rem` on `p`.
+  - Site footer layout: top-aligned all footer columns (`align-items: flex-start`), and structured ecosystem and contribute sections as stacked rows inside a single middle column.
   - Site footer ergonomics: place app version directly following the application name; pin "Back to top ↑" to the right across all screen sizes.
   - FAQ reordering: move "How does the Web Studio render high-quality, flicker-free GIFs without a server?" in `docs/FAQ.md` before any CLI/MCP questions.
   - Syntax highlighting: integrate Prism.js in `DevCard.tsx` with customized token styling matching project design tokens for CLI, Docker, and MCP code blocks.

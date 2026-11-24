@@ -102,14 +102,24 @@ body {
   color: var(--text);
 }
 
+.studio-viewport-fold {
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: #{$mobile-breakpoint + 1px}) {
+    height: calc(100vh - var(--header-height, 48px));
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+}
+
 .studio-layout {
   display: flex;
   border-bottom: 1px solid var(--border);
 
   @media (min-width: #{$mobile-breakpoint + 1px}) {
-    min-height: 520px;
-    height: calc(100vh - 115px);
-    max-height: 750px;
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
   }
 
