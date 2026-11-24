@@ -19,7 +19,7 @@ test('DevCard renders title, snippet, and handles copy to clipboard', async () =
   );
 
   expect(screen.getByText('Test CLI')).toBeInTheDocument();
-  expect(screen.getByText('npx test-cmd')).toBeInTheDocument();
+  expect(screen.getByLabelText('Test CLI')).toHaveTextContent('npx test-cmd');
 
   const button = screen.getByRole('button', { name: 'Copy test snippet' });
   expect(button).toBeInTheDocument();
@@ -49,11 +49,15 @@ test('DevCard supports tab switching and copies active tab snippet', async () =>
 
   expect(screen.getByRole('tab', { name: /CLI Tab/i })).toBeInTheDocument();
   expect(screen.getByRole('tab', { name: /MCP Tab/i })).toBeInTheDocument();
-  expect(screen.getByText('npx cli-command')).toBeInTheDocument();
+  expect(screen.getByLabelText(/CLI Tab code snippet/i)).toHaveTextContent(
+    'npx cli-command'
+  );
 
   // Switch to second tab
   fireEvent.click(screen.getByRole('tab', { name: /MCP Tab/i }));
-  expect(screen.getByText('{"mcp": true}')).toBeInTheDocument();
+  expect(screen.getByLabelText(/MCP Tab code snippet/i)).toHaveTextContent(
+    '{"mcp": true}'
+  );
 
   // Copy active tab snippet
   const copyBtn = screen.getByRole('button', { name: 'Copy MCP Tab' });

@@ -1,6 +1,6 @@
 {
   "name": "@svg-to-video/web",
-  "version": "0.38.0",
+  "version": "0.39.0",
   "description": "Convert SVG animations into MP4, MOV, WebM, GIF, or aPNG directly in your browser. Supports CSS/SMIL and perfect transparent backgrounds.",
   "author": "GehDoc",
   "repository": {
@@ -41,6 +41,7 @@
     "gifenc": "^1.0.3",
     "mediabunny": "^1.61.3",
     "next": "^16.4.6",
+    "prismjs": "^1.30.0",
     "react": "^19.2.4",
     "react-dom": "^19.3.0",
     "react-icons": "^5.6.0",
@@ -56,6 +57,7 @@
     "@svgr/webpack": "^8.1.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",
+    "@types/prismjs": "^1.26.6",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.3.0",
     "@types/umami": "^2.10.1",

@@ -1,6 +1,10 @@
 @use './styles/breakpoints' as *;
+@use './styles/syntax' as *;
 
 :root {
+  /* Layout Dimensions */
+  --header-height: 48px;
+
   /* Base Colors & Theme */
   --bg: #ffffff;
   --panel: #f8fafc;
@@ -15,11 +19,22 @@
   --accent: #aa3bff;
   --accent-text: #aa3bff;
   --error: #dc2626;
+  --success: #047857;
   --card: #ffffff;
 
   --sponsor: #ca263f;
   --sponsor-bg: #fff0f3;
   --sponsor-hover: #ffe0e6;
+  --sponsor-border: rgba(202, 38, 63, 0.3);
+
+  --format-mp4-bg: #e0e7ff;
+  --format-mp4-text: #3730a3;
+  --format-webm-bg: #cffafe;
+  --format-webm-text: #0e7490;
+  --format-apng-bg: #fef3c7;
+  --format-apng-text: #92400e;
+  --format-gif-bg: #d1fae5;
+  --format-gif-text: #065f46;
 
   --code-bg: #f1f5f9;
   --shadow:
@@ -59,11 +74,22 @@
     --primary-hover: #818cf8;
     --accent: #c084fc;
     --accent-text: #c084fc;
+    --success: #34d399;
     --card: #334155;
 
-    --sponsor: #ff6685;
+    --sponsor: #ffa3b5;
     --sponsor-bg: rgba(218, 55, 81, 0.1);
     --sponsor-hover: rgba(218, 55, 81, 0.2);
+    --sponsor-border: rgba(255, 163, 181, 0.3);
+
+    --format-mp4-bg: #312e81;
+    --format-mp4-text: #e0e7ff;
+    --format-webm-bg: #164e63;
+    --format-webm-text: #cffafe;
+    --format-apng-bg: #78350f;
+    --format-apng-text: #fef3c7;
+    --format-gif-bg: #064e3b;
+    --format-gif-text: #d1fae5;
 
     --code-bg: #1e293b;
     --shadow:
@@ -72,14 +98,14 @@
 }
 
 html {
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow-x: clip;
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-height, 48px);
 }
 
 body {
   margin: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow-x: clip;
   min-height: 100vh;
 }
 
@@ -95,16 +121,30 @@ body {
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
+  padding-top: var(--header-height, 48px);
+  box-sizing: border-box;
   background-color: var(--bg);
   color: var(--text);
 }
 
-.studio-layout {
+.studio-viewport-fold {
   display: flex;
-  min-height: calc(100vh - 64px);
+  flex-direction: column;
 
   @media (min-width: #{$mobile-breakpoint + 1px}) {
-    height: calc(100vh - 64px);
+    height: calc(100vh - var(--header-height, 48px));
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+}
+
+.studio-layout {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+
+  @media (min-width: #{$mobile-breakpoint + 1px}) {
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
   }
 

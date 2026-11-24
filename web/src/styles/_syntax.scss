@@ -1,0 +1,62 @@
+// Syntax highlighting and terminal tokens (for Prism.js and code blocks)
+
+:root {
+  --terminal-bg: #0f172a;
+  --terminal-text: #f8fafc;
+
+  --syntax-comment: #94a3b8;
+  --syntax-function: #a5b4fc;
+  --syntax-variable: #38bdf8;
+  --syntax-string: #34d399;
+  --syntax-keyword: #c084fc;
+  --syntax-punctuation: #cbd5e1;
+  --syntax-number: #fbbf24;
+}
+
+.dev-snippet,
+.code-syntax {
+  background: var(--terminal-bg);
+  color: var(--terminal-text);
+
+  code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+  }
+
+  .token.comment {
+    color: var(--syntax-comment);
+    font-style: italic;
+  }
+
+  .token.function,
+  .token.class-name {
+    color: var(--syntax-function);
+    font-weight: 600;
+  }
+
+  .token.parameter,
+  .token.variable {
+    color: var(--syntax-variable);
+  }
+
+  .token.string {
+    color: var(--syntax-string);
+  }
+
+  .token.keyword,
+  .token.property {
+    color: var(--syntax-keyword);
+    font-weight: 600;
+  }
+
+  .token.punctuation,
+  .token.operator {
+    color: var(--syntax-punctuation);
+  }
+
+  .token.boolean,
+  .token.number {
+    color: var(--syntax-number);
+  }
+}

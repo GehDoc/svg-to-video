@@ -10,14 +10,13 @@ afterEach(cleanup);
 
 const { Default } = composeStories(stories);
 
-test('LandingView renders welcome header, sample cards, and trust badges', () => {
+test('LandingView renders welcome prompt, sample cards, and trust badges', () => {
   render(<Default />);
 
   expect(
-    screen.getByRole('heading', {
-      name: /Welcome to SVG to Video Studio/i,
-      level: 2,
-    })
+    screen.getByText(
+      /Upload your animated SVG on the left, or test the engine instantly/i
+    )
   ).toBeInTheDocument();
   expect(screen.getByText(/Rocket Launch/i)).toBeInTheDocument();
   expect(screen.getByText(/Loading Spinner/i)).toBeInTheDocument();
@@ -26,11 +25,18 @@ test('LandingView renders welcome header, sample cards, and trust badges', () =>
   expect(screen.getByText(/100% Local & Private/i)).toBeInTheDocument();
   expect(screen.getByText(/Alpha Channel Transparency/i)).toBeInTheDocument();
   expect(
-    screen.getByText(/Local processing only — files never leave your browser/i)
+    screen.getByText(/More guides, format specs & automation below/i)
   ).toBeInTheDocument();
   expect(
-    screen.getByText(/Released under the MIT License/i)
+    screen.getByRole('link', { name: /how to convert/i })
   ).toBeInTheDocument();
+  expect(
+    screen.getByRole('link', { name: /formats & specs/i })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('link', { name: /cli, docker & mcp/i })
+  ).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /faq/i })).toBeInTheDocument();
 });
 
 test('LandingView pauses SMIL animations by default and unpauses on hover', () => {

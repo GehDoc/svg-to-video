@@ -13,8 +13,34 @@ const readmePath = path.resolve(rootDir, 'README.md');
 const faqPath = path.resolve(rootDir, 'docs/FAQ.md');
 const outputPath = path.resolve(webDir, 'src/data/seoDocumentation.json');
 interface FaqEntry {
+  category?: string;
   question: string;
   answerHtml: string;
+}
+
+interface FaqCategory {
+  category: string;
+  items: FaqEntry[];
+}
+
+interface CliCommandItem {
+  id: string;
+  label: string;
+  comment: string;
+  command: string;
+}
+
+interface CliSectionData {
+  descriptionHtml: string;
+  prerequisitesHtml: string;
+  commands: CliCommandItem[];
+  rawSnippet: string;
+}
+
+interface McpSectionData {
+  descriptionHtml: string;
+  configSnippet: string;
+  promptQuery: string;
 }
 
 interface WhyItem {
@@ -85,29 +111,178 @@ function parseMcpConfig(mcpText: string): string {
   return jsonBlockMatch ? jsonBlockMatch[1].trim() : '';
 }
 
-/**
- * Parses docs/FAQ.md, which uses the convention:
- *   ## Q: <question text>
- *   <blank line>
- *   <answer paragraph(s)>
- */
-function parseFaq(faqMarkdown: string): FaqEntry[] {
-  const entries: FaqEntry[] = [];
-  // Split on level-2 headings that start with "Q:"
-  const blocks = faqMarkdown.split(/\n(?=## Q:)/);
-  for (const block of blocks) {
-    const lines = block.trim().split('\n');
-    const headingLine = lines[0];
-    const questionMatch = headingLine.match(/^## Q:\s+(.+)$/);
-    if (!questionMatch) continue;
-    const question = questionMatch[1].trim();
-    const answerRaw = lines.slice(1).join('\n').trim();
-    entries.push({
-      question,
-      answerHtml: marked.parseInline(answerRaw) as string,
-    });
+function parseCliSection(cliText: string): CliSectionData {
+  const quickStartIdx = cliText.indexOf('### Quick Start');
+  let descriptionHtml = '';
+  let prereqHtml = '';
+
+  if (quickStartIdx !== -1) {
+    descriptionHtml = marked.parse(
+      cliText.slice(0, quickStartIdx).trim()
+    ) as string;
+    const afterQuickStart = cliText.slice(
+      quickStartIdx + '### Quick Start'.length
+    );
+    const codeBlockIdx = afterQuickStart.indexOf('```bash');
+    if (codeBlockIdx !== -1) {
+      prereqHtml = marked.parse(
+        afterQuickStart.slice(0, codeBlockIdx).trim()
+      ) as string;
+    }
   }
-  return entries;
+
+  const rawSnippet = parseCliCommands(cliText);
+  const commands: CliCommandItem[] = [];
+
+  const pairs = rawSnippet.split(/\n\s*\n/);
+  for (let i = 0; i < pairs.length; i++) {
+    const block = pairs[i].trim();
+    if (!block) continue;
+    const lines = block.split('\n').map((l) => l.trim());
+    const commentLines = lines
+      .filter((l) => l.startsWith('#'))
+      .map((l) => l.replace(/^#\s*/, ''));
+    const commandLines = lines.filter(
+      (l) => !l.startsWith('#') && l.length > 0
+    );
+    const comment = commentLines.join(' ');
+    const command = commandLines.join(' ');
+
+    if (command) {
+      let label = comment;
+      if (label.toLowerCase().includes('auto-detected')) {
+        label = 'Auto-detect Duration';
+      } else if (label.toLowerCase().includes('gif output')) {
+        label = 'Transparent GIF';
+      } else if (label.toLowerCase().includes('custom resolution')) {
+        label = 'Custom Resolution';
+      } else if (label.toLowerCase().includes('custom bitrate')) {
+        label = 'Quality & Bitrate';
+      } else if (label.toLowerCase().includes('animated png')) {
+        label = 'Animated PNG';
+      } else if (label.toLowerCase().includes('docker')) {
+        label = 'Docker (Zero Deps)';
+      } else if (comment) {
+        label = comment.slice(0, 24);
+      } else {
+        label = `Command ${i + 1}`;
+      }
+
+      commands.push({
+        id: `cli-cmd-${i + 1}`,
+        label,
+        comment,
+        command,
+      });
+    }
+  }
+
+  return {
+    descriptionHtml,
+    prerequisitesHtml: prereqHtml,
+    commands,
+    rawSnippet,
+  };
+}
+
+function parseMcpSection(mcpText: string): McpSectionData {
+  const step1Idx = mcpText.indexOf('1. **Add to');
+  const descriptionRaw =
+    step1Idx !== -1
+      ? mcpText.slice(0, step1Idx).trim()
+      : mcpText.split('```')[0].trim();
+  const descriptionHtml = marked.parse(descriptionRaw) as string;
+
+  const configSnippet = parseMcpConfig(mcpText);
+
+  const promptMatch = mcpText.match(/>\s*_?["“]([^"”]+)["”]_?/);
+  const promptQuery = promptMatch
+    ? promptMatch[1].trim()
+    : 'Convert examples/example.svg into a 60fps transparent WebM video.';
+
+  return {
+    descriptionHtml,
+    configSnippet,
+    promptQuery,
+  };
+}
+
+/**
+ * Parses docs/FAQ.md, supporting categorized sections (## Category)
+ * with questions (### Q: or ## Q:) beneath them.
+ */
+function parseFaq(faqMarkdown: string): {
+  faq: FaqEntry[];
+  faqCategories: FaqCategory[];
+} {
+  const faq: FaqEntry[] = [];
+  const faqCategories: FaqCategory[] = [];
+
+  const lines = faqMarkdown.split('\n');
+  let currentCategory = 'General';
+  let currentCategoryItems: FaqEntry[] = [];
+  let currentQuestion = '';
+  let currentAnswerLines: string[] = [];
+
+  const flushQuestion = () => {
+    if (currentQuestion && currentAnswerLines.length > 0) {
+      const entry: FaqEntry = {
+        category: currentCategory,
+        question: currentQuestion,
+        answerHtml: marked.parseInline(
+          currentAnswerLines.join('\n').trim()
+        ) as string,
+      };
+      faq.push(entry);
+      currentCategoryItems.push(entry);
+    }
+    currentQuestion = '';
+    currentAnswerLines = [];
+  };
+
+  const flushCategory = () => {
+    flushQuestion();
+    if (currentCategoryItems.length > 0) {
+      faqCategories.push({
+        category: currentCategory,
+        items: [...currentCategoryItems],
+      });
+      currentCategoryItems = [];
+    }
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    // Match Category header: ## Category Name (not ## Q:)
+    const categoryMatch = line.match(/^##\s+(?!Q:)(.+)$/);
+    if (categoryMatch) {
+      flushCategory();
+      currentCategory = categoryMatch[1].trim();
+      continue;
+    }
+
+    // Match Question: ### Q: ... or ## Q: ...
+    const questionMatch = line.match(/^#{2,3}\s+Q:\s+(.+)$/);
+    if (questionMatch) {
+      flushQuestion();
+      currentQuestion = questionMatch[1].trim();
+      continue;
+    }
+
+    // Skip top-level # Frequently Asked Questions header
+    if (line.match(/^#\s+/)) {
+      continue;
+    }
+
+    if (currentQuestion) {
+      currentAnswerLines.push(rawLine);
+    }
+  }
+
+  flushCategory();
+
+  return { faq, faqCategories };
 }
 
 try {
@@ -127,7 +302,9 @@ try {
   const quickStartSteps = parseQuickStart(webStudioText);
   const cliSnippet = parseCliCommands(cliText);
   const mcpSnippet = parseMcpConfig(mcpText);
-  const faq = parseFaq(faqMarkdown);
+  const cliSection = parseCliSection(cliText);
+  const mcpSection = parseMcpSection(mcpText);
+  const { faq, faqCategories } = parseFaq(faqMarkdown);
 
   const seoData = {
     // UI headline: concise, display-friendly — intentionally NOT sourced from
@@ -140,6 +317,8 @@ try {
     quickStartSteps,
     cliSnippet,
     mcpSnippet,
+    cliSection,
+    mcpSection,
     formatComparisons: [
       {
         format: 'MP4',
@@ -178,6 +357,7 @@ try {
       },
     ],
     faq,
+    faqCategories,
     lastUpdated: new Date().toISOString(),
   };
 

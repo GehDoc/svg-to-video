@@ -9,7 +9,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/GehDoc/svg-to-video?logo=github&logoColor=white&label=release&color=2b3137)](https://github.com/GehDoc/svg-to-video/releases)
 [![npm Version](https://img.shields.io/npm/v/@gehdoc/svg-to-video?logo=npm&logoColor=white&label=npm&color=CB3837)](https://www.npmjs.com/package/@gehdoc/svg-to-video)
 [![Docker Image](https://img.shields.io/docker/v/gehdoc/svg-to-video?label=docker&logo=docker&logoColor=white&sort=semver&color=2496ed)](https://hub.docker.com/r/gehdoc/svg-to-video)
-[![MCP Registry](https://img.shields.io/badge/MCP-io.github.GehDoc%2Fsvg--to--video-purple?logo=modelcontextprotocol&logoColor=white)](https://registry.modelcontextprotocol.io/v0/servers/io.github.GehDoc%2Fsvg-to-video/versions/latest)
+[![MCP Registry](https://img.shields.io/badge/MCP-io.github.GehDoc%2Fsvg--to--video-purple?logo=modelcontextprotocol&logoColor=white)](https://registry.modelcontextprotocol.io/?q=io.github.GehDoc%2Fsvg-to-video)
 [![HuggingFace Space](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Demo%20Space-yellow?style=flat)](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)
 [![llms.txt](https://img.shields.io/badge/llms.txt-available-blue)](https://gehdoc.github.io/svg-to-video/llms.txt)
 
@@ -27,7 +27,7 @@ A high-fidelity tool to transform your CSS- and SMIL-animated SVGs into high-qua
 - **Transparent Backgrounds**: Export your animations with a full alpha channel using **WebM or aPNG**, and optimized indexed transparency with **GIF89a**. Perfect for overlays in video editing tools or web use.
 - **Privacy-First**: The Web Studio runs entirely in your browser—your SVG files never leave your computer.
 - **Frame-Accurate**: Our engine scrubs both the **Web Animations API** and native **SVG SMIL**, ensuring every frame is captured exactly as rendered.
-- **AI Agent Native**: Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support indexed on the official [MCP Registry](https://registry.modelcontextprotocol.io/) (`mcp.json`) and hosted live on [HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp).
+- **AI Agent Native**: Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support indexed on the official [MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.GehDoc%2Fsvg-to-video) (`mcp.json`) and hosted live on [HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp).
 - **Universal Animated Formats**: Beyond video, generate lightweight **Animated PNGs (aPNG)** and **GIFs** with deterministic 8x8 Bayer ordered dithering to eliminate temporal fluttering on animated gradients, with full control over background transparency.
 - **Granular Quality & Rate Control**: Fine-tune output file size and visual fidelity with custom target bitrates (`--bitrate`), Constant Rate Factor (`--crf 0-63`), and quality percentages (`--quality 1-100`) across video (MP4, WebM, MKV, MOV) and animated formats (GIF color quantization, aPNG compression).
 - **Copy to Clipboard**: Instant export to **Base64 Data URL**—copy your video and embed it directly into your HTML, CSS, or JS code without manual downloads. Perfect for rapid prototyping and developers.
@@ -127,7 +127,7 @@ See **[docs/MCP.md](./docs/MCP.md)** for full setup instructions, tool schemas, 
 - 📦 **npm Package**: [`@gehdoc/svg-to-video`](https://www.npmjs.com/package/@gehdoc/svg-to-video)
 - 🐳 **Docker Hub Image**: [`gehdoc/svg-to-video`](https://hub.docker.com/r/gehdoc/svg-to-video)
 - 🌐 **Web Studio**: [`gehdoc.github.io/svg-to-video/`](https://gehdoc.github.io/svg-to-video/?utm_source=readme)
-- 🤖 **MCP Registry**: [`io.github.GehDoc/svg-to-video`](https://registry.modelcontextprotocol.io/v0/servers/io.github.GehDoc%2Fsvg-to-video/versions/latest)
+- 🤖 **MCP Registry**: [`io.github.GehDoc/svg-to-video`](https://registry.modelcontextprotocol.io/?q=io.github.GehDoc%2Fsvg-to-video)
 - 🤗 **HuggingFace Space**: [`GehDoc/svg-to-video-mcp`](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)
 
 ---

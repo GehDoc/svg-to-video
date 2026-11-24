@@ -54,7 +54,8 @@ export interface ConversionCancelEventProperties {
 }
 
 export interface ClickSponsorEventProperties {
-  location: 'header' | 'dropdown' | 'success-view';
+  location:
+    'header' | 'dropdown' | 'success-view' | 'mobile-drawer' | 'seo-content';
 }
 
 export interface CopyDataUrlEventProperties {

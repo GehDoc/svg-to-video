@@ -1,6 +1,5 @@
-import { FaLock, FaCheckCircle, FaTerminal, FaRobot } from 'react-icons/fa';
+import { FaLock, FaCheckCircle } from 'react-icons/fa';
 import { SAMPLES, type SamplePreset } from '../utils/samples';
-import { DevCard, type DevCardTab } from './DevCard/DevCard';
 import { SampleCard } from './SampleCard';
 import './LandingView.scss';
 
@@ -8,31 +7,12 @@ interface LandingViewProps {
   onSelectSample?: (sample: SamplePreset) => void;
 }
 
-const DEV_TABS: DevCardTab[] = [
-  {
-    id: 'cli',
-    label: 'CLI Automation',
-    icon: <FaTerminal size={12} />,
-    snippet:
-      'npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --format webm --transparent',
-    copyAriaLabel: 'Copy CLI command',
-  },
-  {
-    id: 'mcp',
-    label: 'AI Agent (MCP)',
-    icon: <FaRobot size={12} />,
-    snippet: `{\n  "mcpServers": {\n    "svg-to-video": {\n      "command": "npx",\n      "args": ["-y", "-p", "@gehdoc/svg-to-video", "svg-to-video-mcp"]\n    }\n  }\n}`,
-    copyAriaLabel: 'Copy MCP config snippet',
-  },
-];
-
 export const LandingView = ({ onSelectSample }: LandingViewProps) => {
   return (
     <div className="landing-view">
       <div className="landing-scroll-content">
-        {/* Welcome Header */}
+        {/* Welcome Prompt */}
         <header className="landing-hero">
-          <h2 className="landing-title">Welcome to SVG to Video Studio</h2>
           <p className="landing-subtitle">
             Upload your animated SVG on the left, or test the engine instantly
             with one of our sample animations.
@@ -60,7 +40,7 @@ export const LandingView = ({ onSelectSample }: LandingViewProps) => {
                 <FaLock size={20} />
               </div>
               <div className="highlight-text">
-                <h4>100% Local & Private</h4>
+                <h4>100% Local &amp; Private</h4>
                 <p>
                   Rendered client-side via WebCodecs. Your SVGs never leave your
                   browser.
@@ -107,23 +87,21 @@ export const LandingView = ({ onSelectSample }: LandingViewProps) => {
             </span>
           </div>
         </section>
-
-        {/* CLI & MCP Developer Integration */}
-        <section
-          className="landing-section integration-section"
-          aria-label="Developer Tools"
-        >
-          <DevCard tabs={DEV_TABS} />
-        </section>
       </div>
 
-      {/* Footer */}
-      <footer className="studio-footer">
-        <p>
-          <FaLock size={12} className="footer-icon" /> Local processing only —
-          files never leave your browser. Released under the MIT License.
-        </p>
-      </footer>
+      {/* Repurposed bottom bar acting as a scroll & jump cue */}
+      <div className="studio-scroll-cue">
+        <span>More guides, format specs &amp; automation below</span>
+        <nav
+          className="studio-scroll-cue__links"
+          aria-label="Quick documentation links"
+        >
+          <a href="#how-to-convert">How to Convert &darr;</a>
+          <a href="#formats">Formats &amp; Specs &darr;</a>
+          <a href="#automation">CLI, Docker &amp; MCP &darr;</a>
+          <a href="#faq">FAQ &darr;</a>
+        </nav>
+      </div>
     </div>
   );
 };

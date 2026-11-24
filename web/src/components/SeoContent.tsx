@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import {
   FaTerminal,
   FaRobot,
@@ -5,32 +6,58 @@ import {
   FaLayerGroup,
   FaCogs,
   FaShieldAlt,
-  FaExternalLinkAlt,
+  FaHeart,
+  FaCheck,
+  FaCopy,
 } from 'react-icons/fa';
 import seoData from '../data/seoDocumentation.json';
+import pkg from '../../package.json';
 import { ECOSYSTEM_LINKS } from '../utils/constants';
+import { trackEvent } from '../utils/analytics';
 import { DevCard } from './DevCard/DevCard';
 import './SeoContent.scss';
 
 export const SeoContent = () => {
+  const [isPromptCopied, setIsPromptCopied] = useState(false);
+  const promptTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (promptTimeoutRef.current) {
+        clearTimeout(promptTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleCopyPrompt = async (promptText: string) => {
+    try {
+      await navigator.clipboard.writeText(promptText);
+      setIsPromptCopied(true);
+      if (promptTimeoutRef.current) {
+        clearTimeout(promptTimeoutRef.current);
+      }
+      promptTimeoutRef.current = setTimeout(() => {
+        setIsPromptCopied(false);
+      }, 2000);
+    } catch {
+      // fallback
+    }
+  };
   return (
     <section
       className="seo-content"
       aria-label="Comprehensive Documentation and Format Guide"
     >
       <div className="seo-container">
-        {/* Header / Intro */}
-        <header className="seo-header">
-          <span className="seo-badge">Open Source Studio</span>
-          <h2>{seoData.headline}</h2>
-          <p className="seo-lead">{seoData.tagline}</p>
-        </header>
-
         {/* Key Features Grid */}
-        <div className="seo-block">
+        <section
+          id="why-svg-to-video"
+          className="seo-block"
+          aria-labelledby="why-title"
+        >
           <div className="block-header">
             <FaShieldAlt className="block-icon" />
-            <h3>Why Use SVG to Video?</h3>
+            <h3 id="why-title">Why Use SVG to Video?</h3>
           </div>
           <div className="features-grid">
             {seoData.features.map((feat) => (
@@ -40,13 +67,19 @@ export const SeoContent = () => {
               </article>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* How It Works / 3-Step Guide */}
-        <div className="seo-block">
+        <section
+          id="how-to-convert"
+          className="seo-block"
+          aria-labelledby="how-title"
+        >
           <div className="block-header">
             <FaCogs className="block-icon" />
-            <h3>How to Convert Animated SVGs (CSS & SMIL)</h3>
+            <h3 id="how-title">
+              How to Convert Animated SVGs (CSS &amp; SMIL)
+            </h3>
           </div>
           <div className="steps-container">
             {seoData.quickStartSteps.map((stepHtml, index) => (
@@ -59,13 +92,19 @@ export const SeoContent = () => {
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* Format Comparison Table */}
-        <div className="seo-block">
+        <section
+          id="formats"
+          className="seo-block"
+          aria-labelledby="formats-title"
+        >
           <div className="block-header">
             <FaLayerGroup className="block-icon" />
-            <h3>Supported Output Formats & Specifications</h3>
+            <h3 id="formats-title">
+              Supported Output Formats &amp; Specifications
+            </h3>
           </div>
           <div className="table-responsive">
             <table className="format-table">
@@ -109,89 +148,226 @@ export const SeoContent = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
 
         {/* CLI & MCP Developer Integration */}
-        <div className="seo-block">
+        <section
+          id="automation"
+          className="seo-block"
+          aria-labelledby="automation-title"
+        >
           <div className="block-header">
             <FaTerminal className="block-icon" />
-            <h3>Developer CLI, Docker & Model Context Protocol (MCP)</h3>
+            <h3 id="automation-title">
+              Developer CLI, Docker &amp; Model Context Protocol (MCP)
+            </h3>
           </div>
-          <div className="developer-grid">
-            <DevCard
-              title="CLI & Docker Automation"
-              icon={<FaTerminal />}
-              snippet={seoData.cliSnippet}
-              snippetAriaLabel="CLI & Docker automation commands"
-              copyAriaLabel="Copy CLI snippet"
-            />
-            <DevCard
-              title="AI Agent & MCP Integration"
-              icon={<FaRobot />}
-              snippet={seoData.mcpSnippet}
-              snippetAriaLabel="MCP server configuration JSON"
-              copyAriaLabel="Copy MCP config"
-            />
+
+          <div className="automation-sections">
+            {/* Sub-section 1: CLI & Docker Automation */}
+            <div className="automation-subblock">
+              <div className="automation-subblock__header">
+                <FaTerminal className="subblock-icon" />
+                <h4>CLI &amp; Docker Automation</h4>
+              </div>
+
+              {seoData.cliSection?.descriptionHtml && (
+                <div
+                  className="automation-description"
+                  dangerouslySetInnerHTML={{
+                    __html: seoData.cliSection.descriptionHtml,
+                  }}
+                />
+              )}
+
+              {seoData.cliSection?.prerequisitesHtml && (
+                <div
+                  className="automation-prereq"
+                  dangerouslySetInnerHTML={{
+                    __html: seoData.cliSection.prerequisitesHtml,
+                  }}
+                />
+              )}
+
+              {seoData.cliSection?.commands &&
+              seoData.cliSection.commands.length > 0 ? (
+                <DevCard
+                  tabs={seoData.cliSection.commands.map((cmd) => ({
+                    id: cmd.id,
+                    label: cmd.label,
+                    snippet: cmd.command,
+                    language: 'bash',
+                    snippetAriaLabel: `${cmd.label}: ${cmd.comment}`,
+                    copyAriaLabel: `Copy ${cmd.label} command`,
+                  }))}
+                />
+              ) : (
+                <DevCard
+                  title="CLI &amp; Docker Automation"
+                  icon={<FaTerminal />}
+                  snippet={seoData.cliSnippet}
+                  snippetAriaLabel="CLI & Docker automation commands"
+                  copyAriaLabel="Copy CLI snippet"
+                />
+              )}
+
+              <div className="automation-docs-link">
+                <a
+                  href={ECOSYSTEM_LINKS.cliDocs}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View full CLI reference (all flags &amp; options) &rarr;
+                </a>
+              </div>
+            </div>
+
+            {/* Sub-section 2: AI Agent & MCP Integration */}
+            <div className="automation-subblock">
+              <div className="automation-subblock__header">
+                <FaRobot className="subblock-icon" />
+                <h4>AI Agent &amp; MCP Integration</h4>
+              </div>
+
+              {seoData.mcpSection?.descriptionHtml && (
+                <div
+                  className="automation-description"
+                  dangerouslySetInnerHTML={{
+                    __html: seoData.mcpSection.descriptionHtml,
+                  }}
+                />
+              )}
+
+              <div className="mcp-steps">
+                <div className="mcp-step">
+                  <span className="mcp-step__label">
+                    1. Add to MCP Server Configuration
+                  </span>
+                  <DevCard
+                    title="MCP Server Configuration"
+                    icon={<FaRobot />}
+                    snippet={
+                      seoData.mcpSection?.configSnippet || seoData.mcpSnippet
+                    }
+                    language="json"
+                    snippetAriaLabel="MCP server configuration JSON"
+                    copyAriaLabel="Copy MCP configuration"
+                  />
+                </div>
+
+                {seoData.mcpSection?.promptQuery && (
+                  <div className="mcp-step">
+                    <span className="mcp-step__label">
+                      2. Prompt your AI Assistant
+                    </span>
+                    <div className="agent-query-box">
+                      <blockquote className="agent-query-text">
+                        &ldquo;{seoData.mcpSection.promptQuery}&rdquo;
+                      </blockquote>
+                      <button
+                        type="button"
+                        className="copy-prompt-btn"
+                        onClick={() =>
+                          handleCopyPrompt(seoData.mcpSection.promptQuery)
+                        }
+                        aria-label="Copy prompt"
+                        title="Copy prompt"
+                      >
+                        {isPromptCopied ? (
+                          <>
+                            <FaCheck size={11} /> Copied!
+                          </>
+                        ) : (
+                          <>
+                            <FaCopy size={11} /> Copy
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="automation-docs-link">
+                <a
+                  href={ECOSYSTEM_LINKS.mcpGuide}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View full MCP setup &amp; schema guide &rarr;
+                </a>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
 
         {/* FAQ Section */}
-        <div className="seo-block">
+        <section id="faq" className="seo-block" aria-labelledby="faq-title">
           <div className="block-header">
             <FaQuestionCircle className="block-icon" />
-            <h3>Frequently Asked Questions</h3>
+            <h3 id="faq-title">Frequently Asked Questions</h3>
           </div>
-          <div className="faq-grid">
-            {seoData.faq.map((item) => (
-              <article key={item.question} className="faq-item">
-                <h4>{item.question}</h4>
-                <p dangerouslySetInnerHTML={{ __html: item.answerHtml }} />
-              </article>
-            ))}
+          <div className="faq-sections">
+            {seoData.faqCategories && seoData.faqCategories.length > 0 ? (
+              seoData.faqCategories.map((group) => (
+                <div key={group.category} className="faq-category-block">
+                  <h4 className="faq-category-title">{group.category}</h4>
+                  <div className="faq-grid">
+                    {group.items.map((item) => (
+                      <article key={item.question} className="faq-item">
+                        <h5>{item.question}</h5>
+                        <p
+                          dangerouslySetInnerHTML={{ __html: item.answerHtml }}
+                        />
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="faq-grid">
+                {seoData.faq.map((item) => (
+                  <article key={item.question} className="faq-item">
+                    <h4>{item.question}</h4>
+                    <p dangerouslySetInnerHTML={{ __html: item.answerHtml }} />
+                  </article>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
+        </section>
 
-        {/* Ecosystem Footer Links */}
-        <div className="seo-ecosystem">
-          <h4>Explore the SVG to Video Ecosystem</h4>
-          <div className="ecosystem-links">
+        {/* Support & Sponsorship Section */}
+        <section
+          id="sponsor"
+          className="seo-block sponsor-section"
+          aria-labelledby="sponsor-title"
+        >
+          <div className="block-header">
+            <FaHeart className="block-icon sponsor-icon" />
+            <h3 id="sponsor-title">Support SVG to Video</h3>
+          </div>
+          <div className="sponsor-card">
+            <p className="sponsor-text">
+              SVG to Video is 100% free, open source, and released under the MIT
+              License. It runs entirely in your browser without tracking or data
+              collection. Your sponsorship directly fuels development, helps
+              maintain cross-browser format support, and keeps this tool
+              accessible to creators and developers worldwide.
+            </p>
             <a
-              href={ECOSYSTEM_LINKS.github}
+              href={pkg.funding.url}
               target="_blank"
               rel="noopener noreferrer"
+              className="sponsor-action-btn"
+              onClick={() => {
+                trackEvent('click-sponsor', { location: 'seo-content' });
+              }}
             >
-              GitHub Repository <FaExternalLinkAlt size={10} />
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.npm}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              npm Package <FaExternalLinkAlt size={10} />
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.docker}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Docker Hub <FaExternalLinkAlt size={10} />
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.mcpDocs}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              MCP Registry <FaExternalLinkAlt size={10} />
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.huggingface}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              HuggingFace Space <FaExternalLinkAlt size={10} />
+              <FaHeart className="icon-heart" /> Sponsor on GitHub ↗
             </a>
           </div>
-        </div>
+        </section>
       </div>
     </section>
   );

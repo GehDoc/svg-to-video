@@ -14,13 +14,6 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
 
   expect(
     screen.getByRole('heading', {
-      name: /SVG Animation to Video/i,
-      level: 2,
-    })
-  ).toBeInTheDocument();
-
-  expect(
-    screen.getByRole('heading', {
       name: /Why Use SVG to Video\?/i,
       level: 3,
     })
@@ -47,9 +40,35 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
     })
   ).toBeInTheDocument();
 
+  expect(
+    screen.getByRole('heading', {
+      name: /Support SVG to Video/i,
+      level: 3,
+    })
+  ).toBeInTheDocument();
+
   // Verify format table rows (format names may appear in multiple elements)
   expect(screen.getAllByText('MP4').length).toBeGreaterThan(0);
   expect(screen.getAllByText('WebM').length).toBeGreaterThan(0);
   expect(screen.getAllByText('aPNG').length).toBeGreaterThan(0);
   expect(screen.getAllByText('GIF').length).toBeGreaterThan(0);
+
+  // Verify CLI and MCP sub-sections
+  expect(
+    screen.getByRole('heading', {
+      name: /CLI & Docker Automation/i,
+      level: 4,
+    })
+  ).toBeInTheDocument();
+
+  expect(
+    screen.getByRole('heading', {
+      name: /AI Agent & MCP Integration/i,
+      level: 4,
+    })
+  ).toBeInTheDocument();
+
+  expect(
+    screen.getByRole('button', { name: /Copy prompt/i })
+  ).toBeInTheDocument();
 });

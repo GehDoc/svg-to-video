@@ -13,9 +13,12 @@ import {
 import type { SamplePreset } from '../utils/samples';
 import { formatRegistry } from '../utils/encoders/Registry';
 import { Header } from './Header';
+import { HeroStrip } from './HeroStrip';
 import { ConfigPanel } from './ConfigPanel';
 import { MonitorPanel } from './MonitorPanel';
 import { SampleModal } from './SampleModal/SampleModal';
+import { SeoContent } from './SeoContent';
+import { SiteFooter } from './SiteFooter';
 import { trackEvent } from '../utils/analytics';
 import { trackFileLoad } from '../utils/tracking/fileTracking';
 import { useStudioState } from '../hooks/useStudioState';
@@ -238,70 +241,77 @@ export const Studio = () => {
   );
 
   return (
-    <div className="app-container">
+    <div className="app-container" id="top">
       <Header onHome={() => handleHome('header')} />
-      <main className="studio-layout">
-        <ConfigPanel
-          svgContent={svgContent}
-          onSvgContentChange={handleSvgContentChange}
-          fileName={fileName}
-          onFileNameChange={setFileName}
-          duration={duration}
-          onDurationChange={(d) => updateConfig({ duration: d })}
-          hold={hold}
-          onHoldChange={(h) => updateConfig({ hold: h })}
-          fps={fps}
-          onFpsChange={(f) => updateConfig({ fps: f })}
-          preset={preset}
-          onPresetChange={(p) => updateConfig({ preset: p })}
-          scale={scale}
-          onScaleChange={(s) => updateConfig({ scale: s })}
-          backgroundColor={backgroundColor}
-          onBackgroundColorChange={(c) => updateConfig({ backgroundColor: c })}
-          format={format}
-          onFormatChange={(f) => updateConfig({ format: f })}
-          isTransparent={isTransparent}
-          onIsTransparentChange={(t) => updateConfig({ isTransparent: t })}
-          captureMethod={captureMethod}
-          onCaptureMethodChange={(m) => updateConfig({ captureMethod: m })}
-          isDragging={isDragging}
-          onIsDraggingChange={setIsDragging}
-          state={state}
-          onStartRender={handleStartRender}
-          validationError={validationError}
-          originalDim={originalDim}
-          targetDim={targetDim}
-          renderedUrl={renderedUrl}
-          metadata={metadata}
-          onMetadataChange={(m) => updateConfig({ metadata: m })}
-          onOpenSamples={() => handleOpenSamples('config-source')}
-          onClearSvg={() => handleHome('config-source')}
-        />
-        <MonitorPanel
-          svgContent={svgContent}
-          renderedUrl={renderedUrl}
-          state={state}
-          fileName={fileName}
-          fileSize={fileSize}
-          onDownload={handleDownload}
-          onBack={handleBack}
-          originalDim={originalDim}
-          targetDim={targetDim}
-          rendererRef={rendererRef}
-          backgroundColor={backgroundColor}
-          isTransparent={isTransparent}
-          onCancel={cancel}
-          onClearError={clearError}
-          mimeType={mimeType}
-          format={format}
-          onSelectSample={handleSelectSample}
-        />
-      </main>
+      <div className="studio-viewport-fold">
+        <HeroStrip />
+        <main id="studio" className="studio-layout">
+          <ConfigPanel
+            svgContent={svgContent}
+            onSvgContentChange={handleSvgContentChange}
+            fileName={fileName}
+            onFileNameChange={setFileName}
+            duration={duration}
+            onDurationChange={(d) => updateConfig({ duration: d })}
+            hold={hold}
+            onHoldChange={(h) => updateConfig({ hold: h })}
+            fps={fps}
+            onFpsChange={(f) => updateConfig({ fps: f })}
+            preset={preset}
+            onPresetChange={(p) => updateConfig({ preset: p })}
+            scale={scale}
+            onScaleChange={(s) => updateConfig({ scale: s })}
+            backgroundColor={backgroundColor}
+            onBackgroundColorChange={(c) =>
+              updateConfig({ backgroundColor: c })
+            }
+            format={format}
+            onFormatChange={(f) => updateConfig({ format: f })}
+            isTransparent={isTransparent}
+            onIsTransparentChange={(t) => updateConfig({ isTransparent: t })}
+            captureMethod={captureMethod}
+            onCaptureMethodChange={(m) => updateConfig({ captureMethod: m })}
+            isDragging={isDragging}
+            onIsDraggingChange={setIsDragging}
+            state={state}
+            onStartRender={handleStartRender}
+            validationError={validationError}
+            originalDim={originalDim}
+            targetDim={targetDim}
+            renderedUrl={renderedUrl}
+            metadata={metadata}
+            onMetadataChange={(m) => updateConfig({ metadata: m })}
+            onOpenSamples={() => handleOpenSamples('config-source')}
+            onClearSvg={() => handleHome('config-source')}
+          />
+          <MonitorPanel
+            svgContent={svgContent}
+            renderedUrl={renderedUrl}
+            state={state}
+            fileName={fileName}
+            fileSize={fileSize}
+            onDownload={handleDownload}
+            onBack={handleBack}
+            originalDim={originalDim}
+            targetDim={targetDim}
+            rendererRef={rendererRef}
+            backgroundColor={backgroundColor}
+            isTransparent={isTransparent}
+            onCancel={cancel}
+            onClearError={clearError}
+            mimeType={mimeType}
+            format={format}
+            onSelectSample={handleSelectSample}
+          />
+        </main>
+      </div>
       <SampleModal
         isOpen={isSampleModalOpen}
         onClose={handleCloseSamples}
         onSelectSample={handleSelectSample}
       />
+      <SeoContent />
+      <SiteFooter />
     </div>
   );
 };
