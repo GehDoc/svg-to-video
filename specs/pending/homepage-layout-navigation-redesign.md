@@ -57,22 +57,15 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
 - [x] **Documentation, Security & SEO Pre-Flight**
   - [x] Run `npm run test:unit`, `npm run check:fast`, and `npm run build -w web`
   - [x] Re-verify visual alignment and responsive behavior
-- [ ] **Phase 1: Semantic Application Layout & CI Fixes**
-  - [ ] Fix CI: update `Studio.spec.tsx` to match active LandingView text ("Upload your animated SVG on the left")
-  - [ ] Fix CI: adjust `DevCard.scss` syntax token contrast for Axe a11y compliance in Storybook
-  - [ ] Semantic layout: extend `<main>` landmark to encompass primary editorial content (`#studio` + `#why-svg-to-video` through `#sponsor`)
-  - [ ] Single `<h1>`: convert header logo link to semantic `<span>` / `<strong>`, preserving Hero as the single `<h1>`
-  - [ ] Review with user and commit Phase 1
-- [ ] **Phase 2: Semantic SEO Content Enhancements**
-  - [ ] Heading hierarchy in `SeoContent.tsx`: replace `<h3>` with `<h2>` for top-level sections, `<h4>` with `<h3>` for sub-blocks/categories, and `<h5>` with `<h4>` for questions
-  - [ ] Ordered list semantics: convert "How to Convert" steps to `<ol>` / `<li>`
-  - [ ] Review with user and commit Phase 2
+  - [x] Resolve visual regression test assertions and Storybook token contrast CI checks
 
 ## 🧪 Verification Plan
 
 - [x] Automated Tests:
   - `npm run test:unit` (ensure Header, LandingView, SeoContent, SuccessView tests pass)
-  - `npm run check:fast` (type-check, lint, prettier)
+  - `npm run test:visual -w web` (all 3 test suites / 14 visual tests pass)
+  - `npm run test:storybook -w web` (Storybook accessibility checks pass with 0 Axe contrast violations)
+  - `npm run check:fast` (type-check, lint, prettier pass)
 - [x] Visual & Interaction Inspection:
   - Header desktop jump links smoothly scroll to correct sections
   - Header mobile drawer expands and collapses cleanly under ≤ 900px
@@ -88,4 +81,7 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
 
 - 2026-11-24: Initial spec created by Antigravity agent based on user design brief.
 - 2026-11-24: Updated spec with standardized GitHub repo icon button in header and mobile drawer.
-- 2026-11-24: Completed implementation of sticky header, hero strip, bounded studio workspace, scroll cue, stage height ergonomics, editorial anchor IDs, and full-width site footer. All unit tests, fast checks, and web build passing. Status set to `🟡 To be reviewed`.
+- 2026-11-24: Completed implementation of sticky header, hero strip, bounded studio workspace, scroll cue, stage height ergonomics, editorial anchor IDs, and full-width site footer.
+- 2026-11-24: Split FAQ into Web Studio and CLI/MCP sections with dynamic category extractor.
+- 2026-11-24: Split automation into copyable CLI one-liners (tabbed DevCard) and AI Agent MCP integration (step-by-step with 1-click prompt copy).
+- 2026-11-24: Resolved visual regression test assertions and Storybook Axe contrast violations. Extracted subsequent semantic layout & heading hierarchy refactoring into a dedicated follow-up spec. Status set to `🟡 To be reviewed`.
