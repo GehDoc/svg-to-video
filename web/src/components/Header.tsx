@@ -100,6 +100,7 @@ export const Header = ({ onHome }: HeaderProps) => {
             rel="noopener noreferrer"
             className="header-github-btn"
             aria-label="GitHub repository"
+            title="GitHub repository"
             onClick={() => trackEvent('click-source-code')}
           >
             <FaGithub size={18} />

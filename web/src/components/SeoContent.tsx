@@ -270,7 +270,8 @@ export const SeoContent = () => {
                         onClick={() =>
                           handleCopyPrompt(seoData.mcpSection.promptQuery)
                         }
-                        aria-label="Copy prompt query"
+                        aria-label="Copy prompt"
+                        title="Copy prompt"
                       >
                         {isPromptCopied ? (
                           <>
@@ -278,7 +279,7 @@ export const SeoContent = () => {
                           </>
                         ) : (
                           <>
-                            <FaCopy size={11} /> Copy Prompt
+                            <FaCopy size={11} /> Copy
                           </>
                         )}
                       </button>

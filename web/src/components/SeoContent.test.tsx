@@ -69,6 +69,6 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
   ).toBeInTheDocument();
 
   expect(
-    screen.getByRole('button', { name: /Copy Prompt/i })
+    screen.getByRole('button', { name: /Copy prompt/i })
   ).toBeInTheDocument();
 });
