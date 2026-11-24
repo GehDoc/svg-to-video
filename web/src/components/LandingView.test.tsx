@@ -26,11 +26,18 @@ test('LandingView renders welcome header, sample cards, and trust badges', () =>
   expect(screen.getByText(/100% Local & Private/i)).toBeInTheDocument();
   expect(screen.getByText(/Alpha Channel Transparency/i)).toBeInTheDocument();
   expect(
-    screen.getByText(/Local processing only — files never leave your browser/i)
+    screen.getByText(/More guides, format specs & automation below/i)
   ).toBeInTheDocument();
   expect(
-    screen.getByText(/Released under the MIT License/i)
+    screen.getByRole('link', { name: /how to convert/i })
   ).toBeInTheDocument();
+  expect(
+    screen.getByRole('link', { name: /formats & specs/i })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('link', { name: /cli, docker & mcp/i })
+  ).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /faq/i })).toBeInTheDocument();
 });
 
 test('LandingView pauses SMIL animations by default and unpauses on hover', () => {

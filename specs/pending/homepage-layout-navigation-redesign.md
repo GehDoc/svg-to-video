@@ -2,7 +2,7 @@
 
 **GitHub Issue**: None
 **Pull Request**: [#275](https://github.com/GehDoc/svg-to-video/pull/275)
-**Status**: 🟠 Pending
+**Status**: 🟡 To be reviewed
 
 ## 🎯 Objective
 
@@ -53,45 +53,46 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
 
 ## ✅ Task List
 
-- [ ] **Infrastructure & Branch Setup**
+- [x] **Infrastructure & Branch Setup**
   - [x] Create feature branch `feat/homepage-layout-navigation-redesign`
   - [x] Initialize spec `specs/pending/homepage-layout-navigation-redesign.md`
-  - [ ] Commit initial spec and push to origin
-- [ ] **Header & Navigation Overhaul**
-  - [ ] Update `Header.tsx` and `Header.scss` to support desktop direct jump links + Sponsor CTA
-  - [ ] Add accessible mobile drawer toggle (≤ 900px) with ARIA states
-  - [ ] Relocate burger dropdown items (version, license, report issue) to footer & mobile drawer
-- [ ] **Hero Strip & Page Shell**
-  - [ ] Create `HeroStrip` component or layout integration above studio workspace with `<h1>` headline
-  - [ ] Set up bounded studio container in `Studio.tsx` / `index.scss` preventing sidebar bleed
-- [ ] **LandingView Streamlining & Workspace Bottom Bar Cue**
-  - [ ] Remove CLI/MCP DevCard from `LandingView.tsx`
-  - [ ] Repurpose `LandingView` bottom bar into an interactive scroll cue with downward anchor links
-- [ ] **Stage Height Ergonomics (No Scrollbars on Standard Screens)**
-  - [ ] Adjust `RenderingView.scss` (padding, gap, monitor wrapper scaling)
-  - [ ] Adjust `SuccessView.scss` (padding, icon size, preview flex constraints)
-  - [ ] Verify both views fit without vertical scrollbars on 768p-1080p viewports
-- [ ] **Editorial & SEO Sections Refinement**
-  - [ ] Update `SeoContent.tsx` with explicit section anchor IDs (`#how-to-convert`, `#formats`, `#why-svg-to-video`, `#automation`, `#faq`, `#sponsor`)
-  - [ ] Remove redundant top `.seo-header` from `SeoContent`
-  - [ ] Remove old floating `.seo-ecosystem` box
-- [ ] **Full-Width Site Footer**
-  - [ ] Create `SiteFooter` component with branding, version, ecosystem links, and "Back to top ↑"
-  - [ ] Integrate into `page.tsx` or layout
-- [ ] **Documentation, Security & SEO Pre-Flight**
-  - [ ] Audit `README.md`, `web/src/app/layout.tsx` (meta/jsonLd), `web/src/components/SeoFallback.tsx`
-  - [ ] Verify test suite passing: `npm run test:unit`, `npm run check:fast`
-- [ ] **Architecture & Maintainability Pre-Flight (`🟡 To be reviewed`)**
-  - [ ] CSS hygiene verified (zero `!important`, semantic variables)
-  - [ ] Accessibility verified (landmark roles, ARIA attributes, keyboard navigation)
-  - [ ] Layout stability verified (no horizontal overflow, no vertical scrollbars in studio stage)
+  - [x] Commit initial spec and push to origin
+- [x] **Header & Navigation Overhaul**
+  - [x] Update `Header.tsx` and `Header.scss` to support desktop direct jump links + Sponsor CTA
+  - [x] Add accessible mobile drawer toggle (≤ 900px) with ARIA states
+  - [x] Relocate burger dropdown items (version, license, report issue) to footer & mobile drawer
+- [x] **Hero Strip & Page Shell**
+  - [x] Create `HeroStrip` component or layout integration above studio workspace with `<h1>` headline
+  - [x] Set up bounded studio container in `Studio.tsx` / `index.scss` preventing sidebar bleed
+- [x] **LandingView Streamlining & Workspace Bottom Bar Cue**
+  - [x] Remove CLI/MCP DevCard from `LandingView.tsx`
+  - [x] Repurpose `LandingView` bottom bar into an interactive scroll cue with downward anchor links
+- [x] **Stage Height Ergonomics (No Scrollbars on Standard Screens)**
+  - [x] Adjust `RenderingView.scss` (padding, gap, monitor wrapper scaling)
+  - [x] Adjust `SuccessView.scss` (padding, icon size, preview flex constraints)
+  - [x] Verify both views fit without vertical scrollbars on 768p-1080p viewports
+- [x] **Editorial & SEO Sections Refinement**
+  - [x] Update `SeoContent.tsx` with explicit section anchor IDs (`#how-to-convert`, `#formats`, `#why-svg-to-video`, `#automation`, `#faq`, `#sponsor`)
+  - [x] Remove redundant top `.seo-header` from `SeoContent`
+  - [x] Remove old floating `.seo-ecosystem` box
+- [x] **Full-Width Site Footer**
+  - [x] Create `SiteFooter` component with branding, version, ecosystem links, and "Back to top ↑"
+  - [x] Integrate into `page.tsx` or layout
+- [x] **Documentation, Security & SEO Pre-Flight**
+  - [x] Audit `README.md`, `web/src/app/layout.tsx` (meta/jsonLd), `web/src/components/SeoFallback.tsx`
+  - [x] Verify test suite passing: `npm run test:unit`, `npm run check:fast`
+- [x] **Architecture & Maintainability Pre-Flight (`🟡 To be reviewed`)**
+  - [x] State atomicity verified (single source of truth, atomic reset, no loose duplicate setters)
+  - [x] CSS hygiene verified (zero `!important`, semantic variables)
+  - [x] Accessibility verified (landmark roles, ARIA attributes, keyboard navigation)
+  - [x] Layout stability verified (no horizontal overflow, no vertical scrollbars in studio stage)
 
 ## 🧪 Verification Plan
 
-- [ ] Automated Tests:
+- [x] Automated Tests:
   - `npm run test:unit` (ensure Header, LandingView, SeoContent, SuccessView tests pass)
   - `npm run check:fast` (type-check, lint, prettier)
-- [ ] Visual & Interaction Inspection:
+- [x] Visual & Interaction Inspection:
   - Header desktop jump links smoothly scroll to correct sections
   - Header mobile drawer expands and collapses cleanly under ≤ 900px
   - Compact hero strip displays properly above studio
@@ -99,9 +100,11 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
   - LandingView bottom bar scroll cue jumps to sections
   - RenderingView and SuccessView fit in the stage without vertical scrollbars on normal screens
   - Full-width footer renders edge-to-edge with version tag and Back to top link
-- [ ] Build & Lint:
+- [x] Build & Lint:
   - `npm run build -w web`
 
 ## 📝 Change Log
 
 - 2026-11-24: Initial spec created by Antigravity agent based on user design brief.
+- 2026-11-24: Updated spec with standardized GitHub repo icon button in header and mobile drawer.
+- 2026-11-24: Completed implementation of sticky header, hero strip, bounded studio workspace, scroll cue, stage height ergonomics, editorial anchor IDs, and full-width site footer. All unit tests, fast checks, and web build passing. Status set to `🟡 To be reviewed`.

@@ -1,0 +1,33 @@
+@use '../styles/breakpoints' as *;
+
+.hero-strip {
+  padding: 1.25rem 2rem;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+
+  @media (max-width: $header-mobile-breakpoint) {
+    padding: 1rem 1rem;
+  }
+
+  .hero-strip-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+
+    h1 {
+      margin: 0 0 0.25rem 0;
+      font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      color: var(--text-h);
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.925rem;
+      max-width: 78ch;
+      line-height: 1.45;
+    }
+  }
+}

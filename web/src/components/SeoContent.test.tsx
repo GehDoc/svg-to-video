@@ -14,13 +14,6 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
 
   expect(
     screen.getByRole('heading', {
-      name: /SVG Animation to Video/i,
-      level: 2,
-    })
-  ).toBeInTheDocument();
-
-  expect(
-    screen.getByRole('heading', {
       name: /Why Use SVG to Video\?/i,
       level: 3,
     })
@@ -43,6 +36,13 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
   expect(
     screen.getByRole('heading', {
       name: /Frequently Asked Questions/i,
+      level: 3,
+    })
+  ).toBeInTheDocument();
+
+  expect(
+    screen.getByRole('heading', {
+      name: /Support SVG to Video/i,
       level: 3,
     })
   ).toBeInTheDocument();

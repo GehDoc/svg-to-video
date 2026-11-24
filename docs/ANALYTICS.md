@@ -13,7 +13,7 @@ Note: All events automatically include the application `version` tag (e.g. `vers
 | `conversion-success` | Render process completes               | `format`, `isTransparent`, `captureMethod`, `fps`, `videoDurationSec`, `totalFrames`, `processDurationSec`                                                                              | Web Studio, CLI, MCP |
 | `conversion-failed`  | Render process errors out              | `error`, `format`, `isTransparent`, `captureMethod`, `processDurationSec`                                                                                                               | Web Studio, CLI, MCP |
 | `conversion-cancel`  | User cancels the render                | `format`, `isTransparent`, `captureMethod`, `processDurationSec`                                                                                                                        | Web Studio           |
-| `click-sponsor`      | User clicks any sponsor/funding link   | `location` (`header` \| `dropdown` \| `success-view`)                                                                                                                                   | Web Studio           |
+| `click-sponsor`      | User clicks any sponsor/funding link   | `location` (`header` \| `dropdown` \| `mobile-drawer` \| `seo-content` \| `success-view`)                                                                                               | Web Studio           |
 | `copy-data-url`      | User clicks "Copy Data URL"            | `success`, `format`, `isTransparent`                                                                                                                                                    | Web Studio           |
 | `download-result`    | User clicks "Download"                 | `format`, `isTransparent`                                                                                                                                                               | Web Studio           |
 | `back-to-studio`     | User clicks "Back to Studio"           | `format`, `isTransparent`                                                                                                                                                               | Web Studio           |
@@ -29,8 +29,10 @@ For events carrying a `location` property (`click-sponsor`, `click-home`, `open-
 | Location Token  | UI Component         | Landmark & Context                                                                                 | Associated Events             |
 | :-------------- | :------------------- | :------------------------------------------------------------------------------------------------- | :---------------------------- |
 | `header`        | `Header.tsx`         | Top application header bar (clicking title/logo home button or header sponsor link)                | `click-home`, `click-sponsor` |
+| `mobile-drawer` | `Header.tsx`         | Mobile navigation slide-down drawer (clicking sponsor link)                                        | `click-sponsor`               |
 | `dropdown`      | `HeaderDropdown.tsx` | Dropdown menu toggled from the header hamburger action (clicking sponsor link)                     | `click-sponsor`               |
 | `config-source` | `ConfigPanel.tsx`    | Section 1 (_Source_) of the Configuration Panel (clicking "Browse Samples" or "Clear SVG" buttons) | `click-home`, `open-samples`  |
+| `seo-content`   | `SeoContent.tsx`     | Editorial documentation section at the bottom (clicking support sponsor link)                      | `click-sponsor`               |
 | `success-view`  | `SuccessView.tsx`    | Post-render completion screen (clicking GitHub sponsor link)                                       | `click-sponsor`               |
 
 ## TypeScript Type Safety & Contract

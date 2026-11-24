@@ -13,9 +13,12 @@ import {
 import type { SamplePreset } from '../utils/samples';
 import { formatRegistry } from '../utils/encoders/Registry';
 import { Header } from './Header';
+import { HeroStrip } from './HeroStrip';
 import { ConfigPanel } from './ConfigPanel';
 import { MonitorPanel } from './MonitorPanel';
 import { SampleModal } from './SampleModal/SampleModal';
+import { SeoContent } from './SeoContent';
+import { SiteFooter } from './SiteFooter';
 import { trackEvent } from '../utils/analytics';
 import { trackFileLoad } from '../utils/tracking/fileTracking';
 import { useStudioState } from '../hooks/useStudioState';
@@ -238,9 +241,10 @@ export const Studio = () => {
   );
 
   return (
-    <div className="app-container">
+    <div className="app-container" id="top">
       <Header onHome={() => handleHome('header')} />
-      <main className="studio-layout">
+      <HeroStrip />
+      <main id="studio" className="studio-layout">
         <ConfigPanel
           svgContent={svgContent}
           onSvgContentChange={handleSvgContentChange}
@@ -302,6 +306,8 @@ export const Studio = () => {
         onClose={handleCloseSamples}
         onSelectSample={handleSelectSample}
       />
+      <SeoContent />
+      <SiteFooter />
     </div>
   );
 };

@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { Studio } from '../components/Studio';
 import { SeoFallback } from '../components/SeoFallback';
 import { SeoContent } from '../components/SeoContent';
+import { HeroStrip } from '../components/HeroStrip';
+import { SiteFooter } from '../components/SiteFooter';
 import './page.scss';
 
 export default function Page() {
@@ -38,10 +40,15 @@ export default function Page() {
           className={`studio-wrapper ${!isSplashVisible ? 'is-visible' : ''}`}
         >
           <Studio />
-          <SeoContent />
         </div>
       )}
-      {!mounted && <SeoContent />}
+      {!mounted && (
+        <div id="top" className="app-container">
+          <HeroStrip />
+          <SeoContent />
+          <SiteFooter />
+        </div>
+      )}
     </>
   );
 }

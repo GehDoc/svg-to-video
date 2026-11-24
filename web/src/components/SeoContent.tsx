@@ -5,10 +5,11 @@ import {
   FaLayerGroup,
   FaCogs,
   FaShieldAlt,
-  FaExternalLinkAlt,
+  FaHeart,
 } from 'react-icons/fa';
 import seoData from '../data/seoDocumentation.json';
-import { ECOSYSTEM_LINKS } from '../utils/constants';
+import pkg from '../../package.json';
+import { trackEvent } from '../utils/analytics';
 import { DevCard } from './DevCard/DevCard';
 import './SeoContent.scss';
 
@@ -19,18 +20,15 @@ export const SeoContent = () => {
       aria-label="Comprehensive Documentation and Format Guide"
     >
       <div className="seo-container">
-        {/* Header / Intro */}
-        <header className="seo-header">
-          <span className="seo-badge">Open Source Studio</span>
-          <h2>{seoData.headline}</h2>
-          <p className="seo-lead">{seoData.tagline}</p>
-        </header>
-
         {/* Key Features Grid */}
-        <div className="seo-block">
+        <section
+          id="why-svg-to-video"
+          className="seo-block"
+          aria-labelledby="why-title"
+        >
           <div className="block-header">
             <FaShieldAlt className="block-icon" />
-            <h3>Why Use SVG to Video?</h3>
+            <h3 id="why-title">Why Use SVG to Video?</h3>
           </div>
           <div className="features-grid">
             {seoData.features.map((feat) => (
@@ -40,13 +38,19 @@ export const SeoContent = () => {
               </article>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* How It Works / 3-Step Guide */}
-        <div className="seo-block">
+        <section
+          id="how-to-convert"
+          className="seo-block"
+          aria-labelledby="how-title"
+        >
           <div className="block-header">
             <FaCogs className="block-icon" />
-            <h3>How to Convert Animated SVGs (CSS & SMIL)</h3>
+            <h3 id="how-title">
+              How to Convert Animated SVGs (CSS &amp; SMIL)
+            </h3>
           </div>
           <div className="steps-container">
             {seoData.quickStartSteps.map((stepHtml, index) => (
@@ -59,13 +63,19 @@ export const SeoContent = () => {
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* Format Comparison Table */}
-        <div className="seo-block">
+        <section
+          id="formats"
+          className="seo-block"
+          aria-labelledby="formats-title"
+        >
           <div className="block-header">
             <FaLayerGroup className="block-icon" />
-            <h3>Supported Output Formats & Specifications</h3>
+            <h3 id="formats-title">
+              Supported Output Formats &amp; Specifications
+            </h3>
           </div>
           <div className="table-responsive">
             <table className="format-table">
@@ -109,37 +119,43 @@ export const SeoContent = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
 
         {/* CLI & MCP Developer Integration */}
-        <div className="seo-block">
+        <section
+          id="automation"
+          className="seo-block"
+          aria-labelledby="automation-title"
+        >
           <div className="block-header">
             <FaTerminal className="block-icon" />
-            <h3>Developer CLI, Docker & Model Context Protocol (MCP)</h3>
+            <h3 id="automation-title">
+              Developer CLI, Docker &amp; Model Context Protocol (MCP)
+            </h3>
           </div>
           <div className="developer-grid">
             <DevCard
-              title="CLI & Docker Automation"
+              title="CLI &amp; Docker Automation"
               icon={<FaTerminal />}
               snippet={seoData.cliSnippet}
               snippetAriaLabel="CLI & Docker automation commands"
               copyAriaLabel="Copy CLI snippet"
             />
             <DevCard
-              title="AI Agent & MCP Integration"
+              title="AI Agent &amp; MCP Integration"
               icon={<FaRobot />}
               snippet={seoData.mcpSnippet}
               snippetAriaLabel="MCP server configuration JSON"
               copyAriaLabel="Copy MCP config"
             />
           </div>
-        </div>
+        </section>
 
         {/* FAQ Section */}
-        <div className="seo-block">
+        <section id="faq" className="seo-block" aria-labelledby="faq-title">
           <div className="block-header">
             <FaQuestionCircle className="block-icon" />
-            <h3>Frequently Asked Questions</h3>
+            <h3 id="faq-title">Frequently Asked Questions</h3>
           </div>
           <div className="faq-grid">
             {seoData.faq.map((item) => (
@@ -149,49 +165,39 @@ export const SeoContent = () => {
               </article>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* Ecosystem Footer Links */}
-        <div className="seo-ecosystem">
-          <h4>Explore the SVG to Video Ecosystem</h4>
-          <div className="ecosystem-links">
+        {/* Support & Sponsorship Section */}
+        <section
+          id="sponsor"
+          className="seo-block sponsor-section"
+          aria-labelledby="sponsor-title"
+        >
+          <div className="block-header">
+            <FaHeart className="block-icon sponsor-icon" />
+            <h3 id="sponsor-title">Support SVG to Video</h3>
+          </div>
+          <div className="sponsor-card">
+            <p className="sponsor-text">
+              SVG to Video is 100% free, open source, and released under the MIT
+              License. It runs entirely in your browser without tracking or data
+              collection. Your sponsorship directly fuels development, helps
+              maintain cross-browser format support, and keeps this tool
+              accessible to creators and developers worldwide.
+            </p>
             <a
-              href={ECOSYSTEM_LINKS.github}
+              href={pkg.funding.url}
               target="_blank"
               rel="noopener noreferrer"
+              className="sponsor-action-btn"
+              onClick={() => {
+                trackEvent('click-sponsor', { location: 'seo-content' });
+              }}
             >
-              GitHub Repository <FaExternalLinkAlt size={10} />
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.npm}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              npm Package <FaExternalLinkAlt size={10} />
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.docker}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Docker Hub <FaExternalLinkAlt size={10} />
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.mcpDocs}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              MCP Registry <FaExternalLinkAlt size={10} />
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.huggingface}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              HuggingFace Space <FaExternalLinkAlt size={10} />
+              <FaHeart className="icon-heart" /> Sponsor on GitHub ↗
             </a>
           </div>
-        </div>
+        </section>
       </div>
     </section>
   );
