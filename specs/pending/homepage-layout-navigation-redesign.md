@@ -84,4 +84,5 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
 - 2026-11-24: Completed implementation of sticky header, hero strip, bounded studio workspace, scroll cue, stage height ergonomics, editorial anchor IDs, and full-width site footer.
 - 2026-11-24: Split FAQ into Web Studio and CLI/MCP sections with dynamic category extractor.
 - 2026-11-24: Split automation into copyable CLI one-liners (tabbed DevCard) and AI Agent MCP integration (step-by-step with 1-click prompt copy).
-- 2026-11-24: Resolved visual regression test assertions and Storybook Axe contrast violations. Extracted subsequent semantic layout & heading hierarchy refactoring into a dedicated follow-up spec. Status set to `🟡 To be reviewed`.
+- 2026-11-24: Resolved visual regression test assertions and Storybook Axe contrast violations. Extracted subsequent semantic layout & heading hierarchy refactoring into a dedicated follow-up spec.
+- 2026-11-24: Centralized CSS variables across light & dark themes (--sponsor-border, --format-*-bg/text, --success), moved --header-height to :root, and extracted Prism syntax highlighting tokens into a dedicated stylesheet (web/src/styles/_syntax.scss). Status set to `🟡 To be reviewed`.
