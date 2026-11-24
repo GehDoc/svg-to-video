@@ -74,10 +74,16 @@
     }
   }
 
-  .site-footer__section {
+  .site-footer__nav-column {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1.25rem;
+  }
+
+  .site-footer__row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
   }
 
   .site-footer__label {

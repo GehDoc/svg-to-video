@@ -16,7 +16,7 @@
     },
     {
       "title": "AI Agent Native",
-      "descriptionHtml": "Native <strong>Model Context Protocol (MCP)</strong> server and <strong>Agent Skill (<code>SKILL.md</code>)</strong> support indexed on the official <a href=\"https://registry.modelcontextprotocol.io/\">MCP Registry</a> (<code>mcp.json</code>) and hosted live on <a href=\"https://huggingface.co/spaces/GehDoc/svg-to-video-mcp\">HuggingFace Spaces</a>."
+      "descriptionHtml": "Native <strong>Model Context Protocol (MCP)</strong> server and <strong>Agent Skill (<code>SKILL.md</code>)</strong> support indexed on the official <a href=\"https://registry.modelcontextprotocol.io/?q=io.github.GehDoc%2Fsvg-to-video\">MCP Registry</a> (<code>mcp.json</code>) and hosted live on <a href=\"https://huggingface.co/spaces/GehDoc/svg-to-video-mcp\">HuggingFace Spaces</a>."
     },
     {
       "title": "Universal Animated Formats",
@@ -108,5 +108,5 @@
       "answerHtml": "You can fine-tune output size and visual fidelity in the CLI and MCP tools using <code>--bitrate &lt;rate&gt;</code> (e.g. <code>5M</code>, <code>2000k</code>), Constant Rate Factor <code>--crf &lt;0-63&gt;</code> (e.g. <code>18</code> for near-lossless, <code>20</code> by default, <code>28</code> for compact), or <code>--quality &lt;1-100&gt;</code> for animated GIF (color palette quantization) and aPNG (zlib compression)."
     }
   ],
-  "lastUpdated": "2026-11-24T06:28:47.035Z"
+  "lastUpdated": "2026-11-24T06:57:04.877Z"
 }

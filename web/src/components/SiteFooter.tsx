@@ -49,70 +49,74 @@ export const SiteFooter = () => {
           </span>
         </div>
 
-        <div className="site-footer__section site-footer__ecosystem">
-          <span className="site-footer__label">Explore the Ecosystem</span>
-          <nav className="site-footer__links" aria-label="Ecosystem links">
-            <a
-              href={ECOSYSTEM_LINKS.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackEvent('click-source-code')}
-            >
-              <FaGithub size={14} /> GitHub ↗
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.npm}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaNpm size={16} /> npm ↗
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.docker}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaDocker size={14} /> Docker Hub ↗
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.mcpDocs}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              MCP Registry ↗
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.huggingface}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              HuggingFace Space ↗
-            </a>
-          </nav>
-        </div>
+        <div className="site-footer__nav-column">
+          <div className="site-footer__row site-footer__ecosystem">
+            <span className="site-footer__label">Explore the Ecosystem</span>
+            <nav className="site-footer__links" aria-label="Ecosystem links">
+              <a
+                href={ECOSYSTEM_LINKS.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent('click-source-code')}
+              >
+                <FaGithub size={14} /> GitHub ↗
+              </a>
+              <a
+                href={ECOSYSTEM_LINKS.npm}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaNpm size={16} /> npm ↗
+              </a>
+              <a
+                href={ECOSYSTEM_LINKS.docker}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaDocker size={14} /> Docker Hub ↗
+              </a>
+              <a
+                href={ECOSYSTEM_LINKS.mcpDocs}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                MCP Registry ↗
+              </a>
+              <a
+                href={ECOSYSTEM_LINKS.huggingface}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                HuggingFace Space ↗
+              </a>
+            </nav>
+          </div>
 
-        <div className="site-footer__section site-footer__contribute">
-          <span className="site-footer__label">Contribute &amp; Feedback</span>
-          <nav
-            className="site-footer__links"
-            aria-label="Contribution and feedback links"
-          >
-            <a
-              href={pkg.bugs.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackEvent('click-issue-report')}
+          <div className="site-footer__row site-footer__contribute">
+            <span className="site-footer__label">
+              Contribute &amp; Feedback
+            </span>
+            <nav
+              className="site-footer__links"
+              aria-label="Contribution and feedback links"
             >
-              <FaBug size={12} /> Bug or Suggest Improvement ↗
-            </a>
-            <a
-              href={ECOSYSTEM_LINKS.contributing}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaCodeBranch size={12} /> Contributing Guide ↗
-            </a>
-          </nav>
+              <a
+                href={pkg.bugs.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent('click-issue-report')}
+              >
+                <FaBug size={12} /> Bug or Suggest Improvement ↗
+              </a>
+              <a
+                href={ECOSYSTEM_LINKS.contributing}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaCodeBranch size={12} /> Contributing Guide ↗
+              </a>
+            </nav>
+          </div>
         </div>
 
         <a href="#top" className="site-footer__top" aria-label="Back to top">
