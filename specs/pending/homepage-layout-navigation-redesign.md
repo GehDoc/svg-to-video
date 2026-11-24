@@ -57,6 +57,16 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
 - [x] **Documentation, Security & SEO Pre-Flight**
   - [x] Run `npm run test:unit`, `npm run check:fast`, and `npm run build -w web`
   - [x] Re-verify visual alignment and responsive behavior
+- [ ] **Phase 1: Semantic Application Layout & CI Fixes**
+  - [ ] Fix CI: update `Studio.spec.tsx` to match active LandingView text ("Upload your animated SVG on the left")
+  - [ ] Fix CI: adjust `DevCard.scss` syntax token contrast for Axe a11y compliance in Storybook
+  - [ ] Semantic layout: extend `<main>` landmark to encompass primary editorial content (`#studio` + `#why-svg-to-video` through `#sponsor`)
+  - [ ] Single `<h1>`: convert header logo link to semantic `<span>` / `<strong>`, preserving Hero as the single `<h1>`
+  - [ ] Review with user and commit Phase 1
+- [ ] **Phase 2: Semantic SEO Content Enhancements**
+  - [ ] Heading hierarchy in `SeoContent.tsx`: replace `<h3>` with `<h2>` for top-level sections, `<h4>` with `<h3>` for sub-blocks/categories, and `<h5>` with `<h4>` for questions
+  - [ ] Ordered list semantics: convert "How to Convert" steps to `<ol>` / `<li>`
+  - [ ] Review with user and commit Phase 2
 
 ## 🧪 Verification Plan
 

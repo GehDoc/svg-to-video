@@ -80,11 +80,11 @@
   .dev-snippet {
     margin: 0;
     padding: 0.85rem 1rem;
-    background: var(--card);
+    background: #0f172a;
     font-family: var(--mono);
     font-size: 0.75rem;
     line-height: 1.45;
-    color: var(--text);
+    color: #f8fafc;
     overflow-x: auto;
     white-space: pre-wrap;
     word-break: break-all;
@@ -96,13 +96,13 @@
     }
 
     .token.comment {
-      color: #64748b;
+      color: #94a3b8;
       font-style: italic;
     }
 
     .token.function,
     .token.class-name {
-      color: #818cf8;
+      color: #a5b4fc;
       font-weight: 600;
     }
 
@@ -123,12 +123,12 @@
 
     .token.punctuation,
     .token.operator {
-      color: #94a3b8;
+      color: #cbd5e1;
     }
 
     .token.boolean,
     .token.number {
-      color: #f59e0b;
+      color: #fbbf24;
     }
   }
 }

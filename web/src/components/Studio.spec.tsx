@@ -151,7 +151,7 @@ test('Studio resets state and returns to landing view when clicking header home 
 
   // 1. Initially LandingView is shown
   expect(
-    screen.getByText(/Welcome to SVG to Video Studio/i)
+    screen.getByText(/Upload your animated SVG on the left/i)
   ).toBeInTheDocument();
 
   // 2. Select a sample to transition to RenderingView
@@ -164,7 +164,7 @@ test('Studio resets state and returns to landing view when clicking header home 
     expect(screen.getByTestId('mock-svg-renderer')).toBeInTheDocument();
   });
   expect(
-    screen.queryByText(/Welcome to SVG to Video Studio/i)
+    screen.queryByText(/Upload your animated SVG on the left/i)
   ).not.toBeInTheDocument();
 
   // 3. Click the header home button
@@ -174,7 +174,7 @@ test('Studio resets state and returns to landing view when clicking header home 
   // 4. Verify landing view is restored and mock renderer is gone
   await waitFor(() => {
     expect(
-      screen.getByText(/Welcome to SVG to Video Studio/i)
+      screen.getByText(/Upload your animated SVG on the left/i)
     ).toBeInTheDocument();
   });
   expect(screen.queryByTestId('mock-svg-renderer')).not.toBeInTheDocument();
@@ -220,7 +220,7 @@ test('Studio resets state and returns to landing view when clicking Clear SVG in
 
   await waitFor(() => {
     expect(
-      screen.getByText(/Welcome to SVG to Video Studio/i)
+      screen.getByText(/Upload your animated SVG on the left/i)
     ).toBeInTheDocument();
   });
   expect(screen.queryByTestId('mock-svg-renderer')).not.toBeInTheDocument();
