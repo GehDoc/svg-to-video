@@ -7,6 +7,8 @@ export const ECOSYSTEM_LINKS = {
   huggingface: 'https://huggingface.co/spaces/GehDoc/svg-to-video-mcp',
   mcpDocs:
     'https://registry.modelcontextprotocol.io/?q=io.github.GehDoc%2Fsvg-to-video',
+  cliDocs: `${pkg.repository.url}/blob/main/docs/CLI.md`,
+  mcpGuide: `${pkg.repository.url}/blob/main/docs/MCP.md`,
   license: `${pkg.repository.url}/blob/main/LICENSE`,
   contributing: `${pkg.repository.url}/blob/main/CONTRIBUTING.md`,
 };

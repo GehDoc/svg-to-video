@@ -25,7 +25,7 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
   - Site footer layout: top-aligned all footer columns (`align-items: flex-start`), and structured ecosystem and contribute sections as stacked rows inside a single middle column.
   - Site footer ergonomics: place app version directly following the application name; pin "Back to top ↑" to the right across all screen sizes.
   - FAQ categorization: split `docs/FAQ.md` into distinct "Web Studio" and "CLI, Docker & MCP Automation" sections, with updated extractor generating `faqCategories` rendered in organized blocks.
-  - Syntax highlighting: integrate Prism.js in `DevCard.tsx` with customized token styling matching project design tokens for CLI, Docker, and MCP code blocks.
+  - CLI & MCP sub-sections: split automation section into dedicated "CLI & Docker Automation" (with interactive tabs for copyable one-liners and prerequisites) and "AI Agent & MCP Integration" (with step-by-step config and 1-click copyable agent prompt query).
 
 ## ✅ Task List
 

@@ -23,6 +23,26 @@ interface FaqCategory {
   items: FaqEntry[];
 }
 
+interface CliCommandItem {
+  id: string;
+  label: string;
+  comment: string;
+  command: string;
+}
+
+interface CliSectionData {
+  descriptionHtml: string;
+  prerequisitesHtml: string;
+  commands: CliCommandItem[];
+  rawSnippet: string;
+}
+
+interface McpSectionData {
+  descriptionHtml: string;
+  configSnippet: string;
+  promptQuery: string;
+}
+
 interface WhyItem {
   title: string;
   descriptionHtml: string;
@@ -89,6 +109,102 @@ function parseCliCommands(cliText: string): string {
 function parseMcpConfig(mcpText: string): string {
   const jsonBlockMatch = mcpText.match(/```json([\s\S]*?)```/);
   return jsonBlockMatch ? jsonBlockMatch[1].trim() : '';
+}
+
+function parseCliSection(cliText: string): CliSectionData {
+  const quickStartIdx = cliText.indexOf('### Quick Start');
+  let descriptionHtml = '';
+  let prereqHtml = '';
+
+  if (quickStartIdx !== -1) {
+    descriptionHtml = marked.parse(
+      cliText.slice(0, quickStartIdx).trim()
+    ) as string;
+    const afterQuickStart = cliText.slice(
+      quickStartIdx + '### Quick Start'.length
+    );
+    const codeBlockIdx = afterQuickStart.indexOf('```bash');
+    if (codeBlockIdx !== -1) {
+      prereqHtml = marked.parse(
+        afterQuickStart.slice(0, codeBlockIdx).trim()
+      ) as string;
+    }
+  }
+
+  const rawSnippet = parseCliCommands(cliText);
+  const commands: CliCommandItem[] = [];
+
+  const pairs = rawSnippet.split(/\n\s*\n/);
+  for (let i = 0; i < pairs.length; i++) {
+    const block = pairs[i].trim();
+    if (!block) continue;
+    const lines = block.split('\n').map((l) => l.trim());
+    const commentLines = lines
+      .filter((l) => l.startsWith('#'))
+      .map((l) => l.replace(/^#\s*/, ''));
+    const commandLines = lines.filter(
+      (l) => !l.startsWith('#') && l.length > 0
+    );
+    const comment = commentLines.join(' ');
+    const command = commandLines.join(' ');
+
+    if (command) {
+      let label = comment;
+      if (label.toLowerCase().includes('auto-detected')) {
+        label = 'Auto-detect Duration';
+      } else if (label.toLowerCase().includes('gif output')) {
+        label = 'Transparent GIF';
+      } else if (label.toLowerCase().includes('custom resolution')) {
+        label = 'Custom Resolution';
+      } else if (label.toLowerCase().includes('custom bitrate')) {
+        label = 'Quality & Bitrate';
+      } else if (label.toLowerCase().includes('animated png')) {
+        label = 'Animated PNG';
+      } else if (label.toLowerCase().includes('docker')) {
+        label = 'Docker (Zero Deps)';
+      } else if (comment) {
+        label = comment.slice(0, 24);
+      } else {
+        label = `Command ${i + 1}`;
+      }
+
+      commands.push({
+        id: `cli-cmd-${i + 1}`,
+        label,
+        comment,
+        command,
+      });
+    }
+  }
+
+  return {
+    descriptionHtml,
+    prerequisitesHtml: prereqHtml,
+    commands,
+    rawSnippet,
+  };
+}
+
+function parseMcpSection(mcpText: string): McpSectionData {
+  const step1Idx = mcpText.indexOf('1. **Add to');
+  const descriptionRaw =
+    step1Idx !== -1
+      ? mcpText.slice(0, step1Idx).trim()
+      : mcpText.split('```')[0].trim();
+  const descriptionHtml = marked.parse(descriptionRaw) as string;
+
+  const configSnippet = parseMcpConfig(mcpText);
+
+  const promptMatch = mcpText.match(/>\s*_?["“]([^"”]+)["”]_?/);
+  const promptQuery = promptMatch
+    ? promptMatch[1].trim()
+    : 'Convert examples/example.svg into a 60fps transparent WebM video.';
+
+  return {
+    descriptionHtml,
+    configSnippet,
+    promptQuery,
+  };
 }
 
 /**
@@ -186,6 +302,8 @@ try {
   const quickStartSteps = parseQuickStart(webStudioText);
   const cliSnippet = parseCliCommands(cliText);
   const mcpSnippet = parseMcpConfig(mcpText);
+  const cliSection = parseCliSection(cliText);
+  const mcpSection = parseMcpSection(mcpText);
   const { faq, faqCategories } = parseFaq(faqMarkdown);
 
   const seoData = {
@@ -199,6 +317,8 @@ try {
     quickStartSteps,
     cliSnippet,
     mcpSnippet,
+    cliSection,
+    mcpSection,
     formatComparisons: [
       {
         format: 'MP4',

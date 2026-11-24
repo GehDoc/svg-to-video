@@ -48,6 +48,54 @@
   ],
   "cliSnippet": "# Node.js (auto-detected duration)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir\n\n# Node.js (explicit duration & GIF output)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent\n\n# Node.js (custom resolution dimensions e.g. vertical 1080x1920)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --resolution 1080x1920\n\n# Node.js (custom bitrate, CRF, and quality)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --bitrate 5M --crf 18 --quality 80\n\n# Node.js (animated PNG output)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format apng\n\n# Docker (zero local dependencies; requires --shm-size=2gb for Chromium rendering; add :Z to -v for SELinux / Fedora)\ndocker run --rm --shm-size=2gb -e PUPPETEER_ARGS=\"--no-sandbox\" -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif",
   "mcpSnippet": "{\n     \"mcpServers\": {\n       \"svg-to-video\": {\n         \"command\": \"npx\",\n         \"args\": [\"-y\", \"-p\", \"@gehdoc/svg-to-video\", \"svg-to-video-mcp\"]\n       }\n     }\n   }",
+  "cliSection": {
+    "descriptionHtml": "<p>For automated or batch processing, use the CLI tool. It is built to run in a headless environment, making it perfect for CI/CD pipelines or server-side automation.</p>\n",
+    "prerequisitesHtml": "<p>Ensure <a href=\"https://nodejs.org/\">Node.js</a> is installed. Chrome/Chromium is managed automatically by Puppeteer (override via <code>PUPPETEER_EXECUTABLE_PATH</code>). System <a href=\"https://ffmpeg.org/\">FFmpeg</a> is used if available, or a bundled static fallback is automatically used (override via <code>--ffmpeg-path &lt;path&gt;</code> or the <code>FFMPEG_PATH</code> environment variable).</p>\n",
+    "commands": [
+      {
+        "id": "cli-cmd-1",
+        "label": "Auto-detect Duration",
+        "comment": "Node.js (auto-detected duration)",
+        "command": "npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir"
+      },
+      {
+        "id": "cli-cmd-2",
+        "label": "Transparent GIF",
+        "comment": "Node.js (explicit duration & GIF output)",
+        "command": "npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent"
+      },
+      {
+        "id": "cli-cmd-3",
+        "label": "Custom Resolution",
+        "comment": "Node.js (custom resolution dimensions e.g. vertical 1080x1920)",
+        "command": "npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --resolution 1080x1920"
+      },
+      {
+        "id": "cli-cmd-4",
+        "label": "Quality & Bitrate",
+        "comment": "Node.js (custom bitrate, CRF, and quality)",
+        "command": "npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --bitrate 5M --crf 18 --quality 80"
+      },
+      {
+        "id": "cli-cmd-5",
+        "label": "Animated PNG",
+        "comment": "Node.js (animated PNG output)",
+        "command": "npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format apng"
+      },
+      {
+        "id": "cli-cmd-6",
+        "label": "Docker (Zero Deps)",
+        "comment": "Docker (zero local dependencies; requires --shm-size=2gb for Chromium rendering; add :Z to -v for SELinux / Fedora)",
+        "command": "docker run --rm --shm-size=2gb -e PUPPETEER_ARGS=\"--no-sandbox\" -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif"
+      }
+    ],
+    "rawSnippet": "# Node.js (auto-detected duration)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir\n\n# Node.js (explicit duration & GIF output)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format gif --transparent\n\n# Node.js (custom resolution dimensions e.g. vertical 1080x1920)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --resolution 1080x1920\n\n# Node.js (custom bitrate, CRF, and quality)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --bitrate 5M --crf 18 --quality 80\n\n# Node.js (animated PNG output)\nnpx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format apng\n\n# Docker (zero local dependencies; requires --shm-size=2gb for Chromium rendering; add :Z to -v for SELinux / Fedora)\ndocker run --rm --shm-size=2gb -e PUPPETEER_ARGS=\"--no-sandbox\" -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif"
+  },
+  "mcpSection": {
+    "descriptionHtml": "<p>Connect <code>svg-to-video</code> to AI Assistants (Claude Desktop, Cursor, Antigravity, AutoGPT) via Model Context Protocol:</p>\n",
+    "configSnippet": "{\n     \"mcpServers\": {\n       \"svg-to-video\": {\n         \"command\": \"npx\",\n         \"args\": [\"-y\", \"-p\", \"@gehdoc/svg-to-video\", \"svg-to-video-mcp\"]\n       }\n     }\n   }",
+    "promptQuery": "Convert `examples/example.svg` into a 60fps transparent WebM video."
+  },
   "formatComparisons": [
     {
       "format": "MP4",
@@ -162,5 +210,5 @@
       ]
     }
   ],
-  "lastUpdated": "2026-11-24T20:05:06.691Z"
+  "lastUpdated": "2026-11-24T20:53:45.904Z"
 }

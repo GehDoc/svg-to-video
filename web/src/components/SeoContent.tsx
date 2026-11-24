@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import {
   FaTerminal,
   FaRobot,
@@ -6,14 +7,42 @@ import {
   FaCogs,
   FaShieldAlt,
   FaHeart,
+  FaCheck,
+  FaCopy,
 } from 'react-icons/fa';
 import seoData from '../data/seoDocumentation.json';
 import pkg from '../../package.json';
+import { ECOSYSTEM_LINKS } from '../utils/constants';
 import { trackEvent } from '../utils/analytics';
 import { DevCard } from './DevCard/DevCard';
 import './SeoContent.scss';
 
 export const SeoContent = () => {
+  const [isPromptCopied, setIsPromptCopied] = useState(false);
+  const promptTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (promptTimeoutRef.current) {
+        clearTimeout(promptTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleCopyPrompt = async (promptText: string) => {
+    try {
+      await navigator.clipboard.writeText(promptText);
+      setIsPromptCopied(true);
+      if (promptTimeoutRef.current) {
+        clearTimeout(promptTimeoutRef.current);
+      }
+      promptTimeoutRef.current = setTimeout(() => {
+        setIsPromptCopied(false);
+      }, 2000);
+    } catch {
+      // fallback
+    }
+  };
   return (
     <section
       className="seo-content"
@@ -133,21 +162,141 @@ export const SeoContent = () => {
               Developer CLI, Docker &amp; Model Context Protocol (MCP)
             </h3>
           </div>
-          <div className="developer-grid">
-            <DevCard
-              title="CLI &amp; Docker Automation"
-              icon={<FaTerminal />}
-              snippet={seoData.cliSnippet}
-              snippetAriaLabel="CLI & Docker automation commands"
-              copyAriaLabel="Copy CLI snippet"
-            />
-            <DevCard
-              title="AI Agent &amp; MCP Integration"
-              icon={<FaRobot />}
-              snippet={seoData.mcpSnippet}
-              snippetAriaLabel="MCP server configuration JSON"
-              copyAriaLabel="Copy MCP config"
-            />
+
+          <div className="automation-sections">
+            {/* Sub-section 1: CLI & Docker Automation */}
+            <div className="automation-subblock">
+              <div className="automation-subblock__header">
+                <FaTerminal className="subblock-icon" />
+                <h4>CLI &amp; Docker Automation</h4>
+              </div>
+
+              {seoData.cliSection?.descriptionHtml && (
+                <div
+                  className="automation-description"
+                  dangerouslySetInnerHTML={{
+                    __html: seoData.cliSection.descriptionHtml,
+                  }}
+                />
+              )}
+
+              {seoData.cliSection?.prerequisitesHtml && (
+                <div
+                  className="automation-prereq"
+                  dangerouslySetInnerHTML={{
+                    __html: seoData.cliSection.prerequisitesHtml,
+                  }}
+                />
+              )}
+
+              {seoData.cliSection?.commands &&
+              seoData.cliSection.commands.length > 0 ? (
+                <DevCard
+                  tabs={seoData.cliSection.commands.map((cmd) => ({
+                    id: cmd.id,
+                    label: cmd.label,
+                    snippet: cmd.command,
+                    language: 'bash',
+                    snippetAriaLabel: `${cmd.label}: ${cmd.comment}`,
+                    copyAriaLabel: `Copy ${cmd.label} command`,
+                  }))}
+                />
+              ) : (
+                <DevCard
+                  title="CLI &amp; Docker Automation"
+                  icon={<FaTerminal />}
+                  snippet={seoData.cliSnippet}
+                  snippetAriaLabel="CLI & Docker automation commands"
+                  copyAriaLabel="Copy CLI snippet"
+                />
+              )}
+
+              <div className="automation-docs-link">
+                <a
+                  href={ECOSYSTEM_LINKS.cliDocs}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View full CLI reference (all flags &amp; options) &rarr;
+                </a>
+              </div>
+            </div>
+
+            {/* Sub-section 2: AI Agent & MCP Integration */}
+            <div className="automation-subblock">
+              <div className="automation-subblock__header">
+                <FaRobot className="subblock-icon" />
+                <h4>AI Agent &amp; MCP Integration</h4>
+              </div>
+
+              {seoData.mcpSection?.descriptionHtml && (
+                <div
+                  className="automation-description"
+                  dangerouslySetInnerHTML={{
+                    __html: seoData.mcpSection.descriptionHtml,
+                  }}
+                />
+              )}
+
+              <div className="mcp-steps">
+                <div className="mcp-step">
+                  <span className="mcp-step__label">
+                    1. Add to MCP Server Configuration
+                  </span>
+                  <DevCard
+                    title="MCP Server Configuration"
+                    icon={<FaRobot />}
+                    snippet={
+                      seoData.mcpSection?.configSnippet || seoData.mcpSnippet
+                    }
+                    language="json"
+                    snippetAriaLabel="MCP server configuration JSON"
+                    copyAriaLabel="Copy MCP configuration"
+                  />
+                </div>
+
+                {seoData.mcpSection?.promptQuery && (
+                  <div className="mcp-step">
+                    <span className="mcp-step__label">
+                      2. Prompt your AI Assistant
+                    </span>
+                    <div className="agent-query-box">
+                      <blockquote className="agent-query-text">
+                        &ldquo;{seoData.mcpSection.promptQuery}&rdquo;
+                      </blockquote>
+                      <button
+                        type="button"
+                        className="copy-prompt-btn"
+                        onClick={() =>
+                          handleCopyPrompt(seoData.mcpSection.promptQuery)
+                        }
+                        aria-label="Copy prompt query"
+                      >
+                        {isPromptCopied ? (
+                          <>
+                            <FaCheck size={11} /> Copied!
+                          </>
+                        ) : (
+                          <>
+                            <FaCopy size={11} /> Copy Prompt
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="automation-docs-link">
+                <a
+                  href={ECOSYSTEM_LINKS.mcpGuide}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View full MCP setup &amp; schema guide &rarr;
+                </a>
+              </div>
+            </div>
           </div>
         </section>
 

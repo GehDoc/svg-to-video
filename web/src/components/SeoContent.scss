@@ -210,9 +210,139 @@
   }
 }
 
-/* Developer Section */
-.developer-grid {
-  @include responsive-grid-2col;
+/* Developer Automation Sections */
+.automation-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.automation-subblock {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+
+    .subblock-icon {
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+
+    h4 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-h);
+      margin: 0;
+    }
+  }
+
+  .automation-description {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .automation-prereq {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+
+    p {
+      margin: 0;
+    }
+
+    code {
+      font-size: 0.8rem;
+    }
+  }
+
+  .automation-docs-link {
+    font-size: 0.85rem;
+
+    a {
+      color: var(--primary-text);
+      text-decoration: none;
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.mcp-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.mcp-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-h);
+  }
+}
+
+.agent-query-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.85rem 1.25rem;
+
+  .agent-query-text {
+    margin: 0;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .copy-prompt-btn {
+    flex-shrink: 0;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.15s ease;
+
+    &:hover {
+      color: var(--text-h);
+      background: var(--card);
+      border-color: var(--accent);
+    }
+  }
 }
 
 /* FAQ Section */
