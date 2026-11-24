@@ -1,4 +1,4 @@
-import { FaGithub, FaNpm, FaDocker, FaBug } from 'react-icons/fa';
+import { FaGithub, FaNpm, FaDocker, FaBug, FaCodeBranch } from 'react-icons/fa';
 import pkg from '../../package.json';
 import { ECOSYSTEM_LINKS } from '../utils/constants';
 import { trackEvent } from '../utils/analytics';
@@ -49,10 +49,8 @@ export const SiteFooter = () => {
           </span>
         </div>
 
-        <div className="site-footer__ecosystem">
-          <span className="site-footer__label">
-            Explore the SVG to Video Ecosystem
-          </span>
+        <div className="site-footer__section site-footer__ecosystem">
+          <span className="site-footer__label">Explore the Ecosystem</span>
           <nav className="site-footer__links" aria-label="Ecosystem links">
             <a
               href={ECOSYSTEM_LINKS.github}
@@ -90,13 +88,29 @@ export const SiteFooter = () => {
             >
               HuggingFace Space ↗
             </a>
+          </nav>
+        </div>
+
+        <div className="site-footer__section site-footer__contribute">
+          <span className="site-footer__label">Contribute &amp; Feedback</span>
+          <nav
+            className="site-footer__links"
+            aria-label="Contribution and feedback links"
+          >
             <a
               href={pkg.bugs.url}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => trackEvent('click-issue-report')}
             >
-              <FaBug size={12} /> Report an Issue ↗
+              <FaBug size={12} /> Bug or Suggest Improvement ↗
+            </a>
+            <a
+              href={ECOSYSTEM_LINKS.contributing}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaCodeBranch size={12} /> Contributing Guide ↗
             </a>
           </nav>
         </div>

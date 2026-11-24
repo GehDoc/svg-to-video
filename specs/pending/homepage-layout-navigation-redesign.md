@@ -13,7 +13,8 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
 - **Core Technologies**: Next.js 14, React 18/19, TypeScript, SASS (SCSS modules / design tokens), Prism.js for syntax coloring.
 - **Architecture**:
   - Reorganize page layout hierarchy into distinct landmark regions: Sticky Header -> Hero Strip -> Bounded Studio Workspace (`#studio`) -> Editorial Doc Sections (`#how-to-convert`, `#formats`, `#why-svg-to-video`, `#automation`, `#faq`, `#sponsor`) -> Full-Width Site Footer.
-  - Sticky header fix: replace `overflow-x: hidden` with `overflow-x: clip` on `body` in `index.scss` so `position: sticky; top: 0` functions properly on the root viewport.
+  - Header position: switched from `position: sticky` to `position: fixed; top: 0; left: 0; right: 0; z-index: 100` with `--header-height: 48px`, container offset `padding-top: var(--header-height)`, and `scroll-padding-top: var(--header-height)` on `html` so it reliably pins to the viewport across all browsers without parent scroll container conflicts.
+  - Community & Contributing footer section: dedicated "Contribute & Feedback" section featuring "Bug or Suggest Improvement ↗" and "Contributing Guide ↗".
   - Unified mobile breakpoint: sync header mobile drawer and studio workspace collapse triggers to a single breakpoint (`$mobile-breakpoint: 1024px`).
   - Studio link behavior: update Studio jump link in desktop and mobile drawer to target `#top` (navigating to the top of the page).
   - Left alignment guide: align header logo, hero strip text, studio workspace, and site footer text to the same left padding guide (`1.5rem` / `24px`).

@@ -38,13 +38,19 @@ test('SiteFooter renders brand, version, license, ecosystem links, and back to t
     screen.getByRole('link', { name: /HuggingFace Space ↗/i })
   ).toBeInTheDocument();
 
-  const bugLink = screen.getByRole('link', { name: /Report an Issue ↗/i });
+  const bugLink = screen.getByRole('link', {
+    name: /Bug or Suggest Improvement ↗/i,
+  });
   expect(bugLink).toBeInTheDocument();
   fireEvent.click(bugLink);
   expect(trackMock).toHaveBeenCalledWith(
     'click-issue-report',
     expect.anything()
   );
+
+  expect(
+    screen.getByRole('link', { name: /Contributing Guide ↗/i })
+  ).toBeInTheDocument();
 
   // Back to top
   expect(

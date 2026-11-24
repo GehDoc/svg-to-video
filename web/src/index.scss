@@ -66,6 +66,7 @@
     --sponsor-hover: rgba(218, 55, 81, 0.2);
 
     --code-bg: #1e293b;
+    --header-height: 48px;
     --shadow:
       0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
   }
@@ -73,14 +74,13 @@
 
 html {
   overflow-x: clip;
-  overflow-y: auto;
   scroll-behavior: smooth;
+  scroll-padding-top: var(--header-height, 48px);
 }
 
 body {
   margin: 0;
   overflow-x: clip;
-  overflow-y: auto;
   min-height: 100vh;
 }
 
@@ -96,6 +96,8 @@ body {
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
+  padding-top: var(--header-height, 48px);
+  box-sizing: border-box;
   background-color: var(--bg);
   color: var(--text);
 }

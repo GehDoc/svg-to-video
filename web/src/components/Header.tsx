@@ -5,7 +5,14 @@ import {
   type KeyboardEvent,
   type MouseEvent,
 } from 'react';
-import { FaBars, FaTimes, FaHeart, FaGithub, FaBug } from 'react-icons/fa';
+import {
+  FaBars,
+  FaTimes,
+  FaHeart,
+  FaGithub,
+  FaBug,
+  FaCodeBranch,
+} from 'react-icons/fa';
 import Logo from '../assets/logo.svg?react';
 import pkg from '../../package.json';
 import { ECOSYSTEM_LINKS } from '../utils/constants';
@@ -180,7 +187,15 @@ export const Header = ({ onHome }: HeaderProps) => {
               handleNavLinkClick();
             }}
           >
-            <FaBug /> Report an Issue ↗
+            <FaBug /> Bug or Suggest Improvement ↗
+          </a>
+          <a
+            href={ECOSYSTEM_LINKS.contributing}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleNavLinkClick}
+          >
+            <FaCodeBranch /> Contributing Guide ↗
           </a>
         </div>
       </nav>
