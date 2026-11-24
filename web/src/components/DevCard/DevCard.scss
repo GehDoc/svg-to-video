@@ -94,5 +94,41 @@
       padding: 0;
       color: inherit;
     }
+
+    .token.comment {
+      color: #64748b;
+      font-style: italic;
+    }
+
+    .token.function,
+    .token.class-name {
+      color: #818cf8;
+      font-weight: 600;
+    }
+
+    .token.parameter,
+    .token.variable {
+      color: #38bdf8;
+    }
+
+    .token.string {
+      color: #34d399;
+    }
+
+    .token.keyword,
+    .token.property {
+      color: #c084fc;
+      font-weight: 600;
+    }
+
+    .token.punctuation,
+    .token.operator {
+      color: #94a3b8;
+    }
+
+    .token.boolean,
+    .token.number {
+      color: #f59e0b;
+    }
   }
 }

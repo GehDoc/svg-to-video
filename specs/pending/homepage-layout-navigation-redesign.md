@@ -10,46 +10,19 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
 
 ## 🛠 Technical Strategy
 
-- **Core Technologies**: Next.js 14, React 18, TypeScript, SASS (SCSS modules / design tokens)
+- **Core Technologies**: Next.js 14, React 18/19, TypeScript, SASS (SCSS modules / design tokens), Prism.js for syntax coloring.
 - **Architecture**:
   - Reorganize page layout hierarchy into distinct landmark regions: Sticky Header -> Hero Strip -> Bounded Studio Workspace (`#studio`) -> Editorial Doc Sections (`#how-to-convert`, `#formats`, `#why-svg-to-video`, `#automation`, `#faq`, `#sponsor`) -> Full-Width Site Footer.
-  - Keep client-side state in `useStudioState` and heavy `Studio` mounting pattern intact to prevent hydration mismatches.
-- **Key Dependencies**: `react-icons/fa`, `pkg` metadata (`package.json`), Umami telemetry tracking.
-- **Header & Navigation Strategy**:
-  - **Desktop (min-width: 901px)**:
-    - Left: Brand logo + "SVG to Video STUDIO" (smooth jump / reset).
-    - Center: `<nav className="jump-nav" aria-label="Page navigation">` with direct jump links: Studio (`#studio`), How It Works (`#how-to-convert`), Formats (`#formats`), CLI & MCP (`#automation`), FAQ (`#faq`).
-    - Right: Standardized GitHub repository icon button (`<FaGithub size={20} />` with accessible label & telemetry) + prominent Sponsor action button (`pkg.funding.url`) with telemetry tracking.
-  - **Mobile (max-width: 900px)**:
-    - Jump links hidden; burger menu button (`<button className="menu-btn" aria-expanded={isOpen} aria-controls="mobile-drawer">`) toggles an accessible drawer.
-    - Drawer contains direct jump links, GitHub repository link, Sponsor link, and Report an Issue link.
-  - **Desktop Burger Item Relocation**:
-    - _View Source Code_: Standardized to modern open-source convention as a dedicated `<FaGithub size={20} />` header action icon button, also included in footer ecosystem links and mobile drawer.
-    - _Buy me a Coffee_: Removed / unified into header Sponsor button.
-    - _Version_: Placed in full-width site footer meta (`v${pkg.version}` with commit SHA linking to release/commit).
-    - _License_: Placed in footer meta (`MIT License`).
-    - _Report an Issue_: Integrated in footer ecosystem links and mobile drawer.
-- **Compact Hero Strip**:
-  - Placed right above the studio workspace.
-  - Displays `<h1>` headline and tagline from SEO data for immediate visitor clarity and search indexer extraction.
-- **Bounded Studio Workspace**:
-  - Clean two-column grid (`.studio-shell` / `.studio-layout`): ConfigPanel sidebar (320-350px) + MonitorPanel stage (flex-1).
-  - Explicit bounded height on desktop (`min-height: 620px; max-height: 720px;` or `height: clamp(600px, calc(100vh - 160px), 740px)`) with clean bottom border.
-  - Sidebar scrolls independently; stage does not spill into the editorial sections below.
-- **LandingView Streamlining & Scroll Cue**:
-  - Keep welcome header, interactive sample cards, privacy/alpha highlights, and format badges in LandingView.
-  - Remove duplicate CLI/MCP DevCard from LandingView stage (now exclusively in `#automation`).
-  - Repurpose bottom bar from static MIT notice to interactive scroll & jump cue ("More guides, format specs & automation below" with jump links `How to Convert ↓`, `Formats & Specs ↓`, `CLI, Docker & MCP ↓`, `FAQ ↓`).
-- **Stage Height Ergonomics (RenderingView & SuccessView)**:
-  - Optimize padding and spacing in `RenderingView.scss` and `SuccessView.scss` (`gap: 0.75rem - 1rem`, `padding: 1rem 1.25rem`).
-  - Preserve `flex: 1; min-height: 0;` with `object-fit: contain` on media previews to eliminate vertical scrollbars on standard 1080p and 768p displays.
-- **Full-Width Site Footer**:
-  - Edge-to-edge footer replacing floating bordered `.seo-ecosystem` box.
-  - Contains brand meta, version tag, ecosystem links, and "Back to top ↑" button.
-- **UI, Interaction & Motion Budget**:
-  - Semantic tokens from `index.scss` (`var(--bg)`, `var(--panel)`, `var(--border)`, `var(--text)`, `var(--text-muted)`, `var(--primary)`, `var(--sponsor)`).
-  - Zero `!important` additions; smooth scroll behavior via CSS.
-  - High accessibility: ARIA attributes, semantic headings (`h1` -> `h2` -> `h3`), keyboard navigability.
+  - Sticky header fix: replace `overflow-x: hidden` with `overflow-x: clip` on `body` in `index.scss` so `position: sticky; top: 0` functions properly on the root viewport.
+  - Unified mobile breakpoint: sync header mobile drawer and studio workspace collapse triggers to a single breakpoint (`$mobile-breakpoint: 1024px`).
+  - Studio link behavior: update Studio jump link in desktop and mobile drawer to target `#top` (navigating to the top of the page).
+  - Left alignment guide: align header logo, hero strip text, studio workspace, and site footer text to the same left padding guide (`1.5rem` / `24px`).
+  - Hero strip subtitle: remove awkward line wraps before "transparency" by relaxing `max-width` to flow naturally across wide viewports.
+  - Studio stage refinement: remove redundant "Welcome to SVG to Video Studio" heading from LandingView to save vertical space.
+  - Viewport-fitted studio workspace: configure `.studio-layout` height (`calc(100vh - 115px)`) so that Header + Hero + Workspace bottom bar fit completely within the initial screen fold without being truncated.
+  - Site footer ergonomics: place app version directly following the application name; pin "Back to top ↑" to the right across all screen sizes.
+  - FAQ reordering: move "How does the Web Studio render high-quality, flicker-free GIFs without a server?" in `docs/FAQ.md` before any CLI/MCP questions.
+  - Syntax highlighting: integrate Prism.js in `DevCard.tsx` with customized token styling matching project design tokens for CLI, Docker, and MCP code blocks.
 
 ## ✅ Task List
 
@@ -59,33 +32,28 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
   - [x] Commit initial spec and push to origin
 - [x] **Header & Navigation Overhaul**
   - [x] Update `Header.tsx` and `Header.scss` to support desktop direct jump links + Sponsor CTA
-  - [x] Add accessible mobile drawer toggle (≤ 900px) with ARIA states
+  - [x] Add accessible mobile drawer toggle with ARIA states
   - [x] Relocate burger dropdown items (version, license, report issue) to footer & mobile drawer
-- [x] **Hero Strip & Page Shell**
-  - [x] Create `HeroStrip` component or layout integration above studio workspace with `<h1>` headline
-  - [x] Set up bounded studio container in `Studio.tsx` / `index.scss` preventing sidebar bleed
-- [x] **LandingView Streamlining & Workspace Bottom Bar Cue**
-  - [x] Remove CLI/MCP DevCard from `LandingView.tsx`
-  - [x] Repurpose `LandingView` bottom bar into an interactive scroll cue with downward anchor links
-- [x] **Stage Height Ergonomics (No Scrollbars on Standard Screens)**
-  - [x] Adjust `RenderingView.scss` (padding, gap, monitor wrapper scaling)
-  - [x] Adjust `SuccessView.scss` (padding, icon size, preview flex constraints)
-  - [x] Verify both views fit without vertical scrollbars on 768p-1080p viewports
-- [x] **Editorial & SEO Sections Refinement**
-  - [x] Update `SeoContent.tsx` with explicit section anchor IDs (`#how-to-convert`, `#formats`, `#why-svg-to-video`, `#automation`, `#faq`, `#sponsor`)
-  - [x] Remove redundant top `.seo-header` from `SeoContent`
-  - [x] Remove old floating `.seo-ecosystem` box
-- [x] **Full-Width Site Footer**
-  - [x] Create `SiteFooter` component with branding, version, ecosystem links, and "Back to top ↑"
-  - [x] Integrate into `page.tsx` or layout
+- [x] **Homepage Layout & Alignment Corrections (User Feedback)**
+  - [x] Fix sticky header: replace `overflow-x: hidden` with `overflow-x: clip` in `index.scss`
+  - [x] Align responsive breakpoints: synchronize header drawer and studio collapse triggers to `$mobile-breakpoint`
+  - [x] Update Studio navigation link to scroll to `#top`
+  - [x] Align Hero and Site Footer left edge with the header logo (`padding: 1.5rem`)
+  - [x] Fix Hero subtitle line wrapping so "transparency" does not break awkwardly
+  - [x] Remove "Welcome to SVG to Video Studio" heading from `LandingView.tsx`
+  - [x] Fix studio workspace height ergonomics so the bottom scroll cue bar is not truncated at the bottom of the viewport
+  - [x] Place app version directly next to the application name in `SiteFooter.tsx`
+  - [x] Ensure "Back to top ↑" is always pinned to the right in `SiteFooter.scss`
+- [x] **FAQ Reordering & Documentation**
+  - [x] Move GIF engine question in `docs/FAQ.md` before any CLI/MCP questions
+  - [x] Regenerate `seoDocumentation.json` via `generate-seo-data.ts`
+- [x] **Syntax Highlighting in Code Samples**
+  - [x] Install `prismjs` and `@types/prismjs` in `web`
+  - [x] Update `DevCard.tsx` to highlight code snippets using Prism.js
+  - [x] Add dark syntax token styles in `DevCard.scss`
 - [x] **Documentation, Security & SEO Pre-Flight**
-  - [x] Audit `README.md`, `web/src/app/layout.tsx` (meta/jsonLd), `web/src/components/SeoFallback.tsx`
-  - [x] Verify test suite passing: `npm run test:unit`, `npm run check:fast`
-- [x] **Architecture & Maintainability Pre-Flight (`🟡 To be reviewed`)**
-  - [x] State atomicity verified (single source of truth, atomic reset, no loose duplicate setters)
-  - [x] CSS hygiene verified (zero `!important`, semantic variables)
-  - [x] Accessibility verified (landmark roles, ARIA attributes, keyboard navigation)
-  - [x] Layout stability verified (no horizontal overflow, no vertical scrollbars in studio stage)
+  - [x] Run `npm run test:unit`, `npm run check:fast`, and `npm run build -w web`
+  - [x] Re-verify visual alignment and responsive behavior
 
 ## 🧪 Verification Plan
 

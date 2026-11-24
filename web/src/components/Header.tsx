@@ -79,7 +79,7 @@ export const Header = ({ onHome }: HeaderProps) => {
         </h1>
 
         <nav className="jump-nav" aria-label="Page navigation">
-          <a href="#studio">Studio</a>
+          <a href="#top">Studio</a>
           <a href="#how-to-convert">How It Works</a>
           <a href="#formats">Formats</a>
           <a href="#automation">CLI &amp; MCP</a>
@@ -129,7 +129,7 @@ export const Header = ({ onHome }: HeaderProps) => {
         aria-label="Mobile navigation"
       >
         <div className="mobile-drawer__section">
-          <a href="#studio" onClick={handleNavLinkClick}>
+          <a href="#top" onClick={handleNavLinkClick}>
             Studio
           </a>
           <a href="#how-to-convert" onClick={handleNavLinkClick}>

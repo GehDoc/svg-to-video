@@ -11,9 +11,8 @@ export const LandingView = ({ onSelectSample }: LandingViewProps) => {
   return (
     <div className="landing-view">
       <div className="landing-scroll-content">
-        {/* Welcome Header */}
+        {/* Welcome Prompt */}
         <header className="landing-hero">
-          <h2 className="landing-title">Welcome to SVG to Video Studio</h2>
           <p className="landing-subtitle">
             Upload your animated SVG on the left, or test the engine instantly
             with one of our sample animations.

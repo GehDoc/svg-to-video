@@ -88,25 +88,25 @@
       "answerHtml": "The engine mounts your SVG in an isolated offscreen canvas, programmatically pauses all CSS and SMIL animations, and advances the animation timeline frame by frame (e.g. at 24, 30, or 60 FPS) to guarantee 100% frame accuracy without skipped frames."
     },
     {
-      "question": "Can I automate conversions in CI/CD pipelines or AI agents?",
-      "answerHtml": "Yes! You can use the official CLI tool (<code>npx -y @gehdoc/svg-to-video</code>), the Docker image (<code>gehdoc/svg-to-video</code>), or connect to the Model Context Protocol (MCP) server for Claude Desktop, Cursor, and Antigravity."
+      "question": "How does the Web Studio render high-quality, flicker-free GIFs without a server?",
+      "answerHtml": "Most browser-based GIF tools either snap colors coarsely (causing color banding) or use error diffusion dithering (which produces moving, noisy speckles across frames). The Web Studio features an in-browser encoder with custom 8x8 Bayer ordered dithering and 16-bit <code>rgb565</code> palette quantization. This disperses narrow color transitions smoothly without temporal fluttering, delivering FFmpeg-grade GIF quality directly inside your browser."
     },
     {
       "question": "How do I preserve transparent backgrounds in exported videos?",
       "answerHtml": "Select <strong>WebM</strong>, <strong>aPNG</strong>, or <strong>GIF</strong> as your output format, check the &quot;Transparent Background&quot; toggle, and ensure your SVG root element does not declare an opaque background rect."
     },
     {
-      "question": "Do I need to manually install FFmpeg to use the CLI?",
-      "answerHtml": "No. The CLI automatically uses system FFmpeg if present on your <code>$PATH</code>, or falls back to a bundled static FFmpeg binary out of the box. You can also specify a custom binary path using <code>--ffmpeg-path &lt;path&gt;</code> or the <code>FFMPEG_PATH</code> environment variable."
+      "question": "Can I automate conversions in CI/CD pipelines or AI agents?",
+      "answerHtml": "Yes! You can use the official CLI tool (<code>npx -y @gehdoc/svg-to-video</code>), the Docker image (<code>gehdoc/svg-to-video</code>), or connect to the Model Context Protocol (MCP) server for Claude Desktop, Cursor, and Antigravity."
     },
     {
-      "question": "How does the Web Studio render high-quality, flicker-free GIFs without a server?",
-      "answerHtml": "Most browser-based GIF tools either snap colors coarsely (causing color banding) or use error diffusion dithering (which produces moving, noisy speckles across frames). The Web Studio features an in-browser encoder with custom 8x8 Bayer ordered dithering and 16-bit <code>rgb565</code> palette quantization. This disperses narrow color transitions smoothly without temporal fluttering, delivering FFmpeg-grade GIF quality directly inside your browser."
+      "question": "Do I need to manually install FFmpeg to use the CLI?",
+      "answerHtml": "No. The CLI automatically uses system FFmpeg if present on your <code>$PATH</code>, or falls back to a bundled static FFmpeg binary out of the box. You can also specify a custom binary path using <code>--ffmpeg-path &lt;path&gt;</code> or the <code>FFMPEG_PATH</code> environment variable."
     },
     {
       "question": "How do I control output video quality and file size?",
       "answerHtml": "You can fine-tune output size and visual fidelity in the CLI and MCP tools using <code>--bitrate &lt;rate&gt;</code> (e.g. <code>5M</code>, <code>2000k</code>), Constant Rate Factor <code>--crf &lt;0-63&gt;</code> (e.g. <code>18</code> for near-lossless, <code>20</code> by default, <code>28</code> for compact), or <code>--quality &lt;1-100&gt;</code> for animated GIF (color palette quantization) and aPNG (zlib compression)."
     }
   ],
-  "lastUpdated": "2026-11-23T21:27:01.333Z"
+  "lastUpdated": "2026-11-24T06:28:47.035Z"
 }

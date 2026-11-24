@@ -10,14 +10,13 @@ afterEach(cleanup);
 
 const { Default } = composeStories(stories);
 
-test('LandingView renders welcome header, sample cards, and trust badges', () => {
+test('LandingView renders welcome prompt, sample cards, and trust badges', () => {
   render(<Default />);
 
   expect(
-    screen.getByRole('heading', {
-      name: /Welcome to SVG to Video Studio/i,
-      level: 2,
-    })
+    screen.getByText(
+      /Upload your animated SVG on the left, or test the engine instantly/i
+    )
   ).toBeInTheDocument();
   expect(screen.getByText(/Rocket Launch/i)).toBeInTheDocument();
   expect(screen.getByText(/Loading Spinner/i)).toBeInTheDocument();

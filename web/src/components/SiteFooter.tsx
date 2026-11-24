@@ -26,7 +26,17 @@ export const SiteFooter = () => {
     <footer id="site-footer" className="site-footer" aria-label="Site footer">
       <div className="site-footer__inner">
         <div className="site-footer__brand">
-          <span className="site-footer__title">SVG to Video Studio</span>
+          <span className="site-footer__title">
+            SVG to Video Studio{' '}
+            <a
+              href={versionHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="site-footer__version"
+            >
+              {versionLabel} ↗
+            </a>
+          </span>
           <span className="site-footer__meta">
             100% client-side rendering &middot; Released under the{' '}
             <a
@@ -35,15 +45,6 @@ export const SiteFooter = () => {
               rel="noopener noreferrer"
             >
               MIT License
-            </a>{' '}
-            &middot;{' '}
-            <a
-              href={versionHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="site-footer__version"
-            >
-              {versionLabel} ↗
             </a>
           </span>
         </div>

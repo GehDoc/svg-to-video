@@ -1,5 +1,8 @@
-import { useState, useRef, useEffect, type ReactNode } from 'react';
+import { useState, useRef, useEffect, useMemo, type ReactNode } from 'react';
 import { FaCheck, FaCopy } from 'react-icons/fa';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-json';
 import './DevCard.scss';
 
 export interface DevCardTab {
@@ -7,6 +10,7 @@ export interface DevCardTab {
   label: string;
   icon?: ReactNode;
   snippet: string;
+  language?: string;
   snippetAriaLabel?: string;
   copyAriaLabel?: string;
 }
@@ -15,6 +19,7 @@ export interface DevCardProps {
   title?: string;
   icon?: ReactNode;
   snippet?: string;
+  language?: string;
   snippetAriaLabel?: string;
   copyAriaLabel?: string;
   tabs?: DevCardTab[];
@@ -25,6 +30,7 @@ export const DevCard = ({
   title,
   icon,
   snippet,
+  language,
   snippetAriaLabel,
   copyAriaLabel,
   tabs,
@@ -46,6 +52,17 @@ export const DevCard = ({
 
   const activeTab = tabs?.find((tab) => tab.id === activeTabId) ?? tabs?.[0];
   const currentSnippet = activeTab ? activeTab.snippet : (snippet ?? '');
+  const currentLanguage =
+    activeTab?.language ||
+    language ||
+    (currentSnippet.trim().startsWith('{') ? 'json' : 'bash');
+
+  const highlightedHtml = useMemo(() => {
+    const grammar = Prism.languages[currentLanguage] || Prism.languages.bash;
+    if (!grammar) return currentSnippet;
+    return Prism.highlight(currentSnippet, grammar, currentLanguage);
+  }, [currentSnippet, currentLanguage]);
+
   const currentSnippetAriaLabel =
     activeTab?.snippetAriaLabel ||
     snippetAriaLabel ||
@@ -130,7 +147,7 @@ export const DevCard = ({
         tabIndex={0}
         aria-label={currentSnippetAriaLabel}
       >
-        <code>{currentSnippet}</code>
+        <code dangerouslySetInnerHTML={{ __html: highlightedHtml }} />
       </pre>
     </div>
   );
