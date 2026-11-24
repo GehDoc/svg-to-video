@@ -1,7 +1,7 @@
 # Spec: Semantic Web Layout, Heading Hierarchy & GitHub Star Rating Integration
 
 **GitHub Issue**: None
-**Pull Request**: Pending
+**Pull Request**: https://github.com/GehDoc/svg-to-video/pull/276
 **Status**: 🟠 Pending
 
 ## 🎯 Objective
