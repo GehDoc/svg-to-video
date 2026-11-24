@@ -157,13 +157,33 @@ export const SeoContent = () => {
             <FaQuestionCircle className="block-icon" />
             <h3 id="faq-title">Frequently Asked Questions</h3>
           </div>
-          <div className="faq-grid">
-            {seoData.faq.map((item) => (
-              <article key={item.question} className="faq-item">
-                <h4>{item.question}</h4>
-                <p dangerouslySetInnerHTML={{ __html: item.answerHtml }} />
-              </article>
-            ))}
+          <div className="faq-sections">
+            {seoData.faqCategories && seoData.faqCategories.length > 0 ? (
+              seoData.faqCategories.map((group) => (
+                <div key={group.category} className="faq-category-block">
+                  <h4 className="faq-category-title">{group.category}</h4>
+                  <div className="faq-grid">
+                    {group.items.map((item) => (
+                      <article key={item.question} className="faq-item">
+                        <h5>{item.question}</h5>
+                        <p
+                          dangerouslySetInnerHTML={{ __html: item.answerHtml }}
+                        />
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="faq-grid">
+                {seoData.faq.map((item) => (
+                  <article key={item.question} className="faq-item">
+                    <h4>{item.question}</h4>
+                    <p dangerouslySetInnerHTML={{ __html: item.answerHtml }} />
+                  </article>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 

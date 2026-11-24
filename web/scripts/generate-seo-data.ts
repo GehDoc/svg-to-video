@@ -13,8 +13,14 @@ const readmePath = path.resolve(rootDir, 'README.md');
 const faqPath = path.resolve(rootDir, 'docs/FAQ.md');
 const outputPath = path.resolve(webDir, 'src/data/seoDocumentation.json');
 interface FaqEntry {
+  category?: string;
   question: string;
   answerHtml: string;
+}
+
+interface FaqCategory {
+  category: string;
+  items: FaqEntry[];
 }
 
 interface WhyItem {
@@ -86,28 +92,81 @@ function parseMcpConfig(mcpText: string): string {
 }
 
 /**
- * Parses docs/FAQ.md, which uses the convention:
- *   ## Q: <question text>
- *   <blank line>
- *   <answer paragraph(s)>
+ * Parses docs/FAQ.md, supporting categorized sections (## Category)
+ * with questions (### Q: or ## Q:) beneath them.
  */
-function parseFaq(faqMarkdown: string): FaqEntry[] {
-  const entries: FaqEntry[] = [];
-  // Split on level-2 headings that start with "Q:"
-  const blocks = faqMarkdown.split(/\n(?=## Q:)/);
-  for (const block of blocks) {
-    const lines = block.trim().split('\n');
-    const headingLine = lines[0];
-    const questionMatch = headingLine.match(/^## Q:\s+(.+)$/);
-    if (!questionMatch) continue;
-    const question = questionMatch[1].trim();
-    const answerRaw = lines.slice(1).join('\n').trim();
-    entries.push({
-      question,
-      answerHtml: marked.parseInline(answerRaw) as string,
-    });
+function parseFaq(faqMarkdown: string): {
+  faq: FaqEntry[];
+  faqCategories: FaqCategory[];
+} {
+  const faq: FaqEntry[] = [];
+  const faqCategories: FaqCategory[] = [];
+
+  const lines = faqMarkdown.split('\n');
+  let currentCategory = 'General';
+  let currentCategoryItems: FaqEntry[] = [];
+  let currentQuestion = '';
+  let currentAnswerLines: string[] = [];
+
+  const flushQuestion = () => {
+    if (currentQuestion && currentAnswerLines.length > 0) {
+      const entry: FaqEntry = {
+        category: currentCategory,
+        question: currentQuestion,
+        answerHtml: marked.parseInline(
+          currentAnswerLines.join('\n').trim()
+        ) as string,
+      };
+      faq.push(entry);
+      currentCategoryItems.push(entry);
+    }
+    currentQuestion = '';
+    currentAnswerLines = [];
+  };
+
+  const flushCategory = () => {
+    flushQuestion();
+    if (currentCategoryItems.length > 0) {
+      faqCategories.push({
+        category: currentCategory,
+        items: [...currentCategoryItems],
+      });
+      currentCategoryItems = [];
+    }
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    // Match Category header: ## Category Name (not ## Q:)
+    const categoryMatch = line.match(/^##\s+(?!Q:)(.+)$/);
+    if (categoryMatch) {
+      flushCategory();
+      currentCategory = categoryMatch[1].trim();
+      continue;
+    }
+
+    // Match Question: ### Q: ... or ## Q: ...
+    const questionMatch = line.match(/^#{2,3}\s+Q:\s+(.+)$/);
+    if (questionMatch) {
+      flushQuestion();
+      currentQuestion = questionMatch[1].trim();
+      continue;
+    }
+
+    // Skip top-level # Frequently Asked Questions header
+    if (line.match(/^#\s+/)) {
+      continue;
+    }
+
+    if (currentQuestion) {
+      currentAnswerLines.push(rawLine);
+    }
   }
-  return entries;
+
+  flushCategory();
+
+  return { faq, faqCategories };
 }
 
 try {
@@ -127,7 +186,7 @@ try {
   const quickStartSteps = parseQuickStart(webStudioText);
   const cliSnippet = parseCliCommands(cliText);
   const mcpSnippet = parseMcpConfig(mcpText);
-  const faq = parseFaq(faqMarkdown);
+  const { faq, faqCategories } = parseFaq(faqMarkdown);
 
   const seoData = {
     // UI headline: concise, display-friendly — intentionally NOT sourced from
@@ -178,6 +237,7 @@ try {
       },
     ],
     faq,
+    faqCategories,
     lastUpdated: new Date().toISOString(),
   };
 

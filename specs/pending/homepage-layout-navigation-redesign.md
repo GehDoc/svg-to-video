@@ -24,7 +24,7 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
   - Hero typography & spacing: configured hero headline `font-size: 1.35rem` with balanced vertical spacing using `margin-top: 1.75rem` on `h1` and `margin-bottom: 1.25rem` on `p`.
   - Site footer layout: top-aligned all footer columns (`align-items: flex-start`), and structured ecosystem and contribute sections as stacked rows inside a single middle column.
   - Site footer ergonomics: place app version directly following the application name; pin "Back to top ↑" to the right across all screen sizes.
-  - FAQ reordering: move "How does the Web Studio render high-quality, flicker-free GIFs without a server?" in `docs/FAQ.md` before any CLI/MCP questions.
+  - FAQ categorization: split `docs/FAQ.md` into distinct "Web Studio" and "CLI, Docker & MCP Automation" sections, with updated extractor generating `faqCategories` rendered in organized blocks.
   - Syntax highlighting: integrate Prism.js in `DevCard.tsx` with customized token styling matching project design tokens for CLI, Docker, and MCP code blocks.
 
 ## ✅ Task List

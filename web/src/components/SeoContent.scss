@@ -215,7 +215,28 @@
   @include responsive-grid-2col;
 }
 
-/* FAQ Grid */
+/* FAQ Section */
+.faq-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.faq-category-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .faq-category-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-h);
+    margin: 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
 .faq-grid {
   @include responsive-grid-2col;
 
