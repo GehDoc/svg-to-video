@@ -19,15 +19,16 @@ Modernize the Web Studio homepage by introducing a sticky header with direct sec
   - **Desktop (min-width: 901px)**:
     - Left: Brand logo + "SVG to Video STUDIO" (smooth jump / reset).
     - Center: `<nav className="jump-nav" aria-label="Page navigation">` with direct jump links: Studio (`#studio`), How It Works (`#how-to-convert`), Formats (`#formats`), CLI & MCP (`#automation`), FAQ (`#faq`).
-    - Right: Prominent Sponsor action button (`pkg.funding.url`) with telemetry tracking.
+    - Right: Standardized GitHub repository icon button (`<FaGithub size={20} />` with accessible label & telemetry) + prominent Sponsor action button (`pkg.funding.url`) with telemetry tracking.
   - **Mobile (max-width: 900px)**:
     - Jump links hidden; burger menu button (`<button className="menu-btn" aria-expanded={isOpen} aria-controls="mobile-drawer">`) toggles an accessible drawer.
-    - Drawer contains direct jump links, Sponsor link, and Report an Issue / GitHub repo links.
+    - Drawer contains direct jump links, GitHub repository link, Sponsor link, and Report an Issue link.
   - **Desktop Burger Item Relocation**:
+    - _View Source Code_: Standardized to modern open-source convention as a dedicated `<FaGithub size={20} />` header action icon button, also included in footer ecosystem links and mobile drawer.
     - _Buy me a Coffee_: Removed / unified into header Sponsor button.
     - _Version_: Placed in full-width site footer meta (`v${pkg.version}` with commit SHA linking to release/commit).
     - _License_: Placed in footer meta (`MIT License`).
-    - _Report an Issue_ & _View Source Code_: Integrated in footer ecosystem links and mobile drawer.
+    - _Report an Issue_: Integrated in footer ecosystem links and mobile drawer.
 - **Compact Hero Strip**:
   - Placed right above the studio workspace.
   - Displays `<h1>` headline and tagline from SEO data for immediate visitor clarity and search indexer extraction.
