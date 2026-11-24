@@ -2,7 +2,7 @@
 
 **GitHub Issue**: None
 **Pull Request**: [#275](https://github.com/GehDoc/svg-to-video/pull/275)
-**Status**: 🟡 To be reviewed
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
