@@ -111,6 +111,8 @@ export const Header = ({ onHome }: HeaderProps) => {
             target="_blank"
             rel="noopener noreferrer"
             className="header-sponsor-btn"
+            title="Sponsor on GitHub ↗"
+            aria-label="Sponsor on GitHub"
             onClick={() => {
               trackEvent('click-sponsor', { location: 'header' });
             }}
