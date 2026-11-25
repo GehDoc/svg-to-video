@@ -399,6 +399,10 @@
     box-shadow: none;
     transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
+    &.is-stuck {
+      box-shadow: var(--sticky-shadow);
+    }
+
     @media (max-width: $mobile-breakpoint) {
       padding-left: 1rem;
       padding-right: 1rem;

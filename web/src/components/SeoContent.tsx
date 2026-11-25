@@ -50,12 +50,14 @@ export const SeoContent = () => {
 
   const secCliRef = useRef<HTMLDivElement>(null);
   const secMcpRef = useRef<HTMLDivElement>(null);
-  const subSectionRefs = useMemo(() => [secCliRef, secMcpRef], []);
-  const [stuckCli, stuckMcp] = useStickyHeaderState(
-    subSectionRefs,
-    undefined,
-    100
+  const secFaqStudioRef = useRef<HTMLDivElement>(null);
+  const secFaqCliRef = useRef<HTMLDivElement>(null);
+  const subSectionRefs = useMemo(
+    () => [secCliRef, secMcpRef, secFaqStudioRef, secFaqCliRef],
+    []
   );
+  const [stuckCli, stuckMcp, stuckFaqStudio, stuckFaqCli] =
+    useStickyHeaderState(subSectionRefs, undefined, 100);
 
   useEffect(() => {
     return () => {
@@ -358,21 +360,35 @@ export const SeoContent = () => {
           </div>
           <div className="faq-sections">
             {seoData.faqCategories && seoData.faqCategories.length > 0 ? (
-              seoData.faqCategories.map((group) => (
-                <div key={group.category} className="faq-category-block">
-                  <h4 className="faq-category-title">{group.category}</h4>
-                  <div className="faq-grid">
-                    {group.items.map((item) => (
-                      <article key={item.question} className="faq-item">
-                        <h5>{item.question}</h5>
-                        <p
-                          dangerouslySetInnerHTML={{ __html: item.answerHtml }}
-                        />
-                      </article>
-                    ))}
+              seoData.faqCategories.map((group, index) => {
+                const catRef = index === 0 ? secFaqStudioRef : secFaqCliRef;
+                const isStuck = index === 0 ? stuckFaqStudio : stuckFaqCli;
+                return (
+                  <div
+                    key={group.category}
+                    ref={catRef}
+                    className="faq-category-block"
+                  >
+                    <h4
+                      className={`faq-category-title ${isStuck ? 'is-stuck' : ''}`}
+                    >
+                      {group.category}
+                    </h4>
+                    <div className="faq-grid">
+                      {group.items.map((item) => (
+                        <article key={item.question} className="faq-item">
+                          <h5>{item.question}</h5>
+                          <p
+                            dangerouslySetInnerHTML={{
+                              __html: item.answerHtml,
+                            }}
+                          />
+                        </article>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="faq-grid">
                 {seoData.faq.map((item) => (
