@@ -7,17 +7,18 @@ import { useStickyHeaderState } from './useStickyObserver';
 import type { RefObject } from 'react';
 
 describe('useStickyHeaderState', () => {
-  it('initializes with all headers not stuck at resting position', () => {
+  it('initializes with all headers not stuck when flush at boundary', () => {
     const el1 = document.createElement('section');
+    // Top is exactly at boundary (48), so rect.top <= 46 is false
     vi.spyOn(el1, 'getBoundingClientRect').mockReturnValue({
-      top: 100,
+      top: 48,
       bottom: 400,
       left: 0,
       right: 100,
       width: 100,
-      height: 300,
+      height: 352,
       x: 0,
-      y: 100,
+      y: 48,
       toJSON: () => {},
     });
     const ref1: RefObject<HTMLElement | null> = { current: el1 };
@@ -26,18 +27,18 @@ describe('useStickyHeaderState', () => {
     expect(result.current).toEqual([false]);
   });
 
-  it('detects when section content scrolls under header in window mode', () => {
+  it('triggers shadow as soon as section scrolls 2px past boundary', () => {
     const el1 = document.createElement('section');
-    // Top is < 48 - 4 (44) and bottom > 88
+    // Top is at 45 (past 48 - 2 = 46) and bottom > 83
     vi.spyOn(el1, 'getBoundingClientRect').mockReturnValue({
-      top: 30,
+      top: 45,
       bottom: 250,
       left: 0,
       right: 100,
       width: 100,
-      height: 220,
+      height: 205,
       x: 0,
-      y: 30,
+      y: 45,
       toJSON: () => {},
     });
 
@@ -51,7 +52,7 @@ describe('useStickyHeaderState', () => {
     const el1 = document.createElement('section');
     vi.spyOn(el1, 'getBoundingClientRect').mockReturnValue({
       top: -200,
-      bottom: 50, // <= 88
+      bottom: 50, // <= 83
       left: 0,
       right: 100,
       width: 100,
@@ -67,8 +68,7 @@ describe('useStickyHeaderState', () => {
     expect(result.current).toEqual([false]);
   });
 
-  it('tracks container.scrollTop relative to section offset in desktop container mode', () => {
-    // Ensure desktop width (> 1024)
+  it('works with a container element on desktop', () => {
     Object.defineProperty(window, 'innerWidth', {
       writable: true,
       configurable: true,
@@ -76,50 +76,63 @@ describe('useStickyHeaderState', () => {
     });
 
     const container = document.createElement('div');
-    Object.defineProperty(container, 'scrollTop', {
-      writable: true,
-      configurable: true,
-      value: 0,
+    vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({
+      top: 116,
+      bottom: 700,
+      left: 0,
+      right: 350,
+      width: 350,
+      height: 584,
+      x: 0,
+      y: 116,
+      toJSON: () => {},
     });
     const containerRef: RefObject<HTMLElement | null> = { current: container };
 
     const sec1 = document.createElement('section');
-    Object.defineProperty(sec1, 'offsetTop', { value: 0 });
-    Object.defineProperty(sec1, 'offsetHeight', { value: 200 });
-
-    const sec2 = document.createElement('section');
-    Object.defineProperty(sec2, 'offsetTop', { value: 200 });
-    Object.defineProperty(sec2, 'offsetHeight', { value: 200 });
+    const spySec1 = vi.spyOn(sec1, 'getBoundingClientRect').mockReturnValue({
+      top: 116, // exactly at container top
+      bottom: 300,
+      left: 0,
+      right: 350,
+      width: 350,
+      height: 184,
+      x: 0,
+      y: 116,
+      toJSON: () => {},
+    });
 
     const ref1: RefObject<HTMLElement | null> = { current: sec1 };
-    const ref2: RefObject<HTMLElement | null> = { current: sec2 };
 
     const { result } = renderHook(() =>
-      useStickyHeaderState([ref1, ref2], containerRef)
+      useStickyHeaderState([ref1], containerRef)
     );
 
-    // Initial state: scrollTop is 0, so nothing is stuck!
-    expect(result.current).toEqual([false, false]);
+    // Initial resting state: flush with container top, so NO shadow!
+    expect(result.current).toEqual([false]);
 
-    // Scroll into section 1 content
+    // User scrolls just 3px: rect.top becomes 113 <= 114
     vi.useFakeTimers();
     try {
-      container.scrollTop = 50;
-      act(() => {
-        container.dispatchEvent(new Event('scroll'));
-        vi.runAllTimers();
+      spySec1.mockReturnValue({
+        top: 113,
+        bottom: 297,
+        left: 0,
+        right: 350,
+        width: 350,
+        height: 184,
+        x: 0,
+        y: 113,
+        toJSON: () => {},
       });
-      // Sec1 is stuck, Sec2 is not
-      expect(result.current).toEqual([true, false]);
 
-      // Scroll into section 2 content
-      container.scrollTop = 250;
       act(() => {
         container.dispatchEvent(new Event('scroll'));
         vi.runAllTimers();
       });
-      // Sec1 is scrolled off, Sec2 is stuck
-      expect(result.current).toEqual([false, true]);
+
+      // Shadow triggers promptly right after 3px!
+      expect(result.current).toEqual([true]);
     } finally {
       vi.useRealTimers();
     }
