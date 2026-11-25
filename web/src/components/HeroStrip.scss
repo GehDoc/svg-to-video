@@ -7,8 +7,17 @@
   box-sizing: border-box;
   flex-shrink: 0;
 
+  @media (min-width: #{$header-mobile-breakpoint + 1px}) {
+    position: sticky;
+    top: var(--header-height, 48px);
+    z-index: 30;
+    box-shadow: var(--shadow-sm);
+  }
+
   @media (max-width: $header-mobile-breakpoint) {
+    position: static;
     padding: 0 1rem;
+    box-shadow: none;
   }
 
   .hero-strip-inner {

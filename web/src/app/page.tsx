@@ -44,8 +44,10 @@ export default function Page() {
       )}
       {!mounted && (
         <div id="top" className="app-container">
-          <HeroStrip />
-          <SeoContent />
+          <main id="main-content">
+            <HeroStrip />
+            <SeoContent />
+          </main>
           <SiteFooter />
         </div>
       )}

@@ -13,6 +13,13 @@ vi.mock('../assets/logo.svg?react', () => ({
 test('Header renders title, jump links, actions and mobile burger', () => {
   render(<Header />);
 
+  expect(
+    screen.getByRole('link', { name: /skip to main content/i })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('link', { name: /skip to main content/i })
+  ).toHaveAttribute('href', '#main-content');
+
   expect(screen.getByText(/svg to video/i)).toBeInTheDocument();
   expect(screen.getAllByText(/studio/i).length).toBeGreaterThan(0);
   expect(screen.getByTestId('logo')).toBeInTheDocument();

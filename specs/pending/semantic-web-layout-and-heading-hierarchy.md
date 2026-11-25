@@ -2,7 +2,7 @@
 
 **GitHub Issue**: None
 **Pull Request**: https://github.com/GehDoc/svg-to-video/pull/276
-**Status**: 🟠 Pending
+**Status**: 🔵 In Progress
 
 ## 🎯 Objective
 
@@ -44,9 +44,10 @@
   - Implement custom hook `useGitHubRepoStars()` querying `https://api.github.com/repos/GehDoc/svg-to-video`.
   - Configure resilient cache policy (`staleTime: 1000 * 60 * 30` / 30 mins, `gcTime: 1000 * 60 * 60`, graceful offline / rate-limit fallback without UI layout shift).
   - Provide test query client wrapper in Storybook decorators and Vitest test setups to prevent outbound network calls.
-- **Top Bar Star Button**:
-  - Add a dedicated GitHub Star button in `Header.tsx` (next to GitHub and Sponsor buttons).
+- **Dedicated StarButton Component**:
+  - Implement a dedicated `StarButton` component (`web/src/components/StarButton/StarButton.tsx`) with unit tests, Storybook stories, and SCSS module/partial.
   - Structure: Star icon + live star count badge (with fallback/skeleton state).
+  - Used in `Header.tsx` (desktop & mobile drawer) and easily embeddable elsewhere.
   - Directs users to `https://github.com/GehDoc/svg-to-video` with tooltip ("Star svg-to-video on GitHub ↗") and external link indicator.
 - **"Sponsor me on GitHub" Renaming**:
   - Update all header buttons, mobile drawer links, tooltips, and SEO support buttons from "Sponsor on GitHub" to "Sponsor me on GitHub".
@@ -74,14 +75,14 @@
 
 ## ✅ Task List
 
-- [ ] **Phase 1: Semantic Application Layout, Landmarks & Sticky Headers**
-  - [ ] Encompass studio workspace and SeoContent inside `<main id="main-content">` in `Studio.tsx` and `page.tsx`
-  - [ ] Convert header logo link to semantic `<div>` (preserving Hero as single document `<h1>`)
-  - [ ] Add accessible skip-to-content link with focus styles
-  - [ ] Implement sticky header behavior and bottom elevation shadow on `HeroStrip` (desktop only)
-  - [ ] Implement sticky headers and subtle shadow in `ConfigPanel` and `SeoContent`
-  - [ ] Verify layout, responsive fold, and visual regressions
-  - [ ] Review and commit Phase 1
+- [x] **Phase 1: Semantic Application Layout, Landmarks & Sticky Headers**
+  - [x] Encompass studio workspace and SeoContent inside `<main id="main-content">` in `Studio.tsx` and `page.tsx`
+  - [x] Convert header logo link to semantic `<div>` (preserving Hero as single document `<h1>`)
+  - [x] Add accessible skip-to-content link with focus styles
+  - [x] Implement sticky header behavior and bottom elevation shadow on `HeroStrip` (desktop only)
+  - [x] Implement sticky headers and subtle shadow in `ConfigPanel` and `SeoContent`
+  - [x] Verify layout, responsive fold, and visual regressions
+  - [x] Review and commit Phase 1
 - [ ] **Phase 2: Semantic Heading Hierarchy & List Semantics**
   - [ ] Promote top-level section headings to `<h2>`
   - [ ] Promote sub-section headings to `<h3>`
@@ -92,7 +93,7 @@
 - [ ] **Phase 3: GitHub Star Rating, Support Section & Sponsoring Renaming**
   - [ ] Install `@tanstack/react-query` in `web` workspace and configure `Providers.tsx`
   - [ ] Implement `useGitHubRepoStars` hook with cached query (`staleTime: 30m`) and offline/rate-limit fallback
-  - [ ] Add star button with icon + star count in `Header.tsx` (desktop & mobile drawer)
+  - [ ] Create dedicated StarButton component (with stories & unit tests) and integrate into `Header.tsx` (desktop & mobile drawer)
   - [ ] Rename "Sponsor on GitHub" to "Sponsor me on GitHub" across Header, mobile drawer, tooltips, and SeoContent
   - [ ] Update `#sponsor` in `SeoContent.tsx` to `#support` with a dedicated "Star on GitHub" rating card alongside Sponsor (with backward-compatible `#sponsor` anchor alias)
   - [ ] Add unit & Storybook tests for Star button and Support section with mock QueryClient

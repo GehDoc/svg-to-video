@@ -46,13 +46,22 @@
     align-items: center;
     gap: 0.75rem;
     border-bottom: 2px solid var(--border);
-    padding-bottom: 0.75rem;
+    padding: 0.75rem 0.5rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    position: sticky;
+    top: var(--header-height, 48px);
+    z-index: 10;
+    background: var(--bg);
+    border-radius: 8px 8px 0 0;
+    box-shadow: var(--shadow-sm);
 
     .block-icon {
       color: var(--primary);
       font-size: 1.35rem;
     }
 
+    h2,
     h3 {
       font-size: 1.35rem;
       font-weight: 700;
