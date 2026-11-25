@@ -22,6 +22,7 @@
 }
 
 .config-section {
+  position: relative;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--border);
 
@@ -34,21 +35,32 @@
     top: 0;
     z-index: 5;
     background: var(--panel);
-    padding: 0.5rem 0;
-    margin-top: -0.5rem;
-    margin-bottom: 0.75rem;
+    opacity: 1;
+    margin: -1rem -1.5rem 0.75rem -1.5rem;
+    padding: 0.75rem 1.5rem;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--text-h);
     font-weight: 700;
-    box-shadow: var(--shadow-sm);
+    box-shadow: none;
+    transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.is-stuck {
+      box-shadow: var(--sticky-shadow);
+    }
+
+    @media (max-width: $mobile-breakpoint) {
+      top: var(--header-height, 48px);
+      z-index: 20;
+    }
   }
 
   &.is-locked {
     h2 {
-      color: var(--text-h);
-      opacity: 0.4;
+      color: var(--text-muted);
+      opacity: 1;
+      background: var(--panel);
     }
 
     .hint-text {

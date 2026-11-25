@@ -6,18 +6,23 @@
   border-bottom: 1px solid var(--border);
   box-sizing: border-box;
   flex-shrink: 0;
+  box-shadow: none;
+  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
   @media (min-width: #{$header-mobile-breakpoint + 1px}) {
     position: sticky;
     top: var(--header-height, 48px);
     z-index: 30;
-    box-shadow: var(--shadow-sm);
+
+    &.is-stuck {
+      box-shadow: var(--sticky-shadow);
+    }
   }
 
   @media (max-width: $header-mobile-breakpoint) {
     position: static;
     padding: 0 1rem;
-    box-shadow: none;
+    box-shadow: none !important;
   }
 
   .hero-strip-inner {

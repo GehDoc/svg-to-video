@@ -2,6 +2,7 @@ import {
   useEffect,
   useState,
   useMemo,
+  useRef,
   type ChangeEvent,
   useCallback,
 } from 'react';
@@ -21,6 +22,7 @@ import type { VideoMetadata } from '../../../shared/metadata';
 import { Button } from './Button/Button';
 import { FormatSelector } from './FormatSelector/FormatSelector';
 import { FaLayerGroup, FaTimes } from 'react-icons/fa';
+import { useStickyHeaderState } from '../hooks/useStickyObserver';
 import './ConfigPanel.scss';
 
 interface ConfigPanelProps {
@@ -180,18 +182,36 @@ export const ConfigPanel = ({
     };
   }, [effectiveTargetDim, format, handleFormatChange]);
 
+  const contentRef = useRef<HTMLDivElement>(null);
+  const sec1Ref = useRef<HTMLElement>(null);
+  const sec2Ref = useRef<HTMLElement>(null);
+  const sec3Ref = useRef<HTMLElement>(null);
+  const sec4Ref = useRef<HTMLElement>(null);
+  const sectionRefs = useMemo(() => [sec1Ref, sec2Ref, sec3Ref, sec4Ref], []);
+  const [stuck1, stuck2, stuck3, stuck4] = useStickyHeaderState(
+    sectionRefs,
+    contentRef
+  );
+
   return (
     <aside className="config-panel">
       <div
         className="config-content"
+        ref={contentRef}
         tabIndex={0}
         aria-label="Configuration sections"
       >
         <section
+          ref={sec1Ref}
           className={`config-section ${isRenderingOrSuccess ? 'is-locked' : ''}`}
           aria-disabled={isRenderingOrSuccess}
         >
-          <h2 aria-disabled={isRenderingOrSuccess}>1. Source</h2>
+          <h2
+            className={stuck1 ? 'is-stuck' : ''}
+            aria-disabled={isRenderingOrSuccess}
+          >
+            1. Source
+          </h2>
           <Dropzone
             svgContent={svgContent}
             isDragging={isDragging}
@@ -229,10 +249,16 @@ export const ConfigPanel = ({
         </section>
 
         <section
+          ref={sec2Ref}
           className={`config-section ${isOptionsDisabled ? 'is-locked' : ''}`}
           aria-disabled={isOptionsDisabled}
         >
-          <h2 aria-disabled={isOptionsDisabled}>2. Format</h2>
+          <h2
+            className={stuck2 ? 'is-stuck' : ''}
+            aria-disabled={isOptionsDisabled}
+          >
+            2. Format
+          </h2>
           <FormatSelector
             formats={formats}
             value={format}
@@ -343,10 +369,16 @@ export const ConfigPanel = ({
         </section>
 
         <section
+          ref={sec3Ref}
           className={`config-section ${isOptionsDisabled ? 'is-locked' : ''}`}
           aria-disabled={isOptionsDisabled}
         >
-          <h2 aria-disabled={isOptionsDisabled}>3. Canvas</h2>
+          <h2
+            className={stuck3 ? 'is-stuck' : ''}
+            aria-disabled={isOptionsDisabled}
+          >
+            3. Canvas
+          </h2>
           <div className="input-group">
             <div className="checkbox-wrapper">
               <input
@@ -431,10 +463,16 @@ export const ConfigPanel = ({
         </section>
 
         <section
+          ref={sec4Ref}
           className={`config-section ${isOptionsDisabled ? 'is-locked' : ''}`}
           aria-disabled={isOptionsDisabled}
         >
-          <h2 aria-disabled={isOptionsDisabled}>4. Metadata</h2>
+          <h2
+            className={stuck4 ? 'is-stuck' : ''}
+            aria-disabled={isOptionsDisabled}
+          >
+            4. Metadata
+          </h2>
           <div className="input-group">
             <label htmlFor="meta-title">Title</label>
             <input

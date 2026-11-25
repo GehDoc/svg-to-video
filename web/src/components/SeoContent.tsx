@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   FaTerminal,
   FaRobot,
@@ -15,11 +15,38 @@ import pkg from '../../package.json';
 import { ECOSYSTEM_LINKS } from '../utils/constants';
 import { trackEvent } from '../utils/analytics';
 import { DevCard } from './DevCard/DevCard';
+import { useStickyHeaderState } from '../hooks/useStickyObserver';
 import './SeoContent.scss';
 
 export const SeoContent = () => {
   const [isPromptCopied, setIsPromptCopied] = useState(false);
   const promptTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const secWhyRef = useRef<HTMLElement>(null);
+  const secHowRef = useRef<HTMLElement>(null);
+  const secFormatsRef = useRef<HTMLElement>(null);
+  const secAutomationRef = useRef<HTMLElement>(null);
+  const secFaqRef = useRef<HTMLElement>(null);
+  const secSponsorRef = useRef<HTMLElement>(null);
+  const seoSectionRefs = useMemo(
+    () => [
+      secWhyRef,
+      secHowRef,
+      secFormatsRef,
+      secAutomationRef,
+      secFaqRef,
+      secSponsorRef,
+    ],
+    []
+  );
+  const [
+    stuckWhy,
+    stuckHow,
+    stuckFormats,
+    stuckAutomation,
+    stuckFaq,
+    stuckSponsor,
+  ] = useStickyHeaderState(seoSectionRefs);
 
   useEffect(() => {
     return () => {
@@ -51,11 +78,12 @@ export const SeoContent = () => {
       <div className="seo-container">
         {/* Key Features Grid */}
         <section
+          ref={secWhyRef}
           id="why-svg-to-video"
           className="seo-block"
           aria-labelledby="why-title"
         >
-          <div className="block-header">
+          <div className={`block-header ${stuckWhy ? 'is-stuck' : ''}`}>
             <FaShieldAlt className="block-icon" />
             <h3 id="why-title">Why Use SVG to Video?</h3>
           </div>
@@ -71,11 +99,12 @@ export const SeoContent = () => {
 
         {/* How It Works / 3-Step Guide */}
         <section
+          ref={secHowRef}
           id="how-to-convert"
           className="seo-block"
           aria-labelledby="how-title"
         >
-          <div className="block-header">
+          <div className={`block-header ${stuckHow ? 'is-stuck' : ''}`}>
             <FaCogs className="block-icon" />
             <h3 id="how-title">
               How to Convert Animated SVGs (CSS &amp; SMIL)
@@ -96,11 +125,12 @@ export const SeoContent = () => {
 
         {/* Format Comparison Table */}
         <section
+          ref={secFormatsRef}
           id="formats"
           className="seo-block"
           aria-labelledby="formats-title"
         >
-          <div className="block-header">
+          <div className={`block-header ${stuckFormats ? 'is-stuck' : ''}`}>
             <FaLayerGroup className="block-icon" />
             <h3 id="formats-title">
               Supported Output Formats &amp; Specifications
@@ -152,11 +182,12 @@ export const SeoContent = () => {
 
         {/* CLI & MCP Developer Integration */}
         <section
+          ref={secAutomationRef}
           id="automation"
           className="seo-block"
           aria-labelledby="automation-title"
         >
-          <div className="block-header">
+          <div className={`block-header ${stuckAutomation ? 'is-stuck' : ''}`}>
             <FaTerminal className="block-icon" />
             <h3 id="automation-title">
               Developer CLI, Docker &amp; Model Context Protocol (MCP)
@@ -302,8 +333,13 @@ export const SeoContent = () => {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="seo-block" aria-labelledby="faq-title">
-          <div className="block-header">
+        <section
+          ref={secFaqRef}
+          id="faq"
+          className="seo-block"
+          aria-labelledby="faq-title"
+        >
+          <div className={`block-header ${stuckFaq ? 'is-stuck' : ''}`}>
             <FaQuestionCircle className="block-icon" />
             <h3 id="faq-title">Frequently Asked Questions</h3>
           </div>
@@ -339,11 +375,12 @@ export const SeoContent = () => {
 
         {/* Support & Sponsorship Section */}
         <section
+          ref={secSponsorRef}
           id="sponsor"
           className="seo-block sponsor-section"
           aria-labelledby="sponsor-title"
         >
-          <div className="block-header">
+          <div className={`block-header ${stuckSponsor ? 'is-stuck' : ''}`}>
             <FaHeart className="block-icon sponsor-icon" />
             <h3 id="sponsor-title">Support SVG to Video</h3>
           </div>

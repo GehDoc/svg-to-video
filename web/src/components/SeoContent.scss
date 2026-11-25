@@ -54,7 +54,12 @@
     z-index: 10;
     background: var(--bg);
     border-radius: 8px 8px 0 0;
-    box-shadow: var(--shadow-sm);
+    box-shadow: none;
+    transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.is-stuck {
+      box-shadow: var(--sticky-shadow);
+    }
 
     .block-icon {
       color: var(--primary);
