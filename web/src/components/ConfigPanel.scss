@@ -13,12 +13,18 @@
     height: auto;
     border-right: none;
     border-bottom: 1px solid var(--border);
+    overflow: visible;
   }
 }
 
 .config-content {
   flex: 1;
   overflow-y: auto;
+
+  @media (max-width: $mobile-breakpoint) {
+    overflow-y: visible;
+    overflow: visible;
+  }
 }
 
 .config-section {

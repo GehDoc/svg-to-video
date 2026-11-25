@@ -19,16 +19,25 @@ export function useStickyHeaderState(
       const isMobile =
         typeof window !== 'undefined' ? window.innerWidth <= 1024 : false;
       const container = !isMobile && containerRef ? containerRef.current : null;
-      const boundaryTop = container
-        ? container.getBoundingClientRect().top
-        : 48; // fixed site-header height
 
       const nextStates = sectionRefs.map((ref) => {
         if (!ref.current) return false;
-        const rect = ref.current.getBoundingClientRect();
-        // The header is stuck when the section top has scrolled past the boundary,
-        // and the section bottom hasn't scrolled completely past the header.
-        return rect.top <= boundaryTop + 2 && rect.bottom > boundaryTop + 40;
+
+        if (container) {
+          // On desktop, check container.scrollTop relative to section offset within container
+          const scrollTop = container.scrollTop;
+          const offsetTop = ref.current.offsetTop;
+          const offsetHeight = ref.current.offsetHeight;
+          return (
+            scrollTop > offsetTop + 4 &&
+            scrollTop < offsetTop + offsetHeight - 35
+          );
+        } else {
+          // On mobile or window scroll, check viewport coordinates
+          const boundaryTop = 48; // fixed site-header height
+          const rect = ref.current.getBoundingClientRect();
+          return rect.top < boundaryTop - 4 && rect.bottom > boundaryTop + 40;
+        }
       });
 
       setStuckStates((prev) => {
