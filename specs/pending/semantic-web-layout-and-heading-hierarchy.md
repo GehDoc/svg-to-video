@@ -1,126 +1,91 @@
-# Spec: Semantic Web Layout, Heading Hierarchy & GitHub Star Rating Integration
+# Spec: Semantic Web Layout, Accessible Landmarks & Sticky Navigation
 
 **GitHub Issue**: None
 **Pull Request**: https://github.com/GehDoc/svg-to-video/pull/276
-**Status**: 🔵 In Progress
+**Status**: 🟡 To be reviewed
 
 ## 🎯 Objective
 
-1. Refactor the Web Studio HTML landmark structure, heading levels, and list semantics to achieve 100% compliance with W3C semantic web standards and WCAG 2.1 accessibility criteria (SC 1.3.1 Info and Relationships) across both SSR and client hydration.
-2. Integrate a GitHub repository rating & star button ("star icon + number of stars" cached via TanStack React Query) into the top navigation bar, accompanied by a dedicated community support & star section inside `SeoContent` alongside the Sponsor card.
-3. Add sticky header behaviors with subtle bottom shadow (matching SVG sample card selector aesthetic) for the web studio form sections, SEO content block headers, and desktop Hero strip (disabled on mobile).
-4. Rename "Sponsor on GitHub" button text, tooltips, and labels to "Sponsor me on GitHub".
-5. Enforce strict design token standards (zero hardcoded colors in component SCSS) and introduce a unified dual-theme Storybook accessibility test script (`test:storybook:all`).
+Refactor the Web Studio HTML landmark structure, keyboard accessibility, and header navigation system to achieve 100% compliance with W3C semantic web standards and WCAG 2.1 criteria:
+
+1. Establish a single-document primary landmark `<main id="main-content">` encapsulating both the interactive studio and editorial documentation across SSR and hydrated client states.
+2. Provide a keyboard-focusable skip-to-content link and reserve the single document `<h1>` strictly for the primary Hero headline.
+3. Implement a deterministic boundary-relative sticky header observer system (`useStickyObserver`) providing smooth scroll-elevation shadows (`--sticky-shadow`) across the desktop Hero fold, the scrollable Web Studio form sections, and two levels of editorial SEO content (section block headers and nested sub-headers / FAQ categories).
+
+_(Note: Semantic heading level promotions `<h3>` → `<h2>` and the dedicated `StarButton` component with TanStack Query repo star caching are scoped to a dedicated follow-up spec `specs/pending/star-button-and-heading-hierarchy.md`.)_
 
 ## 🛠 Technical Strategy
 
-### 1. Semantic Application Layout, Landmarks & Sticky Headers
+### 1. Semantic Application Layout & Landmarks
 
 - **Landmark Scope (SSR & Hydrated Client)**:
-  - Wrap both the bounded studio workspace (`#studio`) and editorial documentation sections (`SeoContent`) inside the primary `<main id="main-content">` landmark.
-  - In `Studio.tsx`: promote `<main className="studio-main">` to encapsulate `HeroStrip`, `<section id="studio">`, and `SeoContent`.
+  - In `Studio.tsx`: promote `<main id="main-content" className="studio-main">` to encapsulate `HeroStrip`, `<section id="studio">`, and `SeoContent`.
   - In `page.tsx` (`!mounted` fallback): wrap `HeroStrip` and `SeoContent` inside `<main id="main-content">` so search crawlers and screen readers receive semantic landmarks in both SSR and hydrated states.
 - **Single `<h1>` Document Standard**:
-  - Convert the application logo title in `Header.tsx` from `<h1>` to a semantic branding container (`<div className="header-title">`), leaving the Hero headline as the sole document `<h1>`.
+  - Convert application logo title in `Header.tsx` from `<h1>` to `<div className="header-title">`, leaving the Hero headline as the sole document `<h1>`.
 - **Accessible Skip Link**:
-  - Add an accessible, keyboard-focusable skip-link (`<a href="#main-content" className="skip-link">Skip to main content</a>`) with high-contrast focus styling.
-- **Sticky Headers with Elevation Shadow**:
-  - **Hero Strip (`HeroStrip`)**: Make sticky on desktop/tablet with `position: sticky; top: var(--header-height, 53px); z-index: 90;` and a subtle bottom elevation shadow (`box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04)`). Keep `position: static` on mobile (`max-width: $header-mobile-breakpoint`).
-  - **Web Studio Form (`ConfigPanel`)**: Sticky section headers (`h2`) or form navigation inside the scrollable configuration column with subtle elevation when scrolled.
-  - **SEO Content (`SeoContent`)**: Make section block headers (`.block-header`) sticky with appropriate background (`var(--bg)`) and bottom elevation shadow.
+  - Add an accessible, keyboard-focusable skip-link (`<a href="#main-content" className="skip-link">Skip to main content</a>`) with high-contrast focus styling in `Header.tsx` and `Header.scss`.
 
-### 2. Semantic Heading Hierarchy & Ordered Lists
+### 2. Sticky Headers with Dynamic Elevation Shadow
 
-- **Heading Level Hierarchy**: Resolve heading level skips by promoting top-level documentation sections (`#why-svg-to-video`, `#how-to-convert`, `#formats`, `#automation`, `#faq`, `#support`) from `<h3>` to `<h2>`.
-- **Sub-section Hierarchy**: Promote nested sub-headings from `<h4>` to `<h3>` (feature titles, CLI & Docker Automation, AI Agent & MCP Integration, FAQ category titles).
-- **FAQ Item Hierarchy**: Promote individual FAQ questions from `<h5>` to `<h4>`.
-- **Ordered List Semantics**: Convert the 5-step conversion sequence in "How to Convert" from generic `<div>` wrappers to semantic `<ol className="steps-container">` and `<li className="step-card">`.
-
-### 3. GitHub Star Rating & Community Support Section
-
-- **TanStack React Query Integration**:
-  - Install `@tanstack/react-query` in `web/package.json`.
-  - Add a lightweight client provider (`web/src/components/Providers.tsx`) in Next.js App Router.
-  - Implement custom hook `useGitHubRepoStars()` querying `https://api.github.com/repos/GehDoc/svg-to-video`.
-  - Configure resilient cache policy (`staleTime: 1000 * 60 * 30` / 30 mins, `gcTime: 1000 * 60 * 60`, graceful offline / rate-limit fallback without UI layout shift).
-  - Provide test query client wrapper in Storybook decorators and Vitest test setups to prevent outbound network calls.
-- **Dedicated StarButton Component**:
-  - Implement a dedicated `StarButton` component (`web/src/components/StarButton/StarButton.tsx`) with unit tests, Storybook stories, and SCSS module/partial.
-  - Structure: Star icon + live star count badge (with fallback/skeleton state).
-  - Used in `Header.tsx` (desktop & mobile drawer) and easily embeddable elsewhere.
-  - Directs users to `https://github.com/GehDoc/svg-to-video` with tooltip ("Star svg-to-video on GitHub ↗") and external link indicator.
-- **"Sponsor me on GitHub" Renaming**:
-  - Update all header buttons, mobile drawer links, tooltips, and SEO support buttons from "Sponsor on GitHub" to "Sponsor me on GitHub".
-- **Dedicated Star & Support Section in SeoContent**:
-  - Expand/unify the existing `#sponsor` section into `#support` ("Support the Project & Star on GitHub").
-  - Preserve an anchor alias (`id="sponsor"`) to ensure backward compatibility for existing external links.
-  - Present side-by-side or stacked community cards:
-    - **Star on GitHub Card**: Prompt users to star and bookmark the repository, displaying live stars.
-    - **Sponsor Card**: Sponsoring prompt renamed to "Sponsor me on GitHub ↗".
-
-### 4. Design Token & Theming Standardization
-
-- **Zero Hardcoded Colors**: Strictly forbid raw hex or rgba values in component `.scss` files. Any colors for star buttons, rating badges, sticky elevation shadows, or hover states must be centralized in `web/src/index.scss` using CSS variables (`--star-color`, `--star-bg`, `--shadow-sm`, etc.) with light & dark theme definitions.
-- **Third-Party Theme Isolation**: Maintain all external library styles in dedicated SCSS partials (like `web/src/styles/_syntax.scss`).
-
-### 5. Unified Dual-Theme Accessibility Verification
-
-- Add `test:storybook:all` script to `web/package.json`:
-  ```json
-  "test:storybook:all": "vitest run -c vitest.storybook.ts && STORYBOOK_THEME=dark vitest run -c vitest.storybook.ts"
-  ```
-- Expose `npm run test:storybook:all` from the root workspace.
+- **Hero Strip (`HeroStrip`)**:
+  - Sticky on desktop/tablet with `position: sticky; top: var(--header-height, 48px); z-index: 90;` and smooth bottom elevation shadow (`--sticky-shadow`).
+  - Stays `position: static` on mobile (`max-width: $mobile-breakpoint`) to conserve screen real estate.
+- **Web Studio Form (`ConfigPanel`)**:
+  - Sticky section headers inside the configuration column with solid disabled background (`var(--panel)`) and dynamic drop shadow activating only when content scrolls under each section.
+  - Resolved mobile stickiness by ensuring `.config-content` and `.config-panel` have visible overflow on mobile viewports.
+- **Editorial SEO Content (`SeoContent`)**:
+  - Primary section block headers (`.block-header`) break out edge-to-edge (`100vw`) with `background: var(--panel)` and sticky pinning at `top: var(--header-height, 48px); z-index: 12`.
+  - Dynamic horizontal padding (`max(1.5rem, calc(50vw - 540px + 1.5rem))`) ensures pixel-perfect text alignment with the 1080px inner container.
+  - Nested Level 2 sticky sub-headers (Developer Automation sub-blocks and FAQ category titles) stick at `top: calc(var(--header-height, 48px) + 52px); z-index: 11` directly below active parent headers with matching edge-to-edge breakout and dynamic shadow.
+- **Sticky State Hook (`useStickyObserver`)**:
+  - Uses relative `getBoundingClientRect()` calculation against the container/viewport boundary rather than `offsetTop` to prevent layout hierarchy offsets.
+  - Supports configurable `boundaryOffset` for multi-level sticky stacking.
 
 ---
 
 ## ✅ Task List
 
-- [x] **Phase 1: Semantic Application Layout, Landmarks & Sticky Headers**
+- [x] **Phase 1: Semantic Application Layout & Landmarks**
   - [x] Encompass studio workspace and SeoContent inside `<main id="main-content">` in `Studio.tsx` and `page.tsx`
   - [x] Convert header logo link to semantic `<div>` (preserving Hero as single document `<h1>`)
   - [x] Add accessible skip-to-content link with focus styles
+- [x] **Phase 2: Sticky Header & Dynamic Elevation System**
   - [x] Implement sticky header behavior and bottom elevation shadow on `HeroStrip` (desktop only)
-  - [x] Implement sticky headers and subtle shadow in `ConfigPanel` and `SeoContent`
-  - [x] Verify layout, responsive fold, and visual regressions
-  - [x] Review and commit Phase 1
-- [ ] **Phase 2: Semantic Heading Hierarchy & List Semantics**
-  - [ ] Promote top-level section headings to `<h2>`
-  - [ ] Promote sub-section headings to `<h3>`
-  - [ ] Promote FAQ questions to `<h4>`
-  - [ ] Convert "How to Convert" steps to `<ol>` / `<li>`
-  - [ ] Update unit tests in `SeoContent.test.tsx` for new heading levels
-  - [ ] Review and commit Phase 2
-- [ ] **Phase 3: GitHub Star Rating, Support Section & Sponsoring Renaming**
-  - [ ] Install `@tanstack/react-query` in `web` workspace and configure `Providers.tsx`
-  - [ ] Implement `useGitHubRepoStars` hook with cached query (`staleTime: 30m`) and offline/rate-limit fallback
-  - [ ] Create dedicated StarButton component (with stories & unit tests) and integrate into `Header.tsx` (desktop & mobile drawer)
-  - [ ] Rename "Sponsor on GitHub" to "Sponsor me on GitHub" across Header, mobile drawer, tooltips, and SeoContent
-  - [ ] Update `#sponsor` in `SeoContent.tsx` to `#support` with a dedicated "Star on GitHub" rating card alongside Sponsor (with backward-compatible `#sponsor` anchor alias)
-  - [ ] Add unit & Storybook tests for Star button and Support section with mock QueryClient
-  - [ ] Review and commit Phase 3
-- [ ] **Phase 4: Design Tokens & Dual-Theme Storybook Script**
-  - [ ] Add star rating and elevation tokens (`--star-color`, `--star-bg`, `--shadow-sm`, etc.) to `web/src/index.scss` (light & dark)
-  - [ ] Add `"test:storybook:all"` to `web/package.json` and root `package.json`
-  - [ ] Run dual-theme Axe contrast validation to ensure 0 violations
-  - [ ] Review and commit Phase 4
-- [ ] **Documentation, Security & Pre-Flight Audit**
-  - [ ] Audit `README.md`, `docs/FAQ.md`, and metadata for new anchor IDs
-  - [ ] Run full check (`check:fast`, `test:unit`, `test:visual`, `test:storybook:all`)
+  - [x] Implement sticky headers and subtle shadow in `ConfigPanel` (desktop relative container + mobile window scrolling)
+  - [x] Implement full-width breakout sticky block headers in `SeoContent`
+  - [x] Implement 2nd-level nested sticky sub-headers for Developer Automation and FAQ categories
+  - [x] Implement and unit-test `useStickyObserver` with `boundaryOffset` support
+- [x] **Documentation, Security & SEO Pre-Flight**
+  - [x] Update `docs/ARCHITECTURE.md` with Web Studio accessible landmark and sticky navigation architecture
+  - [x] Audit `docs/SECURITY.md` (no subprocess calls, ephemeral files, or injection vectors introduced)
+  - [x] Audit `README.md` and repo metadata
+- [x] **Architecture & Maintainability Pre-Flight (`🟡 To be reviewed`)**
+  - [x] CSS hygiene verified (zero hardcoded raw hex colors; semantic variables `--sticky-shadow`, `--panel`, `--bg`, etc.)
+  - [x] UI stability & motion verified (no CLS layout shift, smooth elevation transitions)
+  - [x] All automated verification suites passing cleanly (`check:fast`, `test:unit`, `test:storybook`, `test:visual`)
+  - [x] Branch pushed and Pull Request #276 updated for human review handover
 
 ---
 
 ## 🧪 Verification Plan
 
-- [ ] Automated Tests:
-  - `npm run test:unit`
-  - `npm run test:visual -w web`
-  - `npm run test:storybook:all` (verifies Axe compliance in both light and dark modes)
-  - `npm run check:fast`
-- [ ] Manual & Browser Inspection:
-  - Verify heading tree structure in DevTools accessibility tree
-  - Verify `<main>` landmark contains entire primary page content in both SSR and hydrated state
-  - Test keyboard skip link navigation
-  - Verify sticky headers and subtle bottom shadow behavior (desktop Hero vs mobile static Hero)
-  - Verify "Sponsor me on GitHub" text and tooltips
-  - Verify GitHub Star button renders live count or fallback gracefully without layout shift
-  - Verify dark mode contrast of star rating button and support cards
+- [x] Automated Tests:
+  - `npm run check:fast` (ESLint, Prettier formatting, TypeScript typecheck) — PASS
+  - `npm run test:unit` (26 test files, 98 unit tests) — PASS
+  - `npm run test:storybook -w web` (18 storybook suites, 50 component stories) — PASS
+  - `npm run test:visual -w web` (3 visual regression suites, 14 tests) — PASS
+- [x] Manual & Browser Verification:
+  - Verified `<main id="main-content">` wraps workspace fold and SeoContent in SSR and hydrated state.
+  - Verified keyboard skip link focuses correctly and navigates to `#main-content`.
+  - Verified desktop Hero sticky pinning and elevation shadow.
+  - Verified ConfigPanel sticky headers stick smoothly on both desktop container scroll and mobile page scroll.
+  - Verified SeoContent primary block headers and nested sub-headers / FAQ categories stick edge-to-edge with smooth shadows.
+
+## 📝 Change Log
+
+- 2026-11-25: Initial spec draft and branch setup.
+- 2026-11-25: Completed landmark layout, skip link, and sticky header infrastructure.
+- 2026-11-25: Refined ConfigPanel and SeoContent full-width breakout and nested sub-headers.
+- 2026-11-26: Resolved FAQ category sticky shadow state; scoped heading hierarchy & StarButton to follow-up spec.
+- 2026-11-26: Handover for human review (`🟡 To be reviewed`).

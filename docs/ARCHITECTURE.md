@@ -31,6 +31,19 @@ The Studio requires `SharedArrayBuffer` for high-performance video encoding. For
 
 In development, these are configured in `next.config.js`. In production (GitHub Pages), we utilize the `coi-serviceworker.js` to intercept requests and apply these headers on the client side.
 
+### Accessible Landmarks & Sticky Navigation
+
+The Web Studio adopts an accessible, single-document-landmark structure combined with a deterministic sticky navigation system:
+
+1. **Semantic Landmark Layout (`<main id="main-content">`)**:
+   - Both the interactive workspace (`#studio`) and editorial documentation sections (`SeoContent`) are encapsulated inside `<main id="main-content">` across both SSR fallback (`app/page.tsx`) and hydrated client (`components/Studio.tsx`).
+   - A keyboard-focusable skip-to-content link (`.skip-link`) in `Header.tsx` bypasses the fixed site navigation directly to `#main-content`.
+   - The application logo in `Header.tsx` uses a semantic branding container (`<div className="header-title">`), reserving the single document `<h1>` strictly for the primary Hero headline.
+2. **Boundary-Relative Sticky Observer (`useStickyObserver`)**:
+   - The `useStickyHeaderState` hook deterministically monitors when section headers pin against their relative scroll boundaries (window viewport on mobile/SEO sections, or container top on desktop configuration panel).
+   - Sticky elevation shadows (`--sticky-shadow`) trigger dynamically only when content begins scrolling underneath the headers, ensuring crisp visual elevation without premature shadows.
+   - Supports nested multi-level sticky headers (e.g., editorial blocks at 48px offset, and sub-blocks / FAQ categories at 100px offset).
+
 ## 🎨 High-Fidelity SVG Rendering (Bake & Clean)
 
 The `SvgRenderer` uses a specialized "Bake & Clean" algorithm to capture frame-accurate snapshots of SVGs, particularly those with complex CSS or SMIL animations.
