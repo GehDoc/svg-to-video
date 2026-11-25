@@ -48,6 +48,15 @@ export const SeoContent = () => {
     stuckSponsor,
   ] = useStickyHeaderState(seoSectionRefs);
 
+  const secCliRef = useRef<HTMLDivElement>(null);
+  const secMcpRef = useRef<HTMLDivElement>(null);
+  const subSectionRefs = useMemo(() => [secCliRef, secMcpRef], []);
+  const [stuckCli, stuckMcp] = useStickyHeaderState(
+    subSectionRefs,
+    undefined,
+    100
+  );
+
   useEffect(() => {
     return () => {
       if (promptTimeoutRef.current) {
@@ -196,8 +205,10 @@ export const SeoContent = () => {
 
           <div className="automation-sections">
             {/* Sub-section 1: CLI & Docker Automation */}
-            <div className="automation-subblock">
-              <div className="automation-subblock__header">
+            <div ref={secCliRef} className="automation-subblock">
+              <div
+                className={`automation-subblock__header ${stuckCli ? 'is-stuck' : ''}`}
+              >
                 <FaTerminal className="subblock-icon" />
                 <h4>CLI &amp; Docker Automation</h4>
               </div>
@@ -254,8 +265,10 @@ export const SeoContent = () => {
             </div>
 
             {/* Sub-section 2: AI Agent & MCP Integration */}
-            <div className="automation-subblock">
-              <div className="automation-subblock__header">
+            <div ref={secMcpRef} className="automation-subblock">
+              <div
+                className={`automation-subblock__header ${stuckMcp ? 'is-stuck' : ''}`}
+              >
                 <FaRobot className="subblock-icon" />
                 <h4>AI Agent &amp; MCP Integration</h4>
               </div>

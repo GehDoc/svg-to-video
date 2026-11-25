@@ -6,7 +6,8 @@ import { useEffect, useState, type RefObject } from 'react';
  */
 export function useStickyHeaderState(
   sectionRefs: RefObject<HTMLElement | null>[],
-  containerRef?: RefObject<HTMLElement | null>
+  containerRef?: RefObject<HTMLElement | null>,
+  boundaryOffset?: number
 ): boolean[] {
   const [stuckStates, setStuckStates] = useState<boolean[]>(() =>
     sectionRefs.map(() => false)
@@ -20,8 +21,8 @@ export function useStickyHeaderState(
         typeof window !== 'undefined' ? window.innerWidth <= 1024 : false;
       const container = !isMobile && containerRef ? containerRef.current : null;
       const boundaryTop = container
-        ? container.getBoundingClientRect().top
-        : 48; // fixed site-header height
+        ? container.getBoundingClientRect().top + (boundaryOffset ?? 0)
+        : (boundaryOffset ?? 48); // default to fixed site-header height (48)
 
       const nextStates = sectionRefs.map((ref) => {
         if (!ref.current) return false;
@@ -63,7 +64,7 @@ export function useStickyHeaderState(
         containerEl.removeEventListener('scroll', onScroll);
       }
     };
-  }, [sectionRefs, containerRef]);
+  }, [sectionRefs, containerRef, boundaryOffset]);
 
   return stuckStates;
 }

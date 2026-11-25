@@ -48,6 +48,29 @@ describe('useStickyHeaderState', () => {
     expect(result.current).toEqual([true]);
   });
 
+  it('supports custom boundaryOffset for nested sticky headers', () => {
+    const el1 = document.createElement('div');
+    // Top is at 97 (past boundaryOffset 100 - 2 = 98) and bottom > 135
+    vi.spyOn(el1, 'getBoundingClientRect').mockReturnValue({
+      top: 97,
+      bottom: 300,
+      left: 0,
+      right: 100,
+      width: 100,
+      height: 203,
+      x: 0,
+      y: 97,
+      toJSON: () => {},
+    });
+
+    const ref1: RefObject<HTMLElement | null> = { current: el1 };
+    const { result } = renderHook(() =>
+      useStickyHeaderState([ref1], undefined, 100)
+    );
+
+    expect(result.current).toEqual([true]);
+  });
+
   it('detects when section has scrolled completely past in window mode', () => {
     const el1 = document.createElement('section');
     vi.spyOn(el1, 'getBoundingClientRect').mockReturnValue({

@@ -6,7 +6,7 @@
   background: var(--panel);
   border-top: 1px solid var(--border);
   color: var(--text);
-  padding: 4rem 1.5rem;
+  padding: 4rem 0;
   box-sizing: border-box;
 
   a {
@@ -19,18 +19,21 @@
   }
 
   @media (max-width: $mobile-breakpoint) {
-    padding: 2.5rem 1rem;
+    padding: 2.5rem 0;
   }
 }
 
 .seo-container {
   max-width: 1080px;
   margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 3.5rem;
 
   @media (max-width: $mobile-breakpoint) {
+    padding: 0 1rem;
     gap: 2.5rem;
   }
 }
@@ -45,20 +48,28 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    border-bottom: 2px solid var(--border);
-    padding: 0.75rem 0.5rem;
-    margin-left: -0.5rem;
-    margin-right: -0.5rem;
+    border-bottom: 1px solid var(--border);
+    min-height: 52px;
+    padding: 0.75rem max(1.5rem, calc(50vw - 540px + 1.5rem));
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
     position: sticky;
     top: var(--header-height, 48px);
-    z-index: 10;
-    background: var(--bg);
-    border-radius: 8px 8px 0 0;
+    z-index: 12;
+    background: var(--panel);
+    border-radius: 0;
     box-shadow: none;
+    box-sizing: border-box;
     transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
     &.is-stuck {
       box-shadow: var(--sticky-shadow);
+    }
+
+    @media (max-width: $mobile-breakpoint) {
+      padding-left: 1rem;
+      padding-right: 1rem;
     }
 
     .block-icon {
@@ -216,8 +227,28 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding-bottom: 0.5rem;
+    min-height: 44px;
+    padding: 0.5rem max(1.5rem, calc(50vw - 540px + 1.5rem));
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
+    box-sizing: border-box;
     border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: calc(var(--header-height, 48px) + 52px);
+    z-index: 11;
+    background: var(--panel);
+    box-shadow: none;
+    transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.is-stuck {
+      box-shadow: var(--sticky-shadow);
+    }
+
+    @media (max-width: $mobile-breakpoint) {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
 
     .subblock-icon {
       color: var(--primary);
@@ -352,8 +383,26 @@
     font-weight: 700;
     color: var(--text-h);
     margin: 0;
-    padding-bottom: 0.5rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem max(1.5rem, calc(50vw - 540px + 1.5rem));
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
+    box-sizing: border-box;
     border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: calc(var(--header-height, 48px) + 52px);
+    z-index: 11;
+    background: var(--panel);
+    box-shadow: none;
+    transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    @media (max-width: $mobile-breakpoint) {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
   }
 }
 
