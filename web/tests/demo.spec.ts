@@ -38,7 +38,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
       'scroll',
       () => {
         if (window.scrollY !== 0 || window.scrollX !== 0) {
-          window.scrollTo(0, 0);
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
         }
       },
       { passive: false }

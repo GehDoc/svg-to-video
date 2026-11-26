@@ -87,13 +87,20 @@
   - [x] Update package.json and SEO metadata if needed
   - [x] Run full test suites (`check:fast`, `test:unit`, `test:visual`, `test:storybook:all`)
   - [x] Update PR description and mark spec as `🟡 To be reviewed`
-- [x] **Phase 6: Post-Review Defect Resolutions**
+- [x] **Phase 6: Post-Review Defect Resolutions & Senior Review Polish**
   - [x] Remove StarButton from mobile navigation drawer in `Header.tsx` & `Header.scss` (retaining it in desktop header actions and support card)
   - [x] Update `Header.test.tsx` assertions for single header StarButton instance
   - [x] Add `overscroll-behavior: contain` to `.config-content` in `ConfigPanel.scss` to prevent scroll chaining
   - [x] Remove artificial fixed layout CSS injection from `demo.spec.ts` to restore zero-gap alignment between `.site-header` and `.hero-strip`
-  - [x] Set `smoothScroll: false` on Driver.js and scope spotlight scrolling strictly to internal `.config-content` container
+  - [x] Preserve smooth container scrolling in `demo.spec.ts` with instant window scroll reset
   - [x] Verify demo video generation (`npm run test:demo -w web`) and validate frame boundaries
+  - [x] Fix CodeQL URL substring sanitization via safe `new URL().hostname` parsing in `web/src/test/setup.ts`
+  - [x] Dynamic accessible name on `StarButton` (`<a>` includes live star count, inner badge `aria-hidden="true"`)
+  - [x] Fix loading state contrast in `StarButton.scss` by removing `opacity: 0.6`
+  - [x] Align `#sponsor` `.anchor-alias` to `top: 0` to prevent scroll-padding double offset
+  - [x] Retain compact StarButton on mobile (`<= 480px`) headers by hiding only the text label
+  - [x] Harden `useGitHubRepoStars` JSON validation and forward AbortSignal
+  - [x] Add `Loading` and `Fallback` stories to `StarButton.stories.tsx` for complete Axe testing
 
 ---
 
@@ -116,5 +123,6 @@
 
 ## 📝 Change Log
 
-- 2026-11-26: Phase 6 added to address review defects (mobile drawer button cleanup, scroll containment, and demo video alignment).
+- 2026-11-26: Applied senior reviewer polish items (accessible name, loading contrast, anchor offset, mobile header compact button, hook hardening).
+- 2026-11-26: Phase 6 added to address review defects (mobile drawer button cleanup, scroll containment, demo video alignment, and CodeQL URL fix).
 - 2026-11-26: Initial spec created from partitioned scope of `semantic-web-layout-and-heading-hierarchy.md`.

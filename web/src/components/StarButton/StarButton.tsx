@@ -35,6 +35,11 @@ export const StarButton = ({
     }
   };
 
+  const ariaLabel =
+    stars !== null
+      ? `Star svg-to-video on GitHub (${stars} stars)`
+      : 'Star svg-to-video on GitHub';
+
   const titleText =
     stars !== null
       ? `Star svg-to-video on GitHub (${stars} stars) ↗`
@@ -46,7 +51,7 @@ export const StarButton = ({
       target="_blank"
       rel="noopener noreferrer"
       className={`star-button star-button--${size} ${className}`.trim()}
-      aria-label="Star svg-to-video on GitHub"
+      aria-label={ariaLabel}
       title={titleText}
       onClick={handleClick}
     >
@@ -57,9 +62,7 @@ export const StarButton = ({
       {showCount && (
         <span
           className={`star-button__count ${isLoading && stars === null ? 'is-loading' : ''}`}
-          aria-label={
-            stars !== null ? `${stars} stars on GitHub` : 'GitHub stars count'
-          }
+          aria-hidden="true"
         >
           {formattedStars !== null ? formattedStars : '★'}
         </span>

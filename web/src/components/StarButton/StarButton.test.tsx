@@ -35,7 +35,7 @@ describe('StarButton', () => {
     renderWithClient(<StarButton />);
 
     const link = screen.getByRole('link', {
-      name: /Star svg-to-video on GitHub/i,
+      name: /Star svg-to-video on GitHub \(128 stars\)/i,
     });
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute(
@@ -45,6 +45,22 @@ describe('StarButton', () => {
     expect(link).toHaveAttribute('target', '_blank');
     expect(screen.getByText('Star')).toBeInTheDocument();
     expect(screen.getByText('128')).toBeInTheDocument();
+  });
+
+  it('renders fallback accessible name when stars are null', () => {
+    vi.spyOn(starHook, 'useGitHubRepoStars').mockReturnValue({
+      stars: null,
+      isLoading: false,
+      isError: false,
+    });
+
+    renderWithClient(<StarButton />);
+
+    const link = screen.getByRole('link', {
+      name: /^Star svg-to-video on GitHub$/i,
+    });
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('aria-label', 'Star svg-to-video on GitHub');
   });
 
   it('formats large star count with k suffix', () => {

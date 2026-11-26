@@ -116,7 +116,9 @@
 
 .header-star-btn {
   @media (max-width: 480px) {
-    display: none;
+    .star-button__label {
+      display: none;
+    }
   }
 }
 
