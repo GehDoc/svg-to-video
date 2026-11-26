@@ -1,7 +1,7 @@
 # Spec: Star Button Component, Semantic Heading Hierarchy & GitHub Rating Integration
 
 **GitHub Issue**: None
-**Pull Request**: TBD
+**Pull Request**: https://github.com/GehDoc/svg-to-video/pull/277
 **Status**: 🔵 In Progress
 
 ## 🎯 Objective
@@ -56,13 +56,13 @@
 
 ## ✅ Task List
 
-- [ ] **Phase 1: Semantic Heading Hierarchy & Ordered Lists**
-  - [ ] Promote top-level section headings to `<h2>` in `SeoContent.tsx`
-  - [ ] Promote sub-section headings to `<h3>` in `SeoContent.tsx`
-  - [ ] Promote FAQ questions to `<h4>` in `SeoContent.tsx`
-  - [ ] Convert "How to Convert" steps to `<ol>` / `<li>` in `SeoContent.tsx`
-  - [ ] Update unit tests in `SeoContent.test.tsx` for new heading levels
-  - [ ] Review and commit Phase 1
+- [x] **Phase 1: Semantic Heading Hierarchy & Ordered Lists**
+  - [x] Promote top-level section headings to `<h2>` in `SeoContent.tsx`
+  - [x] Promote sub-section headings to `<h3>` in `SeoContent.tsx`
+  - [x] Promote FAQ questions to `<h4>` in `SeoContent.tsx`
+  - [x] Convert "How to Convert" steps to `<ol>` / `<li>` in `SeoContent.tsx`
+  - [x] Update unit tests in `SeoContent.test.tsx` for new heading levels
+  - [x] Review and commit Phase 1
 - [ ] **Phase 2: Dedicated StarButton Component & GitHub Repo Stars Integration**
   - [ ] Install `@tanstack/react-query` in `web` workspace and configure `Providers.tsx`
   - [ ] Implement `useGitHubRepoStars` hook with cached query (`staleTime: 30m`) and offline/rate-limit fallback

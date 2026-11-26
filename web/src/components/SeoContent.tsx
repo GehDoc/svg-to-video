@@ -58,12 +58,12 @@ export const SeoContent = () => {
         >
           <StickyHeader className="block-header">
             <FaShieldAlt className="block-icon" />
-            <h3 id="why-title">Why Use SVG to Video?</h3>
+            <h2 id="why-title">Why Use SVG to Video?</h2>
           </StickyHeader>
           <div className="features-grid">
             {seoData.features.map((feat) => (
               <article key={feat.title} className="feature-item">
-                <h4>{feat.title}</h4>
+                <h3>{feat.title}</h3>
                 <p dangerouslySetInnerHTML={{ __html: feat.descriptionHtml }} />
               </article>
             ))}
@@ -78,21 +78,23 @@ export const SeoContent = () => {
         >
           <StickyHeader className="block-header">
             <FaCogs className="block-icon" />
-            <h3 id="how-title">
+            <h2 id="how-title">
               How to Convert Animated SVGs (CSS &amp; SMIL)
-            </h3>
+            </h2>
           </StickyHeader>
-          <div className="steps-container">
+          <ol className="steps-container">
             {seoData.quickStartSteps.map((stepHtml, index) => (
-              <div key={index} className="step-card">
-                <span className="step-num">{index + 1}</span>
+              <li key={index} className="step-card">
+                <span className="step-num" aria-hidden="true">
+                  {index + 1}
+                </span>
                 <p
                   className="step-text"
                   dangerouslySetInnerHTML={{ __html: stepHtml }}
                 />
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </section>
 
         {/* Format Comparison Table */}
@@ -103,9 +105,9 @@ export const SeoContent = () => {
         >
           <StickyHeader className="block-header">
             <FaLayerGroup className="block-icon" />
-            <h3 id="formats-title">
+            <h2 id="formats-title">
               Supported Output Formats &amp; Specifications
-            </h3>
+            </h2>
           </StickyHeader>
           <div className="table-responsive">
             <table className="format-table">
@@ -159,9 +161,9 @@ export const SeoContent = () => {
         >
           <StickyHeader className="block-header">
             <FaTerminal className="block-icon" />
-            <h3 id="automation-title">
+            <h2 id="automation-title">
               Developer CLI, Docker &amp; Model Context Protocol (MCP)
-            </h3>
+            </h2>
           </StickyHeader>
 
           <div className="automation-sections">
@@ -169,7 +171,7 @@ export const SeoContent = () => {
             <div className="automation-subblock">
               <StickyHeader className="automation-subblock__header">
                 <FaTerminal className="subblock-icon" />
-                <h4>CLI &amp; Docker Automation</h4>
+                <h3>CLI &amp; Docker Automation</h3>
               </StickyHeader>
 
               {seoData.cliSection?.descriptionHtml && (
@@ -227,7 +229,7 @@ export const SeoContent = () => {
             <div className="automation-subblock">
               <StickyHeader className="automation-subblock__header">
                 <FaRobot className="subblock-icon" />
-                <h4>AI Agent &amp; MCP Integration</h4>
+                <h3>AI Agent &amp; MCP Integration</h3>
               </StickyHeader>
 
               {seoData.mcpSection?.descriptionHtml && (
@@ -306,19 +308,19 @@ export const SeoContent = () => {
         <section id="faq" className="seo-block" aria-labelledby="faq-title">
           <StickyHeader className="block-header">
             <FaQuestionCircle className="block-icon" />
-            <h3 id="faq-title">Frequently Asked Questions</h3>
+            <h2 id="faq-title">Frequently Asked Questions</h2>
           </StickyHeader>
           <div className="faq-sections">
             {seoData.faqCategories && seoData.faqCategories.length > 0 ? (
               seoData.faqCategories.map((group) => (
                 <div key={group.category} className="faq-category-block">
-                  <StickyHeader as="h4" className="faq-category-title">
+                  <StickyHeader as="h3" className="faq-category-title">
                     {group.category}
                   </StickyHeader>
                   <div className="faq-grid">
                     {group.items.map((item) => (
                       <article key={item.question} className="faq-item">
-                        <h5>{item.question}</h5>
+                        <h4>{item.question}</h4>
                         <p
                           dangerouslySetInnerHTML={{
                             __html: item.answerHtml,
@@ -350,7 +352,7 @@ export const SeoContent = () => {
         >
           <StickyHeader className="block-header">
             <FaHeart className="block-icon sponsor-icon" />
-            <h3 id="sponsor-title">Support SVG to Video</h3>
+            <h2 id="sponsor-title">Support SVG to Video</h2>
           </StickyHeader>
           <div className="sponsor-card">
             <p className="sponsor-text">

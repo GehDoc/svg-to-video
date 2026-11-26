@@ -15,35 +15,35 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
   expect(
     screen.getByRole('heading', {
       name: /Why Use SVG to Video\?/i,
-      level: 3,
+      level: 2,
     })
   ).toBeInTheDocument();
 
   expect(
     screen.getByRole('heading', {
       name: /How to Convert Animated SVGs/i,
-      level: 3,
+      level: 2,
     })
   ).toBeInTheDocument();
 
   expect(
     screen.getByRole('heading', {
       name: /Supported Output Formats & Specifications/i,
-      level: 3,
+      level: 2,
     })
   ).toBeInTheDocument();
 
   expect(
     screen.getByRole('heading', {
       name: /Frequently Asked Questions/i,
-      level: 3,
+      level: 2,
     })
   ).toBeInTheDocument();
 
   expect(
     screen.getByRole('heading', {
       name: /Support SVG to Video/i,
-      level: 3,
+      level: 2,
     })
   ).toBeInTheDocument();
 
@@ -53,20 +53,25 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
   expect(screen.getAllByText('aPNG').length).toBeGreaterThan(0);
   expect(screen.getAllByText('GIF').length).toBeGreaterThan(0);
 
-  // Verify CLI and MCP sub-sections
+  // Verify CLI and MCP sub-sections (level 3)
   expect(
     screen.getByRole('heading', {
       name: /CLI & Docker Automation/i,
-      level: 4,
+      level: 3,
     })
   ).toBeInTheDocument();
 
   expect(
     screen.getByRole('heading', {
       name: /AI Agent & MCP Integration/i,
-      level: 4,
+      level: 3,
     })
   ).toBeInTheDocument();
+
+  // Verify ordered list semantics for conversion steps
+  expect(screen.getByRole('list')).toBeInTheDocument();
+  const listItems = screen.getAllByRole('listitem');
+  expect(listItems.length).toBeGreaterThanOrEqual(3);
 
   expect(
     screen.getByRole('button', { name: /Copy prompt/i })
