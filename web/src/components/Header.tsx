@@ -165,13 +165,6 @@ export const Header = ({ onHome }: HeaderProps) => {
         <div className="mobile-drawer__divider" />
 
         <div className="mobile-drawer__section">
-          <div className="mobile-drawer__star-wrapper">
-            <StarButton
-              size="medium"
-              location="mobile-drawer"
-              onClick={handleNavLinkClick}
-            />
-          </div>
           <a
             href={ECOSYSTEM_LINKS.github}
             target="_blank"

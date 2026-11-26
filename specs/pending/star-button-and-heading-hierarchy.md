@@ -87,24 +87,34 @@
   - [x] Update package.json and SEO metadata if needed
   - [x] Run full test suites (`check:fast`, `test:unit`, `test:visual`, `test:storybook:all`)
   - [x] Update PR description and mark spec as `🟡 To be reviewed`
+- [x] **Phase 6: Post-Review Defect Resolutions**
+  - [x] Remove StarButton from mobile navigation drawer in `Header.tsx` & `Header.scss` (retaining it in desktop header actions and support card)
+  - [x] Update `Header.test.tsx` assertions for single header StarButton instance
+  - [x] Add `overscroll-behavior: contain` to `.config-content` in `ConfigPanel.scss` to prevent scroll chaining
+  - [x] Remove artificial fixed layout CSS injection from `demo.spec.ts` to restore zero-gap alignment between `.site-header` and `.hero-strip`
+  - [x] Set `smoothScroll: false` on Driver.js and scope spotlight scrolling strictly to internal `.config-content` container
+  - [x] Verify demo video generation (`npm run test:demo -w web`) and validate frame boundaries
 
 ---
 
 ## 🧪 Verification Plan
 
-- [ ] Automated Tests:
+- [x] Automated Tests:
   - `npm run check:fast`
   - `npm run test:unit`
   - `npm run test:visual -w web`
   - `npm run test:storybook:all` (verifies Axe compliance in both light and dark modes)
-- [ ] Manual & Browser Inspection:
+  - `npm run test:demo -w web` (generates demo video without gap or page scrolling)
+- [x] Manual & Browser Inspection:
   - Verify heading tree structure in DevTools accessibility tree (`h1` -> `h2` -> `h3` -> `h4`)
   - Verify "Sponsor me on GitHub" text and tooltips
   - Verify GitHub Star button renders live count or fallback gracefully without layout shift
   - Verify dark mode contrast of star rating button and support cards
+  - Verify demo video shows seamless header-hero contact and locked outer viewport
 
 ---
 
 ## 📝 Change Log
 
+- 2026-11-26: Phase 6 added to address review defects (mobile drawer button cleanup, scroll containment, and demo video alignment).
 - 2026-11-26: Initial spec created from partitioned scope of `semantic-web-layout-and-heading-hierarchy.md`.

@@ -73,7 +73,7 @@ test('Header renders title, jump links, actions and mobile burger', () => {
   ).toBe(2);
   expect(
     screen.getAllByRole('link', { name: /star svg-to-video on github/i }).length
-  ).toBe(2);
+  ).toBe(1);
   expect(screen.getAllByRole('link', { name: /sponsor/i }).length).toBe(2);
 
   // Burger button

@@ -23,23 +23,6 @@ test.setTimeout(120000);
 
 test('Generate Demo Video - Web Studio', async ({ page }) => {
   await gotoIsolated(page);
-  // Inject styles to disable main page scrolling
-  await page.addStyleTag({
-    content: `
-      html, body {
-        overflow: hidden !important;
-        height: 100% !important;
-      }
-      #root, .app-container {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        overflow: hidden !important;
-      }
-    `,
-  });
 
   // Ensure Splash Screen is gone before starting recording interactions
   const splash = page.locator('.seo-fallback');
@@ -48,6 +31,19 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   // Ensure the page is fully loaded and ready for interaction
   await page.waitForLoadState('networkidle');
   await page.waitForSelector('input[type="file"]');
+
+  // Lock window scroll to origin so only internal form content scrolls
+  await page.evaluate(() => {
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (window.scrollY !== 0 || window.scrollX !== 0) {
+          window.scrollTo(0, 0);
+        }
+      },
+      { passive: false }
+    );
+  });
 
   // =========================================================================
   // 1. INJECTION OF DRIVER.JS (Local dependencies)
@@ -58,7 +54,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     window.driverObj = window.driver.js.driver({
       showProgress: false,
       animate: true,
-      smoothScroll: true,
+      smoothScroll: false,
       overlayColor: '#000',
       overlayOpacity: 0.5,
       stagePadding: 4,
@@ -78,10 +74,36 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     // 1. Ensure the element is attached
     await locator.waitFor({ state: 'attached' });
 
-    // 2. Trigger Morph and Scroll simultaneously (no popover yet)
+    // 2. Trigger Morph and scroll container internally (no popover yet)
     await locator.evaluate((element) => {
       window.driverObj!.highlight({ element });
-      element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      const getScrollParent = (
+        node: HTMLElement | null
+      ): HTMLElement | null => {
+        if (node == null) return null;
+        if (node.scrollHeight > node.clientHeight) {
+          const overflowY = window.getComputedStyle(node).overflowY;
+          if (overflowY === 'auto' || overflowY === 'scroll') return node;
+        }
+        return getScrollParent(node.parentElement);
+      };
+
+      const scrollContainer = getScrollParent(element as HTMLElement);
+      if (scrollContainer) {
+        const elRect = element.getBoundingClientRect();
+        const cRect = scrollContainer.getBoundingClientRect();
+        const isBelow = elRect.bottom > cRect.bottom;
+        const isAbove = elRect.top < cRect.top;
+        if (isBelow || isAbove) {
+          scrollContainer.scrollTo({
+            top:
+              scrollContainer.scrollTop +
+              (elRect.top - cRect.top) -
+              (cRect.height / 2 - elRect.height / 2),
+            behavior: 'smooth',
+          });
+        }
+      }
     });
 
     // 3. Wait for the scroll to stabilize
