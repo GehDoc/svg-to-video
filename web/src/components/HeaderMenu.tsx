@@ -32,7 +32,7 @@ export const HeaderMenu = () => {
           trackEvent('click-sponsor', { location: 'header' });
         }}
       >
-        <FaHeart className="icon-heart" /> Sponsor
+        <FaHeart className="icon-heart" /> Sponsor me
       </a>
 
       <button

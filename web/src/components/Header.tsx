@@ -124,7 +124,7 @@ export const Header = ({ onHome }: HeaderProps) => {
             }}
           >
             <FaHeart className="icon-heart" />
-            <span className="header-sponsor-btn__label">Sponsor</span>
+            <span className="header-sponsor-btn__label">Sponsor me</span>
           </a>
 
           <button
