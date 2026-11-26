@@ -5,11 +5,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export interface ProvidersProps {
   children: React.ReactNode;
+  queryClient?: QueryClient;
 }
 
-export function Providers({ children }: ProvidersProps) {
+export function Providers({
+  children,
+  queryClient: customClient,
+}: ProvidersProps) {
   const [queryClient] = useState(
     () =>
+      customClient ??
       new QueryClient({
         defaultOptions: {
           queries: {

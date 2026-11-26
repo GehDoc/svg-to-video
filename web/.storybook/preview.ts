@@ -7,9 +7,12 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
+      staleTime: Infinity,
     },
   },
 });
+// Pre-populate GitHub repo stars to ensure Storybook tests are completely hermetic (no outbound API calls)
+queryClient.setQueryData(['github-repo-stars'], 128);
 
 const preview: Preview = {
   decorators: [

@@ -175,9 +175,12 @@ For instructions on contributing, build commands, security standards, and the te
 
 If you find this tool helpful, please consider supporting its development:
 
+- ⭐ **[Star svg-to-video on GitHub](https://github.com/GehDoc/svg-to-video)** to help other creators and developers discover the tool.
+- 💖 **[Sponsor me on GitHub](https://github.com/sponsors/GehDoc)** to directly fuel development:
+
 [![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors)](https://github.com/sponsors/GehDoc)
 
-Your support directly fuels my agentic engineering harness and helps keep this tool free, secure, and privacy-first. Thank you!
+Your support directly fuels development and helps keep this tool free, secure, and privacy-first. Thank you!
 
 ---
 

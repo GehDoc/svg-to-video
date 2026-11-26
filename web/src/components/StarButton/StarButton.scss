@@ -1,5 +1,6 @@
 @use '../../styles/breakpoints' as *;
 
+a.star-button,
 .star-button {
   display: inline-flex;
   align-items: center;
@@ -15,9 +16,12 @@
   overflow: hidden;
   line-height: 1;
 
-  &:hover {
+  &:hover,
+  &:visited {
+    color: var(--star-text);
     background: var(--star-hover);
     border-color: var(--star);
+    text-decoration: none;
   }
 
   &:focus-visible {
@@ -55,6 +59,7 @@
 
   &__label {
     font-weight: 600;
+    color: var(--star-text);
   }
 
   &__count {

@@ -2,7 +2,7 @@
 
 **GitHub Issue**: None
 **Pull Request**: https://github.com/GehDoc/svg-to-video/pull/277
-**Status**: 🔵 In Progress
+**Status**: 🟡 To be reviewed
 
 ## 🎯 Objective
 
@@ -75,18 +75,18 @@
   - [x] Update `#sponsor` in `SeoContent.tsx` to `#support` with a dedicated "Star on GitHub" rating card alongside Sponsor (with backward-compatible `#sponsor` anchor alias)
   - [x] Add unit & Storybook tests for Star button and Support section
   - [x] Review and commit Phase 3
-- [ ] **Phase 4: Design Tokens & Dual-Theme Storybook Script**
-  - [ ] Add star rating tokens (`--star-color`, `--star-bg`, etc.) to `web/src/index.scss` (light & dark)
-  - [ ] Add `"test:storybook:all"` to `web/package.json` and root `package.json`
-  - [ ] Run dual-theme Axe contrast validation to ensure 0 violations
-  - [ ] Review and commit Phase 4
-- [ ] **Phase 5: Documentation, Security & Pre-Flight Audits (`🟡 To be reviewed`)**
-  - [ ] Update README.md and documentation for `#support` section anchor
-  - [ ] Audit docs/SECURITY.md (API query sanitization, external link `rel="noopener noreferrer"`)
-  - [ ] Audit docs/ANALYTICS.md (telemetry for star button clicks)
-  - [ ] Update package.json and SEO metadata if needed
-  - [ ] Run full test suites (`check:fast`, `test:unit`, `test:visual`, `test:storybook:all`)
-  - [ ] Update PR description and mark spec as `🟡 To be reviewed`
+- [x] **Phase 4: Design Tokens & Dual-Theme Storybook Script**
+  - [x] Add star rating tokens (`--star-color`, `--star-bg`, etc.) to `web/src/index.scss` (light & dark)
+  - [x] Add `"test:storybook:all"` to `web/package.json` and root `package.json`
+  - [x] Run dual-theme Axe contrast validation to ensure 0 violations
+  - [x] Review and commit Phase 4
+- [x] **Phase 5: Documentation, Security & Pre-Flight Audits (`🟡 To be reviewed`)**
+  - [x] Update README.md and documentation for `#support` section anchor
+  - [x] Audit docs/SECURITY.md (API query sanitization, external link `rel="noopener noreferrer"`)
+  - [x] Audit docs/ANALYTICS.md (telemetry for star button clicks)
+  - [x] Update package.json and SEO metadata if needed
+  - [x] Run full test suites (`check:fast`, `test:unit`, `test:visual`, `test:storybook:all`)
+  - [x] Update PR description and mark spec as `🟡 To be reviewed`
 
 ---
 

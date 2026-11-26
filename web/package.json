@@ -31,6 +31,7 @@
     "test:web": "playwright test --reporter=list",
     "test:unit": "vitest run",
     "test:storybook": "vitest run -c vitest.storybook.ts",
+    "test:storybook:all": "vitest run -c vitest.storybook.ts && STORYBOOK_THEME=dark vitest run -c vitest.storybook.ts",
     "test:visual": "vitest run -c vitest.visual.config.ts",
     "test:visual:update": "vitest run -c vitest.visual.config.ts -u",
     "storybook": "storybook dev -p 6006",
