@@ -51,6 +51,11 @@
     padding: 0.65rem 0.75rem;
     gap: 0.5rem;
   }
+
+  @media (max-width: 360px) {
+    padding: 0.65rem 0.5rem;
+    gap: 0.35rem;
+  }
 }
 
 .header-title {
@@ -66,7 +71,7 @@
     font-size: 1rem;
   }
 
-  @media (max-width: 360px) {
+  @media (max-width: 380px) {
     .header-badge {
       display: none;
     }
@@ -135,9 +140,31 @@
   box-sizing: border-box;
   flex-shrink: 0;
 
-  @media (max-width: 480px) {
+  // Medium & Small (<= 1024px): hide "Star" text label -> [★ count]
+  @media (max-width: $header-mobile-breakpoint) {
     .star-button__label {
       display: none;
+    }
+  }
+
+  // Extra-small (<= 380px): hide count pill and become uniform 34x34 icon button -> [★]
+  @media (max-width: 380px) {
+    &.star-button,
+    .star-button {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      justify-content: center;
+      gap: 0;
+      min-width: 34px;
+
+      .star-button__icon {
+        font-size: 0.95rem;
+      }
+
+      .star-button__count {
+        display: none;
+      }
     }
   }
 }
@@ -194,8 +221,21 @@
     font-size: 0.8rem;
   }
 
-  @media (max-width: 640px) {
-    display: none;
+  // Medium, Small & Extra-small (<= 1024px): hide "Sponsor me" label -> 34x34 square [♥] icon button
+  @media (max-width: $header-mobile-breakpoint) {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+
+    .icon-heart {
+      font-size: 0.95rem;
+    }
+
+    .header-sponsor-btn__label {
+      display: none;
+    }
   }
 }
 

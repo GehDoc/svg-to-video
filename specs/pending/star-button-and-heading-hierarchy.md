@@ -98,7 +98,8 @@
   - [x] Dynamic accessible name on `StarButton` (`<a>` includes live star count, inner badge `aria-hidden="true"`)
   - [x] Fix loading state contrast in `StarButton.scss` by removing `opacity: 0.6`
   - [x] Align `#sponsor` `.anchor-alias` to `top: 0` to prevent scroll-padding double offset
-  - [x] Retain compact StarButton on mobile (`<= 480px`) headers by hiding only the text label
+  - [x] Implement 4-tier responsive progressive degradation for header actions: Large (full Star & Sponsor with text labels), Medium (Star [★ count] + Sponsor [♥] icon + GitHub + Burger), Small (Star [★ count] + Sponsor [♥] + Burger), Extra-Small (Star [★] + Sponsor [♥] + Burger with hidden STUDIO badge for 320px reflow)
+  - [x] Retain compact StarButton on mobile headers with progressive count and icon-only states
   - [x] Harden `useGitHubRepoStars` JSON validation and forward AbortSignal
   - [x] Add `Loading` and `Fallback` stories to `StarButton.stories.tsx` for complete Axe testing
 
@@ -118,11 +119,13 @@
   - Verify GitHub Star button renders live count or fallback gracefully without layout shift
   - Verify dark mode contrast of star rating button and support cards
   - Verify demo video shows seamless header-hero contact and locked outer viewport
+  - Verify 4-tier responsive header: no clipping down to 320px viewport
 
 ---
 
 ## 📝 Change Log
 
+- 2026-11-26: Implemented 4-tier responsive progressive degradation for header actions (Large, Medium, Small, Extra-Small).
 - 2026-11-26: Applied senior reviewer polish items (accessible name, loading contrast, anchor offset, mobile header compact button, hook hardening).
 - 2026-11-26: Phase 6 added to address review defects (mobile drawer button cleanup, scroll containment, demo video alignment, and CodeQL URL fix).
 - 2026-11-26: Initial spec created from partitioned scope of `semantic-web-layout-and-heading-hierarchy.md`.
