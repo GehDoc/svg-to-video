@@ -12,16 +12,24 @@ a.star-button,
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
   overflow: hidden;
   line-height: 1;
+  cursor: pointer;
+  user-select: none;
 
-  &:hover,
-  &:visited {
+  &:hover {
     color: var(--star-text);
     background: var(--star-hover);
     border-color: var(--star);
     text-decoration: none;
+  }
+
+  &:visited {
+    color: var(--star-text);
   }
 
   &:focus-visible {
@@ -48,6 +56,12 @@ a.star-button,
     .star-button__icon {
       font-size: 0.95rem;
     }
+  }
+
+  &__icon-wrapper,
+  &__label,
+  &__count {
+    pointer-events: none;
   }
 
   &__icon-wrapper {
