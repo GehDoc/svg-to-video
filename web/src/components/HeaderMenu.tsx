@@ -26,11 +26,13 @@ export const HeaderMenu = () => {
         target="_blank"
         rel="noopener noreferrer"
         className="header-sponsor-btn"
+        title="Sponsor me on GitHub ↗"
+        aria-label="Sponsor me on GitHub"
         onClick={() => {
           trackEvent('click-sponsor', { location: 'header' });
         }}
       >
-        <FaHeart className="icon-heart" /> Sponsor
+        <FaHeart className="icon-heart" /> Sponsor me
       </a>
 
       <button

@@ -10,6 +10,21 @@ import {
 import { test, expect, vi, afterEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { Studio } from './Studio';
+import { Providers } from './Providers';
+import { QueryClient } from '@tanstack/react-query';
+
+const createHermeticQueryClient = () => {
+  const client = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: Infinity,
+      },
+    },
+  });
+  client.setQueryData(['github-repo-stars'], 100);
+  return client;
+};
 
 vi.mock('./SvgRenderer', () => ({
   default: ({
@@ -32,7 +47,11 @@ vi.mock('./SvgRenderer', () => ({
 afterEach(cleanup);
 
 test('Studio triggers preview on SvgRenderer when svgContent is set via upload', async () => {
-  render(<Studio />);
+  render(
+    <Providers queryClient={createHermeticQueryClient()}>
+      <Studio />
+    </Providers>
+  );
 
   // Mock file upload
   const file = new File(['<svg><rect /></svg>'], 'test.svg', {
@@ -55,7 +74,11 @@ test('Studio triggers preview on SvgRenderer when svgContent is set via upload',
 });
 
 test('Studio updates preview when backgroundColor changes', async () => {
-  render(<Studio />);
+  render(
+    <Providers queryClient={createHermeticQueryClient()}>
+      <Studio />
+    </Providers>
+  );
 
   // 1. Initial SVG set via upload
   const file = new File(['<svg />'], 'test.svg', { type: 'image/svg+xml' });
@@ -84,7 +107,11 @@ test('Studio updates preview when backgroundColor changes', async () => {
 });
 
 test('Studio automatically updates duration when animated SVG is uploaded', async () => {
-  render(<Studio />);
+  render(
+    <Providers queryClient={createHermeticQueryClient()}>
+      <Studio />
+    </Providers>
+  );
 
   // Upload an animated SVG with 3s duration
   const animatedSvg = `
@@ -114,7 +141,11 @@ test('Studio automatically updates duration when animated SVG is uploaded', asyn
 });
 
 test('Studio applies sample target capture settings and preserves defined capture duration', async () => {
-  render(<Studio />);
+  render(
+    <Providers queryClient={createHermeticQueryClient()}>
+      <Studio />
+    </Providers>
+  );
 
   // Click on "Test Rocket Launch sample" button
   const rocketBtn = screen.getByRole('button', {
@@ -147,7 +178,11 @@ test('Studio resets state and returns to landing view when clicking header home 
     track: trackMock,
   };
 
-  render(<Studio />);
+  render(
+    <Providers queryClient={createHermeticQueryClient()}>
+      <Studio />
+    </Providers>
+  );
 
   // 1. Initially LandingView is shown
   expect(
@@ -194,7 +229,11 @@ test('Studio resets state and returns to landing view when clicking Clear SVG in
     track: trackMock,
   };
 
-  render(<Studio />);
+  render(
+    <Providers queryClient={createHermeticQueryClient()}>
+      <Studio />
+    </Providers>
+  );
 
   // Clear SVG button is initially present but disabled
   const initialClearBtn = screen.getByRole('button', {
@@ -240,7 +279,11 @@ test('Studio opens SampleModal via Browse Samples and loads selected sample', as
     track: trackMock,
   };
 
-  render(<Studio />);
+  render(
+    <Providers queryClient={createHermeticQueryClient()}>
+      <Studio />
+    </Providers>
+  );
 
   // 1. Click Browse Samples button in ConfigPanel
   const browseBtn = screen.getByRole('button', {

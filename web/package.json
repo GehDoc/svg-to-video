@@ -1,6 +1,6 @@
 {
   "name": "@svg-to-video/web",
-  "version": "0.40.0",
+  "version": "0.41.0",
   "description": "Convert SVG animations into MP4, MOV, WebM, GIF, or aPNG directly in your browser. Supports CSS/SMIL and perfect transparent backgrounds.",
   "author": "GehDoc",
   "repository": {
@@ -31,12 +31,14 @@
     "test:web": "playwright test --reporter=list",
     "test:unit": "vitest run",
     "test:storybook": "vitest run -c vitest.storybook.ts",
+    "test:storybook:all": "vitest run -c vitest.storybook.ts && STORYBOOK_THEME=dark vitest run -c vitest.storybook.ts",
     "test:visual": "vitest run -c vitest.visual.config.ts",
     "test:visual:update": "vitest run -c vitest.visual.config.ts -u",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.108.4",
     "coi-serviceworker": "^0.1.7",
     "gifenc": "^1.0.3",
     "mediabunny": "^1.61.3",

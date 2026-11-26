@@ -26,6 +26,7 @@
 
 /// Structured item typography (title + muted body)
 @mixin item-content-typography($title-size: 1rem, $body-size: 0.9rem) {
+  h3,
   h4 {
     font-size: $title-size;
     font-weight: 700;

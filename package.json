@@ -1,7 +1,7 @@
 {
   "name": "@gehdoc/svg-to-video",
   "mcpName": "io.github.GehDoc/svg-to-video",
-  "version": "0.40.0",
+  "version": "0.41.0",
   "type": "module",
   "description": "Professional animated SVG (CSS & SMIL) to Video (MP4/WebM/MKV/MOV) and Animated Image (aPNG/GIF) converter featuring frame-accurate rendering, CLI automation, Model Context Protocol (MCP) server integration, and a serverless Web Studio.",
   "imports": {
@@ -105,6 +105,7 @@
     "test:mcp": "tsx --test tests/mcp.spec.ts",
     "test:pack": "npm run build && tsx --test tests/pack.spec.ts",
     "test:unit": "tsx --test src/**/*.test.ts tests/**/*.test.ts && vitest run shared/*.test.ts && npm run test:unit -w web",
+    "test:storybook:all": "npm run test:storybook:all -w web",
     "test": "npm run test:cli && npm run test:mcp && npm run test:pack && npm run test:unit && npm run test:web -w web && npm run test:storybook -w web && npm run test:visual -w web",
     "type-check": "tsc -p tsconfig.json --noEmit && npm run type-check -w web",
     "check": "npm run lint && npm run format && npm run type-check && npm run test",

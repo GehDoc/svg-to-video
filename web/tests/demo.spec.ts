@@ -23,23 +23,6 @@ test.setTimeout(120000);
 
 test('Generate Demo Video - Web Studio', async ({ page }) => {
   await gotoIsolated(page);
-  // Inject styles to disable main page scrolling
-  await page.addStyleTag({
-    content: `
-      html, body {
-        overflow: hidden !important;
-        height: 100% !important;
-      }
-      #root, .app-container {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        overflow: hidden !important;
-      }
-    `,
-  });
 
   // Ensure Splash Screen is gone before starting recording interactions
   const splash = page.locator('.seo-fallback');
@@ -48,6 +31,19 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
   // Ensure the page is fully loaded and ready for interaction
   await page.waitForLoadState('networkidle');
   await page.waitForSelector('input[type="file"]');
+
+  // Lock window scroll to origin so only internal form content scrolls
+  await page.evaluate(() => {
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (window.scrollY !== 0 || window.scrollX !== 0) {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        }
+      },
+      { passive: false }
+    );
+  });
 
   // =========================================================================
   // 1. INJECTION OF DRIVER.JS (Local dependencies)
@@ -78,14 +74,9 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     // 1. Ensure the element is attached
     await locator.waitFor({ state: 'attached' });
 
-    // 2. Trigger Morph and Scroll simultaneously (no popover yet)
-    await locator.evaluate((element) => {
+    // 2. Trigger Morph and scroll container internally (no popover yet)
+    const scrolled = await locator.evaluate((element) => {
       window.driverObj!.highlight({ element });
-      element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
-
-    // 3. Wait for the scroll to stabilize
-    await locator.evaluate(async (element) => {
       const getScrollParent = (
         node: HTMLElement | null
       ): HTMLElement | null => {
@@ -99,23 +90,30 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
 
       const scrollContainer = getScrollParent(element as HTMLElement);
       if (scrollContainer) {
-        await new Promise((resolve) => {
-          let lastPos = scrollContainer.scrollTop;
-          let identicalFrameCount = 0;
-          function verifyMovement() {
-            const currentPos = scrollContainer!.scrollTop;
-            if (currentPos === lastPos) identicalFrameCount++;
-            else identicalFrameCount = 0;
-            lastPos = currentPos;
-            if (identicalFrameCount > 10) resolve(true);
-            else requestAnimationFrame(verifyMovement);
-          }
-          requestAnimationFrame(verifyMovement);
-        });
-      } else {
-        await new Promise((r) => setTimeout(r, 500));
+        const elRect = element.getBoundingClientRect();
+        const cRect = scrollContainer.getBoundingClientRect();
+        const isBelow = elRect.bottom > cRect.bottom;
+        const isAbove = elRect.top < cRect.top;
+        if (isBelow || isAbove) {
+          scrollContainer.scrollTo({
+            top:
+              scrollContainer.scrollTop +
+              (elRect.top - cRect.top) -
+              (cRect.height / 2 - elRect.height / 2),
+            behavior: 'smooth',
+          });
+          return true;
+        }
       }
+      return false;
     });
+
+    // 3. If scrolling, wait for smooth scroll animation to complete on video
+    if (scrolled) {
+      await page.waitForTimeout(600);
+    } else {
+      await page.waitForTimeout(200);
+    }
 
     // 4. Show the popover once stable
     if (title) {

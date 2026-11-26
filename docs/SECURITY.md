@@ -46,3 +46,6 @@ Before merging any PR into `main`, ensure all new or modified code satisfies the
    - [ ] Browser contexts must close cleanly (`browser.close()`) even if rendering errors out.
 4. **Input Validation & Types**:
    - [ ] Subprocess JSON outputs must be validated with runtime type guards (e.g., `isLoggerJsonOutput`).
+5. **Client-Side API & External Links**:
+   - [ ] External hyperlinks must use `target="_blank"` with `rel="noopener noreferrer"`.
+   - [ ] External API queries (e.g., GitHub stargazers query) must validate returned HTTP status and parse typed numerical payloads safely without executing unvalidated data.
