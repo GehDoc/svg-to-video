@@ -4,17 +4,22 @@ import '@testing-library/jest-dom';
 const originalFetch = globalThis.fetch;
 if (typeof originalFetch === 'function') {
   globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-    const urlStr =
-      typeof input === 'string'
-        ? input
-        : input instanceof URL
-          ? input.toString()
-          : input.url;
-    if (urlStr.includes('api.github.com')) {
-      return new Response(JSON.stringify({ stargazers_count: 100 }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    try {
+      const urlStr =
+        typeof input === 'string'
+          ? input
+          : input instanceof URL
+            ? input.toString()
+            : input.url;
+      const parsedUrl = new URL(urlStr, 'http://localhost');
+      if (parsedUrl.hostname === 'api.github.com') {
+        return new Response(JSON.stringify({ stargazers_count: 100 }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    } catch {
+      // URL parsing fallback
     }
     return originalFetch(input, init);
   };
