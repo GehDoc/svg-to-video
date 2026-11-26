@@ -54,7 +54,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     window.driverObj = window.driver.js.driver({
       showProgress: false,
       animate: true,
-      smoothScroll: false,
+      smoothScroll: true,
       overlayColor: '#000',
       overlayOpacity: 0.5,
       stagePadding: 4,
@@ -75,7 +75,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
     await locator.waitFor({ state: 'attached' });
 
     // 2. Trigger Morph and scroll container internally (no popover yet)
-    await locator.evaluate((element) => {
+    const scrolled = await locator.evaluate((element) => {
       window.driverObj!.highlight({ element });
       const getScrollParent = (
         node: HTMLElement | null
@@ -102,42 +102,18 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
               (cRect.height / 2 - elRect.height / 2),
             behavior: 'smooth',
           });
+          return true;
         }
       }
+      return false;
     });
 
-    // 3. Wait for the scroll to stabilize
-    await locator.evaluate(async (element) => {
-      const getScrollParent = (
-        node: HTMLElement | null
-      ): HTMLElement | null => {
-        if (node == null) return null;
-        if (node.scrollHeight > node.clientHeight) {
-          const overflowY = window.getComputedStyle(node).overflowY;
-          if (overflowY === 'auto' || overflowY === 'scroll') return node;
-        }
-        return getScrollParent(node.parentElement);
-      };
-
-      const scrollContainer = getScrollParent(element as HTMLElement);
-      if (scrollContainer) {
-        await new Promise((resolve) => {
-          let lastPos = scrollContainer.scrollTop;
-          let identicalFrameCount = 0;
-          function verifyMovement() {
-            const currentPos = scrollContainer!.scrollTop;
-            if (currentPos === lastPos) identicalFrameCount++;
-            else identicalFrameCount = 0;
-            lastPos = currentPos;
-            if (identicalFrameCount > 10) resolve(true);
-            else requestAnimationFrame(verifyMovement);
-          }
-          requestAnimationFrame(verifyMovement);
-        });
-      } else {
-        await new Promise((r) => setTimeout(r, 500));
-      }
-    });
+    // 3. If scrolling, wait for smooth scroll animation to complete on video
+    if (scrolled) {
+      await page.waitForTimeout(600);
+    } else {
+      await page.waitForTimeout(200);
+    }
 
     // 4. Show the popover once stable
     if (title) {
