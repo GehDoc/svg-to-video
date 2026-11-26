@@ -69,8 +69,11 @@ export const Header = ({ onHome }: HeaderProps) => {
 
   return (
     <header className="site-header" ref={headerRef}>
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <div className="site-header__bar">
-        <h1 className="header-title">
+        <div className="header-title">
           <a
             role="button"
             tabIndex={0}
@@ -83,7 +86,7 @@ export const Header = ({ onHome }: HeaderProps) => {
             <span>SVG to Video</span>
             <small className="header-badge">STUDIO</small>
           </a>
-        </h1>
+        </div>
 
         <nav className="jump-nav" aria-label="Page navigation">
           <a href="#top">Studio</a>

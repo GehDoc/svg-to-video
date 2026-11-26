@@ -31,6 +31,20 @@ The Studio requires `SharedArrayBuffer` for high-performance video encoding. For
 
 In development, these are configured in `next.config.js`. In production (GitHub Pages), we utilize the `coi-serviceworker.js` to intercept requests and apply these headers on the client side.
 
+### Accessible Landmarks & Sticky Navigation
+
+The Web Studio adopts an accessible, single-document-landmark structure combined with a deterministic sticky navigation system:
+
+1. **Semantic Landmark Layout (`<main id="main-content">`)**:
+   - Both the interactive workspace (`#studio`) and editorial documentation sections (`SeoContent`) are encapsulated inside `<main id="main-content">` across both SSR fallback (`app/page.tsx`) and hydrated client (`components/Studio.tsx`).
+   - A keyboard-focusable skip-to-content link (`.skip-link`) in `Header.tsx` bypasses the fixed site navigation directly to `#main-content`.
+   - The application logo in `Header.tsx` uses a semantic branding container (`<div className="header-title">`), reserving the single document `<h1>` strictly for the primary Hero headline.
+2. **Self-Contained Sticky Header & Shared Coordinator (`StickyHeader` & `stickyCoordinator`)**:
+   - Rather than parent components manually managing and coordinating arrays of DOM refs, sections simply wrap their headings in a polymorphic `<StickyHeader as="h2">` component.
+   - The shared `stickyCoordinator` automatically discovers the active scroll container (scrolling ancestor with `overflowY: auto/scroll` on desktop `ConfigPanel`, or `window` on mobile and editorial sections), dynamically reads computed CSS `top` offsets, and disables tracking cleanly when CSS specifies `position: static` (e.g. `HeroStrip` on mobile).
+   - Re-renders are strictly isolated to the `<StickyHeader>` leaf, eliminating full-tree re-renders of heavy forms or documentation during scrolling.
+   - Dynamic elevation shadows (`--sticky-shadow`) trigger only when content begins scrolling underneath the headers, supporting multi-level nested headers without hardcoded constants.
+
 ## 🎨 High-Fidelity SVG Rendering (Bake & Clean)
 
 The `SvgRenderer` uses a specialized "Bake & Clean" algorithm to capture frame-accurate snapshots of SVGs, particularly those with complex CSS or SMIL animations.

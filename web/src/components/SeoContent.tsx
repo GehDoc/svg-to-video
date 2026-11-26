@@ -15,6 +15,7 @@ import pkg from '../../package.json';
 import { ECOSYSTEM_LINKS } from '../utils/constants';
 import { trackEvent } from '../utils/analytics';
 import { DevCard } from './DevCard/DevCard';
+import { StickyHeader } from './StickyHeader/StickyHeader';
 import './SeoContent.scss';
 
 export const SeoContent = () => {
@@ -55,10 +56,10 @@ export const SeoContent = () => {
           className="seo-block"
           aria-labelledby="why-title"
         >
-          <div className="block-header">
+          <StickyHeader className="block-header">
             <FaShieldAlt className="block-icon" />
             <h3 id="why-title">Why Use SVG to Video?</h3>
-          </div>
+          </StickyHeader>
           <div className="features-grid">
             {seoData.features.map((feat) => (
               <article key={feat.title} className="feature-item">
@@ -75,12 +76,12 @@ export const SeoContent = () => {
           className="seo-block"
           aria-labelledby="how-title"
         >
-          <div className="block-header">
+          <StickyHeader className="block-header">
             <FaCogs className="block-icon" />
             <h3 id="how-title">
               How to Convert Animated SVGs (CSS &amp; SMIL)
             </h3>
-          </div>
+          </StickyHeader>
           <div className="steps-container">
             {seoData.quickStartSteps.map((stepHtml, index) => (
               <div key={index} className="step-card">
@@ -100,12 +101,12 @@ export const SeoContent = () => {
           className="seo-block"
           aria-labelledby="formats-title"
         >
-          <div className="block-header">
+          <StickyHeader className="block-header">
             <FaLayerGroup className="block-icon" />
             <h3 id="formats-title">
               Supported Output Formats &amp; Specifications
             </h3>
-          </div>
+          </StickyHeader>
           <div className="table-responsive">
             <table className="format-table">
               <thead>
@@ -156,20 +157,20 @@ export const SeoContent = () => {
           className="seo-block"
           aria-labelledby="automation-title"
         >
-          <div className="block-header">
+          <StickyHeader className="block-header">
             <FaTerminal className="block-icon" />
             <h3 id="automation-title">
               Developer CLI, Docker &amp; Model Context Protocol (MCP)
             </h3>
-          </div>
+          </StickyHeader>
 
           <div className="automation-sections">
             {/* Sub-section 1: CLI & Docker Automation */}
             <div className="automation-subblock">
-              <div className="automation-subblock__header">
+              <StickyHeader className="automation-subblock__header">
                 <FaTerminal className="subblock-icon" />
                 <h4>CLI &amp; Docker Automation</h4>
-              </div>
+              </StickyHeader>
 
               {seoData.cliSection?.descriptionHtml && (
                 <div
@@ -224,10 +225,10 @@ export const SeoContent = () => {
 
             {/* Sub-section 2: AI Agent & MCP Integration */}
             <div className="automation-subblock">
-              <div className="automation-subblock__header">
+              <StickyHeader className="automation-subblock__header">
                 <FaRobot className="subblock-icon" />
                 <h4>AI Agent &amp; MCP Integration</h4>
-              </div>
+              </StickyHeader>
 
               {seoData.mcpSection?.descriptionHtml && (
                 <div
@@ -303,21 +304,25 @@ export const SeoContent = () => {
 
         {/* FAQ Section */}
         <section id="faq" className="seo-block" aria-labelledby="faq-title">
-          <div className="block-header">
+          <StickyHeader className="block-header">
             <FaQuestionCircle className="block-icon" />
             <h3 id="faq-title">Frequently Asked Questions</h3>
-          </div>
+          </StickyHeader>
           <div className="faq-sections">
             {seoData.faqCategories && seoData.faqCategories.length > 0 ? (
               seoData.faqCategories.map((group) => (
                 <div key={group.category} className="faq-category-block">
-                  <h4 className="faq-category-title">{group.category}</h4>
+                  <StickyHeader as="h4" className="faq-category-title">
+                    {group.category}
+                  </StickyHeader>
                   <div className="faq-grid">
                     {group.items.map((item) => (
                       <article key={item.question} className="faq-item">
                         <h5>{item.question}</h5>
                         <p
-                          dangerouslySetInnerHTML={{ __html: item.answerHtml }}
+                          dangerouslySetInnerHTML={{
+                            __html: item.answerHtml,
+                          }}
                         />
                       </article>
                     ))}
@@ -343,10 +348,10 @@ export const SeoContent = () => {
           className="seo-block sponsor-section"
           aria-labelledby="sponsor-title"
         >
-          <div className="block-header">
+          <StickyHeader className="block-header">
             <FaHeart className="block-icon sponsor-icon" />
             <h3 id="sponsor-title">Support SVG to Video</h3>
-          </div>
+          </StickyHeader>
           <div className="sponsor-card">
             <p className="sponsor-text">
               SVG to Video is 100% free, open source, and released under the MIT

@@ -21,6 +21,7 @@ import type { VideoMetadata } from '../../../shared/metadata';
 import { Button } from './Button/Button';
 import { FormatSelector } from './FormatSelector/FormatSelector';
 import { FaLayerGroup, FaTimes } from 'react-icons/fa';
+import { StickyHeader } from './StickyHeader/StickyHeader';
 import './ConfigPanel.scss';
 
 interface ConfigPanelProps {
@@ -191,7 +192,9 @@ export const ConfigPanel = ({
           className={`config-section ${isRenderingOrSuccess ? 'is-locked' : ''}`}
           aria-disabled={isRenderingOrSuccess}
         >
-          <h2 aria-disabled={isRenderingOrSuccess}>1. Source</h2>
+          <StickyHeader as="h2" aria-disabled={isRenderingOrSuccess}>
+            1. Source
+          </StickyHeader>
           <Dropzone
             svgContent={svgContent}
             isDragging={isDragging}
@@ -232,7 +235,9 @@ export const ConfigPanel = ({
           className={`config-section ${isOptionsDisabled ? 'is-locked' : ''}`}
           aria-disabled={isOptionsDisabled}
         >
-          <h2 aria-disabled={isOptionsDisabled}>2. Format</h2>
+          <StickyHeader as="h2" aria-disabled={isOptionsDisabled}>
+            2. Format
+          </StickyHeader>
           <FormatSelector
             formats={formats}
             value={format}
@@ -346,7 +351,9 @@ export const ConfigPanel = ({
           className={`config-section ${isOptionsDisabled ? 'is-locked' : ''}`}
           aria-disabled={isOptionsDisabled}
         >
-          <h2 aria-disabled={isOptionsDisabled}>3. Canvas</h2>
+          <StickyHeader as="h2" aria-disabled={isOptionsDisabled}>
+            3. Canvas
+          </StickyHeader>
           <div className="input-group">
             <div className="checkbox-wrapper">
               <input
@@ -434,7 +441,9 @@ export const ConfigPanel = ({
           className={`config-section ${isOptionsDisabled ? 'is-locked' : ''}`}
           aria-disabled={isOptionsDisabled}
         >
-          <h2 aria-disabled={isOptionsDisabled}>4. Metadata</h2>
+          <StickyHeader as="h2" aria-disabled={isOptionsDisabled}>
+            4. Metadata
+          </StickyHeader>
           <div className="input-group">
             <label htmlFor="meta-title">Title</label>
             <input

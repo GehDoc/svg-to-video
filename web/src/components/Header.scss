@@ -12,6 +12,28 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
+.skip-link {
+  position: absolute;
+  top: -9999px;
+  left: 1.5rem;
+  z-index: 1000;
+  padding: 0.5rem 1rem;
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: top 0.15s ease-out;
+
+  &:focus {
+    top: 0.65rem;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
 .site-header__bar {
   padding: 0.65rem 1.5rem;
   display: flex;
