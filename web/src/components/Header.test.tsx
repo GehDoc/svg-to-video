@@ -2,16 +2,40 @@
  * @vitest-environment jsdom
  */
 import { render, screen, fireEvent, within } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
 import { Header } from './Header';
-import { expect, test, vi } from 'vitest';
+import { expect, test, vi, beforeEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
+import * as starHook from '../hooks/useGitHubRepoStars';
 
 vi.mock('../assets/logo.svg?react', () => ({
   default: () => <div data-testid="logo" />,
 }));
 
+const renderWithClient = (ui: React.ReactElement) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+  );
+};
+
+beforeEach(() => {
+  vi.spyOn(starHook, 'useGitHubRepoStars').mockReturnValue({
+    stars: 100,
+    isLoading: false,
+    isError: false,
+  });
+});
+
 test('Header renders title, jump links, actions and mobile burger', () => {
-  render(<Header />);
+  renderWithClient(<Header />);
 
   expect(
     screen.getByRole('link', { name: /skip to main content/i })
@@ -43,9 +67,12 @@ test('Header renders title, jump links, actions and mobile burger', () => {
     within(jumpNav).getByRole('link', { name: /^faq$/i })
   ).toBeInTheDocument();
 
-  // GitHub & Sponsor buttons
+  // GitHub, Star & Sponsor buttons
   expect(
     screen.getAllByRole('link', { name: /github repository/i }).length
+  ).toBe(2);
+  expect(
+    screen.getAllByRole('link', { name: /star svg-to-video on github/i }).length
   ).toBe(2);
   expect(screen.getAllByRole('link', { name: /sponsor/i }).length).toBe(2);
 
@@ -59,7 +86,7 @@ test('Header toggles mobile drawer when clicking burger button', () => {
   const trackMock = vi.fn();
   vi.stubGlobal('umami', { track: trackMock });
 
-  render(<Header />);
+  renderWithClient(<Header />);
 
   const burgerBtn = screen.getByRole('button', { name: /open menu/i });
   expect(burgerBtn).toHaveAttribute('aria-expanded', 'false');
@@ -85,7 +112,7 @@ test('Header toggles mobile drawer when clicking burger button', () => {
 
 test('Header title triggers onHome callback when clicked', () => {
   const onHome = vi.fn();
-  render(<Header onHome={onHome} />);
+  renderWithClient(<Header onHome={onHome} />);
 
   const homeBtn = screen.getByRole('button', { name: /svg to video home/i });
   fireEvent.click(homeBtn);
@@ -95,7 +122,7 @@ test('Header title triggers onHome callback when clicked', () => {
 
 test('Header title triggers onHome callback on Enter or Space key down', () => {
   const onHome = vi.fn();
-  render(<Header onHome={onHome} />);
+  renderWithClient(<Header onHome={onHome} />);
 
   const homeBtn = screen.getByRole('button', { name: /svg to video home/i });
   fireEvent.keyDown(homeBtn, { key: 'Enter' });

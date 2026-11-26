@@ -9,6 +9,7 @@ import {
 } from '@shared/analytics-schema';
 
 import { ECOSYSTEM_LINKS } from '../utils/constants';
+import { Providers } from '../components/Providers';
 
 const siteName = 'SVG to Video';
 const title =
@@ -125,7 +126,9 @@ export default function RootLayout({
         )}
       </head>
       <body>
-        <div id="root">{children}</div>
+        <Providers>
+          <div id="root">{children}</div>
+        </Providers>
       </body>
     </html>
   );

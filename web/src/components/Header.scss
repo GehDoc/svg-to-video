@@ -114,6 +114,12 @@
   gap: 0.5rem;
 }
 
+.header-star-btn {
+  @media (max-width: 480px) {
+    display: none;
+  }
+}
+
 .header-github-btn {
   display: inline-flex;
   align-items: center;
@@ -193,6 +199,15 @@
   &.is-open {
     @media (max-width: $header-mobile-breakpoint) {
       display: flex;
+    }
+  }
+
+  .mobile-drawer__star-wrapper {
+    padding-bottom: 0.25rem;
+
+    .star-button {
+      width: 100%;
+      justify-content: center;
     }
   }
 

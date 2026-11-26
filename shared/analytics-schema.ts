@@ -78,6 +78,10 @@ export interface ClickHomeEventProperties {
   location: 'header' | 'config-source';
 }
 
+export interface ClickStarEventProperties {
+  location?: 'header' | 'mobile-drawer' | 'seo-content';
+}
+
 export interface OpenSamplesEventProperties {
   location: 'config-source';
 }
@@ -96,6 +100,7 @@ export interface AnalyticsEventMap {
   'back-to-studio': BackToStudioEventProperties;
   'click-home': ClickHomeEventProperties;
   'open-samples': OpenSamplesEventProperties;
+  'click-star'?: ClickStarEventProperties;
   'click-issue-report'?: EmptyEventProperties;
   'click-source-code'?: EmptyEventProperties;
 }

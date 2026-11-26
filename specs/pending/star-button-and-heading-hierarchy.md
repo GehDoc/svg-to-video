@@ -63,13 +63,13 @@
   - [x] Convert "How to Convert" steps to `<ol>` / `<li>` in `SeoContent.tsx`
   - [x] Update unit tests in `SeoContent.test.tsx` for new heading levels
   - [x] Review and commit Phase 1
-- [ ] **Phase 2: Dedicated StarButton Component & GitHub Repo Stars Integration**
-  - [ ] Install `@tanstack/react-query` in `web` workspace and configure `Providers.tsx`
-  - [ ] Implement `useGitHubRepoStars` hook with cached query (`staleTime: 30m`) and offline/rate-limit fallback
-  - [ ] Create dedicated `StarButton` component (with `.scss`, `.test.tsx`, and `.stories.tsx`)
-  - [ ] Integrate `StarButton` into `Header.tsx` (desktop & mobile drawer)
-  - [ ] Add mock QueryClient wrapper in Vitest setup and Storybook preview
-  - [ ] Review and commit Phase 2
+- [x] **Phase 2: Dedicated StarButton Component & GitHub Repo Stars Integration**
+  - [x] Install `@tanstack/react-query` in `web` workspace and configure `Providers.tsx`
+  - [x] Implement `useGitHubRepoStars` hook with cached query (`staleTime: 30m`) and offline/rate-limit fallback
+  - [x] Create dedicated `StarButton` component (with `.scss`, `.test.tsx`, and `.stories.tsx`)
+  - [x] Integrate `StarButton` into `Header.tsx` (desktop & mobile drawer)
+  - [x] Add mock QueryClient wrapper in Vitest setup and Storybook preview
+  - [x] Review and commit Phase 2
 - [ ] **Phase 3: "Sponsor me on GitHub" Renaming & Community Support Section**
   - [ ] Rename "Sponsor on GitHub" to "Sponsor me on GitHub" across Header, mobile drawer, tooltips, and SeoContent
   - [ ] Update `#sponsor` in `SeoContent.tsx` to `#support` with a dedicated "Star on GitHub" rating card alongside Sponsor (with backward-compatible `#sponsor` anchor alias)

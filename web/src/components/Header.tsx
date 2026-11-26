@@ -17,6 +17,7 @@ import Logo from '../assets/logo.svg?react';
 import pkg from '../../package.json';
 import { ECOSYSTEM_LINKS } from '../utils/constants';
 import { trackEvent } from '../utils/analytics';
+import { StarButton } from './StarButton';
 import './Header.scss';
 
 export interface HeaderProps {
@@ -97,6 +98,8 @@ export const Header = ({ onHome }: HeaderProps) => {
         </nav>
 
         <div className="header-actions">
+          <StarButton className="header-star-btn" location="header" />
+
           <a
             href={ECOSYSTEM_LINKS.github}
             target="_blank"
@@ -114,8 +117,8 @@ export const Header = ({ onHome }: HeaderProps) => {
             target="_blank"
             rel="noopener noreferrer"
             className="header-sponsor-btn"
-            title="Sponsor on GitHub ↗"
-            aria-label="Sponsor on GitHub"
+            title="Sponsor me on GitHub ↗"
+            aria-label="Sponsor me on GitHub"
             onClick={() => {
               trackEvent('click-sponsor', { location: 'header' });
             }}
@@ -162,6 +165,13 @@ export const Header = ({ onHome }: HeaderProps) => {
         <div className="mobile-drawer__divider" />
 
         <div className="mobile-drawer__section">
+          <div className="mobile-drawer__star-wrapper">
+            <StarButton
+              size="medium"
+              location="mobile-drawer"
+              onClick={handleNavLinkClick}
+            />
+          </div>
           <a
             href={ECOSYSTEM_LINKS.github}
             target="_blank"
@@ -182,7 +192,7 @@ export const Header = ({ onHome }: HeaderProps) => {
               handleNavLinkClick();
             }}
           >
-            <FaHeart className="icon-heart" /> Sponsor on GitHub ↗
+            <FaHeart className="icon-heart" /> Sponsor me on GitHub ↗
           </a>
           <a
             href={pkg.bugs.url}
