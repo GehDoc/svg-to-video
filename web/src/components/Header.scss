@@ -140,8 +140,8 @@
   box-sizing: border-box;
   flex-shrink: 0;
 
-  // Medium & Small (<= 1024px): hide "Star" text label -> [★ count]
-  @media (max-width: $header-mobile-breakpoint) {
+  // Small (<= 640px): hide "Star" text label -> [★ count]
+  @media (max-width: 640px) {
     .star-button__label {
       display: none;
     }
@@ -149,8 +149,7 @@
 
   // Extra-small (<= 380px): hide count pill and become uniform 34x34 icon button -> [★]
   @media (max-width: 380px) {
-    &.star-button,
-    .star-button {
+    &.star-button {
       width: 34px;
       height: 34px;
       padding: 0;
@@ -221,8 +220,8 @@
     font-size: 0.8rem;
   }
 
-  // Medium, Small & Extra-small (<= 1024px): hide "Sponsor me" label -> 34x34 square [♥] icon button
-  @media (max-width: $header-mobile-breakpoint) {
+  // Small & Extra-small (<= 640px): hide "Sponsor me" label -> 34x34 square [♥] icon button
+  @media (max-width: 640px) {
     width: 34px;
     height: 34px;
     padding: 0;
