@@ -16,6 +16,7 @@ import { ECOSYSTEM_LINKS } from '../utils/constants';
 import { trackEvent } from '../utils/analytics';
 import { DevCard } from './DevCard/DevCard';
 import { StickyHeader } from './StickyHeader/StickyHeader';
+import { StarButton } from './StarButton';
 import './SeoContent.scss';
 
 export const SeoContent = () => {
@@ -344,35 +345,56 @@ export const SeoContent = () => {
           </div>
         </section>
 
-        {/* Support & Sponsorship Section */}
+        {/* Support & Community Section */}
         <section
-          id="sponsor"
-          className="seo-block sponsor-section"
-          aria-labelledby="sponsor-title"
+          id="support"
+          className="seo-block support-section"
+          aria-labelledby="support-title"
         >
+          {/* Backward compatibility anchor for existing #sponsor links */}
+          <span id="sponsor" className="anchor-alias" aria-hidden="true" />
           <StickyHeader className="block-header">
-            <FaHeart className="block-icon sponsor-icon" />
-            <h2 id="sponsor-title">Support SVG to Video</h2>
+            <FaHeart className="block-icon support-icon" />
+            <h2 id="support-title">
+              Support SVG to Video &amp; Star on GitHub
+            </h2>
           </StickyHeader>
-          <div className="sponsor-card">
-            <p className="sponsor-text">
-              SVG to Video is 100% free, open source, and released under the MIT
-              License. It runs entirely in your browser without tracking or data
-              collection. Your sponsorship directly fuels development, helps
-              maintain cross-browser format support, and keeps this tool
-              accessible to creators and developers worldwide.
-            </p>
-            <a
-              href={pkg.funding.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="sponsor-action-btn"
-              onClick={() => {
-                trackEvent('click-sponsor', { location: 'seo-content' });
-              }}
-            >
-              <FaHeart className="icon-heart" /> Sponsor on GitHub ↗
-            </a>
+          <div className="support-cards-grid">
+            <div className="support-card star-card">
+              <h3>Star on GitHub</h3>
+              <p className="support-text">
+                If you find SVG to Video helpful, give it a star on GitHub! It
+                helps other developers discover the tool and motivates continued
+                development.
+              </p>
+              <div className="support-action">
+                <StarButton size="medium" location="seo-content" />
+              </div>
+            </div>
+
+            <div className="support-card sponsor-card">
+              <h3>Sponsor Development</h3>
+              <p className="support-text">
+                SVG to Video is 100% free, open source, and released under the
+                MIT License. It runs entirely in your browser without tracking
+                or data collection. Your sponsorship directly fuels development,
+                helps maintain cross-browser format support, and keeps this tool
+                accessible to creators worldwide.
+              </p>
+              <div className="support-action">
+                <a
+                  href={pkg.funding.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="sponsor-action-btn"
+                  onClick={() => {
+                    trackEvent('click-sponsor', { location: 'seo-content' });
+                  }}
+                >
+                  <FaHeart className="icon-heart" /> Sponsor me on GitHub ↗
+                </a>
+              </div>
+            </div>
           </div>
         </section>
       </div>

@@ -70,11 +70,11 @@
   - [x] Integrate `StarButton` into `Header.tsx` (desktop & mobile drawer)
   - [x] Add mock QueryClient wrapper in Vitest setup and Storybook preview
   - [x] Review and commit Phase 2
-- [ ] **Phase 3: "Sponsor me on GitHub" Renaming & Community Support Section**
-  - [ ] Rename "Sponsor on GitHub" to "Sponsor me on GitHub" across Header, mobile drawer, tooltips, and SeoContent
-  - [ ] Update `#sponsor` in `SeoContent.tsx` to `#support` with a dedicated "Star on GitHub" rating card alongside Sponsor (with backward-compatible `#sponsor` anchor alias)
-  - [ ] Add unit & Storybook tests for Star button and Support section
-  - [ ] Review and commit Phase 3
+- [x] **Phase 3: "Sponsor me on GitHub" Renaming & Community Support Section**
+  - [x] Rename "Sponsor on GitHub" to "Sponsor me on GitHub" across Header, mobile drawer, tooltips, and SeoContent
+  - [x] Update `#sponsor` in `SeoContent.tsx` to `#support` with a dedicated "Star on GitHub" rating card alongside Sponsor (with backward-compatible `#sponsor` anchor alias)
+  - [x] Add unit & Storybook tests for Star button and Support section
+  - [x] Review and commit Phase 3
 - [ ] **Phase 4: Design Tokens & Dual-Theme Storybook Script**
   - [ ] Add star rating tokens (`--star-color`, `--star-bg`, etc.) to `web/src/index.scss` (light & dark)
   - [ ] Add `"test:storybook:all"` to `web/package.json` and root `package.json`

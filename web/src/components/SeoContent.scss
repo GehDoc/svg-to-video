@@ -423,25 +423,48 @@
   }
 }
 
-/* Sponsor Section */
-.sponsor-section {
-  .sponsor-icon {
+/* Support & Community Section */
+.support-section {
+  position: relative;
+
+  .anchor-alias {
+    position: absolute;
+    top: calc(-1 * var(--header-height, 48px));
+  }
+
+  .support-icon {
     color: var(--sponsor);
   }
 
-  .sponsor-card {
+  .support-cards-grid {
+    @include responsive-grid-2col;
+  }
+
+  .support-card {
     @include card-surface;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    justify-content: space-between;
     gap: 1.25rem;
 
-    .sponsor-text {
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-h);
+      margin: 0;
+    }
+
+    .support-text {
       color: var(--text-muted);
       line-height: 1.6;
       font-size: 0.95rem;
       margin: 0;
-      max-width: 80ch;
+      flex-grow: 1;
+    }
+
+    .support-action {
+      display: flex;
+      align-items: center;
     }
 
     .sponsor-action-btn {

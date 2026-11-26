@@ -1,11 +1,20 @@
 // @vitest-environment jsdom
 import { render, screen, cleanup } from '@testing-library/react';
-import { test, expect, afterEach } from 'vitest';
+import { test, expect, afterEach, vi, beforeEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { composeStories } from '@storybook/react';
 import * as stories from './SeoContent.stories';
+import * as starHook from '../hooks/useGitHubRepoStars';
 
 afterEach(cleanup);
+
+beforeEach(() => {
+  vi.spyOn(starHook, 'useGitHubRepoStars').mockReturnValue({
+    stars: 100,
+    isLoading: false,
+    isError: false,
+  });
+});
 
 const { Default } = composeStories(stories);
 
@@ -42,9 +51,27 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
 
   expect(
     screen.getByRole('heading', {
-      name: /Support SVG to Video/i,
+      name: /Support SVG to Video & Star on GitHub/i,
       level: 2,
     })
+  ).toBeInTheDocument();
+
+  expect(
+    screen.getByRole('heading', {
+      name: /Star on GitHub/i,
+      level: 3,
+    })
+  ).toBeInTheDocument();
+
+  expect(
+    screen.getByRole('heading', {
+      name: /Sponsor Development/i,
+      level: 3,
+    })
+  ).toBeInTheDocument();
+
+  expect(
+    screen.getByRole('link', { name: /Sponsor me on GitHub/i })
   ).toBeInTheDocument();
 
   // Verify format table rows (format names may appear in multiple elements)
