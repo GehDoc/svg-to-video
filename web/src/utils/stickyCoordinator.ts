@@ -21,8 +21,9 @@ export interface StickyHeaderOptions {
 export interface StickyEntry {
   headerEl: HTMLElement;
   options?: StickyHeaderOptions;
-  onStateChange: (isStuck: boolean) => void;
+  onStateChange: (isStuck: boolean, isStackedAbove: boolean) => void;
   isStuck: boolean;
+  isStackedAbove: boolean;
   scrollTarget: Window | HTMLElement;
 }
 
@@ -66,7 +67,7 @@ class StickyCoordinator {
    */
   register(
     headerEl: HTMLElement,
-    onStateChange: (isStuck: boolean) => void,
+    onStateChange: (isStuck: boolean, isStackedAbove: boolean) => void,
     options?: StickyHeaderOptions
   ): () => void {
     if (typeof window === 'undefined') return () => {};
@@ -77,6 +78,7 @@ class StickyCoordinator {
       options,
       onStateChange,
       isStuck: false,
+      isStackedAbove: false,
       scrollTarget,
     };
 
@@ -207,23 +209,19 @@ class StickyCoordinator {
       : (target as HTMLElement).getBoundingClientRect().top +
         (target as HTMLElement).clientTop;
 
+    const nextStuckMap = new Map<StickyEntry, boolean>();
+
     for (const entry of entries) {
       if (!entry.headerEl || !entry.headerEl.isConnected) continue;
 
       if (entry.options?.disabled) {
-        if (entry.isStuck) {
-          entry.isStuck = false;
-          entry.onStateChange(false);
-        }
+        nextStuckMap.set(entry, false);
         continue;
       }
 
       const style = window.getComputedStyle(entry.headerEl);
       if (style.position !== 'sticky') {
-        if (entry.isStuck) {
-          entry.isStuck = false;
-          entry.onStateChange(false);
-        }
+        nextStuckMap.set(entry, false);
         continue;
       }
 
@@ -234,7 +232,10 @@ class StickyCoordinator {
 
       const boundaryEl =
         entry.options?.boundaryRef?.current || entry.headerEl.parentElement;
-      if (!boundaryEl) continue;
+      if (!boundaryEl) {
+        nextStuckMap.set(entry, false);
+        continue;
+      }
 
       const boundaryTop = containerTop + topOffset;
       const rect = boundaryEl.getBoundingClientRect();
@@ -242,10 +243,49 @@ class StickyCoordinator {
       const minBottom = boundaryTop + Math.max(20, headerHeight * 0.7);
 
       const nextStuck = rect.top <= boundaryTop - 2 && rect.bottom > minBottom;
+      nextStuckMap.set(entry, nextStuck);
+    }
 
-      if (entry.isStuck !== nextStuck) {
+    // Determine which stuck headers have another stuck header touching directly underneath
+    const stuckEntries = Array.from(entries).filter(
+      (e) => nextStuckMap.get(e) && e.headerEl?.isConnected
+    );
+
+    const rectMap = new Map<StickyEntry, DOMRect>();
+    for (const entry of stuckEntries) {
+      rectMap.set(entry, entry.headerEl.getBoundingClientRect());
+    }
+
+    for (const entry of entries) {
+      const nextStuck = nextStuckMap.get(entry) ?? false;
+      let nextStackedAbove = false;
+
+      if (nextStuck) {
+        const rectA = rectMap.get(entry);
+        if (rectA) {
+          for (const other of stuckEntries) {
+            if (other === entry) continue;
+            const rectB = rectMap.get(other)!;
+            // other is below entry and touching entry's bottom within 2px
+            const touchesBottom =
+              Math.abs(rectA.bottom - rectB.top) <= 2 &&
+              rectB.left < rectA.right &&
+              rectB.right > rectA.left;
+            if (touchesBottom) {
+              nextStackedAbove = true;
+              break;
+            }
+          }
+        }
+      }
+
+      if (
+        entry.isStuck !== nextStuck ||
+        entry.isStackedAbove !== nextStackedAbove
+      ) {
         entry.isStuck = nextStuck;
-        entry.onStateChange(nextStuck);
+        entry.isStackedAbove = nextStackedAbove;
+        entry.onStateChange(nextStuck, nextStackedAbove);
       }
     }
   }

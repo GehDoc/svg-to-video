@@ -65,6 +65,10 @@
 
     &.is-stuck {
       box-shadow: var(--sticky-shadow);
+
+      &.is-stacked-above {
+        box-shadow: none;
+      }
     }
 
     @media (max-width: $mobile-breakpoint) {
@@ -246,6 +250,10 @@
 
     &.is-stuck {
       box-shadow: var(--sticky-shadow);
+
+      &.is-stacked-above {
+        box-shadow: none;
+      }
     }
 
     @media (max-width: $mobile-breakpoint) {
@@ -405,6 +413,10 @@
 
     &.is-stuck {
       box-shadow: var(--sticky-shadow);
+
+      &.is-stacked-above {
+        box-shadow: none;
+      }
     }
 
     @media (max-width: $mobile-breakpoint) {

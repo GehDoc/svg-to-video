@@ -12,6 +12,7 @@ import {
 export type StickyHeaderProps<T extends ElementType = 'div'> = {
   as?: T;
   stuckClassName?: string;
+  stackedAboveClassName?: string;
   className?: string;
   children?: ReactNode;
 } & UseStickyHeaderOptions &
@@ -25,6 +26,7 @@ export const StickyHeader = forwardRef(
     {
       as,
       stuckClassName = 'is-stuck',
+      stackedAboveClassName = 'is-stacked-above',
       className = '',
       boundaryRef,
       offsetPx,
@@ -35,7 +37,11 @@ export const StickyHeader = forwardRef(
     forwardedRef: React.ForwardedRef<HTMLElement>
   ) => {
     const Component = as || 'div';
-    const { ref: stickyRef, isStuck } = useStickyHeader({
+    const {
+      ref: stickyRef,
+      isStuck,
+      isStackedAbove,
+    } = useStickyHeader({
       boundaryRef,
       offsetPx,
       disabled,
@@ -50,8 +56,13 @@ export const StickyHeader = forwardRef(
       }
     };
 
-    const mergedClassName =
-      `${className} ${isStuck ? stuckClassName : ''}`.trim();
+    const mergedClassName = [
+      className,
+      isStuck ? stuckClassName : '',
+      isStackedAbove ? stackedAboveClassName : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     return (
       <Component ref={setMergedRef} className={mergedClassName} {...rest}>

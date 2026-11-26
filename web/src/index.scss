@@ -147,6 +147,10 @@ body {
   color: var(--text);
 }
 
+.is-stuck.is-stacked-above {
+  box-shadow: none !important;
+}
+
 .studio-viewport-fold {
   display: flex;
   flex-direction: column;
