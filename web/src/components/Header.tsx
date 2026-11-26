@@ -123,7 +123,8 @@ export const Header = ({ onHome }: HeaderProps) => {
               trackEvent('click-sponsor', { location: 'header' });
             }}
           >
-            <FaHeart className="icon-heart" /> Sponsor
+            <FaHeart className="icon-heart" />
+            <span className="header-sponsor-btn__label">Sponsor</span>
           </a>
 
           <button

@@ -164,6 +164,22 @@
   .icon-heart {
     font-size: 0.8rem;
   }
+
+  @media (max-width: 480px) {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+
+    .icon-heart {
+      font-size: 0.875rem;
+    }
+
+    .header-sponsor-btn__label {
+      display: none;
+    }
+  }
 }
 
 .header-menu-btn {
