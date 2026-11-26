@@ -9,10 +9,8 @@ export type UseStickyHeaderOptions = StickyHeaderOptions;
 export function useStickyHeader(options?: UseStickyHeaderOptions): {
   ref: (node: HTMLElement | null) => void;
   isStuck: boolean;
-  isStackedAbove: boolean;
 } {
   const [isStuck, setIsStuck] = useState(false);
-  const [isStackedAbove, setIsStackedAbove] = useState(false);
   const [element, setElement] = useState<HTMLElement | null>(null);
 
   const ref = useCallback((node: HTMLElement | null) => {
@@ -24,9 +22,8 @@ export function useStickyHeader(options?: UseStickyHeaderOptions): {
 
     const unregister = stickyCoordinator.register(
       element,
-      (nextStuck, nextStackedAbove) => {
+      (nextStuck) => {
         setIsStuck(nextStuck);
-        setIsStackedAbove(nextStackedAbove);
       },
       options
     );
@@ -36,5 +33,5 @@ export function useStickyHeader(options?: UseStickyHeaderOptions): {
     };
   }, [element, options]);
 
-  return { ref, isStuck, isStackedAbove };
+  return { ref, isStuck };
 }

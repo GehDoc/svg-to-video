@@ -87,16 +87,13 @@
   - [x] Update package.json and SEO metadata if needed
   - [x] Run full test suites (`check:fast`, `test:unit`, `test:visual`, `test:storybook:all`)
   - [x] Update PR description and mark spec as `🟡 To be reviewed`
-- [x] **Phase 6: Post-Review Defect Resolutions & Stacked Sticky Header Elevation**
+- [x] **Phase 6: Post-Review Defect Resolutions**
   - [x] Remove StarButton from mobile navigation drawer in `Header.tsx` & `Header.scss` (retaining it in desktop header actions and support card)
   - [x] Update `Header.test.tsx` assertions for single header StarButton instance
   - [x] Add `overscroll-behavior: contain` to `.config-content` in `ConfigPanel.scss` to prevent scroll chaining
   - [x] Remove artificial fixed layout CSS injection from `demo.spec.ts` to restore zero-gap alignment between `.site-header` and `.hero-strip`
   - [x] Set `smoothScroll: false` on Driver.js and scope spotlight scrolling strictly to internal `.config-content` container
   - [x] Verify demo video generation (`npm run test:demo -w web`) and validate frame boundaries
-  - [x] Implement stacked sticky header shadow suppression (Option A): multi-pass collision detection in `stickyCoordinator.ts` marks headers with `isStackedAbove` when a lower stuck header touches their bottom edge flush (<= 2px)
-  - [x] Add `is-stacked-above` styling (`box-shadow: none !important`) in `web/src/index.scss` and `web/src/components/SeoContent.scss` so the upper header drops shadow only when touching, but retains elevation when separated by a gap
-  - [x] Add unit test in `StickyHeader.test.tsx` verifying shadow suppression toggles dynamically based on lower header collision
 
 ---
 
@@ -114,12 +111,10 @@
   - Verify GitHub Star button renders live count or fallback gracefully without layout shift
   - Verify dark mode contrast of star rating button and support cards
   - Verify demo video shows seamless header-hero contact and locked outer viewport
-  - Verify stacked sticky headers: upper header shadow drops seamlessly when lower header touches, and reappears when scrolled apart
 
 ---
 
 ## 📝 Change Log
 
-- 2026-11-26: Implemented Option A: Stacked sticky header shadow suppression (`is-stacked-above`) when two stuck headers touch flush in `stickyCoordinator.ts`.
 - 2026-11-26: Phase 6 added to address review defects (mobile drawer button cleanup, scroll containment, and demo video alignment).
 - 2026-11-26: Initial spec created from partitioned scope of `semantic-web-layout-and-heading-hierarchy.md`.
