@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   FaTerminal,
   FaRobot,
@@ -15,49 +15,12 @@ import pkg from '../../package.json';
 import { ECOSYSTEM_LINKS } from '../utils/constants';
 import { trackEvent } from '../utils/analytics';
 import { DevCard } from './DevCard/DevCard';
-import { useStickyHeaderState } from '../hooks/useStickyObserver';
+import { StickyHeader } from './StickyHeader/StickyHeader';
 import './SeoContent.scss';
 
 export const SeoContent = () => {
   const [isPromptCopied, setIsPromptCopied] = useState(false);
   const promptTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const secWhyRef = useRef<HTMLElement>(null);
-  const secHowRef = useRef<HTMLElement>(null);
-  const secFormatsRef = useRef<HTMLElement>(null);
-  const secAutomationRef = useRef<HTMLElement>(null);
-  const secFaqRef = useRef<HTMLElement>(null);
-  const secSponsorRef = useRef<HTMLElement>(null);
-  const seoSectionRefs = useMemo(
-    () => [
-      secWhyRef,
-      secHowRef,
-      secFormatsRef,
-      secAutomationRef,
-      secFaqRef,
-      secSponsorRef,
-    ],
-    []
-  );
-  const [
-    stuckWhy,
-    stuckHow,
-    stuckFormats,
-    stuckAutomation,
-    stuckFaq,
-    stuckSponsor,
-  ] = useStickyHeaderState(seoSectionRefs);
-
-  const secCliRef = useRef<HTMLDivElement>(null);
-  const secMcpRef = useRef<HTMLDivElement>(null);
-  const secFaqStudioRef = useRef<HTMLDivElement>(null);
-  const secFaqCliRef = useRef<HTMLDivElement>(null);
-  const subSectionRefs = useMemo(
-    () => [secCliRef, secMcpRef, secFaqStudioRef, secFaqCliRef],
-    []
-  );
-  const [stuckCli, stuckMcp, stuckFaqStudio, stuckFaqCli] =
-    useStickyHeaderState(subSectionRefs, undefined, 100);
 
   useEffect(() => {
     return () => {
@@ -89,15 +52,14 @@ export const SeoContent = () => {
       <div className="seo-container">
         {/* Key Features Grid */}
         <section
-          ref={secWhyRef}
           id="why-svg-to-video"
           className="seo-block"
           aria-labelledby="why-title"
         >
-          <div className={`block-header ${stuckWhy ? 'is-stuck' : ''}`}>
+          <StickyHeader className="block-header">
             <FaShieldAlt className="block-icon" />
             <h3 id="why-title">Why Use SVG to Video?</h3>
-          </div>
+          </StickyHeader>
           <div className="features-grid">
             {seoData.features.map((feat) => (
               <article key={feat.title} className="feature-item">
@@ -110,17 +72,16 @@ export const SeoContent = () => {
 
         {/* How It Works / 3-Step Guide */}
         <section
-          ref={secHowRef}
           id="how-to-convert"
           className="seo-block"
           aria-labelledby="how-title"
         >
-          <div className={`block-header ${stuckHow ? 'is-stuck' : ''}`}>
+          <StickyHeader className="block-header">
             <FaCogs className="block-icon" />
             <h3 id="how-title">
               How to Convert Animated SVGs (CSS &amp; SMIL)
             </h3>
-          </div>
+          </StickyHeader>
           <div className="steps-container">
             {seoData.quickStartSteps.map((stepHtml, index) => (
               <div key={index} className="step-card">
@@ -136,17 +97,16 @@ export const SeoContent = () => {
 
         {/* Format Comparison Table */}
         <section
-          ref={secFormatsRef}
           id="formats"
           className="seo-block"
           aria-labelledby="formats-title"
         >
-          <div className={`block-header ${stuckFormats ? 'is-stuck' : ''}`}>
+          <StickyHeader className="block-header">
             <FaLayerGroup className="block-icon" />
             <h3 id="formats-title">
               Supported Output Formats &amp; Specifications
             </h3>
-          </div>
+          </StickyHeader>
           <div className="table-responsive">
             <table className="format-table">
               <thead>
@@ -193,27 +153,24 @@ export const SeoContent = () => {
 
         {/* CLI & MCP Developer Integration */}
         <section
-          ref={secAutomationRef}
           id="automation"
           className="seo-block"
           aria-labelledby="automation-title"
         >
-          <div className={`block-header ${stuckAutomation ? 'is-stuck' : ''}`}>
+          <StickyHeader className="block-header">
             <FaTerminal className="block-icon" />
             <h3 id="automation-title">
               Developer CLI, Docker &amp; Model Context Protocol (MCP)
             </h3>
-          </div>
+          </StickyHeader>
 
           <div className="automation-sections">
             {/* Sub-section 1: CLI & Docker Automation */}
-            <div ref={secCliRef} className="automation-subblock">
-              <div
-                className={`automation-subblock__header ${stuckCli ? 'is-stuck' : ''}`}
-              >
+            <div className="automation-subblock">
+              <StickyHeader className="automation-subblock__header">
                 <FaTerminal className="subblock-icon" />
                 <h4>CLI &amp; Docker Automation</h4>
-              </div>
+              </StickyHeader>
 
               {seoData.cliSection?.descriptionHtml && (
                 <div
@@ -267,13 +224,11 @@ export const SeoContent = () => {
             </div>
 
             {/* Sub-section 2: AI Agent & MCP Integration */}
-            <div ref={secMcpRef} className="automation-subblock">
-              <div
-                className={`automation-subblock__header ${stuckMcp ? 'is-stuck' : ''}`}
-              >
+            <div className="automation-subblock">
+              <StickyHeader className="automation-subblock__header">
                 <FaRobot className="subblock-icon" />
                 <h4>AI Agent &amp; MCP Integration</h4>
-              </div>
+              </StickyHeader>
 
               {seoData.mcpSection?.descriptionHtml && (
                 <div
@@ -348,47 +303,32 @@ export const SeoContent = () => {
         </section>
 
         {/* FAQ Section */}
-        <section
-          ref={secFaqRef}
-          id="faq"
-          className="seo-block"
-          aria-labelledby="faq-title"
-        >
-          <div className={`block-header ${stuckFaq ? 'is-stuck' : ''}`}>
+        <section id="faq" className="seo-block" aria-labelledby="faq-title">
+          <StickyHeader className="block-header">
             <FaQuestionCircle className="block-icon" />
             <h3 id="faq-title">Frequently Asked Questions</h3>
-          </div>
+          </StickyHeader>
           <div className="faq-sections">
             {seoData.faqCategories && seoData.faqCategories.length > 0 ? (
-              seoData.faqCategories.map((group, index) => {
-                const catRef = index === 0 ? secFaqStudioRef : secFaqCliRef;
-                const isStuck = index === 0 ? stuckFaqStudio : stuckFaqCli;
-                return (
-                  <div
-                    key={group.category}
-                    ref={catRef}
-                    className="faq-category-block"
-                  >
-                    <h4
-                      className={`faq-category-title ${isStuck ? 'is-stuck' : ''}`}
-                    >
-                      {group.category}
-                    </h4>
-                    <div className="faq-grid">
-                      {group.items.map((item) => (
-                        <article key={item.question} className="faq-item">
-                          <h5>{item.question}</h5>
-                          <p
-                            dangerouslySetInnerHTML={{
-                              __html: item.answerHtml,
-                            }}
-                          />
-                        </article>
-                      ))}
-                    </div>
+              seoData.faqCategories.map((group) => (
+                <div key={group.category} className="faq-category-block">
+                  <StickyHeader as="h4" className="faq-category-title">
+                    {group.category}
+                  </StickyHeader>
+                  <div className="faq-grid">
+                    {group.items.map((item) => (
+                      <article key={item.question} className="faq-item">
+                        <h5>{item.question}</h5>
+                        <p
+                          dangerouslySetInnerHTML={{
+                            __html: item.answerHtml,
+                          }}
+                        />
+                      </article>
+                    ))}
                   </div>
-                );
-              })
+                </div>
+              ))
             ) : (
               <div className="faq-grid">
                 {seoData.faq.map((item) => (
@@ -404,15 +344,14 @@ export const SeoContent = () => {
 
         {/* Support & Sponsorship Section */}
         <section
-          ref={secSponsorRef}
           id="sponsor"
           className="seo-block sponsor-section"
           aria-labelledby="sponsor-title"
         >
-          <div className={`block-header ${stuckSponsor ? 'is-stuck' : ''}`}>
+          <StickyHeader className="block-header">
             <FaHeart className="block-icon sponsor-icon" />
             <h3 id="sponsor-title">Support SVG to Video</h3>
-          </div>
+          </StickyHeader>
           <div className="sponsor-card">
             <p className="sponsor-text">
               SVG to Video is 100% free, open source, and released under the MIT

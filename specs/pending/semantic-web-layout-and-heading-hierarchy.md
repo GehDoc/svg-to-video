@@ -38,9 +38,10 @@ _(Note: Semantic heading level promotions `<h3>` → `<h2>` and the dedicated `S
   - Primary section block headers (`.block-header`) break out edge-to-edge (`100vw`) with `background: var(--panel)` and sticky pinning at `top: var(--header-height, 48px); z-index: 12`.
   - Dynamic horizontal padding (`max(1.5rem, calc(50vw - 540px + 1.5rem))`) ensures pixel-perfect text alignment with the 1080px inner container.
   - Nested Level 2 sticky sub-headers (Developer Automation sub-blocks and FAQ category titles) stick at `top: calc(var(--header-height, 48px) + 52px); z-index: 11` directly below active parent headers with matching edge-to-edge breakout and dynamic shadow.
-- **Sticky State Hook (`useStickyObserver`)**:
-  - Uses relative `getBoundingClientRect()` calculation against the container/viewport boundary rather than `offsetTop` to prevent layout hierarchy offsets.
-  - Supports configurable `boundaryOffset` for multi-level sticky stacking.
+- **Self-Contained `<StickyHeader>` & Shared Coordinator (`stickyCoordinator`)**:
+  - Rather than parent components managing arrays of DOM refs, sections simply wrap their headings in a polymorphic `<StickyHeader as="h2">` component.
+  - The shared `stickyCoordinator` automatically discovers the active scroll container (scrolling ancestor with `overflowY: auto/scroll` on desktop `ConfigPanel`, or `window` on mobile and editorial sections), dynamically reads computed CSS `top` offsets, and disables tracking cleanly when CSS specifies `position: static` (e.g. `HeroStrip` on mobile).
+  - Re-renders are strictly isolated to the `<StickyHeader>` leaf, completely eliminating full-tree re-renders of heavy forms or documentation during scrolling.
 
 ---
 
@@ -50,14 +51,14 @@ _(Note: Semantic heading level promotions `<h3>` → `<h2>` and the dedicated `S
   - [x] Encompass studio workspace and SeoContent inside `<main id="main-content">` in `Studio.tsx` and `page.tsx`
   - [x] Convert header logo link to semantic `<div>` (preserving Hero as single document `<h1>`)
   - [x] Add accessible skip-to-content link with focus styles
-- [x] **Phase 2: Sticky Header & Dynamic Elevation System**
-  - [x] Implement sticky header behavior and bottom elevation shadow on `HeroStrip` (desktop only)
-  - [x] Implement sticky headers and subtle shadow in `ConfigPanel` (desktop relative container + mobile window scrolling)
-  - [x] Implement full-width breakout sticky block headers in `SeoContent`
-  - [x] Implement 2nd-level nested sticky sub-headers for Developer Automation and FAQ categories
-  - [x] Implement and unit-test `useStickyObserver` with `boundaryOffset` support
+- [x] **Phase 2: Self-Contained Sticky Header & Shared Coordinator**
+  - [x] Implement shared CSS-driven `stickyCoordinator` managing scroll targets and leaf notifications
+  - [x] Implement `useStickyHeader` hook and polymorphic `<StickyHeader>` component with Storybook stories
+  - [x] Refactor `HeroStrip`, `ConfigPanel`, and `SeoContent` to use `<StickyHeader>` (eliminating 15 manual refs)
+  - [x] Verify multi-level nested sticky headers and full-width breakouts in `SeoContent`
+  - [x] Add comprehensive unit tests in `StickyHeader.test.tsx`
 - [x] **Documentation, Security & SEO Pre-Flight**
-  - [x] Update `docs/ARCHITECTURE.md` with Web Studio accessible landmark and sticky navigation architecture
+  - [x] Update `docs/ARCHITECTURE.md` with Web Studio accessible landmark and `<StickyHeader>` architecture
   - [x] Audit `docs/SECURITY.md` (no subprocess calls, ephemeral files, or injection vectors introduced)
   - [x] Audit `README.md` and repo metadata
 - [x] **Architecture & Maintainability Pre-Flight (`🟡 To be reviewed`)**
@@ -72,8 +73,8 @@ _(Note: Semantic heading level promotions `<h3>` → `<h2>` and the dedicated `S
 
 - [x] Automated Tests:
   - `npm run check:fast` (ESLint, Prettier formatting, TypeScript typecheck) — PASS
-  - `npm run test:unit` (26 test files, 98 unit tests) — PASS
-  - `npm run test:storybook -w web` (18 storybook suites, 50 component stories) — PASS
+  - `npm run test:unit` (26 test files, 99 unit tests) — PASS
+  - `npm run test:storybook -w web` (19 storybook suites, 51 component stories) — PASS
   - `npm run test:visual -w web` (3 visual regression suites, 14 tests) — PASS
 - [x] Manual & Browser Verification:
   - Verified `<main id="main-content">` wraps workspace fold and SeoContent in SSR and hydrated state.
@@ -88,4 +89,5 @@ _(Note: Semantic heading level promotions `<h3>` → `<h2>` and the dedicated `S
 - 2026-11-25: Completed landmark layout, skip link, and sticky header infrastructure.
 - 2026-11-25: Refined ConfigPanel and SeoContent full-width breakout and nested sub-headers.
 - 2026-11-26: Resolved FAQ category sticky shadow state; scoped heading hierarchy & StarButton to follow-up spec.
+- 2026-11-26: Senior code review; refactored sticky system to self-contained `<StickyHeader>` component with shared CSS-driven `stickyCoordinator`, removing all 15 manual refs across `ConfigPanel`, `SeoContent`, and `HeroStrip`.
 - 2026-11-26: Handover for human review (`🟡 To be reviewed`).

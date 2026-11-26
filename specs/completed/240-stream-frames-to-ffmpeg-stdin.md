@@ -1,7 +1,7 @@
 # Spec: Stream PNG Frame Buffers to FFmpeg stdin
 
 **GitHub Issue**: N/A — Originated from PR [#240](https://github.com/GehDoc/svg-to-video/pull/240)
-**Status**: 🟠 Pending — Implementation exists on branch `jules-14619308868444751465-2bf4228c`, awaiting review & corrections
+**Status**: 🟢 Completed
 
 ---
 
@@ -117,10 +117,10 @@ Following architectural and stream safety code review, the following improvement
 
 - [x] Unit test: `npm run test:unit` — `src/formats/registry.test.ts` verifies `-f image2pipe` injection
 - [x] Integration test: `npm run test:cli` — verifies no-PNG and keep-frames behaviors
-- [ ] Manual: `svg-to-video input.svg 24 ./out` → no `.png` files in `./out/`, video produced
-- [ ] Manual: `svg-to-video input.svg 24 ./out --keep-frames` → `.png` files present in `./out/`
-- [ ] Manual: test with GIF output (uses `postProcess`) to ensure post-processing still runs correctly
-- [ ] Manual: test with transparent WEBM output (color-keying path) to verify `shouldKey` branch still works under piped mode
+- [x] Manual: `svg-to-video input.svg 24 ./out` → no `.png` files in `./out/`, video produced
+- [x] Manual: `svg-to-video input.svg 24 ./out --keep-frames` → `.png` files present in `./out/`
+- [x] Manual: test with GIF output (uses `postProcess`) to ensure post-processing still runs correctly
+- [x] Manual: test with transparent WEBM output (color-keying path) to verify `shouldKey` branch still works under piped mode
 
 ---
 

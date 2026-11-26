@@ -39,10 +39,11 @@ The Web Studio adopts an accessible, single-document-landmark structure combined
    - Both the interactive workspace (`#studio`) and editorial documentation sections (`SeoContent`) are encapsulated inside `<main id="main-content">` across both SSR fallback (`app/page.tsx`) and hydrated client (`components/Studio.tsx`).
    - A keyboard-focusable skip-to-content link (`.skip-link`) in `Header.tsx` bypasses the fixed site navigation directly to `#main-content`.
    - The application logo in `Header.tsx` uses a semantic branding container (`<div className="header-title">`), reserving the single document `<h1>` strictly for the primary Hero headline.
-2. **Boundary-Relative Sticky Observer (`useStickyObserver`)**:
-   - The `useStickyHeaderState` hook deterministically monitors when section headers pin against their relative scroll boundaries (window viewport on mobile/SEO sections, or container top on desktop configuration panel).
-   - Sticky elevation shadows (`--sticky-shadow`) trigger dynamically only when content begins scrolling underneath the headers, ensuring crisp visual elevation without premature shadows.
-   - Supports nested multi-level sticky headers (e.g., editorial blocks at 48px offset, and sub-blocks / FAQ categories at 100px offset).
+2. **Self-Contained Sticky Header & Shared Coordinator (`StickyHeader` & `stickyCoordinator`)**:
+   - Rather than parent components manually managing and coordinating arrays of DOM refs, sections simply wrap their headings in a polymorphic `<StickyHeader as="h2">` component.
+   - The shared `stickyCoordinator` automatically discovers the active scroll container (scrolling ancestor with `overflowY: auto/scroll` on desktop `ConfigPanel`, or `window` on mobile and editorial sections), dynamically reads computed CSS `top` offsets, and disables tracking cleanly when CSS specifies `position: static` (e.g. `HeroStrip` on mobile).
+   - Re-renders are strictly isolated to the `<StickyHeader>` leaf, eliminating full-tree re-renders of heavy forms or documentation during scrolling.
+   - Dynamic elevation shadows (`--sticky-shadow`) trigger only when content begins scrolling underneath the headers, supporting multi-level nested headers without hardcoded constants.
 
 ## 🎨 High-Fidelity SVG Rendering (Bake & Clean)
 
