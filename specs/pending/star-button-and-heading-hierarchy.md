@@ -100,6 +100,7 @@
   - [x] Align `#sponsor` `.anchor-alias` to `top: 0` to prevent scroll-padding double offset
   - [x] Implement 4-tier responsive progressive degradation for header actions: Large (full Star & Sponsor with text labels + desktop jump nav), Medium (Star [★ Star count] + Sponsor [♥ Sponsor me] + GitHub [GH] + Burger [☰]), Small (Star [★ count] + Sponsor [♥] + Burger [☰]), Extra-Small (Star [★] + Sponsor [♥] + Burger [☰] with hidden STUDIO badge for 320px reflow)
   - [x] Retain full Star and Sponsor labels on Medium viewports (641px–1024px) utilizing available space from collapsed jump nav
+  - [x] Align desktop `LandingView` vertical scrollbar to viewport edge on `.landing-view` eliminating 960px inner margin gap
   - [x] Harden `useGitHubRepoStars` JSON validation and forward AbortSignal
   - [x] Add `Loading` and `Fallback` stories to `StarButton.stories.tsx` for complete Axe testing
 
@@ -125,6 +126,7 @@
 
 ## 📝 Change Log
 
+- 2026-11-26: Aligned desktop `LandingView` vertical scrollbar to monitor panel edge on `.landing-view` without overscroll containment.
 - 2026-11-26: Preserved full "Star" and "Sponsor me" labels on Medium viewports (641px–1024px), collapsing to compact representations at <= 640px.
 - 2026-11-26: Implemented 4-tier responsive progressive degradation for header actions (Large, Medium, Small, Extra-Small).
 - 2026-11-26: Applied senior reviewer polish items (accessible name, loading contrast, anchor offset, mobile header compact button, hook hardening).

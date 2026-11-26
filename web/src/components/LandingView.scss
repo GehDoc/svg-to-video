@@ -8,7 +8,8 @@
   width: 100%;
   background: var(--bg);
   color: var(--text);
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   @media (max-width: $mobile-breakpoint) {
     height: auto;
@@ -18,7 +19,6 @@
 
 .landing-scroll-content {
   flex: 1;
-  overflow-y: auto;
   padding: 1rem 1.5rem;
   max-width: 960px;
   width: 100%;
@@ -29,7 +29,6 @@
   gap: 1rem;
 
   @media (max-width: $mobile-breakpoint) {
-    overflow-y: visible;
     padding: 1.25rem 1rem;
     gap: 1rem;
   }
