@@ -371,8 +371,12 @@ export const ConfigPanel = ({
               />
               {((detectedDuration !== undefined && detectedDuration > 300) ||
                 duration > 300) && (
-                <span className="duration-warning-text" role="status">
-                  ⚠️ &gt; 5 min
+                <span
+                  className="duration-warning-text"
+                  role="status"
+                  title="Duration exceeds 5 minutes (300s). Rendering may take significant time."
+                >
+                  ⚠️ Long duration
                 </span>
               )}
             </div>

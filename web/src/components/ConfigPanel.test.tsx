@@ -342,7 +342,7 @@ test('ConfigPanel renders warning indicator and border when duration exceeds 5 m
     />
   );
 
-  expect(screen.queryByText(/⚠️ > 5 min/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/long duration/i)).not.toBeInTheDocument();
   const durationInput = screen.getByLabelText(/Dur\. \(s\)/i);
   expect(durationInput).not.toHaveClass('input-warning');
 
@@ -355,6 +355,6 @@ test('ConfigPanel renders warning indicator and border when duration exceeds 5 m
     />
   );
 
-  expect(screen.getByText(/⚠️ > 5 min/i)).toBeInTheDocument();
+  expect(screen.getByText(/long duration/i)).toBeInTheDocument();
   expect(durationInput).toHaveClass('input-warning');
 });
