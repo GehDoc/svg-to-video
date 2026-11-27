@@ -69,6 +69,17 @@ describe('MCP Server Integration', () => {
     assert.ok('crf' in renderProps);
     assert.ok('quality' in renderProps);
 
+    const crfProp = renderProps.crf as { minimum?: number; maximum?: number };
+    assert.strictEqual(crfProp.minimum, 0);
+    assert.strictEqual(crfProp.maximum, 63);
+
+    const qualityProp = renderProps.quality as {
+      minimum?: number;
+      maximum?: number;
+    };
+    assert.strictEqual(qualityProp.minimum, 1);
+    assert.strictEqual(qualityProp.maximum, 100);
+
     const inspectTool = response.tools.find(
       (t) => t.name === 'inspect_svg_animation'
     );

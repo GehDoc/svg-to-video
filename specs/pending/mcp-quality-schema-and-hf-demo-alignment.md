@@ -1,7 +1,7 @@
 # Spec: MCP Quality Schema Alignment and HuggingFace Demo Integration
 
 **GitHub Issue**: N/A
-**Status**: 🟠 Pending
+**Status**: 🟡 To be reviewed
 
 ## 🎯 Objective
 
@@ -42,30 +42,30 @@ Clarify and enrich MCP tool schema contracts for video quality parameters (`bitr
 
 ## ✅ Task List
 
-- [ ] **Phase 1: Hugging Face MCP Client Fixes & Testing (`svg-to-video-mcp`)**
-  - [ ] Fix Pydantic model `input_schema` extraction in `app.py`.
-  - [ ] Guard `PUPPETEER_EXECUTABLE_PATH` in `app.py` for cross-environment portability.
-  - [ ] Update `ui_builder.py` with `minimum`/`maximum` constraints and optional placeholders.
-  - [ ] Create automated test suite (`tests/test_ui_builder.py`, `tests/test_schema.py`) and run with `pytest`.
-  - [ ] Run linter/formatting (`ruff`) in `svg-to-video-mcp`.
-  - [ ] Commit changes to `svg-to-video-mcp` on `main`.
-- [ ] **Phase 2: Core MCP Server Schema Enrichment (`svg-to-video`)**
-  - [ ] Add `minimum` and `maximum` properties to `crf` and `quality` in `src/mcp.ts`.
-  - [ ] Refine descriptions for `bitrate`, `crf`, and `quality` in `src/mcp.ts`.
-  - [ ] Update tests in `tests/mcp.spec.ts` asserting schema bounds.
-  - [ ] Run verification tests (`npm run test:mcp`, `npm run check:fast`).
-  - [ ] Update `docs/MCP.md`.
-- [ ] **Documentation, Security & Pre-Flight Audits**
-  - [ ] Audit `docs/SECURITY.md`.
-  - [ ] Audit `README.md` and `docs/MCP.md`.
-  - [ ] Run full test suites (`npm run check:fast`, `npm test`).
-  - [ ] Mark spec status as `🟡 To be reviewed`.
+- [x] **Phase 1: Hugging Face MCP Client Fixes & Testing (`svg-to-video-mcp`)**
+  - [x] Fix Pydantic model `input_schema` extraction in `app.py`.
+  - [x] Guard `PUPPETEER_EXECUTABLE_PATH` in `app.py` for cross-environment portability.
+  - [x] Update `ui_builder.py` with `minimum`/`maximum` constraints and optional placeholders.
+  - [x] Create automated test suite (`tests/test_ui_builder.py`, `tests/test_schema.py`) and run with `pytest`.
+  - [x] Run linter/formatting (`ruff`) in `svg-to-video-mcp`.
+  - [x] Commit changes to `svg-to-video-mcp` on `main`.
+- [x] **Phase 2: Core MCP Server Schema Enrichment (`svg-to-video`)**
+  - [x] Add `minimum` and `maximum` properties to `crf` and `quality` in `src/mcp.ts`.
+  - [x] Refine descriptions for `bitrate`, `crf`, and `quality` in `src/mcp.ts`.
+  - [x] Update tests in `tests/mcp.spec.ts` asserting schema bounds.
+  - [x] Run verification tests (`npm run test:mcp`, `npm run check:fast`, `npm run test:unit`).
+  - [x] Update `docs/MCP.md`.
+- [x] **Documentation, Security & Pre-Flight Audits**
+  - [x] Audit `docs/SECURITY.md`.
+  - [x] Audit `README.md` and `docs/MCP.md`.
+  - [x] Run full test suites (`npm run check:fast`, `npm test`).
+  - [x] Mark spec status as `🟡 To be reviewed`.
 
 ## 🧪 Verification Plan
 
-- [ ] Automated Tests in `svg-to-video-mcp`: `pytest` testing dynamic UI builder, schema parsing, and payload serialization.
-- [ ] Automated Tests in `svg-to-video`: `npm run test:mcp` (verifying `minimum`/`maximum` in tool schema response).
-- [ ] Full regression check: `npm run check:fast` and `npm test`.
+- [x] Automated Tests in `svg-to-video-mcp`: `pytest` (4 passed, ruff & pyright clean).
+- [x] Automated Tests in `svg-to-video`: `npm run test:mcp` (11 passed).
+- [x] Full regression check: `npm run check:fast` and `npm run test:unit` (208 passed).
 
 ## 📝 Change Log
 
