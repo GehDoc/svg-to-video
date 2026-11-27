@@ -251,20 +251,34 @@ export const ConfigPanel = ({
             disabled={isOptionsDisabled}
           />
 
-          {getFormatById(format)?.supportsLoop && onLoopChange && (
-            <div className="input-group">
-              <div className="checkbox-wrapper">
-                <input
-                  type="checkbox"
-                  id="loop-animation"
-                  checked={loop}
-                  onChange={(e) => onLoopChange(e.target.checked)}
-                  disabled={isOptionsDisabled}
-                />
-                <label htmlFor="loop-animation">Loop Animation</label>
-              </div>
+          <div className="input-group">
+            <div className="checkbox-wrapper">
+              <input
+                type="checkbox"
+                id="loop-animation"
+                checked={loop}
+                onChange={(e) => onLoopChange?.(e.target.checked)}
+                disabled={
+                  isOptionsDisabled || !getFormatById(format)?.supportsLoop
+                }
+                title={
+                  !getFormatById(format)?.supportsLoop
+                    ? 'Looping is only supported for animated image formats (GIF, aPNG).'
+                    : undefined
+                }
+              />
+              <label
+                htmlFor="loop-animation"
+                title={
+                  !getFormatById(format)?.supportsLoop
+                    ? 'Looping is only supported for animated image formats (GIF, aPNG).'
+                    : undefined
+                }
+              >
+                Loop Animation
+              </label>
             </div>
-          )}
+          </div>
 
           <div className="input-group">
             <label htmlFor="resolution">Resolution</label>

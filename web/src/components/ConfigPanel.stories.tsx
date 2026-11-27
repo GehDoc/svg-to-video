@@ -108,6 +108,16 @@ export const LoopSupportedAnimated: Story = {
   },
 };
 
+export const LoopDisabledVideo: Story = {
+  args: {
+    svgContent: '<svg></svg>',
+    format: 'mp4',
+    loop: true,
+    originalDim: { width: 1920, height: 1080, isDimensionsDetected: true },
+    targetDim: { width: 1920, height: 1080 },
+  },
+};
+
 export const WithDurationWarning: Story = {
   args: {
     svgContent: '<svg></svg>',

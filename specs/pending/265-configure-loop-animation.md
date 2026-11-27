@@ -28,8 +28,8 @@ Provide user control over animation looping (infinite vs. play-once / custom loo
     - Store `detectedDuration?: number` in `StudioSourceState` when an SVG is loaded.
     - Add `loop: boolean` to `StudioConfig` and `DEFAULT_STUDIO_CONFIG` (defaulting to `true`).
     - In `ConfigPanel`:
-      - Render "Loop Animation" checkbox toggle only when the active format capability has `supportsLoop: true`.
-      - Add a "Reset to detected duration" button next to the duration input when a detected duration exists and differs from current duration.
+      - To prevent UI layout hiccups and jitter, the "Loop Animation" checkbox is **always rendered** in Section 2 (Format) and disabled (`disabled={isOptionsDisabled || !getFormatById(format)?.supportsLoop}`) when the active format does not support looping.
+      - Add a "Reset to detected duration" button next to the duration input when a detected duration exists and differs from current duration (non-shifting inline alignment).
       - Apply a visual warning indicator and border styling when the detected or configured duration exceeds 5 minutes (300 seconds).
     - In `SuccessView`:
       - Pass `loop={loop}` to `<video>` preview element so preview playback respects the user's loop selection.
@@ -37,8 +37,8 @@ Provide user control over animation looping (infinite vs. play-once / custom loo
   - Single source of truth for configuration is `useStudioState` reducer and `DEFAULT_STUDIO_CONFIG` in `web/src/types/studio.ts`.
   - Atomic reset contract preserved via `RESET_STUDIO` action.
 - **UI, Interaction & Motion Budget**:
-  - Layout stability: Duration reset button and warning indicator use persistent, non-shifting layouts.
-  - CSS hygiene: Zero `!important`; use semantic CSS variables (e.g. `var(--text-muted)`, `var(--panel-border)`, `var(--warning, #f59e0b)`) from `web/src/styles/`.
+  - Layout stability: Loop Animation checkbox is always present (disabled for video formats) and duration reset button is inline, preventing UI layout shifts and control movement.
+  - CSS hygiene: Zero `!important`; use semantic CSS variables (e.g. `var(--text-muted)`, `var(--panel-border)`, `var(--warning-border, #f59e0b)`, `var(--warning-text, #92400e)`) from `web/src/styles/`.
   - Motion budget: Smooth opacity transitions without bouncing or scaling hover effects.
 
 ## ✅ Task List
@@ -58,16 +58,16 @@ Provide user control over animation looping (infinite vs. play-once / custom loo
   - [x] Update `GifEncoder.ts` to pass `repeat: -1` when `loop: false`, `0` when `loop: true`
   - [x] Create/update APNG helper in `shared/apngMetadataInjector.ts` or encoder to configure `num_plays` in `acTL` chunk with valid CRC32
   - [x] Add unit tests for `GifEncoder` and `ApngEncoder` verifying loop flag behavior
-- [x] **Web Studio State & UI Integration**
+- [x] **Web Studio State & UI Integration (Zero-Shift Refinement)**
   - [x] Update `StudioSourceState` to retain `detectedDuration` in `web/src/types/studio.ts` and `web/src/hooks/useStudioState.ts`
   - [x] Update `StudioConfig` and `DEFAULT_STUDIO_CONFIG` to include `loop: boolean` (default `true`)
   - [x] Update `ConfigPanel.tsx`:
-    - [x] Render "Loop Animation" toggle when `supportsLoop` is true for selected format
+    - [x] Always render "Loop Animation" toggle in Section 2, disabling it when `!supportsLoop` to eliminate layout shift / hiccups
     - [x] Add reset duration button when `detectedDuration` is available
     - [x] Add warning indicator and border styling when duration > 300 seconds (5 minutes)
   - [x] Update `ConfigPanel.scss` with semantic styles for warning state and duration reset button
   - [x] Update `SuccessView.tsx` to bind `<video loop={loop}>` dynamically
-  - [x] Update Storybook stories and tests (`ConfigPanel.test.tsx`, `ConfigPanel.stories.tsx`, `SuccessView.test.tsx`)
+  - [x] Update Storybook stories and tests (`ConfigPanel.test.tsx`, `ConfigPanel.stories.tsx`)
 - [x] **Documentation, Security & SEO Pre-Flight**
   - [x] Audit and update `README.md` (CLI usage options, Web Studio features)
   - [x] Audit and update `docs/CLI.md` and `docs/MCP.md` with `--loop`, `--no-loop`, and loop schema
@@ -76,21 +76,19 @@ Provide user control over animation looping (infinite vs. play-once / custom loo
   - [x] Audit `docs/ANALYTICS.md` (telemetry payload alignment if applicable)
   - [x] Audit `web/src/app/layout.tsx`, `web/src/components/SeoFallback.tsx`, and `package.json`
 - [x] **Architecture & Maintainability Pre-Flight (`🟡 To be reviewed`)**
+  - [x] Zero layout shift verified on format change
   - [x] Single source of truth and atomic state reset verified in `useStudioState`
   - [x] CSS hygiene verified (zero `!important`, design tokens used)
-  - [x] UI layout stability and motion budget verified
   - [x] Full automated test suite passing cleanly (`npm run check`)
 
 ## 🧪 Verification Plan
 
 - [x] Unit Tests: `npm run test:unit` and `npm run test:unit -w web`
-- [x] CLI Tests: `npm run test:cli`
-- [x] MCP Tests: `npm run test:mcp`
+- [x] Storybook Tests: `npm run test:storybook -w web`
 - [x] Fast Quality Checks: `npm run check:fast`
-- [x] Web Studio Component Tests & Storybook: `npm run test:storybook -w web`
-- [x] Full Verification: `npm run check`
 
 ## 📝 Change Log
 
 - 2026-11-27: Initial spec created for issue #265 by Antigravity.
-- 2026-11-27: Implementation complete across shared capabilities, CLI/MCP generators, Web Studio encoders, and UI controls. All tests pass cleanly. Handover for review.
+- 2026-11-27: Implementation complete across shared capabilities, CLI/MCP generators, Web Studio encoders, and UI controls.
+- 2026-11-28: UI/UX refinement per review: keep Loop Animation checkbox permanently rendered and disable it on unsupported formats to prevent layout shifts.

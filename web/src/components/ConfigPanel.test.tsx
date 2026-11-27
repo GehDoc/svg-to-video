@@ -283,7 +283,7 @@ test('ConfigPanel renders Loop Animation toggle for formats supporting loop', as
   expect(onLoopChange).toHaveBeenCalledWith(false);
 });
 
-test('ConfigPanel does not render Loop Animation toggle for formats without loop support', async () => {
+test('ConfigPanel renders disabled Loop Animation toggle for formats without loop support', async () => {
   vi.mocked(discoverFormats.getFormatById).mockReturnValue({
     id: 'mp4',
     label: 'MP4',
@@ -305,9 +305,11 @@ test('ConfigPanel does not render Loop Animation toggle for formats without loop
     />
   );
 
-  expect(
-    screen.queryByRole('checkbox', { name: /loop animation/i })
-  ).not.toBeInTheDocument();
+  const loopCheckbox = screen.getByRole('checkbox', {
+    name: /loop animation/i,
+  });
+  expect(loopCheckbox).toBeInTheDocument();
+  expect(loopCheckbox).toBeDisabled();
 });
 
 test('ConfigPanel renders duration reset button when detectedDuration differs from duration', async () => {

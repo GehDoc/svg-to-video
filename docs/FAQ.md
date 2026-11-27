@@ -20,7 +20,7 @@ Select **WebM**, **aPNG**, or **GIF** as your output format, check the "Transpar
 
 ### Q: How do I disable looping for animated GIFs or aPNGs?
 
-In the **Web Studio**, uncheck the **Loop Animation** toggle under the Output Format selector (available when GIF or aPNG is selected). In the **CLI**, use `--no-loop` (or `--loop 1` / `--loop -1`). In the **MCP** server, set `"loop": false` or `"loop": 1`.
+In the **Web Studio**, uncheck the **Loop Animation** toggle under the Output Format selector (enabled for animated formats like GIF and aPNG; disabled for video formats). In the **CLI**, use `--no-loop` (or `--loop 1` / `--loop -1`). In the **MCP** server, set `"loop": false` or `"loop": 1`.
 
 ## CLI, Docker & MCP Automation
 

@@ -154,7 +154,7 @@
     {
       "category": "Web Studio",
       "question": "How do I disable looping for animated GIFs or aPNGs?",
-      "answerHtml": "In the <strong>Web Studio</strong>, uncheck the <strong>Loop Animation</strong> toggle under the Output Format selector (available when GIF or aPNG is selected). In the <strong>CLI</strong>, use <code>--no-loop</code> (or <code>--loop 1</code> / <code>--loop -1</code>). In the <strong>MCP</strong> server, set <code>&quot;loop&quot;: false</code> or <code>&quot;loop&quot;: 1</code>."
+      "answerHtml": "In the <strong>Web Studio</strong>, uncheck the <strong>Loop Animation</strong> toggle under the Output Format selector (enabled for animated formats like GIF and aPNG; disabled for video formats). In the <strong>CLI</strong>, use <code>--no-loop</code> (or <code>--loop 1</code> / <code>--loop -1</code>). In the <strong>MCP</strong> server, set <code>&quot;loop&quot;: false</code> or <code>&quot;loop&quot;: 1</code>."
     },
     {
       "category": "CLI, Docker & MCP Automation",
@@ -199,7 +199,7 @@
         {
           "category": "Web Studio",
           "question": "How do I disable looping for animated GIFs or aPNGs?",
-          "answerHtml": "In the <strong>Web Studio</strong>, uncheck the <strong>Loop Animation</strong> toggle under the Output Format selector (available when GIF or aPNG is selected). In the <strong>CLI</strong>, use <code>--no-loop</code> (or <code>--loop 1</code> / <code>--loop -1</code>). In the <strong>MCP</strong> server, set <code>&quot;loop&quot;: false</code> or <code>&quot;loop&quot;: 1</code>."
+          "answerHtml": "In the <strong>Web Studio</strong>, uncheck the <strong>Loop Animation</strong> toggle under the Output Format selector (enabled for animated formats like GIF and aPNG; disabled for video formats). In the <strong>CLI</strong>, use <code>--no-loop</code> (or <code>--loop 1</code> / <code>--loop -1</code>). In the <strong>MCP</strong> server, set <code>&quot;loop&quot;: false</code> or <code>&quot;loop&quot;: 1</code>."
         }
       ]
     },
@@ -224,5 +224,5 @@
       ]
     }
   ],
-  "lastUpdated": "2026-11-27T03:22:24.954Z"
+  "lastUpdated": "2026-11-27T23:48:24.221Z"
 }
