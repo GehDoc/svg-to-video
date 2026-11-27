@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 permissions:
   contents: write
 
@@ -131,8 +135,22 @@ jobs:
       - name: Run Visual Regression tests
         run: npm run test:visual -w web
 
+  web-build:
+    name: 'Web Build'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Build Web Studio static export
+        run: npm run build -w web
+        env:
+          NEXT_PUBLIC_COMMIT_SHA: ${{ github.sha }}
+
   build-and-deploy:
     name: 'Build and Deploy GitHub Pages'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -144,6 +162,7 @@ jobs:
       - web-e2e-tests
       - storybook-tests
       - visual-tests
+      - web-build
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
