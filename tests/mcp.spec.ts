@@ -228,6 +228,28 @@ describe('MCP Server Integration', () => {
     assert.strictEqual(probe.width, '1080');
     assert.strictEqual(probe.height, '1080');
   });
+
+  test('should return actionable execution error message on invalid parameters', async () => {
+    const result = await client.callTool({
+      name: 'render_svg_to_video',
+      arguments: {
+        svgFilePath: exampleSvg,
+        outDir: outputDir,
+        fps: 24,
+        duration: 1,
+        quality: 0,
+      },
+    });
+
+    assert.strictEqual(result.isError, true);
+    assert.ok(Array.isArray(result.content));
+    const contentText = result.content[0] as { type: string; text: string };
+    assert.ok(
+      contentText.text.includes(
+        'Quality value must be a number between 1 and 100.'
+      )
+    );
+  });
 });
 
 describe('MCP Server Security Sandboxing (MCP_HOSTED=true)', () => {

@@ -478,12 +478,40 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
     } catch (error) {
+      let errorMsg = error instanceof Error ? error.message : String(error);
+      if (error && typeof error === 'object') {
+        const stdoutStr =
+          'stdout' in error && error.stdout ? String(error.stdout).trim() : '';
+        const stderrStr =
+          'stderr' in error && error.stderr ? String(error.stderr).trim() : '';
+
+        if (stdoutStr) {
+          try {
+            const parsedJson: unknown = JSON.parse(stdoutStr);
+            if (
+              parsedJson &&
+              typeof parsedJson === 'object' &&
+              'error' in parsedJson &&
+              typeof parsedJson.error === 'string'
+            ) {
+              errorMsg = parsedJson.error;
+            }
+          } catch {
+            // Non-JSON stdout; preserve original errorMsg
+          }
+        }
+
+        if (stderrStr && errorMsg !== stderrStr) {
+          errorMsg = errorMsg ? `${errorMsg}\n${stderrStr}` : stderrStr;
+        }
+      }
+
       return {
         isError: true,
         content: [
           {
             type: 'text',
-            text: `Execution failed: ${error instanceof Error ? error.message : String(error)}`,
+            text: `Execution failed: ${errorMsg}`,
           },
         ],
       };
