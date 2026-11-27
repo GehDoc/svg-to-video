@@ -154,17 +154,21 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             bitrate: {
               type: 'string',
               description:
-                'Target video bitrate (e.g. 5M, 2000k) for video formats (MP4, WebM, MOV, MKV).',
+                'Target video bitrate (e.g. 5M, 2000k) for video formats (MP4, WebM, MOV, MKV). Optional; if omitted, format default rate control is used.',
             },
             crf: {
               type: 'number',
+              minimum: 0,
+              maximum: 63,
               description:
-                'Constant Rate Factor (0-63) for video formats (e.g. 18-28).',
+                'Constant Rate Factor (0-63) for video formats (e.g. 18-28). Optional; defaults to 20 for MP4/MKV when bitrate is omitted.',
             },
             quality: {
               type: 'number',
+              minimum: 1,
+              maximum: 100,
               description:
-                'Quality level (1-100) for animated exports (GIF palette generation max colors, APNG compression).',
+                'Quality level (1-100) for animated exports (GIF palette generation max colors, APNG compression). Optional; defaults to max quality (100) if omitted.',
             },
           },
           ...(isHosted
@@ -474,12 +478,46 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
     } catch (error) {
+      let errorMsg = error instanceof Error ? error.message : String(error);
+      if (error && typeof error === 'object') {
+        const stdoutStr =
+          'stdout' in error && error.stdout ? String(error.stdout).trim() : '';
+        const stderrStr =
+          'stderr' in error && error.stderr ? String(error.stderr).trim() : '';
+
+        if (stdoutStr) {
+          try {
+            const parsedJson: unknown = JSON.parse(stdoutStr);
+            if (
+              parsedJson &&
+              typeof parsedJson === 'object' &&
+              'error' in parsedJson &&
+              typeof parsedJson.error === 'string'
+            ) {
+              const details =
+                'details' in parsedJson &&
+                typeof parsedJson.details === 'string' &&
+                parsedJson.details.trim()
+                  ? ` (${parsedJson.details.trim()})`
+                  : '';
+              errorMsg = `${parsedJson.error}${details}`;
+            }
+          } catch {
+            // Non-JSON stdout; preserve original errorMsg
+          }
+        }
+
+        if (stderrStr && errorMsg !== stderrStr) {
+          errorMsg = errorMsg ? `${errorMsg}\n${stderrStr}` : stderrStr;
+        }
+      }
+
       return {
         isError: true,
         content: [
           {
             type: 'text',
-            text: `Execution failed: ${error instanceof Error ? error.message : String(error)}`,
+            text: `Execution failed: ${errorMsg}`,
           },
         ],
       };
