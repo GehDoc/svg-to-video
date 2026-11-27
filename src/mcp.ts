@@ -494,7 +494,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               'error' in parsedJson &&
               typeof parsedJson.error === 'string'
             ) {
-              errorMsg = parsedJson.error;
+              const details =
+                'details' in parsedJson &&
+                typeof parsedJson.details === 'string' &&
+                parsedJson.details.trim()
+                  ? ` (${parsedJson.details.trim()})`
+                  : '';
+              errorMsg = `${parsedJson.error}${details}`;
             }
           } catch {
             // Non-JSON stdout; preserve original errorMsg
