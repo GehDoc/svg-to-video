@@ -148,6 +148,13 @@ Inspects an SVG string or file to estimate animation duration, CSS keyframes, an
 | `svgFilePath` | `string` | Path to the input `.svg` file (required if `svgContent` is not provided; local mode only, omitted when `MCP_HOSTED=true`). |
 | `svgContent`  | `string` | Raw SVG XML string content.                                                                                                |
 
+### 📐 Schema Declaration Guidelines for Future Parameters
+
+When adding new tool parameters in `src/mcp.ts`:
+
+- **Declare Formal JSON Schema Bounds**: Always declare formal validation keywords (`minimum`, `maximum`, `enum`) for constrained numeric or choice parameters rather than relying solely on description text. This allows AI assistants to self-validate inputs and prevents client-side form coercion issues.
+- **Document Omission Fallbacks**: If an optional parameter intentionally omits a `default` property (e.g. to let format generators apply context-dependent defaults), its `description` must clearly explain the fallback behavior when omitted.
+
 ---
 
 ## 🔍 Debugging with MCP Inspector

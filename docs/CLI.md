@@ -60,6 +60,8 @@ npx tsx src/index.ts <svgPath> <fps> <outDir> [options]
 | `--silent`              | `false`                           | Alias for `--quiet`.                                                                                                                                                                    |
 | `--json`                | `false`                           | Output final conversion result as JSON (implies quiet mode).                                                                                                                            |
 
+> **Note on Video Quality & Rate-Control Parameters**: `--bitrate`, `--crf`, and `--quality` do not have universal default values because their relevance depends on the selected output format. Omitting them allows each format generator to select its native default rate-control mode (e.g., pure CRF 20 for MP4/MKV, native VP9 quality for WebM, 256-color palette for GIF) without triggering conflicting encoder flags.
+
 ## Environment Variables
 
 | Variable                    | Scope   | Description                                                                                                                                       |
