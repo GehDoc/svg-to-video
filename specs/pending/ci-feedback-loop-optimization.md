@@ -1,6 +1,6 @@
 # Spec: CI Feedback Loop Optimization
 
-**GitHub Issue**: N/A
+**Pull Request**: [#279](https://github.com/GehDoc/svg-to-video/pull/279)
 **Status**: 🟡 To be reviewed
 
 ## 🎯 Objective
