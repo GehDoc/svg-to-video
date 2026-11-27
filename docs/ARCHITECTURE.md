@@ -162,7 +162,7 @@ This section documents how to add new output formats and manage the alpha channe
 
 ### Format Capabilities Registry (`shared/formatCapabilities.ts`)
 
-Format definitions, MIME types, primary extensions, extension aliases, `supportsAlpha`, `supportsMetadata`, and `needsColorKeying` capability flags are centralized in `shared/formatCapabilities.ts`. Both the CLI format generators and Web Studio encoders consume this single source of truth, ensuring format metadata remains synchronized across environments.
+Format definitions, MIME types, primary extensions, extension aliases, `supportsAlpha`, `supportsMetadata`, `supportsLoop`, and `needsColorKeying` capability flags are centralized in `shared/formatCapabilities.ts`. Both the CLI format generators and Web Studio encoders consume this single source of truth, ensuring format metadata remains synchronized across environments.
 
 ### Adding New Formats
 
@@ -199,6 +199,17 @@ export const formatRegistry = new CLIFormatRegistry();
 formatRegistry.register(new GifFormatGenerator());
 formatRegistry.register(new ApngFormatGenerator());
 ```
+
+### Animation Looping (`supportsLoop`)
+
+Animated image formats (`gif`, `apng`) declare `supportsLoop: true` in `shared/formatCapabilities.ts`. Looping configuration is handled consistently across environments:
+
+- **Web Studio**:
+  - `GifEncoder` controls looping on frame 0 using `options.repeat`: setting `repeat: 0` writes the standard Netscape 2.0 application extension block for infinite looping; `repeat: -1` suppresses the block so conforming decoders play once.
+  - `ApngEncoder` injects `num_plays` via `setApngNumPlays(buffer, numPlays)` in `shared/apngMetadataInjector.ts`. This directly locates the `acTL` chunk, updates the 4-byte big-endian `num_plays` field (offset +12), and recomputes the chunk's CRC32 checksum over chunk type and data without re-encoding frames.
+- **CLI & FFmpeg**:
+  - GIF outputs pass `-loop 0` for infinite loops, `-loop -1` for play once (`--no-loop`), or `-loop N`.
+  - aPNG outputs pass `-plays 0` for infinite loops, `-plays 1` for play once (`--no-loop`), or `-plays N`.
 
 ### Handling Transparency (Alpha Channel)
 

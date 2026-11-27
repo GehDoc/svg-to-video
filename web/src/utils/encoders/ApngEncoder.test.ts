@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ApngEncoder, injectApngMetadata } from './ApngEncoder';
+import {
+  ApngEncoder,
+  injectApngMetadata,
+  setApngNumPlays,
+} from './ApngEncoder';
 
 const mockPngHeader = new Uint8Array([
   0x89,
@@ -138,5 +142,49 @@ describe('ApngEncoder', () => {
     const text = new TextDecoder().decode(resultBuffer);
     expect(text).toContain('Title');
     expect(text).toContain('Hello');
+  });
+
+  it('should patch acTL num_plays when loop is false', () => {
+    // Construct a mock APNG with signature + IHDR + acTL chunk (length 8) + IEND
+    const testApng = new Uint8Array([
+      0x89,
+      0x50,
+      0x4e,
+      0x47,
+      0x0d,
+      0x0a,
+      0x1a,
+      0x0a, // Signature
+      // acTL chunk: length 8, 'acTL', num_frames = 5, num_plays = 0, crc (placeholder)
+      0x00,
+      0x00,
+      0x00,
+      0x08,
+      0x61,
+      0x63,
+      0x54,
+      0x4c, // 'acTL'
+      0x00,
+      0x00,
+      0x00,
+      0x05, // num_frames = 5
+      0x00,
+      0x00,
+      0x00,
+      0x00, // num_plays = 0 (infinite)
+      0x00,
+      0x00,
+      0x00,
+      0x00, // CRC
+    ]);
+
+    const patched = setApngNumPlays(testApng, 1);
+    const view = new DataView(
+      patched.buffer,
+      patched.byteOffset,
+      patched.byteLength
+    );
+    // Offset for acTL: 8 bytes sig + 4 bytes length + 4 bytes type + 4 bytes num_frames = 20
+    expect(view.getUint32(20, false)).toBe(1);
   });
 });

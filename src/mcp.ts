@@ -170,6 +170,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description:
                 'Quality level (1-100) for animated exports (GIF palette generation max colors, APNG compression). Optional; defaults to max quality (100) if omitted.',
             },
+            loop: {
+              type: 'number',
+              description:
+                'Loop count for animated formats (GIF, aPNG). 0 = infinite loop (default), 1 or -1 = play once, N = loop count.',
+            },
           },
           ...(isHosted
             ? { required: ['svgContent'] }
@@ -307,6 +312,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       bitrate?: string;
       crf?: number;
       quality?: number;
+      loop?: number;
     };
 
     if (isHosted && (params.svgFilePath || params.outDir)) {
@@ -399,6 +405,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
       if (params.quality !== undefined) {
         cliArgs.push('--quality', String(params.quality));
+      }
+      if (params.loop !== undefined) {
+        cliArgs.push('--loop', String(params.loop));
       }
 
       const rawOutput = execFileSync(command, cliArgs, {

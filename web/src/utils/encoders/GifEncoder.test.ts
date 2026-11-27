@@ -224,6 +224,60 @@ describe('GifEncoder', () => {
     const text = new TextDecoder().decode(resultBuffer);
     expect(text).toContain('Hello - World');
   });
+
+  it('should pass repeat: -1 when loop option is false', async () => {
+    const mockWriteFrame = vi.fn();
+    vi.mocked(gifenc.GIFEncoder).mockImplementation(() => ({
+      writeFrame: mockWriteFrame,
+      finish: vi.fn(),
+      buffer: new Uint8Array([0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x3b]).buffer,
+      bytes: vi.fn(),
+      bytesView: vi.fn(),
+      writeHeader: vi.fn(),
+      reset: vi.fn(),
+      stream: vi.fn() as never,
+    }));
+
+    const canvas = document.createElement('canvas');
+    await encoder.init({ ...mockOptions, loop: false }, canvas);
+    await encoder.addFrame(0, 100);
+
+    await encoder.finalize();
+
+    expect(mockWriteFrame).toHaveBeenCalledWith(
+      expect.anything(),
+      10,
+      10,
+      expect.objectContaining({ repeat: -1 })
+    );
+  });
+
+  it('should pass repeat: 0 when loop option is true or omitted', async () => {
+    const mockWriteFrame = vi.fn();
+    vi.mocked(gifenc.GIFEncoder).mockImplementation(() => ({
+      writeFrame: mockWriteFrame,
+      finish: vi.fn(),
+      buffer: new Uint8Array([0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x3b]).buffer,
+      bytes: vi.fn(),
+      bytesView: vi.fn(),
+      writeHeader: vi.fn(),
+      reset: vi.fn(),
+      stream: vi.fn() as never,
+    }));
+
+    const canvas = document.createElement('canvas');
+    await encoder.init({ ...mockOptions, loop: true }, canvas);
+    await encoder.addFrame(0, 100);
+
+    await encoder.finalize();
+
+    expect(mockWriteFrame).toHaveBeenCalledWith(
+      expect.anything(),
+      10,
+      10,
+      expect.objectContaining({ repeat: 0 })
+    );
+  });
 });
 
 describe('applyBayerPalette', () => {

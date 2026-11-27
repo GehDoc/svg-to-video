@@ -41,6 +41,15 @@ describe('CLIFormatRegistry', () => {
     assert.strictEqual(formatRegistry.get('mov')?.needsColorKeying, false);
   });
 
+  test('should expose supportsLoop flag correctly for format generators', () => {
+    assert.strictEqual(formatRegistry.get('gif')?.supportsLoop, true);
+    assert.strictEqual(formatRegistry.get('apng')?.supportsLoop, true);
+    assert.strictEqual(formatRegistry.get('mp4')?.supportsLoop, false);
+    assert.strictEqual(formatRegistry.get('webm')?.supportsLoop, false);
+    assert.strictEqual(formatRegistry.get('mkv')?.supportsLoop, false);
+    assert.strictEqual(formatRegistry.get('mov')?.supportsLoop, false);
+  });
+
   test('should resolve format and extension with default fallbacks', () => {
     const res1 = formatRegistry.resolveFormatAndExtension(undefined, false);
     assert.strictEqual(res1.format, 'mp4');
@@ -227,5 +236,90 @@ describe('CLIFormatRegistry', () => {
     assert.ok(args.includes('apng'));
     assert.ok(args.includes('-pix_fmt'));
     assert.ok(args.includes('rgba'));
+  });
+
+  test('should build correct FFmpeg args for GIF with custom loop and noLoop options', () => {
+    const gifGen = formatRegistry.get('gif')!;
+
+    // Play once via noLoop
+    const noLoopArgs = gifGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.gif',
+      noLoop: true,
+    });
+    assert.strictEqual(noLoopArgs[noLoopArgs.indexOf('-loop') + 1], '-1');
+
+    // Play once via loop = 1
+    const loop1Args = gifGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.gif',
+      loop: 1,
+    });
+    assert.strictEqual(loop1Args[loop1Args.indexOf('-loop') + 1], '-1');
+
+    // Play once via loop = -1
+    const loopNeg1Args = gifGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.gif',
+      loop: -1,
+    });
+    assert.strictEqual(loopNeg1Args[loopNeg1Args.indexOf('-loop') + 1], '-1');
+
+    // Custom loop count = 4
+    const customLoopArgs = gifGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.gif',
+      loop: 4,
+    });
+    assert.strictEqual(
+      customLoopArgs[customLoopArgs.indexOf('-loop') + 1],
+      '4'
+    );
+  });
+
+  test('should build correct FFmpeg args for aPNG with custom loop and noLoop options', () => {
+    const apngGen = formatRegistry.get('apng')!;
+
+    // Default infinite loop
+    const defaultArgs = apngGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.png',
+    });
+    assert.strictEqual(defaultArgs[defaultArgs.indexOf('-plays') + 1], '0');
+
+    // Play once via noLoop
+    const noLoopArgs = apngGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.png',
+      noLoop: true,
+    });
+    assert.strictEqual(noLoopArgs[noLoopArgs.indexOf('-plays') + 1], '1');
+
+    // Play once via loop = 1
+    const loop1Args = apngGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.png',
+      loop: 1,
+    });
+    assert.strictEqual(loop1Args[loop1Args.indexOf('-plays') + 1], '1');
+
+    // Play once via loop = -1
+    const loopNeg1Args = apngGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.png',
+      loop: -1,
+    });
+    assert.strictEqual(loopNeg1Args[loopNeg1Args.indexOf('-plays') + 1], '1');
+
+    // Custom loop count = 4
+    const customPlaysArgs = apngGen.buildFfmpegArgs({
+      ...baseOptions,
+      outputFileName: 'test.png',
+      loop: 4,
+    });
+    assert.strictEqual(
+      customPlaysArgs[customPlaysArgs.indexOf('-plays') + 1],
+      '4'
+    );
   });
 });

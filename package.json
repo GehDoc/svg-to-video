@@ -42,6 +42,8 @@
     "bitrate",
     "crf",
     "quality",
+    "animation-loop",
+    "loop",
     "web-animations-api",
     "mcp",
     "mcp-server",

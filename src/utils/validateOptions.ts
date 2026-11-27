@@ -15,11 +15,23 @@ export interface ValidateOptionsParams {
   bitrate?: string;
   crf?: number;
   quality?: number;
+  loop?: number | boolean;
+  noLoop?: boolean;
 }
 
 export function validateOptions(options: ValidateOptionsParams): void {
   if (options.duration !== undefined && options.duration <= 0) {
     throw new Error('Duration must be a positive number.');
+  }
+
+  if (
+    options.loop !== undefined &&
+    typeof options.loop === 'number' &&
+    (isNaN(options.loop) || options.loop < -1)
+  ) {
+    throw new Error(
+      'Loop count must be an integer >= -1 (0 for infinite loop, 1 or -1 for play once).'
+    );
   }
 
   if (

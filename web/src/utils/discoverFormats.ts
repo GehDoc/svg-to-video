@@ -10,6 +10,7 @@ export interface VideoFormat {
   mimeType: string;
   supportsAlpha: boolean;
   supportsMetadata: boolean;
+  supportsLoop: boolean;
   needsColorKeying: boolean;
   isSupported?: boolean;
 }
@@ -39,6 +40,7 @@ export const getFormatById = (id: string): VideoFormat | undefined => {
     mimeType: format.mimeType,
     supportsAlpha: format.supportsAlpha,
     supportsMetadata: format.supportsMetadata,
+    supportsLoop: format.supportsLoop,
     needsColorKeying: format.needsColorKeying,
   };
 };
@@ -79,6 +81,7 @@ export const discoverFormats = async (resolution?: {
         mimeType: f.mimeType,
         supportsAlpha: f.supportsAlpha,
         supportsMetadata: f.supportsMetadata,
+        supportsLoop: f.supportsLoop,
         needsColorKeying: f.needsColorKeying,
         isSupported,
       };

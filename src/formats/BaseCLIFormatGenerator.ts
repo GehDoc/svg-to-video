@@ -6,6 +6,7 @@ export abstract class BaseCLIFormatGenerator implements CLIFormatGenerator {
   readonly extensions: string[];
   readonly mimeType: string;
   readonly supportsAlpha: boolean;
+  readonly supportsLoop: boolean;
   readonly needsColorKeying: boolean;
 
   constructor(formatId: string) {
@@ -17,6 +18,7 @@ export abstract class BaseCLIFormatGenerator implements CLIFormatGenerator {
     this.extensions = [...cap.extensions];
     this.mimeType = cap.mimeType;
     this.supportsAlpha = cap.supportsAlpha;
+    this.supportsLoop = cap.supportsLoop;
     this.needsColorKeying = cap.needsColorKeying;
   }
 

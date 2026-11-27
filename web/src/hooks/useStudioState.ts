@@ -93,6 +93,7 @@ function studioReducer(state: StudioState, action: StudioAction): StudioState {
         source: {
           svgContent: action.svgContent,
           fileName: action.fileName,
+          detectedDuration: action.detectedDuration,
           originalDim: action.originalDim,
         },
         config: {
@@ -114,6 +115,7 @@ function studioReducer(state: StudioState, action: StudioAction): StudioState {
         source: {
           svgContent: sample.svgContent,
           fileName: `${sample.id}.${sample.format}`,
+          detectedDuration: sample.duration,
           originalDim,
         },
         config: {

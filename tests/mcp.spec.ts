@@ -68,6 +68,7 @@ describe('MCP Server Integration', () => {
     assert.ok('bitrate' in renderProps);
     assert.ok('crf' in renderProps);
     assert.ok('quality' in renderProps);
+    assert.ok('loop' in renderProps);
 
     const crfProp = renderProps.crf as { minimum?: number; maximum?: number };
     assert.strictEqual(crfProp.minimum, 0);

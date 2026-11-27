@@ -65,6 +65,7 @@ test('ConfigPanel: GIF with transparent background enables background color sele
     mimeType: 'image/gif',
     supportsAlpha: true,
     supportsMetadata: false,
+    supportsLoop: true,
     needsColorKeying: true,
   });
   vi.mocked(isTransparencySupported.isTransparencySupported).mockReturnValue(
@@ -247,4 +248,111 @@ test('ConfigPanel renders Clear SVG button, disabled when svgContent is absent a
 
   fireEvent.click(clearBtn);
   expect(onClearSvg).toHaveBeenCalledTimes(1);
+});
+
+test('ConfigPanel renders Loop Animation toggle for formats supporting loop', async () => {
+  const onLoopChange = vi.fn();
+  vi.mocked(discoverFormats.getFormatById).mockReturnValue({
+    id: 'gif',
+    label: 'GIF',
+    extension: '.gif',
+    mimeType: 'image/gif',
+    supportsAlpha: true,
+    supportsMetadata: true,
+    supportsLoop: true,
+    needsColorKeying: true,
+  });
+
+  render(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      format="gif"
+      loop={true}
+      onLoopChange={onLoopChange}
+    />
+  );
+
+  const loopCheckbox = screen.getByRole('checkbox', {
+    name: /loop animation/i,
+  });
+  expect(loopCheckbox).toBeInTheDocument();
+  expect(loopCheckbox).toBeChecked();
+
+  fireEvent.click(loopCheckbox);
+  expect(onLoopChange).toHaveBeenCalledWith(false);
+});
+
+test('ConfigPanel does not render Loop Animation toggle for formats without loop support', async () => {
+  vi.mocked(discoverFormats.getFormatById).mockReturnValue({
+    id: 'mp4',
+    label: 'MP4',
+    extension: '.mp4',
+    mimeType: 'video/mp4',
+    supportsAlpha: false,
+    supportsMetadata: true,
+    supportsLoop: false,
+    needsColorKeying: false,
+  });
+
+  render(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      format="mp4"
+      loop={true}
+      onLoopChange={vi.fn()}
+    />
+  );
+
+  expect(
+    screen.queryByRole('checkbox', { name: /loop animation/i })
+  ).not.toBeInTheDocument();
+});
+
+test('ConfigPanel renders duration reset button when detectedDuration differs from duration', async () => {
+  const onDurationChange = vi.fn();
+
+  render(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      duration={10}
+      detectedDuration={3.5}
+      onDurationChange={onDurationChange}
+    />
+  );
+
+  const resetBtn = screen.getByRole('button', { name: /reset/i });
+  expect(resetBtn).toBeInTheDocument();
+
+  fireEvent.click(resetBtn);
+  expect(onDurationChange).toHaveBeenCalledWith(3.5);
+});
+
+test('ConfigPanel renders warning indicator and border when duration exceeds 5 minutes (300s)', async () => {
+  const { rerender } = render(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      duration={200}
+      detectedDuration={200}
+    />
+  );
+
+  expect(screen.queryByText(/⚠️ > 5 min/i)).not.toBeInTheDocument();
+  const durationInput = screen.getByLabelText(/Dur\. \(s\)/i);
+  expect(durationInput).not.toHaveClass('input-warning');
+
+  rerender(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      duration={350}
+      detectedDuration={350}
+    />
+  );
+
+  expect(screen.getByText(/⚠️ > 5 min/i)).toBeInTheDocument();
+  expect(durationInput).toHaveClass('input-warning');
 });

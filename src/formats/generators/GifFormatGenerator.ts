@@ -70,7 +70,20 @@ export class GifFormatGenerator extends BaseCLIFormatGenerator {
     }
 
     args.push('-filter_complex', filterComplex);
-    args.push('-loop', '0');
+
+    let loopArg = '0';
+    if (options.noLoop || options.loop === false) {
+      loopArg = '-1';
+    } else if (options.loop !== undefined) {
+      if (options.loop === 0) {
+        loopArg = '0';
+      } else if (options.loop === 1 || options.loop === -1) {
+        loopArg = '-1';
+      } else {
+        loopArg = String(options.loop);
+      }
+    }
+    args.push('-loop', loopArg);
 
     const gifComment = title ? `${title} - ${finalComment}` : finalComment;
     args.push('-metadata', `comment=${gifComment}`);

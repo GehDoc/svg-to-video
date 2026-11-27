@@ -1,7 +1,7 @@
 # Spec: 265 - Configure Animation Looping and Duration Controls
 
 **GitHub Issue**: [#265](https://github.com/GehDoc/svg-to-video/issues/265)
-**Status**: 🟠 Pending
+**Status**: 🟡 To be reviewed
 
 ## 🎯 Objective
 
@@ -43,53 +43,54 @@ Provide user control over animation looping (infinite vs. play-once / custom loo
 
 ## ✅ Task List
 
-- [ ] **Infrastructure & Shared Capabilities**
-  - [ ] Add `supportsLoop: boolean` to `FormatCapability` interface and definitions in `shared/formatCapabilities.ts` (`gif`: true, `apng`: true, others: false)
-  - [ ] Update `shared/formatCapabilities.test.ts` to verify `supportsLoop` for all formats
-  - [ ] Expose `supportsLoop` in `BaseCLIFormatGenerator`, `BaseFormat`, and `discoverFormats.ts`
-- [ ] **CLI & MCP Looping Support**
-  - [ ] Add `--loop <count>` and `--no-loop` flags in CLI options (`src/index.ts` & `src/utils/validateOptions.ts`)
-  - [ ] Add `loop` parameter to `render_svg_to_video` schema in `src/mcp.ts`
-  - [ ] Update `GifFormatGenerator.ts` to output appropriate `-loop` argument based on options
-  - [ ] Update `ApngFormatGenerator.ts` to output appropriate `-plays` argument based on options
-  - [ ] Add CLI and MCP integration tests for loop options (`tests/cli.spec.ts`, `tests/mcp.spec.ts`)
-- [ ] **Web Studio Encoders & Architecture**
-  - [ ] Update `EncoderOptions` in `web/src/utils/encoders/types.ts` to include `loop?: boolean`
-  - [ ] Update `GifEncoder.ts` to pass `repeat: -1` when `loop: false`, `0` when `loop: true`
-  - [ ] Create/update APNG helper in `shared/apngMetadataInjector.ts` or encoder to configure `num_plays` in `acTL` chunk with valid CRC32
-  - [ ] Add unit tests for `GifEncoder` and `ApngEncoder` verifying loop flag behavior
-- [ ] **Web Studio State & UI Integration**
-  - [ ] Update `StudioSourceState` to retain `detectedDuration` in `web/src/types/studio.ts` and `web/src/hooks/useStudioState.ts`
-  - [ ] Update `StudioConfig` and `DEFAULT_STUDIO_CONFIG` to include `loop: boolean` (default `true`)
-  - [ ] Update `ConfigPanel.tsx`:
-    - [ ] Render "Loop Animation" toggle when `supportsLoop` is true for selected format
-    - [ ] Add reset duration button when `detectedDuration` is available
-    - [ ] Add warning indicator and border styling when duration > 300 seconds (5 minutes)
-  - [ ] Update `ConfigPanel.scss` with semantic styles for warning state and duration reset button
-  - [ ] Update `SuccessView.tsx` to bind `<video loop={loop}>` dynamically
-  - [ ] Update Storybook stories and tests (`ConfigPanel.test.tsx`, `ConfigPanel.stories.tsx`, `SuccessView.test.tsx`)
-- [ ] **Documentation, Security & SEO Pre-Flight**
-  - [ ] Audit and update `README.md` (CLI usage options, Web Studio features)
-  - [ ] Audit and update `docs/CLI.md` and `docs/MCP.md` with `--loop`, `--no-loop`, and loop schema
-  - [ ] Audit `docs/ARCHITECTURE.md` (format capabilities and looping contract)
-  - [ ] Audit `docs/SECURITY.md` (type guards, argument sanitization)
-  - [ ] Audit `docs/ANALYTICS.md` (telemetry payload alignment if applicable)
-  - [ ] Audit `web/src/app/layout.tsx`, `web/src/components/SeoFallback.tsx`, and `package.json`
-- [ ] **Architecture & Maintainability Pre-Flight (`🟡 To be reviewed`)**
-  - [ ] Single source of truth and atomic state reset verified in `useStudioState`
-  - [ ] CSS hygiene verified (zero `!important`, design tokens used)
-  - [ ] UI layout stability and motion budget verified
-  - [ ] Full automated test suite passing cleanly (`npm run check`)
+- [x] **Infrastructure & Shared Capabilities**
+  - [x] Add `supportsLoop: boolean` to `FormatCapability` interface and definitions in `shared/formatCapabilities.ts` (`gif`: true, `apng`: true, others: false)
+  - [x] Update `shared/formatCapabilities.test.ts` to verify `supportsLoop` for all formats
+  - [x] Expose `supportsLoop` in `BaseCLIFormatGenerator`, `BaseFormat`, and `discoverFormats.ts`
+- [x] **CLI & MCP Looping Support**
+  - [x] Add `--loop <count>` and `--no-loop` flags in CLI options (`src/index.ts` & `src/utils/validateOptions.ts`)
+  - [x] Add `loop` parameter to `render_svg_to_video` schema in `src/mcp.ts`
+  - [x] Update `GifFormatGenerator.ts` to output appropriate `-loop` argument based on options
+  - [x] Update `ApngFormatGenerator.ts` to output appropriate `-plays` argument based on options
+  - [x] Add CLI and MCP integration tests for loop options (`tests/cli.spec.ts`, `tests/mcp.spec.ts`)
+- [x] **Web Studio Encoders & Architecture**
+  - [x] Update `EncoderOptions` in `web/src/utils/encoders/types.ts` to include `loop?: boolean`
+  - [x] Update `GifEncoder.ts` to pass `repeat: -1` when `loop: false`, `0` when `loop: true`
+  - [x] Create/update APNG helper in `shared/apngMetadataInjector.ts` or encoder to configure `num_plays` in `acTL` chunk with valid CRC32
+  - [x] Add unit tests for `GifEncoder` and `ApngEncoder` verifying loop flag behavior
+- [x] **Web Studio State & UI Integration**
+  - [x] Update `StudioSourceState` to retain `detectedDuration` in `web/src/types/studio.ts` and `web/src/hooks/useStudioState.ts`
+  - [x] Update `StudioConfig` and `DEFAULT_STUDIO_CONFIG` to include `loop: boolean` (default `true`)
+  - [x] Update `ConfigPanel.tsx`:
+    - [x] Render "Loop Animation" toggle when `supportsLoop` is true for selected format
+    - [x] Add reset duration button when `detectedDuration` is available
+    - [x] Add warning indicator and border styling when duration > 300 seconds (5 minutes)
+  - [x] Update `ConfigPanel.scss` with semantic styles for warning state and duration reset button
+  - [x] Update `SuccessView.tsx` to bind `<video loop={loop}>` dynamically
+  - [x] Update Storybook stories and tests (`ConfigPanel.test.tsx`, `ConfigPanel.stories.tsx`, `SuccessView.test.tsx`)
+- [x] **Documentation, Security & SEO Pre-Flight**
+  - [x] Audit and update `README.md` (CLI usage options, Web Studio features)
+  - [x] Audit and update `docs/CLI.md` and `docs/MCP.md` with `--loop`, `--no-loop`, and loop schema
+  - [x] Audit `docs/ARCHITECTURE.md` (format capabilities and looping contract)
+  - [x] Audit `docs/SECURITY.md` (type guards, argument sanitization)
+  - [x] Audit `docs/ANALYTICS.md` (telemetry payload alignment if applicable)
+  - [x] Audit `web/src/app/layout.tsx`, `web/src/components/SeoFallback.tsx`, and `package.json`
+- [x] **Architecture & Maintainability Pre-Flight (`🟡 To be reviewed`)**
+  - [x] Single source of truth and atomic state reset verified in `useStudioState`
+  - [x] CSS hygiene verified (zero `!important`, design tokens used)
+  - [x] UI layout stability and motion budget verified
+  - [x] Full automated test suite passing cleanly (`npm run check`)
 
 ## 🧪 Verification Plan
 
-- [ ] Unit Tests: `npm run test:unit` and `npm run test:unit -w web`
-- [ ] CLI Tests: `npm run test:cli`
-- [ ] MCP Tests: `npm run test:mcp`
-- [ ] Fast Quality Checks: `npm run check:fast`
-- [ ] Web Studio Component Tests & Storybook: `npm run test:storybook -w web`
-- [ ] Full Verification: `npm run check`
+- [x] Unit Tests: `npm run test:unit` and `npm run test:unit -w web`
+- [x] CLI Tests: `npm run test:cli`
+- [x] MCP Tests: `npm run test:mcp`
+- [x] Fast Quality Checks: `npm run check:fast`
+- [x] Web Studio Component Tests & Storybook: `npm run test:storybook -w web`
+- [x] Full Verification: `npm run check`
 
 ## 📝 Change Log
 
 - 2026-11-27: Initial spec created for issue #265 by Antigravity.
+- 2026-11-27: Implementation complete across shared capabilities, CLI/MCP generators, Web Studio encoders, and UI controls. All tests pass cleanly. Handover for review.

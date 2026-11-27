@@ -44,6 +44,8 @@ interface RunOptions {
   bitrate?: string;
   crf?: number;
   quality?: number;
+  loop?: number | boolean;
+  noLoop?: boolean;
 }
 
 function writeFrameToStdin(stdin: Writable, buffer: Buffer): Promise<void> {
@@ -149,6 +151,12 @@ Resources:
       'quality/compression level (1-100) for animated exports',
       (val) => parseInt(val, 10)
     )
+    .option(
+      '--loop <count>',
+      'loop count for animated formats (0 = infinite [default], 1 or -1 = play once, N = loop count)',
+      (val) => parseInt(val, 10)
+    )
+    .option('--no-loop', 'disable looping for animated formats (play once)')
     .option('-q, --quiet', 'suppress interactive progress output', false)
     .option('--silent', 'alias for --quiet', false)
     .option(
@@ -258,7 +266,7 @@ async function run(
   logger.info(`  Target:     ${path.join(outDir, outputFileName)}`);
 
   logger.info(
-    `  Settings:   ${duration}s @ ${fps}fps (Format: ${format}, Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'}${options.bitrate ? `, Bitrate: ${options.bitrate}` : ''}${options.crf !== undefined ? `, CRF: ${options.crf}` : ''}${options.quality !== undefined ? `, Quality: ${options.quality}` : ''})`
+    `  Settings:   ${duration}s @ ${fps}fps (Format: ${format}, Hold: ${options.hold}s, Resolution: ${options.resolution}, Scale: ${options.scale}x, Transparent: ${options.transparent}, BGColor: ${options.bgColor || 'default'}${options.bitrate ? `, Bitrate: ${options.bitrate}` : ''}${options.crf !== undefined ? `, CRF: ${options.crf}` : ''}${options.quality !== undefined ? `, Quality: ${options.quality}` : ''}${options.noLoop || options.loop === false ? ', Loop: disabled' : options.loop !== undefined ? `, Loop: ${options.loop}` : ''})`
   );
   if (puppeteerArgs.length > 0) {
     logger.info(`  Puppeteer:  ${puppeteerArgs.join(' ')}`);
@@ -329,6 +337,8 @@ async function run(
       bitrate: options.bitrate,
       crf: options.crf,
       quality: options.quality,
+      loop: options.loop,
+      noLoop: options.noLoop,
       generator,
       logger,
       onBrowserCreated: (b) => {
@@ -453,6 +463,8 @@ async function renderAndEncodeFrames(params: {
   bitrate?: string;
   crf?: number;
   quality?: number;
+  loop?: number | boolean;
+  noLoop?: boolean;
   generator: CLIFormatGenerator;
   logger: Logger;
   onBrowserCreated: (browser: Browser) => void;
@@ -480,6 +492,8 @@ async function renderAndEncodeFrames(params: {
     bitrate: params.bitrate,
     crf: params.crf,
     quality: params.quality,
+    loop: params.loop,
+    noLoop: params.noLoop,
   };
 
   const args = params.generator.buildFfmpegArgs(formatOptions);

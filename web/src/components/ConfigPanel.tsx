@@ -65,6 +65,9 @@ interface ConfigPanelProps {
   renderedUrl: string | null;
   metadata: VideoMetadata;
   onMetadataChange: (m: VideoMetadata) => void;
+  loop?: boolean;
+  onLoopChange?: (loop: boolean) => void;
+  detectedDuration?: number;
   onOpenSamples?: () => void;
   onClearSvg?: () => void;
 }
@@ -102,6 +105,9 @@ export const ConfigPanel = ({
   renderedUrl,
   metadata,
   onMetadataChange,
+  loop = true,
+  onLoopChange,
+  detectedDuration,
   onOpenSamples,
   onClearSvg,
 }: ConfigPanelProps) => {
@@ -245,6 +251,21 @@ export const ConfigPanel = ({
             disabled={isOptionsDisabled}
           />
 
+          {getFormatById(format)?.supportsLoop && onLoopChange && (
+            <div className="input-group">
+              <div className="checkbox-wrapper">
+                <input
+                  type="checkbox"
+                  id="loop-animation"
+                  checked={loop}
+                  onChange={(e) => onLoopChange(e.target.checked)}
+                  disabled={isOptionsDisabled}
+                />
+                <label htmlFor="loop-animation">Loop Animation</label>
+              </div>
+            </div>
+          )}
+
           <div className="input-group">
             <label htmlFor="resolution">Resolution</label>
             <select
@@ -300,10 +321,31 @@ export const ConfigPanel = ({
 
           <div className="grid-3">
             <div className="input-group">
-              <label htmlFor="duration">Dur. (s)</label>
+              <div className="duration-label-wrapper">
+                <label htmlFor="duration">Dur. (s)</label>
+                {detectedDuration !== undefined &&
+                  detectedDuration > 0 &&
+                  detectedDuration !== duration && (
+                    <button
+                      type="button"
+                      className="reset-duration-btn"
+                      onClick={() => onDurationChange(detectedDuration)}
+                      disabled={isOptionsDisabled}
+                      title={`Reset to detected duration (${detectedDuration}s)`}
+                    >
+                      ↺ Reset
+                    </button>
+                  )}
+              </div>
               <input
                 type="number"
                 id="duration"
+                className={
+                  (detectedDuration !== undefined && detectedDuration > 300) ||
+                  duration > 300
+                    ? 'input-warning'
+                    : ''
+                }
                 value={isNaN(duration) ? '' : duration}
                 onChange={(e) => {
                   const val = parseFloat(e.target.value);
@@ -313,6 +355,12 @@ export const ConfigPanel = ({
                 step={0.1}
                 disabled={isOptionsDisabled}
               />
+              {((detectedDuration !== undefined && detectedDuration > 300) ||
+                duration > 300) && (
+                <span className="duration-warning-text" role="status">
+                  ⚠️ &gt; 5 min
+                </span>
+              )}
             </div>
             <div className="input-group">
               <label htmlFor="hold">Hold (s)</label>

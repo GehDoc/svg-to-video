@@ -242,4 +242,64 @@ describe('validateOptions', () => {
       })
     );
   });
+
+  test('should validate loop parameter', () => {
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          loop: -2,
+        }),
+      /Loop count must be an integer >= -1/
+    );
+
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          loop: NaN,
+        }),
+      /Loop count must be an integer >= -1/
+    );
+
+    assert.doesNotThrow(() =>
+      validateOptions({
+        scale: 1,
+        resolution: 'original',
+        transparent: false,
+        loop: 0,
+      })
+    );
+
+    assert.doesNotThrow(() =>
+      validateOptions({
+        scale: 1,
+        resolution: 'original',
+        transparent: false,
+        loop: -1,
+      })
+    );
+
+    assert.doesNotThrow(() =>
+      validateOptions({
+        scale: 1,
+        resolution: 'original',
+        transparent: false,
+        loop: 1,
+      })
+    );
+
+    assert.doesNotThrow(() =>
+      validateOptions({
+        scale: 1,
+        resolution: 'original',
+        transparent: false,
+        noLoop: true,
+      })
+    );
+  });
 });

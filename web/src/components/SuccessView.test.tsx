@@ -37,6 +37,36 @@ test('SuccessView renders MP4 success state correctly', () => {
   expect(screen.getByTestId('video-preview')).toBeInTheDocument();
 });
 
+test('SuccessView video preview respects loop setting', () => {
+  const { rerender } = render(
+    <SuccessView
+      fileName="test.mp4"
+      fileSize="1.2 MB"
+      renderedUrl="blob:test"
+      mimeType="video/mp4"
+      loop={false}
+      onDownload={vi.fn()}
+      onBack={vi.fn()}
+    />
+  );
+
+  const video = screen.getByTestId('video-preview') as HTMLVideoElement;
+  expect(video.loop).toBe(false);
+
+  rerender(
+    <SuccessView
+      fileName="test.mp4"
+      fileSize="1.2 MB"
+      renderedUrl="blob:test"
+      mimeType="video/mp4"
+      loop={true}
+      onDownload={vi.fn()}
+      onBack={vi.fn()}
+    />
+  );
+  expect(video.loop).toBe(true);
+});
+
 test('SuccessView handles copy action', async () => {
   const onCopyOverride = vi.fn().mockResolvedValue(true);
 
