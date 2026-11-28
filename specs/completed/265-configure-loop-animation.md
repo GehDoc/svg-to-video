@@ -1,7 +1,7 @@
 # Spec: 265 - Configure Animation Looping and Duration Controls
 
 **GitHub Issue**: [#265](https://github.com/GehDoc/svg-to-video/issues/265)
-**Status**: 🟡 To be reviewed
+**Status**: 🟢 Completed
 
 ## 🎯 Objective
 
@@ -104,3 +104,5 @@ Provide user control over animation looping (infinite vs. play-once / custom loo
 - 2026-11-27: Implementation complete across shared capabilities, CLI/MCP generators, Web Studio encoders, and UI controls.
 - 2026-11-28: UI/UX refinement per review: keep Loop Animation checkbox permanently rendered and disable it on unsupported formats to prevent layout shifts.
 - 2026-11-28: Senior Code Review follow-up: resolve MCP loop boolean handling and bounds schema, fix dark-mode contrast on reset duration button, harden APNG chunk bounds, and tighten option validation.
+- 2026-11-28: E2E stability & timeout hardening: disambiguate transparency checkbox selector in demo e2e, enforce 30s standard E2E timeout, and cap demo generation override at 1 minute.
+- 2026-11-28: Approved by user. Spec archived and version bumped to 0.43.0.
