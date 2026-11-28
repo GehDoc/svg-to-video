@@ -19,6 +19,9 @@ test.use({
   viewport: { width: 1280, height: 720 },
 });
 
+// Demo video generation scenario executes full multi-step UI flow and video recording; 1 minute maximum acceptable override
+test.setTimeout(60000);
+
 test('Generate Demo Video - Web Studio', async ({ page }) => {
   await gotoIsolated(page);
 
