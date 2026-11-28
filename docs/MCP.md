@@ -199,8 +199,20 @@ Once connected, agent operators can use natural prompts to trigger media renderi
 - **Inspect Animation Metadata**:
   > _"Inspect `animation.svg` using `inspect_svg_animation` and tell me its detected duration and resolution."_
 
-## 🤗 Live Interactive Demo (HuggingFace Space)
+## 🌐 Online Playgrounds & Hosted Sandboxes
 
-If you want to test the MCP server without installing Docker or Node.js locally, try our hosted demo: **[GehDoc/svg-to-video-mcp on HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)**
+### HuggingFace Space (Interactive Demo)
 
-> **Architecture note**: The HuggingFace Space exposes the MCP server via a **Python wrapper** (not a Dockerfile) for cost reasons — it installs and invokes the npm package at runtime. The Space is backed by a dedicated **HuggingFace repository** ([`GehDoc/svg-to-video-mcp`](https://huggingface.co/GehDoc/svg-to-video-mcp)) that requires **Python development** for any changes to the hosting layer.
+Test the MCP server directly in your browser without local installation: **[GehDoc/svg-to-video-mcp on HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)**.
+
+> **Architecture note**: The HuggingFace Space runs a lightweight Python wrapper that invokes the npm package at runtime.
+
+### Glama.ai (Container Sandbox & Deployment)
+
+The server is indexed and deployable on **[Glama.ai (`GehDoc/svg-to-video`)](https://glama.ai/mcp/servers/GehDoc/svg-to-video)**:
+
+- **Command (`cmd argument`)**:
+  ```json
+  ["mcp-proxy", "--", "node", "dist/src/mcp.js", "--hosted"]
+  ```
+- **Build Configuration**: When building on Glama, ensure Chromium and fonts are installed via `apt-get`, and symlink `/usr/bin/chromium` to `/opt/google/chrome/chrome` and `/usr/bin/google-chrome` in your build steps so Puppeteer discovers system Chromium out-of-the-box.

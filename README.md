@@ -1,7 +1,3 @@
-<div align="center">
-  <img src="./docs/assets/social-preview.svg" alt="SVG to Video Logo" width="600">
-</div>
-
 # SVG to Video
 
 [![CI](https://img.shields.io/github/actions/workflow/status/GehDoc/svg-to-video/ci.yml?branch=main&logo=githubactions&logoColor=white&label=CI)](https://github.com/GehDoc/svg-to-video/actions/workflows/ci.yml)
@@ -10,7 +6,6 @@
 [![npm Version](https://img.shields.io/npm/v/@gehdoc/svg-to-video?logo=npm&logoColor=white&label=npm&color=CB3837)](https://www.npmjs.com/package/@gehdoc/svg-to-video)
 [![Docker Image](https://img.shields.io/docker/v/gehdoc/svg-to-video?label=docker&logo=docker&logoColor=white&sort=semver&color=2496ed)](https://hub.docker.com/r/gehdoc/svg-to-video)
 [![MCP Registry](https://img.shields.io/badge/MCP-io.github.GehDoc%2Fsvg--to--video-purple?logo=modelcontextprotocol&logoColor=white)](https://registry.modelcontextprotocol.io/?q=io.github.GehDoc%2Fsvg-to-video)
-[![HuggingFace Space](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Demo%20Space-yellow?style=flat)](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)
 [![llms.txt](https://img.shields.io/badge/llms.txt-available-blue)](https://gehdoc.github.io/svg-to-video/llms.txt)
 
 A high-fidelity tool to transform your CSS- and SMIL-animated SVGs into high-quality videos (MP4, WebM, MKV, MOV) or lightweight animated formats (aPNG, GIF) with perfect alpha-channel transparency directly in your browser or via CLI/MCP server.
@@ -27,7 +22,7 @@ A high-fidelity tool to transform your CSS- and SMIL-animated SVGs into high-qua
 - **Transparent Backgrounds**: Export your animations with a full alpha channel using **WebM or aPNG**, and optimized indexed transparency with **GIF89a**. Perfect for overlays in video editing tools or web use.
 - **Privacy-First**: The Web Studio runs entirely in your browser—your SVG files never leave your computer.
 - **Frame-Accurate**: Our engine scrubs both the **Web Animations API** and native **SVG SMIL**, ensuring every frame is captured exactly as rendered.
-- **AI Agent Native**: Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support indexed on the official [MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.GehDoc%2Fsvg-to-video) (`mcp.json`) and hosted live on [HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp).
+- **AI Agent Native**: Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support indexed on the official [MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.GehDoc%2Fsvg-to-video) (`mcp.json`) and hosted on interactive online playgrounds across [HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp) and [Glama.ai](https://glama.ai/mcp/servers/GehDoc/svg-to-video).
 - **Universal Animated Formats**: Beyond video, generate lightweight **Animated PNGs (aPNG)** and **GIFs** with deterministic 8x8 Bayer ordered dithering to eliminate temporal fluttering on animated gradients, with full control over background transparency.
 - **Granular Quality & Rate Control**: Fine-tune output file size and visual fidelity with custom target bitrates (`--bitrate`), Constant Rate Factor (`--crf 0-63`), and quality percentages (`--quality 1-100`) across video (MP4, WebM, MKV, MOV) and animated formats (GIF color quantization, aPNG compression).
 - **Configurable Animation Looping**: Full control over animation playback loops for animated formats (GIF, aPNG) and live preview—toggle infinite looping or single-play export across Web Studio, CLI (`--loop <count>`, `--no-loop`), and MCP integrations.
@@ -117,7 +112,12 @@ Connect `svg-to-video` to AI Assistants (Claude Desktop, Cursor, Antigravity, Au
    }
    ```
 2. **Prompt your AI Assistant**:
+
    > _"Convert `examples/example.svg` into a 60fps transparent WebM video."_
+
+3. **Explore Interactive Online Playgrounds**:
+   - 🤗 **[HuggingFace Space Playground](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)**: Test SVG conversions live in an interactive web client with zero local installation.
+   - 🪐 **[Glama.ai MCP Playground](https://glama.ai/mcp/servers/GehDoc/svg-to-video)**: Test, inspect tool schemas, and deploy containerized MCP endpoints directly in your browser.
 
 See **[docs/MCP.md](./docs/MCP.md)** for full setup instructions, tool schemas, Docker execution, and agent prompting guides.
 
@@ -130,6 +130,7 @@ See **[docs/MCP.md](./docs/MCP.md)** for full setup instructions, tool schemas, 
 - 🌐 **Web Studio**: [`gehdoc.github.io/svg-to-video/`](https://gehdoc.github.io/svg-to-video/?utm_source=readme)
 - 🤖 **MCP Registry**: [`io.github.GehDoc/svg-to-video`](https://registry.modelcontextprotocol.io/?q=io.github.GehDoc%2Fsvg-to-video)
 - 🤗 **HuggingFace Space**: [`GehDoc/svg-to-video-mcp`](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp)
+- 🪐 **Glama.ai MCP Server**: [`glama.ai/mcp/servers/GehDoc/svg-to-video`](https://glama.ai/mcp/servers/GehDoc/svg-to-video)
 
 ---
 

@@ -9,6 +9,7 @@ import {
   FaHeart,
   FaCheck,
   FaCopy,
+  FaCompass,
 } from 'react-icons/fa';
 import seoData from '../data/seoDocumentation.json';
 import pkg from '../../package.json';
@@ -301,6 +302,49 @@ export const SeoContent = () => {
                   View full MCP setup &amp; schema guide &rarr;
                 </a>
               </div>
+            </div>
+
+            {/* Sub-section 3: Interactive MCP Playgrounds */}
+            <div className="automation-subblock">
+              <StickyHeader className="automation-subblock__header">
+                <FaCompass className="subblock-icon" />
+                <h3>Interactive MCP Playgrounds</h3>
+              </StickyHeader>
+
+              {seoData.mcpPlaygroundsSection?.descriptionHtml && (
+                <div
+                  className="automation-description"
+                  dangerouslySetInnerHTML={{
+                    __html: seoData.mcpPlaygroundsSection.descriptionHtml,
+                  }}
+                />
+              )}
+
+              {seoData.mcpPlaygroundsSection?.playgrounds && (
+                <div className="playgrounds-grid">
+                  {seoData.mcpPlaygroundsSection.playgrounds.map((item) => (
+                    <div key={item.id} className="playground-card">
+                      <div className="playground-card__header">
+                        <span className="playground-card__badge">
+                          {item.badge}
+                        </span>
+                        <h4>{item.name}</h4>
+                      </div>
+                      <p className="playground-card__desc">
+                        {item.description}
+                      </p>
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="playground-card__link"
+                      >
+                        Open {item.name} &rarr;
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </section>

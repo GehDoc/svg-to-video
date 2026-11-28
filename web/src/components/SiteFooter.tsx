@@ -89,6 +89,13 @@ export const SiteFooter = () => {
               >
                 HuggingFace Space ↗
               </a>
+              <a
+                href={ECOSYSTEM_LINKS.glama}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Glama.ai MCP ↗
+              </a>
             </nav>
           </div>
 

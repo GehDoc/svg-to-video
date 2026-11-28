@@ -147,13 +147,40 @@
 .splash-links {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  align-items: center;
+  gap: 1.25rem;
   font-size: 0.9rem;
+  flex-wrap: wrap;
 
   a {
-    color: var(--primary-text);
+    color: var(--text-muted);
     text-decoration: none;
     font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    transition:
+      color 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+
+  .splash-link--icon {
+    line-height: 1;
+
+    svg {
+      display: block;
+    }
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+
+  .splash-link--text {
+    font-size: 0.85rem;
 
     &:hover {
       text-decoration: underline;

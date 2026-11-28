@@ -43,6 +43,20 @@ interface McpSectionData {
   promptQuery: string;
 }
 
+interface McpPlaygroundItem {
+  id: string;
+  name: string;
+  badge: string;
+  url: string;
+  description: string;
+}
+
+interface McpPlaygroundsSectionData {
+  title: string;
+  descriptionHtml: string;
+  playgrounds: McpPlaygroundItem[];
+}
+
 interface WhyItem {
   title: string;
   descriptionHtml: string;
@@ -207,6 +221,36 @@ function parseMcpSection(mcpText: string): McpSectionData {
   };
 }
 
+function parseMcpPlaygroundsSection(
+  _mcpText: string
+): McpPlaygroundsSectionData {
+  const playgrounds: McpPlaygroundItem[] = [
+    {
+      id: 'huggingface',
+      name: 'HuggingFace Space Playground',
+      badge: 'Interactive Demo',
+      url: 'https://huggingface.co/spaces/GehDoc/svg-to-video-mcp',
+      description:
+        'Test SVG conversions live in an interactive web client with zero local installation.',
+    },
+    {
+      id: 'glama',
+      name: 'Glama.ai MCP Playground',
+      badge: 'Container Sandbox & Deployment',
+      url: 'https://glama.ai/mcp/servers/GehDoc/svg-to-video',
+      description:
+        'Test, inspect tool schemas, and deploy containerized MCP endpoints directly in your browser.',
+    },
+  ];
+
+  return {
+    title: 'Interactive MCP Playgrounds',
+    descriptionHtml:
+      '<p>Test and explore the Model Context Protocol (MCP) server directly in your browser without local installation before configuring local agents or Docker containers.</p>',
+    playgrounds,
+  };
+}
+
 /**
  * Parses docs/FAQ.md, supporting categorized sections (## Category)
  * with questions (### Q: or ## Q:) beneath them.
@@ -304,6 +348,7 @@ try {
   const mcpSnippet = parseMcpConfig(mcpText);
   const cliSection = parseCliSection(cliText);
   const mcpSection = parseMcpSection(mcpText);
+  const mcpPlaygroundsSection = parseMcpPlaygroundsSection(mcpText);
   const { faq, faqCategories } = parseFaq(faqMarkdown);
 
   const seoData = {
@@ -319,6 +364,7 @@ try {
     mcpSnippet,
     cliSection,
     mcpSection,
+    mcpPlaygroundsSection,
     formatComparisons: [
       {
         format: 'MP4',
