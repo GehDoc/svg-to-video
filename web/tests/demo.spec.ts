@@ -184,7 +184,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
 
   // Step 5: Transparency
   await spotlight(
-    '.checkbox-wrapper',
+    '.checkbox-wrapper:has(#transparent)',
     'Enable transparency',
     'Enable transparent backgrounds for overlays.',
     'top'
