@@ -147,20 +147,47 @@
 .splash-links {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  align-items: center;
+  gap: 1.25rem;
   font-size: 0.9rem;
+  flex-wrap: wrap;
 
   a {
-    color: var(--primary-text);
+    color: var(--text-muted);
     text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--primary);
+    }
+  }
+
+  .splash-link--icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+
+    svg {
+      display: block;
+      pointer-events: none;
+    }
+  }
+
+  .splash-link--text {
+    font-size: 0.85rem;
     font-weight: 500;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
       text-decoration: underline;
     }
   }
 
   .separator {
     color: var(--border);
+    user-select: none;
   }
 }

@@ -88,6 +88,7 @@ const jsonLd = {
     ECOSYSTEM_LINKS.npm,
     ECOSYSTEM_LINKS.docker,
     ECOSYSTEM_LINKS.huggingface,
+    ECOSYSTEM_LINKS.glama,
   ],
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
   featureList: [

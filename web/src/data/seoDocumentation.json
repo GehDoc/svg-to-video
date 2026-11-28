@@ -16,7 +16,7 @@
     },
     {
       "title": "AI Agent Native",
-      "descriptionHtml": "Native <strong>Model Context Protocol (MCP)</strong> server and <strong>Agent Skill (<code>SKILL.md</code>)</strong> support indexed on the official <a href=\"https://registry.modelcontextprotocol.io/?q=io.github.GehDoc%2Fsvg-to-video\">MCP Registry</a> (<code>mcp.json</code>) and hosted live on <a href=\"https://huggingface.co/spaces/GehDoc/svg-to-video-mcp\">HuggingFace Spaces</a>."
+      "descriptionHtml": "Native <strong>Model Context Protocol (MCP)</strong> server and <strong>Agent Skill (<code>SKILL.md</code>)</strong> support indexed on the official <a href=\"https://registry.modelcontextprotocol.io/?q=io.github.GehDoc%2Fsvg-to-video\">MCP Registry</a> (<code>mcp.json</code>) and hosted on interactive online playgrounds across <a href=\"https://huggingface.co/spaces/GehDoc/svg-to-video-mcp\">HuggingFace Spaces</a> and <a href=\"https://glama.ai/mcp/servers/GehDoc/svg-to-video\">Glama.ai</a>."
     },
     {
       "title": "Universal Animated Formats",
@@ -99,6 +99,26 @@
     "descriptionHtml": "<p>Connect <code>svg-to-video</code> to AI Assistants (Claude Desktop, Cursor, Antigravity, AutoGPT) via Model Context Protocol:</p>\n",
     "configSnippet": "{\n     \"mcpServers\": {\n       \"svg-to-video\": {\n         \"command\": \"npx\",\n         \"args\": [\"-y\", \"-p\", \"@gehdoc/svg-to-video\", \"svg-to-video-mcp\"]\n       }\n     }\n   }",
     "promptQuery": "Convert `examples/example.svg` into a 60fps transparent WebM video."
+  },
+  "mcpPlaygroundsSection": {
+    "title": "Interactive MCP Playgrounds",
+    "descriptionHtml": "<p>Test and explore the Model Context Protocol (MCP) server directly in your browser without local installation before configuring local agents or Docker containers.</p>",
+    "playgrounds": [
+      {
+        "id": "huggingface",
+        "name": "HuggingFace Space Playground",
+        "badge": "Interactive Demo",
+        "url": "https://huggingface.co/spaces/GehDoc/svg-to-video-mcp",
+        "description": "Test SVG conversions live in an interactive web client with zero local installation."
+      },
+      {
+        "id": "glama",
+        "name": "Glama.ai MCP Playground",
+        "badge": "Container Sandbox & Deployment",
+        "url": "https://glama.ai/mcp/servers/GehDoc/svg-to-video",
+        "description": "Test, inspect tool schemas, and deploy containerized MCP endpoints directly in your browser."
+      }
+    ]
   },
   "formatComparisons": [
     {
@@ -224,5 +244,5 @@
       ]
     }
   ],
-  "lastUpdated": "2026-11-27T23:48:24.221Z"
+  "lastUpdated": "2026-11-28T03:01:38.059Z"
 }

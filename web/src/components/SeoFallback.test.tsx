@@ -20,6 +20,12 @@ describe('SeoFallback', () => {
     render(<SeoFallback />);
     const githubLink = screen.getByRole('link', { name: /View on GitHub/i });
     expect(githubLink.getAttribute('href')).toContain('github.com');
+
+    const glamaLink = screen.getByRole('link', { name: /View on Glama\.ai/i });
+    expect(glamaLink.getAttribute('href')).toContain('glama.ai');
+
+    const hfLink = screen.getByRole('link', { name: /View on HuggingFace/i });
+    expect(hfLink.getAttribute('href')).toContain('huggingface.co');
   });
 
   it('has a metadata description length between 25 and 158 characters', () => {
