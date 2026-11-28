@@ -95,6 +95,13 @@ test('SeoContent renders headings, format table, CLI snippets, and FAQ', () => {
     })
   ).toBeInTheDocument();
 
+  expect(
+    screen.getByRole('heading', {
+      name: /Interactive MCP Playgrounds/i,
+      level: 3,
+    })
+  ).toBeInTheDocument();
+
   // Verify ordered list semantics for conversion steps
   expect(screen.getByRole('list')).toBeInTheDocument();
   const listItems = screen.getAllByRole('listitem');
