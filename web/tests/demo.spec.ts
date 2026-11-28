@@ -19,8 +19,6 @@ test.use({
   viewport: { width: 1280, height: 720 },
 });
 
-test.setTimeout(120000);
-
 test('Generate Demo Video - Web Studio', async ({ page }) => {
   await gotoIsolated(page);
 
@@ -216,7 +214,7 @@ test('Generate Demo Video - Web Studio', async ({ page }) => {
 
   // Step 8: Success
   const successCard = page.locator('.success-card').first();
-  await successCard.waitFor({ state: 'visible', timeout: 60000 });
+  await successCard.waitFor({ state: 'visible', timeout: 30000 });
   await page.waitForTimeout(500); // necessary for the animation to complete and the card to be fully visible
   await spotlight(
     '.success-card',
