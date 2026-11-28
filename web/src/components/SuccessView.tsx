@@ -14,6 +14,7 @@ interface SuccessViewProps {
   mimeType: string;
   format?: string;
   isTransparent?: boolean;
+  loop?: boolean;
   onDownload: () => void;
   onBack: () => void;
   onCopyOverride?: (url: string) => Promise<boolean>;
@@ -26,6 +27,7 @@ export const SuccessView = ({
   mimeType,
   format,
   isTransparent,
+  loop,
   onDownload,
   onBack,
   onCopyOverride,
@@ -82,7 +84,7 @@ export const SuccessView = ({
             src={renderedUrl}
             controls
             autoPlay
-            loop
+            loop={loop !== false}
             preload="none"
             data-testid="video-preview"
           >

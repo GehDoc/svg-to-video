@@ -36,6 +36,9 @@ const meta: Meta<typeof ConfigPanel> = {
     renderedUrl: null,
     metadata: { title: '', comment: '' },
     onMetadataChange: (m) => console.log('Metadata change', m),
+    loop: true,
+    onLoopChange: (l) => console.log('Loop change', l),
+    detectedDuration: 5,
   },
   decorators: [
     (Story) => (
@@ -92,5 +95,45 @@ export const WithError: Story = {
   args: {
     svgContent: '<svg></svg>',
     originalDim: { isDimensionsDetected: false },
+  },
+};
+
+export const LoopSupportedAnimated: Story = {
+  args: {
+    svgContent: '<svg></svg>',
+    format: 'gif',
+    loop: true,
+    originalDim: { width: 1920, height: 1080, isDimensionsDetected: true },
+    targetDim: { width: 1920, height: 1080 },
+  },
+};
+
+export const LoopDisabledVideo: Story = {
+  args: {
+    svgContent: '<svg></svg>',
+    format: 'mp4',
+    loop: true,
+    originalDim: { width: 1920, height: 1080, isDimensionsDetected: true },
+    targetDim: { width: 1920, height: 1080 },
+  },
+};
+
+export const WithDurationWarning: Story = {
+  args: {
+    svgContent: '<svg></svg>',
+    duration: 350,
+    detectedDuration: 350,
+    originalDim: { width: 1920, height: 1080, isDimensionsDetected: true },
+    targetDim: { width: 1920, height: 1080 },
+  },
+};
+
+export const WithCustomDuration: Story = {
+  args: {
+    svgContent: '<svg></svg>',
+    duration: 10,
+    detectedDuration: 3.5,
+    originalDim: { width: 1920, height: 1080, isDimensionsDetected: true },
+    targetDim: { width: 1920, height: 1080 },
   },
 };

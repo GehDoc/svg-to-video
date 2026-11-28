@@ -12,6 +12,7 @@ export interface StudioConfig {
   isTransparent: boolean;
   captureMethod: 'optimal' | 'high-fidelity';
   metadata: VideoMetadata;
+  loop: boolean;
 }
 
 export const DEFAULT_STUDIO_CONFIG: Readonly<StudioConfig> = Object.freeze({
@@ -24,6 +25,7 @@ export const DEFAULT_STUDIO_CONFIG: Readonly<StudioConfig> = Object.freeze({
   format: 'mp4',
   isTransparent: false,
   captureMethod: 'high-fidelity',
+  loop: true,
   metadata: Object.freeze({
     title: '',
     comment: '',
@@ -33,6 +35,7 @@ export const DEFAULT_STUDIO_CONFIG: Readonly<StudioConfig> = Object.freeze({
 export interface StudioSourceState {
   svgContent: string | null;
   fileName: string;
+  detectedDuration?: number;
   originalDim: {
     width: number;
     height: number;
@@ -43,6 +46,7 @@ export interface StudioSourceState {
 export const DEFAULT_SOURCE_STATE: Readonly<StudioSourceState> = Object.freeze({
   svgContent: null,
   fileName: 'animation.mp4',
+  detectedDuration: undefined,
   originalDim: Object.freeze({
     width: 0,
     height: 0,

@@ -61,6 +61,7 @@ describe('useRenderer hook', () => {
     mimeType: 'video/mp4',
     supportsAlpha: false,
     supportsMetadata: true,
+    supportsLoop: false,
     needsColorKeying: false,
     createEncoder: vi.fn().mockReturnValue(mockEncoder),
     isSupported: vi.fn().mockResolvedValue(true),

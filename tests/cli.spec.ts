@@ -610,5 +610,42 @@ describe('CLI Functionality', () => {
       assert.ok(fs.existsSync(outputFile));
       assert.ok(result.stdout.includes('Quality: 60'));
     });
+
+    test('should encode GIF with --no-loop flag', () => {
+      const { inputFile, outputFile } = getTestPaths('loop-test', '.gif');
+      const result = runCli([
+        inputFile,
+        '12',
+        outputDir,
+        '-d',
+        '1',
+        '--format',
+        'gif',
+        '--no-loop',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+      assert.ok(result.stdout.includes('Loop: disabled'));
+    });
+
+    test('should encode aPNG with --loop parameter', () => {
+      const { inputFile, outputFile } = getTestPaths('loop-test', '.apng');
+      const result = runCli([
+        inputFile,
+        '12',
+        outputDir,
+        '-d',
+        '1',
+        '--format',
+        'apng',
+        '--loop',
+        '1',
+        '--force',
+      ]);
+      assert.strictEqual(result.status, 0, result.stderr);
+      assert.ok(fs.existsSync(outputFile));
+      assert.ok(result.stdout.includes('Loop: 1'));
+    });
   });
 });

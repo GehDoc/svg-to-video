@@ -208,10 +208,64 @@
   .input-group {
     margin-bottom: 0;
 
+    .duration-label-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+
+      label {
+        margin-bottom: 0;
+        text-align: left;
+      }
+
+      .reset-duration-btn {
+        background: none;
+        border: none;
+        color: var(--primary-text);
+        font-size: 0.65rem;
+        cursor: pointer;
+        padding: 0;
+        text-decoration: underline;
+        font-weight: 500;
+        line-height: 1;
+
+        &:hover:not(:disabled) {
+          opacity: 0.8;
+        }
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+      }
+    }
+
     input[type='number'] {
       width: 100%;
       box-sizing: border-box;
       padding: 0.4rem;
+
+      &.input-warning {
+        border-color: var(--warning-border, #f59e0b);
+
+        &:focus:not(:disabled) {
+          border-color: var(--warning-border, #f59e0b);
+          box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+      }
+    }
+
+    .duration-warning-text {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--warning-text, #92400e);
+      margin-top: 0.25rem;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     label {

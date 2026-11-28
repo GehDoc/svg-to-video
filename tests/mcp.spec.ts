@@ -68,6 +68,17 @@ describe('MCP Server Integration', () => {
     assert.ok('bitrate' in renderProps);
     assert.ok('crf' in renderProps);
     assert.ok('quality' in renderProps);
+    assert.ok('loop' in renderProps);
+    const loopProp = renderProps.loop as {
+      oneOf?: Array<{ type: string; minimum?: number; maximum?: number }>;
+    };
+    assert.ok(Array.isArray(loopProp.oneOf));
+    const intBranch = loopProp.oneOf.find((b) => b.type === 'integer');
+    assert.ok(intBranch);
+    assert.strictEqual(intBranch.minimum, -1);
+    assert.strictEqual(intBranch.maximum, 65535);
+    const boolBranch = loopProp.oneOf.find((b) => b.type === 'boolean');
+    assert.ok(boolBranch);
 
     const crfProp = renderProps.crf as { minimum?: number; maximum?: number };
     assert.strictEqual(crfProp.minimum, 0);
@@ -162,6 +173,28 @@ describe('MCP Server Integration', () => {
     const data = JSON.parse(contentText.text);
     assert.strictEqual(data.success, true);
     assert.strictEqual(data.format, 'mp4');
+    assert.ok(fs.existsSync(data.outputFile));
+  });
+
+  test('should accept loop parameter (boolean false and integer) in render_svg_to_video tool', async () => {
+    const result = await client.callTool({
+      name: 'render_svg_to_video',
+      arguments: {
+        svgFilePath: exampleSvg,
+        outDir: outputDir,
+        fps: 12,
+        duration: 1,
+        format: 'gif',
+        loop: false,
+      },
+    });
+
+    assert.strictEqual(result.isError, undefined);
+    assert.ok(Array.isArray(result.content));
+    const contentText = result.content[0] as { type: string; text: string };
+    const data = JSON.parse(contentText.text);
+    assert.strictEqual(data.success, true);
+    assert.strictEqual(data.format, 'gif');
     assert.ok(fs.existsSync(data.outputFile));
   });
 

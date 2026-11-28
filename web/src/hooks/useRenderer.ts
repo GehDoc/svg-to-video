@@ -23,6 +23,7 @@ export interface RenderSettings {
   captureMethod: CaptureMethod;
   hold: number;
   metadata?: VideoMetadata;
+  loop?: boolean;
 }
 
 export interface RenderState {
@@ -152,6 +153,7 @@ export const useRenderer = (
             metadata: settings.metadata,
             format: settings.format,
             mimeType: format.mimeType,
+            loop: settings.loop,
           },
           canvas
         );

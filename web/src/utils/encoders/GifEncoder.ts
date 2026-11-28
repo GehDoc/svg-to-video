@@ -178,6 +178,7 @@ export class GifEncoder implements VideoEncoder {
 
         if (i === 0) {
           options.palette = palette;
+          options.repeat = this.options?.loop === false ? -1 : 0;
         }
 
         encoder.writeFrame(index, width, height, options);
@@ -211,6 +212,7 @@ export class GifEncoder implements VideoEncoder {
 
         if (i === 0) {
           options.palette = palette;
+          options.repeat = this.options?.loop === false ? -1 : 0;
         }
 
         encoder.writeFrame(index, width, height, options);

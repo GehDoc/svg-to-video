@@ -30,6 +30,7 @@ A high-fidelity tool to transform your CSS- and SMIL-animated SVGs into high-qua
 - **AI Agent Native**: Native **Model Context Protocol (MCP)** server and **Agent Skill (`SKILL.md`)** support indexed on the official [MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.GehDoc%2Fsvg-to-video) (`mcp.json`) and hosted live on [HuggingFace Spaces](https://huggingface.co/spaces/GehDoc/svg-to-video-mcp).
 - **Universal Animated Formats**: Beyond video, generate lightweight **Animated PNGs (aPNG)** and **GIFs** with deterministic 8x8 Bayer ordered dithering to eliminate temporal fluttering on animated gradients, with full control over background transparency.
 - **Granular Quality & Rate Control**: Fine-tune output file size and visual fidelity with custom target bitrates (`--bitrate`), Constant Rate Factor (`--crf 0-63`), and quality percentages (`--quality 1-100`) across video (MP4, WebM, MKV, MOV) and animated formats (GIF color quantization, aPNG compression).
+- **Configurable Animation Looping**: Full control over animation playback loops for animated formats (GIF, aPNG) and live preview—toggle infinite looping or single-play export across Web Studio, CLI (`--loop <count>`, `--no-loop`), and MCP integrations.
 - **Copy to Clipboard**: Instant export to **Base64 Data URL**—copy your video and embed it directly into your HTML, CSS, or JS code without manual downloads. Perfect for rapid prototyping and developers.
 - **Metadata Injection**: Support for custom titles and comments across video (MP4, WebM, MKV, MOV) and animated image (aPNG, GIF) formats.
 - **Versatile**: Whether you need an accessible [Web Studio](#-web-studio) for quick conversions or a powerful [CLI tool](#-cli--docker-tool) for batch automation and CI/CD pipelines, this project has you covered.
@@ -89,8 +90,8 @@ npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --resolution 
 # Node.js (custom bitrate, CRF, and quality)
 npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir --bitrate 5M --crf 18 --quality 80
 
-# Node.js (animated PNG output)
-npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format apng
+# Node.js (animated PNG output with play-once / no loop)
+npx -y -p @gehdoc/svg-to-video svg-to-video input.svg 60 ./out-dir -d 5 --format apng --no-loop
 
 # Docker (zero local dependencies; requires --shm-size=2gb for Chromium rendering; add :Z to -v for SELinux / Fedora)
 docker run --rm --shm-size=2gb -e PUPPETEER_ARGS="--no-sandbox" -v $(pwd):/data:Z gehdoc/svg-to-video /data/input.svg 60 /data/out-dir -d 5 --format gif

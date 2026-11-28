@@ -58,5 +58,12 @@ describe('shared formatCapabilities', () => {
     expect(FORMAT_CAPABILITIES.apng.supportsAlpha).toBe(true);
     expect(FORMAT_CAPABILITIES.mkv.supportsAlpha).toBe(true);
     expect(FORMAT_CAPABILITIES.mov.supportsAlpha).toBe(true);
+
+    expect(FORMAT_CAPABILITIES.gif.supportsLoop).toBe(true);
+    expect(FORMAT_CAPABILITIES.apng.supportsLoop).toBe(true);
+    expect(FORMAT_CAPABILITIES.mp4.supportsLoop).toBe(false);
+    expect(FORMAT_CAPABILITIES.webm.supportsLoop).toBe(false);
+    expect(FORMAT_CAPABILITIES.mkv.supportsLoop).toBe(false);
+    expect(FORMAT_CAPABILITIES.mov.supportsLoop).toBe(false);
   });
 });

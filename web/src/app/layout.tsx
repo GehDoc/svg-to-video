@@ -34,6 +34,9 @@ export const metadata: Metadata = {
     'video metadata',
     'cli gif export',
     'cli apng export',
+    'animation loop',
+    'no loop gif',
+    'apng loop',
     'smil animation',
     'svg smil',
     'bitrate control',
@@ -90,6 +93,7 @@ const jsonLd = {
   featureList: [
     'High-fidelity SVG to video conversion (MP4, WebM, MKV, MOV)',
     'Optimized animated image export (aPNG, GIF)',
+    'Configurable animation looping (infinite or play-once for GIF and aPNG)',
     'Granular encoding quality & bitrate control (CRF, target bitrate, GIF/aPNG quality)',
     'Transparent background support (WebM, aPNG, GIF89a)',
     'Metadata embedding across video and animated images',

@@ -11,6 +11,7 @@ export interface EncoderOptions {
   metadata?: VideoMetadata;
   mimeType: string;
   format: string;
+  loop?: boolean;
 }
 
 export interface VideoEncoder {
@@ -35,6 +36,7 @@ export interface VideoFormat {
   readonly mimeType: string;
   readonly supportsAlpha: boolean;
   readonly supportsMetadata: boolean;
+  readonly supportsLoop: boolean;
 
   /**
    * Creates a new instance of the encoder for this format.
@@ -63,6 +65,7 @@ export abstract class BaseFormat implements VideoFormat {
   readonly mimeType: string;
   readonly supportsAlpha: boolean;
   readonly supportsMetadata: boolean;
+  readonly supportsLoop: boolean;
   readonly needsColorKeying: boolean;
 
   constructor(formatId: string) {
@@ -76,6 +79,7 @@ export abstract class BaseFormat implements VideoFormat {
     this.mimeType = cap.mimeType;
     this.supportsAlpha = cap.supportsAlpha;
     this.supportsMetadata = cap.supportsMetadata;
+    this.supportsLoop = cap.supportsLoop;
     this.needsColorKeying = cap.needsColorKeying;
   }
 

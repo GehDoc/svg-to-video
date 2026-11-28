@@ -1,6 +1,9 @@
 import UPNG from 'upng-js';
 import { VideoEncoder, EncoderOptions, BaseFormat } from './types';
-import { injectApngMetadata as sharedInjectApngMetadata } from '@shared/apngMetadataInjector';
+import {
+  injectApngMetadata as sharedInjectApngMetadata,
+  setApngNumPlays as sharedSetApngNumPlays,
+} from '@shared/apngMetadataInjector';
 import pkg from '../../../../package.json';
 
 export interface EncoderFrame {
@@ -48,6 +51,10 @@ export class ApngEncoder implements VideoEncoder {
       UPNG.encode(buffers, width, height, 0, delays)
     );
 
+    if (this.options.loop === false) {
+      buffer = setApngNumPlays(buffer, 1);
+    }
+
     if (metadata) {
       buffer = injectApngMetadata(buffer, metadata);
     }
@@ -68,6 +75,13 @@ export function injectApngMetadata(
   metadata?: EncoderOptions['metadata']
 ): Uint8Array<ArrayBuffer> {
   return sharedInjectApngMetadata(buffer, metadata, pkg.version);
+}
+
+export function setApngNumPlays(
+  buffer: Uint8Array<ArrayBuffer>,
+  numPlays: number
+): Uint8Array<ArrayBuffer> {
+  return sharedSetApngNumPlays(buffer, numPlays);
 }
 
 export class ApngFormat extends BaseFormat {

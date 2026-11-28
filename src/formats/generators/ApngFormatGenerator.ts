@@ -51,7 +51,19 @@ export class ApngFormatGenerator extends BaseCLIFormatGenerator {
       args.push('-vf', filters.join(','));
     }
 
-    args.push('-f', 'apng', '-plays', '0');
+    let playsArg = '0';
+    if (options.noLoop || options.loop === false) {
+      playsArg = '1';
+    } else if (options.loop !== undefined && options.loop !== true) {
+      if (options.loop === 0) {
+        playsArg = '0';
+      } else if (options.loop === 1 || options.loop === -1) {
+        playsArg = '1';
+      } else {
+        playsArg = String(options.loop);
+      }
+    }
+    args.push('-f', 'apng', '-plays', playsArg);
     if (transparent) {
       args.push('-pix_fmt', 'rgba');
     } else {

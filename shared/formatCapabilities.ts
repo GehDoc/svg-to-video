@@ -6,6 +6,7 @@ export interface FormatCapability {
   readonly mimeType: string;
   readonly supportsAlpha: boolean;
   readonly supportsMetadata: boolean;
+  readonly supportsLoop: boolean;
   readonly needsColorKeying: boolean;
 }
 
@@ -18,6 +19,7 @@ export const FORMAT_CAPABILITIES: Record<string, FormatCapability> = {
     mimeType: 'video/mp4',
     supportsAlpha: false,
     supportsMetadata: true,
+    supportsLoop: false,
     needsColorKeying: false,
   },
   webm: {
@@ -28,6 +30,7 @@ export const FORMAT_CAPABILITIES: Record<string, FormatCapability> = {
     mimeType: 'video/webm',
     supportsAlpha: true,
     supportsMetadata: true,
+    supportsLoop: false,
     needsColorKeying: false,
   },
   gif: {
@@ -38,6 +41,7 @@ export const FORMAT_CAPABILITIES: Record<string, FormatCapability> = {
     mimeType: 'image/gif',
     supportsAlpha: true,
     supportsMetadata: true,
+    supportsLoop: true,
     needsColorKeying: true,
   },
   apng: {
@@ -48,6 +52,7 @@ export const FORMAT_CAPABILITIES: Record<string, FormatCapability> = {
     mimeType: 'image/png',
     supportsAlpha: true,
     supportsMetadata: true,
+    supportsLoop: true,
     needsColorKeying: false,
   },
   mkv: {
@@ -58,6 +63,7 @@ export const FORMAT_CAPABILITIES: Record<string, FormatCapability> = {
     mimeType: 'video/x-matroska',
     supportsAlpha: true,
     supportsMetadata: true,
+    supportsLoop: false,
     needsColorKeying: false,
   },
   mov: {
@@ -68,6 +74,7 @@ export const FORMAT_CAPABILITIES: Record<string, FormatCapability> = {
     mimeType: 'video/quicktime',
     supportsAlpha: true,
     supportsMetadata: true,
+    supportsLoop: false,
     needsColorKeying: false,
   },
 };

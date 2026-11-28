@@ -59,6 +59,7 @@ export const Studio = () => {
     isTransparent,
     captureMethod,
     metadata,
+    loop,
   } = config;
 
   const { render, cancel, clearError, state } = useRenderer(rendererRef);
@@ -129,6 +130,7 @@ export const Studio = () => {
       captureMethod,
       hold,
       metadata,
+      loop,
     };
     try {
       const url = await render(svgContent, settings);
@@ -154,6 +156,7 @@ export const Studio = () => {
     hold,
     render,
     metadata,
+    loop,
     setRenderResult,
   ]);
 
@@ -286,6 +289,9 @@ export const Studio = () => {
               renderedUrl={renderedUrl}
               metadata={metadata}
               onMetadataChange={(m) => updateConfig({ metadata: m })}
+              loop={loop}
+              onLoopChange={(l) => updateConfig({ loop: l })}
+              detectedDuration={source.detectedDuration}
               onOpenSamples={() => handleOpenSamples('config-source')}
               onClearSvg={() => handleHome('config-source')}
             />
@@ -306,6 +312,7 @@ export const Studio = () => {
               onClearError={clearError}
               mimeType={mimeType}
               format={format}
+              loop={loop}
               onSelectSample={handleSelectSample}
             />
           </section>

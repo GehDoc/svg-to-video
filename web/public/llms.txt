@@ -19,6 +19,7 @@
 ## Key Capabilities
 
 - Supports MP4, WebM, MKV, MOV, aPNG, and GIF exports.
+- Configurable animation looping (infinite, play-once, or custom count for GIF/aPNG).
 - Full alpha-channel transparency support for WebM, aPNG, and GIF.
 - Granular quality and bitrate control (custom bitrate, CRF, and quality levels).
 - Frame-accurate Web Animations API (CSS) and SVG DOM (SMIL) scrubbing.
