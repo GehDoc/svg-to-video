@@ -1,0 +1,1 @@
+.meta-grid{color:var(--text-muted);grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:.5rem;margin-top:.75rem;font-size:.7rem;display:grid}.meta-item strong{color:var(--text);margin-right:.25rem;font-size:.75rem;display:inline}
