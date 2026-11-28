@@ -51,7 +51,7 @@ export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
             aria-label="View on GitHub"
             title="GitHub Repository"
           >
-            <FaGithub size={18} />
+            <FaGithub size={20} />
           </a>
           <a
             href={ECOSYSTEM_LINKS.npm}
@@ -61,7 +61,7 @@ export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
             aria-label="View on npm"
             title="npm Package"
           >
-            <FaNpm size={20} />
+            <FaNpm size={22} />
           </a>
           <a
             href={ECOSYSTEM_LINKS.docker}
@@ -71,7 +71,7 @@ export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
             aria-label="View on Docker Hub"
             title="Docker Hub Image"
           >
-            <FaDocker size={18} />
+            <FaDocker size={20} />
           </a>
           <a
             href={ECOSYSTEM_LINKS.mcpDocs}
@@ -81,7 +81,7 @@ export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
             aria-label="View on Model Context Protocol Registry"
             title="MCP Registry Server"
           >
-            <SiModelcontextprotocol size={16} />
+            <SiModelcontextprotocol size={18} />
           </a>
           <a
             href={ECOSYSTEM_LINKS.huggingface}
@@ -91,7 +91,7 @@ export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
             aria-label="View on HuggingFace Spaces"
             title="HuggingFace Space Playground"
           >
-            <SiHuggingface size={18} />
+            <SiHuggingface size={20} />
           </a>
           <a
             href={ECOSYSTEM_LINKS.glama}
@@ -101,7 +101,7 @@ export const SeoFallback = ({ isHidden }: SeoFallbackProps) => {
             aria-label="View on Glama.ai"
             title="Glama.ai MCP Playground"
           >
-            <GlamaIcon size={18} />
+            <GlamaIcon size={19} />
           </a>
           <span className="separator">•</span>
           <a

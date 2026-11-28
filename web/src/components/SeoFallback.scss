@@ -148,85 +148,46 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.65rem;
+  gap: 1.25rem;
   font-size: 0.9rem;
   flex-wrap: wrap;
-  position: relative;
-  z-index: 10;
+
+  a {
+    color: var(--text-muted);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--primary);
+    }
+  }
 
   .splash-link--icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
-    box-sizing: border-box;
-    border-radius: 8px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    cursor: pointer;
-    box-shadow: var(--shadow-sm);
-    text-decoration: none;
-    transition:
-      color 0.2s ease,
-      background-color 0.2s ease,
-      border-color 0.2s ease,
-      transform 0.2s ease,
-      box-shadow 0.2s ease;
+    line-height: 1;
 
     svg {
       display: block;
       pointer-events: none;
     }
-
-    &:hover,
-    &:focus-visible {
-      color: var(--primary-text);
-      background: var(--panel);
-      border-color: var(--primary);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow);
-      outline: none;
-    }
-
-    &:active {
-      transform: translateY(0);
-      box-shadow: var(--shadow-sm);
-    }
   }
 
   .splash-link--text {
-    display: inline-flex;
-    align-items: center;
-    height: 38px;
-    padding: 0 0.75rem;
-    box-sizing: border-box;
-    border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 500;
-    color: var(--text-muted);
-    text-decoration: none;
-    background: transparent;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition:
-      color 0.2s ease,
-      background-color 0.2s ease,
-      border-color 0.2s ease;
 
     &:hover,
     &:focus-visible {
-      color: var(--text-h);
-      background: var(--panel);
-      border-color: var(--border);
-      outline: none;
+      text-decoration: underline;
     }
   }
 
   .separator {
     color: var(--border);
     user-select: none;
-    margin: 0 0.2rem;
   }
 }
