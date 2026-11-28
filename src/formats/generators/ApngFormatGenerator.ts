@@ -54,7 +54,7 @@ export class ApngFormatGenerator extends BaseCLIFormatGenerator {
     let playsArg = '0';
     if (options.noLoop || options.loop === false) {
       playsArg = '1';
-    } else if (options.loop !== undefined) {
+    } else if (options.loop !== undefined && options.loop !== true) {
       if (options.loop === 0) {
         playsArg = '0';
       } else if (options.loop === 1 || options.loop === -1) {

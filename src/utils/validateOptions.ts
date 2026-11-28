@@ -24,14 +24,17 @@ export function validateOptions(options: ValidateOptionsParams): void {
     throw new Error('Duration must be a positive number.');
   }
 
-  if (
-    options.loop !== undefined &&
-    typeof options.loop === 'number' &&
-    (isNaN(options.loop) || options.loop < -1)
-  ) {
-    throw new Error(
-      'Loop count must be an integer >= -1 (0 for infinite loop, 1 or -1 for play once).'
-    );
+  if (options.loop !== undefined) {
+    if (
+      typeof options.loop === 'number' &&
+      (!Number.isInteger(options.loop) ||
+        options.loop < -1 ||
+        options.loop > 65535)
+    ) {
+      throw new Error(
+        'Loop count must be an integer between -1 and 65535 (0 for infinite loop, 1 or -1 for play once).'
+      );
+    }
   }
 
   if (

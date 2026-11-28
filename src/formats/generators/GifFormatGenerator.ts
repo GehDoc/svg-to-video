@@ -74,7 +74,7 @@ export class GifFormatGenerator extends BaseCLIFormatGenerator {
     let loopArg = '0';
     if (options.noLoop || options.loop === false) {
       loopArg = '-1';
-    } else if (options.loop !== undefined) {
+    } else if (options.loop !== undefined && options.loop !== true) {
       if (options.loop === 0) {
         loopArg = '0';
       } else if (options.loop === 1 || options.loop === -1) {

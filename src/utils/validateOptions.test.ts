@@ -252,7 +252,7 @@ describe('validateOptions', () => {
           transparent: false,
           loop: -2,
         }),
-      /Loop count must be an integer >= -1/
+      /Loop count must be an integer between -1 and 65535/
     );
 
     assert.throws(
@@ -263,7 +263,38 @@ describe('validateOptions', () => {
           transparent: false,
           loop: NaN,
         }),
-      /Loop count must be an integer >= -1/
+      /Loop count must be an integer between -1 and 65535/
+    );
+
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          loop: 1.5,
+        }),
+      /Loop count must be an integer between -1 and 65535/
+    );
+
+    assert.throws(
+      () =>
+        validateOptions({
+          scale: 1,
+          resolution: 'original',
+          transparent: false,
+          loop: 70000,
+        }),
+      /Loop count must be an integer between -1 and 65535/
+    );
+
+    assert.doesNotThrow(() =>
+      validateOptions({
+        scale: 1,
+        resolution: 'original',
+        transparent: false,
+        loop: 65535,
+      })
     );
 
     assert.doesNotThrow(() =>

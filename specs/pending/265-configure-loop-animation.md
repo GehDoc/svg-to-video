@@ -81,10 +81,21 @@ Provide user control over animation looping (infinite vs. play-once / custom loo
   - [x] CSS hygiene verified (zero `!important`, design tokens used)
   - [x] Full automated test suite passing cleanly (`npm run check`)
 
+- [x] **Senior Review Follow-up & Hardening**
+  - [x] Update MCP `loop` schema with `oneOf: [{ type: 'integer', minimum: -1, maximum: 65535 }, { type: 'boolean' }]` and handle `params.loop === false -> '--no-loop'`
+  - [x] Fix dark-mode contrast on `.reset-duration-btn` by using `color: var(--primary-text)` (7.34:1 contrast ratio)
+  - [x] Add `WithCustomDuration` story in `ConfigPanel.stories.tsx` to test `.reset-duration-btn` in light/dark Storybook tests
+  - [x] Add bounds check `offset + 12 + chunkLength <= result.length` and full 8-byte signature check in `setApngNumPlays`
+  - [x] Tighten CLI validation for `options.loop` with `Number.isInteger` and maximum 65535
+  - [x] Memoize `getFormatById(format)` in `ConfigPanel.tsx`
+  - [x] Update duration warning indicator to `⚠️ Long duration` tied directly to duration > 300s
+  - [x] Update `web/src/app/layout.tsx` (`jsonLd.featureList`), `web/public/llms.txt`, and `skills/svg-to-video/SKILL.md`
+
 ## 🧪 Verification Plan
 
 - [x] Unit Tests: `npm run test:unit` and `npm run test:unit -w web`
-- [x] Storybook Tests: `npm run test:storybook -w web`
+- [x] Storybook Tests: `npm run test:storybook:all`
+- [x] MCP Tests: `npm run test:mcp`
 - [x] Fast Quality Checks: `npm run check:fast`
 
 ## 📝 Change Log
@@ -92,3 +103,4 @@ Provide user control over animation looping (infinite vs. play-once / custom loo
 - 2026-11-27: Initial spec created for issue #265 by Antigravity.
 - 2026-11-27: Implementation complete across shared capabilities, CLI/MCP generators, Web Studio encoders, and UI controls.
 - 2026-11-28: UI/UX refinement per review: keep Loop Animation checkbox permanently rendered and disable it on unsupported formats to prevent layout shifts.
+- 2026-11-28: Senior Code Review follow-up: resolve MCP loop boolean handling and bounds schema, fix dark-mode contrast on reset duration button, harden APNG chunk bounds, and tighten option validation.

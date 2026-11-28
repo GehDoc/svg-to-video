@@ -16,8 +16,9 @@ This skill enables AI agents to render animated vector graphics (SVGs with CSS a
 
 1. **Format Export**: Converts SVGs into `mp4`, `webm`, `gif`, `apng`, `mkv`, and `mov`.
 2. **Transparent Backgrounds**: Supports full alpha-channel transparency for `webm`, `gif`, `apng`, and `mov`.
-3. **Auto-Duration Detection**: Automatically detects CSS keyframes and SMIL animation loop durations if not specified.
-4. **Resolution Presets & Custom Dimensions**: Supports `original`, `1080p`, `720p`, custom scaling factors (1x-4x), or formatted resolution strings (e.g., `WIDTHxHEIGHT` like `1080x1920`, `1080x1080`).
+3. **Configurable Animation Looping**: Supports loop control for animated formats (`gif`, `apng`) via `loop` parameter (0 = infinite [default], 1 or -1 / false = play once, N = loop count).
+4. **Auto-Duration Detection**: Automatically detects CSS keyframes and SMIL animation loop durations if not specified.
+5. **Resolution Presets & Custom Dimensions**: Supports `original`, `1080p`, `720p`, custom scaling factors (1x-4x), or formatted resolution strings (e.g., `WIDTHxHEIGHT` like `1080x1920`, `1080x1080`).
 
 ## Usage Guidelines for AI Agents
 

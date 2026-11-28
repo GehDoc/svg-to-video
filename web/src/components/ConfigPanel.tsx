@@ -116,6 +116,8 @@ export const ConfigPanel = ({
   const isRenderingOrSuccess = state.isRendering || !!renderedUrl;
   const isOptionsDisabled = isRenderingOrSuccess || !svgContent;
 
+  const currentFormatInfo = useMemo(() => getFormatById(format), [format]);
+
   const effectiveTargetDim = useMemo(
     () =>
       targetDim ||
@@ -258,11 +260,9 @@ export const ConfigPanel = ({
                 id="loop-animation"
                 checked={loop}
                 onChange={(e) => onLoopChange?.(e.target.checked)}
-                disabled={
-                  isOptionsDisabled || !getFormatById(format)?.supportsLoop
-                }
+                disabled={isOptionsDisabled || !currentFormatInfo?.supportsLoop}
                 title={
-                  !getFormatById(format)?.supportsLoop
+                  !currentFormatInfo?.supportsLoop
                     ? 'Looping is only supported for animated image formats (GIF, aPNG).'
                     : undefined
                 }
@@ -270,7 +270,7 @@ export const ConfigPanel = ({
               <label
                 htmlFor="loop-animation"
                 title={
-                  !getFormatById(format)?.supportsLoop
+                  !currentFormatInfo?.supportsLoop
                     ? 'Looping is only supported for animated image formats (GIF, aPNG).'
                     : undefined
                 }
@@ -354,12 +354,7 @@ export const ConfigPanel = ({
               <input
                 type="number"
                 id="duration"
-                className={
-                  (detectedDuration !== undefined && detectedDuration > 300) ||
-                  duration > 300
-                    ? 'input-warning'
-                    : ''
-                }
+                className={duration > 300 ? 'input-warning' : ''}
                 value={isNaN(duration) ? '' : duration}
                 onChange={(e) => {
                   const val = parseFloat(e.target.value);
@@ -369,8 +364,7 @@ export const ConfigPanel = ({
                 step={0.1}
                 disabled={isOptionsDisabled}
               />
-              {((detectedDuration !== undefined && detectedDuration > 300) ||
-                duration > 300) && (
+              {duration > 300 && (
                 <span
                   className="duration-warning-text"
                   role="status"
@@ -451,7 +445,7 @@ export const ConfigPanel = ({
                 onChange={(e) => onBackgroundColorChange(e.target.value)}
                 disabled={
                   isOptionsDisabled ||
-                  (isTransparent && !getFormatById(format)?.needsColorKeying)
+                  (isTransparent && !currentFormatInfo?.needsColorKeying)
                 }
               />
               <input
@@ -460,7 +454,7 @@ export const ConfigPanel = ({
                 onChange={(e) => onBackgroundColorChange(e.target.value)}
                 disabled={
                   isOptionsDisabled ||
-                  (isTransparent && !getFormatById(format)?.needsColorKeying)
+                  (isTransparent && !currentFormatInfo?.needsColorKeying)
                 }
                 className="color-text-input"
                 aria-label="Background color hex code"
@@ -520,7 +514,7 @@ export const ConfigPanel = ({
                 onMetadataChange({ ...metadata, title: e.target.value })
               }
               disabled={
-                isOptionsDisabled || !getFormatById(format)?.supportsMetadata
+                isOptionsDisabled || !currentFormatInfo?.supportsMetadata
               }
               placeholder="Video title"
             />
@@ -534,7 +528,7 @@ export const ConfigPanel = ({
                 onMetadataChange({ ...metadata, comment: e.target.value })
               }
               disabled={
-                isOptionsDisabled || !getFormatById(format)?.supportsMetadata
+                isOptionsDisabled || !currentFormatInfo?.supportsMetadata
               }
               placeholder="Additional notes"
               rows={2}

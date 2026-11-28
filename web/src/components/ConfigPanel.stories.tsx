@@ -127,3 +127,13 @@ export const WithDurationWarning: Story = {
     targetDim: { width: 1920, height: 1080 },
   },
 };
+
+export const WithCustomDuration: Story = {
+  args: {
+    svgContent: '<svg></svg>',
+    duration: 10,
+    detectedDuration: 3.5,
+    originalDim: { width: 1920, height: 1080, isDimensionsDetected: true },
+    targetDim: { width: 1920, height: 1080 },
+  },
+};

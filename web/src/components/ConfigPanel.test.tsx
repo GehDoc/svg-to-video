@@ -357,4 +357,16 @@ test('ConfigPanel renders warning indicator and border when duration exceeds 5 m
 
   expect(screen.getByText(/long duration/i)).toBeInTheDocument();
   expect(durationInput).toHaveClass('input-warning');
+
+  rerender(
+    <ConfigPanel
+      {...defaultProps}
+      svgContent="<svg></svg>"
+      duration={10}
+      detectedDuration={350}
+    />
+  );
+
+  expect(screen.queryByText(/long duration/i)).not.toBeInTheDocument();
+  expect(durationInput).not.toHaveClass('input-warning');
 });

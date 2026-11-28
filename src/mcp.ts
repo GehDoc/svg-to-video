@@ -171,9 +171,22 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                 'Quality level (1-100) for animated exports (GIF palette generation max colors, APNG compression). Optional; defaults to max quality (100) if omitted.',
             },
             loop: {
-              type: 'number',
+              oneOf: [
+                {
+                  type: 'integer',
+                  minimum: -1,
+                  maximum: 65535,
+                  description:
+                    'Loop count for animated formats (GIF, aPNG). 0 = infinite loop (default), 1 or -1 = play once, N = loop count.',
+                },
+                {
+                  type: 'boolean',
+                  description:
+                    'Enable or disable looping for animated formats. true = infinite loop, false = play once.',
+                },
+              ],
               description:
-                'Loop count for animated formats (GIF, aPNG). 0 = infinite loop (default), 1 or -1 = play once, N = loop count.',
+                'Loop control for animated formats (GIF, aPNG). Accepts an integer loop count (0 = infinite [default], 1 or -1 = play once, N = loop count) or boolean (false = play once, true = infinite).',
             },
           },
           ...(isHosted
@@ -312,7 +325,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       bitrate?: string;
       crf?: number;
       quality?: number;
-      loop?: number;
+      loop?: number | boolean;
     };
 
     if (isHosted && (params.svgFilePath || params.outDir)) {
@@ -407,7 +420,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         cliArgs.push('--quality', String(params.quality));
       }
       if (params.loop !== undefined) {
-        cliArgs.push('--loop', String(params.loop));
+        if (params.loop === false) {
+          cliArgs.push('--no-loop');
+        } else if (params.loop !== true) {
+          cliArgs.push('--loop', String(params.loop));
+        }
       }
 
       const rawOutput = execFileSync(command, cliArgs, {
